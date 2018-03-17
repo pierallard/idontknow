@@ -1,12 +1,20 @@
+import {Cell} from "../Cell";
+import {Human} from "../Human";
+
 export default class Play extends Phaser.State {
     public create() {
-        let graphics = this.game.add.graphics(0, 0);
-        graphics.beginFill(0xff00ff);
-        graphics.lineStyle(10, 0x00ffff);
-        graphics.drawCircle(100, 100, 100);
-        this.game.add.existing(graphics);
+        this.game.stage.backgroundColor = "#4488AA";
+
+        for (let x = 0; x < 3; x++) {
+            for (let y = 0; y < 6; y++) {
+                new Cell(this.game, new PIXI.Point(x, y));
+            }
+        }
+
+        new Human(this.game, new PIXI.Point(0, 0));
     }
 
     update() {
+
     }
 }
