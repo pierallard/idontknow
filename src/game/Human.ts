@@ -1,5 +1,7 @@
 import {PositionTransformer} from "./PositionTransformer";
 
+const FRAME_RATE = 12;
+
 export class Human {
     private tile: Phaser.TileSprite;
     private cell: PIXI.Point;
@@ -23,7 +25,7 @@ export class Human {
         this.tile.animations.add('default', [12, 13, 14]);
         this.tile.animations.add('default_reverse', [18, 19, 20]);
         this.tile.anchor.set(0.5, 1.3);
-        this.tile.animations.play('default', 12, true);
+        this.tile.animations.play('default', FRAME_RATE, true);
 
         game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(this.moveLeft, this);
         game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(this.moveRight, this);
@@ -73,7 +75,7 @@ export class Human {
         this.game.add.tween(this.tile.position).to({
             x: PositionTransformer.getRealPosition(this.cell).x,
             y: PositionTransformer.getRealPosition(this.cell).y
-        }, 1000, 'Linear', true).onComplete.add(this.isNotMoving, this);
+        }, 1200, 'Linear', true).onComplete.add(this.isNotMoving, this);
     }
 
     private isNotMoving() {
@@ -83,18 +85,18 @@ export class Human {
 
     private loadMove() {
         if (this.isTop) {
-            this.tile.animations.play('walk_reverse', 12, true);
+            this.tile.animations.play('walk_reverse', FRAME_RATE, true);
         } else {
-            this.tile.animations.play('walk', 12, true);
+            this.tile.animations.play('walk', FRAME_RATE, true);
         }
         this.tile.scale.set(this.isLeft ? 1 : -1, 1);
     }
 
     private loadDefault() {
         if (this.isTop) {
-            this.tile.animations.play('default_reverse', 12, true);
+            this.tile.animations.play('default_reverse', FRAME_RATE, true);
         } else {
-            this.tile.animations.play('default', 12, true);
+            this.tile.animations.play('default', FRAME_RATE, true);
         }
         this.tile.scale.set(this.isLeft ? 1 : -1, 1);
     }

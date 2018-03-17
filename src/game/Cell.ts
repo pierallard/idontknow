@@ -1,15 +1,16 @@
-import {CELL_HEIGHT, CELL_WIDTH, PositionTransformer} from "./PositionTransformer";
+import {PositionTransformer} from "./PositionTransformer";
 
-export class Cell extends Phaser.Graphics {
+export class Cell extends Phaser.Sprite {
     constructor(game: Phaser.Game, point: PIXI.Point) {
-        super(game, PositionTransformer.getRealPosition(point).x, PositionTransformer.getRealPosition(point).y);
-        this.game.add.existing(this);
+        super(
+            game,
+            PositionTransformer.getRealPosition(point).x,
+            PositionTransformer.getRealPosition(point).y,
+            'woodcell'
+        );
 
-        this.lineStyle(1, 0xffffff);
-        this.moveTo(0, 0);
-        this.lineTo(-CELL_WIDTH/2, -CELL_HEIGHT/2);
-        this.lineTo(0, -CELL_HEIGHT);
-        this.lineTo(CELL_WIDTH/2, -CELL_HEIGHT/2);
-        this.lineTo(0, 0);
+        this.anchor.setTo(0.5, 1);
+
+        this.game.add.existing(this);
     }
 }

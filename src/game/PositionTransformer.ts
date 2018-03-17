@@ -1,7 +1,7 @@
 import {GAME_HEIGHT, GAME_WIDTH} from "../app";
 
 export const CELL_WIDTH = 40;
-export const CELL_HEIGHT = 18;
+export const CELL_HEIGHT = 20;
 
 export class PositionTransformer {
     static getRealPosition(point: PIXI.Point): PIXI.Point {
