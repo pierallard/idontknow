@@ -2,7 +2,7 @@ import {SCALE} from "../../app";
 
 export default class Boot extends Phaser.State {
     public create () {
-        this.physics.startSystem(Phaser.Physics.ARCADE);
+        // this.physics.startSystem(Phaser.Physics.ARCADE);
 
         this.game.scale.scaleMode = Phaser.ScaleManager.USER_SCALE;
         this.game.scale.setUserScale(SCALE, SCALE);
