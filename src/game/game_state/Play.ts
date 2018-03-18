@@ -1,43 +1,33 @@
-import {Cell} from "../Cell";
 import {Human} from "../Human";
 import {PositionTransformer} from "../PositionTransformer";
+import {Ground} from "../Ground";
 
 export default class Play extends Phaser.State {
-    private cells: Cell[];
+
     private human: Human;
+    private ground: Ground;
+
+    private group: Phaser.Group;
 
     constructor() {
         super();
-        this.cells = [];
     }
 
     public create() {
         this.game.stage.backgroundColor = "#4488AA";
+        const floor = this.game.add.group();
+        this.group = this.game.add.group();
+        this.ground = new Ground(this.game, floor, this.group);
 
-        for (let x = 0; x < 6; x++) {
-            for (let y = 0; y < 6; y++) {
-                this.cells.push(new Cell(this.game, new PIXI.Point(x, y)));
-            }
-        }
-
-        this.human = new Human(this, this.game, new PIXI.Point(0, 0));
+        this.human = new Human(this, this.game, this.group, new PIXI.Point(0, 0), this.ground);
     }
 
     update() {
+        this.group.sort('y', Phaser.Group.SORT_ASCENDING);
+
         if (this.game.input.activePointer.isDown) {
             const position = PositionTransformer.getCellPosition(this.game.input.activePointer.position);
-            this.cells.forEach((cell) => {
-                if (cell.getPosition().x === position.x && cell.getPosition().y === position.y) {
-                    this.human.moveTo(cell.getPosition());
-                    cell.loadTexture('casedefault');
-                }
-            })
+            this.human.moveTo(position);
         }
-    }
-
-    setHuman(human: Human) {
-        this.cells.forEach((cell) => {
-            cell.setHuman(human);
-        });
     }
 }

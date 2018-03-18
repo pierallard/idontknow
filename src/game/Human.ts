@@ -1,6 +1,10 @@
 import {PositionTransformer} from "./PositionTransformer";
 import Play from "./game_state/Play";
 
+declare var Phaser: any;
+import "../../bin/phaser_pathfinding-0.2.0"
+import {Ground} from "./Ground";
+
 const FRAME_RATE = 12;
 
 export class Human {
@@ -12,8 +16,10 @@ export class Human {
     private isTop: boolean;
     private play: Play;
     private goal: PIXI.Point;
+    private pathfinder: Phaser.Plugin.PathFinderPlugin;
+    private path: PIXI.Point[];
 
-    constructor(play: Play, game: Phaser.Game, cell: PIXI.Point) {
+    constructor(play: Play, game: Phaser.Game, group: Phaser.Group, cell: PIXI.Point, ground: Ground) {
         const realX = PositionTransformer.getRealPosition(cell).x;
         const realY = PositionTransformer.getRealPosition(cell).y;
         this.cell = cell;
@@ -22,6 +28,7 @@ export class Human {
         this.isLeft = false;
         this.isTop = false;
         this.play = play;
+        this.path = [];
 
         this.tile = game.add.tileSprite(realX, realY, 24, 25, 'human');
         this.tile.animations.add('walk', [0, 1, 2, 3, 4, 5]);
@@ -34,22 +41,34 @@ export class Human {
         this.tile.inputEnabled = true;
         this.tile.events.onInputDown.add(this.select, this);
 
-        // game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(this.moveLeft, this);
-        // game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(this.moveRight, this);
-        // game.input.keyboard.addKey(Phaser.Keyboard.UP).onDown.add(this.moveUp, this);
-        // game.input.keyboard.addKey(Phaser.Keyboard.DOWN).onDown.add(this.moveDown, this);
+        group.add(this.tile);
+
+        this.pathfinder = game.plugins.add(Phaser.Plugin.PathFinderPlugin);
+        console.log(ground.getAcceptables());
+        this.pathfinder.setGrid(ground.getGrid(), ground.getAcceptables());
+
     }
 
     private select() {
         this.tile.loadTexture('human_selected', this.tile.frame, false);
-        this.play.setHuman(this);
     }
 
     moveTo(cell: PIXI.Point) {
-        this.goal = cell;
-        if (!this.isMoving) {
-            this.moveFinished();
-        }
+        this.pathfinder.setCallbackFunction((path) => {
+            if (path) {
+                this.goal = cell;
+                this.path = [];
+                for (let i = 1, ilen = path.length; i < ilen; i++) {
+                    this.path.push(new PIXI.Point(path[i].x, path[i].y));
+                }
+                if (!this.isMoving) {
+                    this.moveFinished();
+                }
+            }
+        });
+
+        this.pathfinder.preparePathCalculation([this.cell.x, this.cell.y], [cell.x, cell.y]);
+        this.pathfinder.calculatePath();
     }
 
     private moveLeft() {
@@ -99,23 +118,20 @@ export class Human {
 
     private moveFinished() {
         this.isMoving = false;
-        if (!this.goal || this.cell.x === this.goal.x && this.cell.y === this.goal.y) {
-            console.log('finished');
+        if (this.path.length == 0) {
             this.goal = null;
             this.loadStandTexture();
         } else {
-            if (this.cell.x === this.goal.x) {
-                if (this.goal.y > this.cell.y) {
-                    this.moveUp();
-                } else {
-                    this.moveDown();
-                }
-            } else {
-                if (this.goal.x > this.cell.x) {
-                    this.moveLeft();
-                } else {
-                    this.moveRight();
-                }
+            const next = this.path.shift();
+            console.log(next);
+            if (next.x > this.cell.x) {
+                this.moveLeft();
+            } else if (next.x < this.cell.x) {
+                this.moveRight();
+            } else if (next.y > this.cell.y) {
+                this.moveUp();
+            } else if (next.y < this.cell.y) {
+                this.moveDown();
             }
         }
     }

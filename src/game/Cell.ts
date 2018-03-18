@@ -5,7 +5,7 @@ export class Cell extends Phaser.Sprite {
     private human: Human;
     private cell: PIXI.Point;
 
-    constructor(game: Phaser.Game, point: PIXI.Point) {
+    constructor(game: Phaser.Game, group: Phaser.Group, point: PIXI.Point) {
         super(
             game,
             PositionTransformer.getRealPosition(point).x,
@@ -14,17 +14,8 @@ export class Cell extends Phaser.Sprite {
         );
 
         this.cell = point;
-
         this.anchor.setTo(0.5, 1);
 
-        this.game.add.existing(this);
-    }
-
-    setHuman(human: Human) {
-        this.human = human;
-    }
-
-    getPosition(): PIXI.Point {
-        return this.cell;
+        group.add(this);
     }
 }
