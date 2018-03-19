@@ -1,8 +1,5 @@
 import {PositionTransformer} from "./PositionTransformer";
 import Play from "./game_state/Play";
-
-declare var Phaser: any;
-import "../../bin/phaser_pathfinding-0.2.0"
 import {Ground} from "./Ground";
 
 const FRAME_RATE = 12;
@@ -16,7 +13,7 @@ export class Human {
     private isTop: boolean;
     private play: Play;
     private goal: PIXI.Point;
-    private pathfinder: any;
+    private pathfinder: Phaser.Plugin.PathFinderPlugin;
     private path: PIXI.Point[];
 
     constructor(play: Play, game: Phaser.Game, group: Phaser.Group, cell: PIXI.Point, ground: Ground) {
@@ -54,7 +51,7 @@ export class Human {
     }
 
     moveTo(cell: PIXI.Point) {
-        this.pathfinder.setCallbackFunction((path) => {
+        this.pathfinder.setCallbackFunction((path: ({x: number, y: number}[])) => {
             if (path) {
                 this.goal = cell;
                 this.path = [];
@@ -127,7 +124,6 @@ export class Human {
             this.loadStandTexture();
         } else {
             const next = this.path.shift();
-            console.log(next);
             if (next.x > this.cell.x) {
                 this.moveLeft();
             } else if (next.x < this.cell.x) {
