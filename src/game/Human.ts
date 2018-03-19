@@ -16,7 +16,7 @@ export class Human {
     private isTop: boolean;
     private play: Play;
     private goal: PIXI.Point;
-    private pathfinder: Phaser.Plugin.PathFinderPlugin;
+    private pathfinder: any;
     private path: PIXI.Point[];
 
     constructor(play: Play, game: Phaser.Game, group: Phaser.Group, cell: PIXI.Point, ground: Ground) {
@@ -67,8 +67,12 @@ export class Human {
             }
         });
 
-        this.pathfinder.preparePathCalculation([this.cell.x, this.cell.y], [cell.x, cell.y]);
-        this.pathfinder.calculatePath();
+        try {
+            this.pathfinder.preparePathCalculation([this.cell.x, this.cell.y], [cell.x, cell.y]);
+            this.pathfinder.calculatePath();
+        } catch(error) {
+            console.log(error);
+        }
     }
 
     private moveLeft() {
