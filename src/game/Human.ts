@@ -9,8 +9,6 @@ export class Human {
     private cell: PIXI.Point;
     private game: Phaser.Game;
     private isMoving: boolean;
-    private isLeft: boolean;
-    private isTop: boolean;
     private play: Play;
     private goal: PIXI.Point;
     private pathfinder: Phaser.Plugin.PathFinderPlugin;
@@ -22,8 +20,6 @@ export class Human {
         this.cell = cell;
         this.game = game;
         this.isMoving = false;
-        this.isLeft = false;
-        this.isTop = false;
         this.play = play;
         this.path = [];
 
@@ -41,7 +37,6 @@ export class Human {
         group.add(this.tile);
 
         this.pathfinder = game.plugins.add(Phaser.Plugin.PathFinderPlugin);
-        console.log(ground.getAcceptables());
         this.pathfinder.setGrid(ground.getGrid(), ground.getAcceptables());
 
     }
@@ -51,6 +46,10 @@ export class Human {
     }
 
     moveTo(cell: PIXI.Point) {
+        if (this.cell.x === cell.x && this.cell.y === cell.y) {
+            return;
+        }
+
         this.pathfinder.setCallbackFunction((path: ({x: number, y: number}[])) => {
             if (path) {
                 this.goal = cell;
@@ -59,7 +58,7 @@ export class Human {
                     this.path.push(new PIXI.Point(path[i].x, path[i].y));
                 }
                 if (!this.isMoving) {
-                    this.moveFinished();
+                    this.continueMoving(null, null);
                 }
             }
         });
@@ -75,53 +74,50 @@ export class Human {
     private moveLeft() {
         if (!this.isMoving) {
             this.cell.x += 1;
-            this.isLeft = true;
-            this.isTop = true;
-            this.runTween();
+            this.runTween(true, true);
         }
     }
 
     private moveRight() {
         if (!this.isMoving) {
             this.cell.x -= 1;
-            this.isLeft = false;
-            this.isTop = false;
-            this.runTween();
+            this.runTween(false, false);
         }
     }
 
     private moveUp() {
         if (!this.isMoving) {
             this.cell.y += 1;
-            this.isLeft = false;
-            this.isTop = true;
-            this.runTween();
+            this.runTween(false, true);
         }
     }
 
     private moveDown() {
         if (!this.isMoving) {
             this.cell.y -= 1;
-            this.isLeft = true;
-            this.isTop = false;
-            this.runTween();
+            this.runTween(true, false);
         }
     }
 
-    private runTween() {
-        this.loadMoveTexture();
+    private runTween(isLeft: boolean, isTop: boolean) {
+        console.log('run tween');
+        this.loadMoveTexture(isLeft, isTop);
         this.isMoving = true;
         this.game.add.tween(this.tile.position).to({
             x: PositionTransformer.getRealPosition(this.cell).x,
             y: PositionTransformer.getRealPosition(this.cell).y
-        }, 1200, 'Linear', true).onComplete.add(this.moveFinished, this);
+        }, 1200, 'Linear', true).onComplete.add(this.moveFinished, this, 0, isLeft, isTop);
     }
 
-    private moveFinished() {
+    private moveFinished(_tweenValues: any, _game: any, isLeft: boolean, isTop: boolean) {
+        this.continueMoving(isLeft, isTop);
+    }
+
+    private continueMoving(isLeft: boolean, isTop: boolean) {
         this.isMoving = false;
         if (this.path.length == 0) {
             this.goal = null;
-            this.loadStandTexture();
+            this.loadStandTexture(isLeft, isTop);
         } else {
             const next = this.path.shift();
             if (next.x > this.cell.x) {
@@ -136,21 +132,21 @@ export class Human {
         }
     }
 
-    private loadMoveTexture() {
-        if (this.isTop) {
+    private loadMoveTexture(isLeft: boolean, isTop: boolean) {
+        if (isTop) {
             this.tile.animations.play('walk_reverse', FRAME_RATE, true);
         } else {
             this.tile.animations.play('walk', FRAME_RATE, true);
         }
-        this.tile.scale.set(this.isLeft ? 1 : -1, 1);
+        this.tile.scale.set(isLeft ? 1 : -1, 1);
     }
 
-    private loadStandTexture() {
-        if (this.isTop) {
+    private loadStandTexture(isLeft: boolean, isTop: boolean) {
+        if (isTop) {
             this.tile.animations.play('default_reverse', FRAME_RATE, true);
         } else {
             this.tile.animations.play('default', FRAME_RATE, true);
         }
-        this.tile.scale.set(this.isLeft ? 1 : -1, 1);
+        this.tile.scale.set(isLeft ? 1 : -1, 1);
     }
 }
