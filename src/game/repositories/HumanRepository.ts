@@ -16,11 +16,9 @@ export class HumanRepository {
         })
     }
 
-    getFirstHuman(): Human {
-        return this.humans[0];
-    }
-
-    getHumans(): Human[] {
-        return this.humans;
+    update() {
+        this.humans.forEach((human: Human) => {
+            human.update();
+        })
     }
 }

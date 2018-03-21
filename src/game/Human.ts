@@ -1,5 +1,8 @@
 import {PositionTransformer} from "./PositionTransformer";
 import {World} from "./World";
+import {HumanState} from "./human_states/HumanState";
+import {FreezeState} from "./human_states/FreezeState";
+import {MoveRandomState} from "./human_states/MoveRandomState";
 
 const FRAME_RATE = 12;
 
@@ -11,15 +14,18 @@ export class Human {
     private goal: PIXI.Point;
     private pathfinder: Phaser.Plugin.PathFinderPlugin;
     private path: PIXI.Point[];
-    private world: World
+    private world: World;
+    private state: HumanState;
 
     constructor(cell: PIXI.Point) {
         this.cell = cell;
         this.isMoving = false;
         this.path = [];
+        this.state = new FreezeState(this);
     }
 
     create(game: Phaser.Game, group: Phaser.Group, world: World) {
+        this.state.start(game);
         this.game = game;
         this.world = world;
 
@@ -44,6 +50,13 @@ export class Human {
 
         this.pathfinder = game.plugins.add(Phaser.Plugin.PathFinderPlugin);
         this.pathfinder.setGrid(world.getGround().getGrid(), world.getGround().getAcceptables());
+    }
+
+    update() {
+        if (!this.state.isActive()) {
+            this.state = Math.random() > 0.5 ? new MoveRandomState(this) : new FreezeState(this);
+            this.state.start(this.game);
+        }
     }
 
     private select() {

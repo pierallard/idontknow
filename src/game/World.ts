@@ -1,8 +1,6 @@
 import {Ground} from "./Ground";
 import {HumanRepository} from "./repositories/HumanRepository";
-import {Human} from "./Human";
 import {Wall} from "./Wall";
-import {PositionTransformer} from "./PositionTransformer";
 
 export class World {
     private ground: Ground;
@@ -19,12 +17,12 @@ export class World {
         this.humanRepository.create(game, groups, this);
     }
 
-    getGround(): Ground {
-        return this.ground;
+    update() {
+        this.humanRepository.update();
     }
 
-    getHumanRepository(): HumanRepository {
-        return this.humanRepository;
+    getGround(): Ground {
+        return this.ground;
     }
 
     humanMoved(positions: PIXI.Point[]) {
