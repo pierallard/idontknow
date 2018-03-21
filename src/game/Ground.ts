@@ -75,4 +75,8 @@ export class Ground {
 
         return acceptables;
     }
+
+    getWallRepository(): WallRepository {
+        return this.wallRepository
+    }
 }

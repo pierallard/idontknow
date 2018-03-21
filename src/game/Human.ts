@@ -11,6 +11,7 @@ export class Human {
     private goal: PIXI.Point;
     private pathfinder: Phaser.Plugin.PathFinderPlugin;
     private path: PIXI.Point[];
+    private world: World
 
     constructor(cell: PIXI.Point) {
         this.cell = cell;
@@ -20,6 +21,7 @@ export class Human {
 
     create(game: Phaser.Game, group: Phaser.Group, world: World) {
         this.game = game;
+        this.world = world;
 
         this.tile = game.add.tileSprite(
             PositionTransformer.getRealPosition(this.cell).x,
@@ -117,6 +119,7 @@ export class Human {
 
     private continueMoving(isLeft: boolean, isTop: boolean) {
         this.isMoving = false;
+        let humanPositions = [this.cell];
         if (this.path.length == 0) {
             this.goal = null;
             this.loadStandTexture(isLeft, isTop);
@@ -131,7 +134,9 @@ export class Human {
             } else if (next.y < this.cell.y) {
                 this.moveDown();
             }
+            humanPositions.push(this.cell);
         }
+        this.world.humanMoved(humanPositions);
     }
 
     private loadMoveTexture(isLeft: boolean, isTop: boolean) {
@@ -150,5 +155,9 @@ export class Human {
             this.tile.animations.play('default', FRAME_RATE, true);
         }
         this.tile.scale.set(isLeft ? 1 : -1, 1);
+    }
+
+    getPosition() {
+        return this.cell;
     }
 }

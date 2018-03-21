@@ -1,5 +1,8 @@
 import {Ground} from "./Ground";
 import {HumanRepository} from "./repositories/HumanRepository";
+import {Human} from "./Human";
+import {Wall} from "./Wall";
+import {PositionTransformer} from "./PositionTransformer";
 
 export class World {
     private ground: Ground;
@@ -22,5 +25,27 @@ export class World {
 
     getHumanRepository(): HumanRepository {
         return this.humanRepository;
+    }
+
+    humanMoved(positions: PIXI.Point[]) {
+        const walls = this.ground.getWallRepository().getWalls();
+
+        walls.forEach((wall: Wall) => {
+            let visible = true;
+            positions.forEach((position: PIXI.Point) => {
+                if (World.humanIsAboveWall(position, wall)) {
+                    visible = false;
+                }
+            });
+            wall.setVisibility(visible);
+        })
+    }
+
+    private static humanIsAboveWall(humanPosition, wall: Wall) {
+        const wallPosition = wall.getPosition();
+
+        return (humanPosition.x == wallPosition.x + 1 && humanPosition.y == wallPosition.y + 1) ||
+            (humanPosition.x == wallPosition.x && humanPosition.y == wallPosition.y + 1) ||
+            (humanPosition.x == wallPosition.x + 1 && humanPosition.y == wallPosition.y);
     }
 }

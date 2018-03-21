@@ -33,4 +33,8 @@ export class WallRepository {
 
         return false;
     }
+
+    getWalls(): Wall[] {
+        return this.walls;
+    }
 }
