@@ -1,6 +1,5 @@
 import {PositionTransformer} from "./PositionTransformer";
-import Play from "./game_state/Play";
-import {Ground} from "./Ground";
+import {World} from "./World";
 
 const FRAME_RATE = 12;
 
@@ -9,21 +8,26 @@ export class Human {
     private cell: PIXI.Point;
     private game: Phaser.Game;
     private isMoving: boolean;
-    private play: Play;
     private goal: PIXI.Point;
     private pathfinder: Phaser.Plugin.PathFinderPlugin;
     private path: PIXI.Point[];
 
-    constructor(play: Play, game: Phaser.Game, group: Phaser.Group, cell: PIXI.Point, ground: Ground) {
-        const realX = PositionTransformer.getRealPosition(cell).x;
-        const realY = PositionTransformer.getRealPosition(cell).y;
+    constructor(cell: PIXI.Point) {
         this.cell = cell;
-        this.game = game;
         this.isMoving = false;
-        this.play = play;
         this.path = [];
+    }
 
-        this.tile = game.add.tileSprite(realX, realY, 24, 25, 'human');
+    create(game: Phaser.Game, group: Phaser.Group, world: World) {
+        this.game = game;
+
+        this.tile = game.add.tileSprite(
+            PositionTransformer.getRealPosition(this.cell).x,
+            PositionTransformer.getRealPosition(this.cell).y,
+            24,
+            25,
+            'human'
+        );
         this.tile.animations.add('walk', [0, 1, 2, 3, 4, 5]);
         this.tile.animations.add('walk_reverse', [6, 7, 8, 9, 10, 11]);
         this.tile.animations.add('default', [12, 13, 14]);
@@ -37,8 +41,7 @@ export class Human {
         group.add(this.tile);
 
         this.pathfinder = game.plugins.add(Phaser.Plugin.PathFinderPlugin);
-        this.pathfinder.setGrid(ground.getGrid(), ground.getAcceptables());
-
+        this.pathfinder.setGrid(world.getGround().getGrid(), world.getGround().getAcceptables());
     }
 
     private select() {
@@ -100,7 +103,6 @@ export class Human {
     }
 
     private runTween(isLeft: boolean, isTop: boolean) {
-        console.log('run tween');
         this.loadMoveTexture(isLeft, isTop);
         this.isMoving = true;
         this.game.add.tween(this.tile.position).to({

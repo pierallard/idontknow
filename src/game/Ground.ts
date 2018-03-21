@@ -1,16 +1,31 @@
 import {Cell} from "./Cell";
 import {Desk} from "./Desk";
 import {Wall} from "./Wall";
+import {WallRepository} from "./repositories/WallRepository";
 
 export class Ground {
     private desks: Desk[];
     private cells: Cell[];
-    private walls: Wall[];
+    private wallRepository: WallRepository;
 
-    constructor(game: Phaser.Game, floor: Phaser.Group, group: Phaser.Group) {
+    constructor() {
         this.cells = [];
-        this.desks = [];
-        this.walls = [];
+        this.desks = [];
+        this.wallRepository = new WallRepository();
+
+        [
+            new PIXI.Point(3,3),
+            new PIXI.Point(3,4),
+            new PIXI.Point(2,4),
+            new PIXI.Point(2,3),
+        ].forEach((cell) => {
+            this.wallRepository.addWall(cell);
+        });
+    }
+
+    create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}) {
+        const floor = groups['floor'];
+        const noname = groups['noname'];
 
         for (let x = 0; x < 6; x++) {
             for (let y = 0; y < 6; y++) {
@@ -18,28 +33,11 @@ export class Ground {
             }
         }
 
-        const wallCells = [
-            new PIXI.Point(3,3),
-            new PIXI.Point(3,4),
-            new PIXI.Point(2,4),
-            new PIXI.Point(2,3),
-        ];
-
         for (let i = 0; i < 3; i++) {
-            this.desks.push(new Desk(game, group, new PIXI.Point(Math.floor(Phaser.Math.random(0, 6)), Math.floor(Phaser.Math.random(0, 6)))))
+            this.desks.push(new Desk(game, noname, new PIXI.Point(Math.floor(Phaser.Math.random(0, 6)), Math.floor(Phaser.Math.random(0, 6)))))
         }
 
-        wallCells.forEach((wallCell) => {
-            this.walls.push(new Wall(
-                game,
-                group,
-                new PIXI.Point(wallCell.x, wallCell.y),
-                Ground.hasWall(wallCells, wallCell.x + 1, wallCell.y),
-                Ground.hasWall(wallCells, wallCell.x, wallCell.y + 1),
-                Ground.hasWall(wallCells, wallCell.x - 1, wallCell.y),
-                Ground.hasWall(wallCells, wallCell.x, wallCell.y - 1),
-            ));
-        });
+        this.wallRepository.create(game, noname);
     }
 
     getGrid(): {index: number}[][] {
@@ -66,10 +64,8 @@ export class Ground {
                         found = true;
                     }
                 }
-                for (let i = 0; i < this.walls.length; i++) {
-                    if (this.walls[i].getPosition().x === x && this.walls[i].getPosition().y === y) {
-                        found = true;
-                    }
+                if (this.wallRepository.hasWall(x, y)) {
+                    found = true;
                 }
                 if (!found) {
                     acceptables.push(y * 6 + x);
@@ -78,15 +74,5 @@ export class Ground {
         }
 
         return acceptables;
-    }
-
-    private static hasWall(wallCells: PIXI.Point[], x: number, y: number): boolean {
-        for (let i = 0; i < wallCells.length; i++) {
-            if (wallCells[i].x === x && wallCells[i].y === y) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

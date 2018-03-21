@@ -1,31 +1,30 @@
 import {PositionTransformer} from "./PositionTransformer";
 
-export class Wall extends Phaser.Sprite {
+export class Wall {
     private cell: PIXI.Point;
+    private sprite: Phaser.Sprite;
 
-    constructor(
+    constructor(position: PIXI.Point) {
+        this.cell = position;
+    }
+
+    create(
         game: Phaser.Game,
         group: Phaser.Group,
-        position: PIXI.Point,
         hasWallLeft: boolean,
         hasWallTop: boolean,
         hasWallRight: boolean,
         hasWallBottom: boolean
     ) {
-        super(
-            game,
-            PositionTransformer.getRealPosition(position).x,
-            PositionTransformer.getRealPosition(position).y,
+        this.sprite = game.add.sprite(
+            PositionTransformer.getRealPosition(this.cell).x,
+            PositionTransformer.getRealPosition(this.cell).y,
             'wall',
             Wall.getFrame(hasWallLeft, hasWallTop, hasWallRight, hasWallBottom)
         );
-        this.cell = position;
-        this.anchor.set(0.5, 1);
 
-        console.log(Wall.getFrame(hasWallLeft, hasWallTop, hasWallRight, hasWallBottom));
-        // this.loadTexture(this.texture, );
-
-        group.add(this);
+        this.sprite.anchor.set(0.5, 1);
+        group.add(this.sprite);
     }
 
     getPosition(): PIXI.Point {

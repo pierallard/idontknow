@@ -1,33 +1,30 @@
-import {Human} from "../Human";
+import {World} from "../World";
 import {PositionTransformer} from "../PositionTransformer";
-import {Ground} from "../Ground";
 
 export default class Play extends Phaser.State {
-
-    private human: Human;
-    private ground: Ground;
-
-    private group: Phaser.Group;
+    private worldKnownledge: World;
+    private groups: {[index: string] : Phaser.Group};
 
     constructor() {
         super();
+        this.worldKnownledge = new World();
     }
 
     public create() {
         this.game.stage.backgroundColor = "#4488AA";
-        const floor = this.game.add.group();
-        this.group = this.game.add.group();
-        this.ground = new Ground(this.game, floor, this.group);
-
-        this.human = new Human(this, this.game, this.group, new PIXI.Point(0, 0), this.ground);
+        this.groups = {
+            'floor': this.game.add.group(),
+            'noname':  this.game.add.group()
+        };
+        this.worldKnownledge.create(this.game, this.groups);
     }
 
     update() {
-        this.group.sort('y', Phaser.Group.SORT_ASCENDING);
+        this.groups['noname'].sort('y', Phaser.Group.SORT_ASCENDING);
 
         if (this.game.input.activePointer.isDown) {
             const position = PositionTransformer.getCellPosition(this.game.input.activePointer.position);
-            this.human.moveTo(position);
+            this.worldKnownledge.getHumanRepository().getFirstHuman().moveTo(position);
         }
     }
 }
