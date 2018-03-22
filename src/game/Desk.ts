@@ -5,10 +5,13 @@ export class Desk {
     private chairSprite: Phaser.Sprite;
     private position: PIXI.Point;
 
-    constructor(game: Phaser.Game, group: Phaser.Group, point: PIXI.Point) {
+    constructor(point: PIXI.Point) {
         this.position = point;
-        this.chairSprite = game.add.sprite(PositionTransformer.getRealPosition(point).x, PositionTransformer.getRealPosition(point).y, 'chair');
-        this.deskSprite = game.add.sprite(PositionTransformer.getRealPosition(point).x, PositionTransformer.getRealPosition(point).y, 'desk');
+    }
+
+    create(game: Phaser.Game, group: Phaser.Group) {
+        this.chairSprite = game.add.sprite(PositionTransformer.getRealPosition(this.position).x, PositionTransformer.getRealPosition(this.position).y, 'chair');
+        this.deskSprite = game.add.sprite(PositionTransformer.getRealPosition(this.position).x, PositionTransformer.getRealPosition(this.position).y, 'desk');
         this.chairSprite.anchor.set(0.5, 1);
         this.deskSprite.anchor.set(0.5, 1);
 

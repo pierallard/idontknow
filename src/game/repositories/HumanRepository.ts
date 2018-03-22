@@ -4,9 +4,9 @@ import {World} from "../World";
 export class HumanRepository {
     humans: Human[];
 
-    constructor() {
+    constructor(world: World) {
         this.humans = [
-            new Human(new PIXI.Point(0, 0))
+            new Human(world.getGround().getRandomCell())
         ];
     }
 

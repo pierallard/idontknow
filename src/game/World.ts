@@ -8,7 +8,7 @@ export class World {
 
     constructor() {
         this.ground = new Ground();
-        this.humanRepository = new HumanRepository();
+        this.humanRepository = new HumanRepository(this);
     }
 
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}) {

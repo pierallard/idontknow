@@ -54,7 +54,7 @@ export class Human {
 
     update() {
         if (!this.state.isActive()) {
-            this.state = Math.random() > 0.5 ? new MoveRandomState(this) : new FreezeState(this);
+            this.state = Math.random() > 0.5 ? new MoveRandomState(this, this.world) : new FreezeState(this);
             this.state.start(this.game);
         }
     }
