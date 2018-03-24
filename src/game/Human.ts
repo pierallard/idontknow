@@ -3,6 +3,7 @@ import {World} from "./World";
 import {HumanState} from "./human_states/HumanState";
 import {FreezeState} from "./human_states/FreezeState";
 import {MoveRandomState} from "./human_states/MoveRandomState";
+import {SmokeState} from "./human_states/SmokeState";
 
 const FRAME_RATE = 12;
 
@@ -25,7 +26,6 @@ export class Human {
     }
 
     create(game: Phaser.Game, group: Phaser.Group, world: World) {
-        this.state.start(game);
         this.game = game;
         this.world = world;
 
@@ -40,6 +40,17 @@ export class Human {
         this.tile.animations.add('walk_reverse', [6, 7, 8, 9, 10, 11]);
         this.tile.animations.add('default', [12, 13, 14]);
         this.tile.animations.add('default_reverse', [18, 19, 20]);
+        let smoke_frames = [24, 25, 26, 27, 30, 31, 32, 33];
+        for (let i = 0; i < 6; i++) {
+            // Take smoke length
+            smoke_frames.push(33)
+        }
+        smoke_frames = smoke_frames.concat([32, 31, 30, 27, 26, 25, 24]);
+        for (let i = 0; i < 20; i++) {
+            // Do nothing length
+            smoke_frames.push(24)
+        }
+        this.tile.animations.add('smoke', smoke_frames);
         this.tile.anchor.set(0.5, 1.0 + 8/25);
         this.tile.animations.play('default', FRAME_RATE, true);
 
@@ -50,11 +61,18 @@ export class Human {
 
         this.pathfinder = game.plugins.add(Phaser.Plugin.PathFinderPlugin);
         this.pathfinder.setGrid(world.getGround().getGrid(), world.getGround().getAcceptables());
+
+        this.state.start(game);
     }
 
     update() {
         if (!this.state.isActive()) {
-            this.state = Math.random() > 0.5 ? new MoveRandomState(this, this.world) : new FreezeState(this);
+            const states = [
+                new SmokeState(this),
+                new FreezeState(this),
+                new MoveRandomState(this, this.world)
+            ];
+            this.state = states[Math.floor(Math.random() * states.length)];
             this.state.start(this.game);
         }
     }
@@ -172,5 +190,13 @@ export class Human {
 
     getPosition() {
         return this.cell;
+    }
+
+    smoke() {
+        this.tile.animations.play('smoke', FRAME_RATE, true);
+    }
+
+    freeze() {
+        this.loadStandTexture(true, false);
     }
 }

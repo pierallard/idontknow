@@ -1,7 +1,7 @@
 import {Human} from "../Human";
 import {HumanState} from "./HumanState";
 
-export class FreezeState implements HumanState {
+export class SmokeState implements HumanState {
     private human: Human;
     private active: boolean;
 
@@ -15,8 +15,8 @@ export class FreezeState implements HumanState {
 
     start(game: Phaser.Game): void {
         game.time.events.add(Phaser.Math.random(1, 3) * Phaser.Timer.SECOND, this.end, this);
-        this.human.freeze();
         this.active = true;
+        this.human.smoke();
     }
 
     end(): void {
