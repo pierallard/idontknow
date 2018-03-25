@@ -4,12 +4,15 @@ import {HumanState} from "./human_states/HumanState";
 import {FreezeState} from "./human_states/FreezeState";
 import {MoveRandomState} from "./human_states/MoveRandomState";
 import {SmokeState} from "./human_states/SmokeState";
+import {SitState} from "./human_states/SitState";
 
 const FRAME_RATE = 12;
 export enum ANIMATION {
     FREEZE,
     WALK,
     SMOKE,
+    SIT_DOWN,
+    STAND_UP
 }
 const TOP_ORIENTED_ANIMATION = '_reverse';
 
@@ -42,21 +45,7 @@ export class Human {
             25,
             'human'
         );
-        this.tile.animations.add(ANIMATION.WALK + '', [0, 1, 2, 3, 4, 5]);
-        this.tile.animations.add(ANIMATION.WALK + TOP_ORIENTED_ANIMATION, [6, 7, 8, 9, 10, 11]);
-        this.tile.animations.add(ANIMATION.FREEZE + '', [12, 13, 14]);
-        this.tile.animations.add(ANIMATION.FREEZE + TOP_ORIENTED_ANIMATION, [18, 19, 20]);
-        let smoke_frames = [24, 25, 26, 27, 30, 31, 32, 33];
-        for (let i = 0; i < 6; i++) {
-            // Take smoke length
-            smoke_frames.push(33)
-        }
-        smoke_frames = smoke_frames.concat([32, 31, 30, 27, 26, 25, 24]);
-        for (let i = 0; i < 20; i++) {
-            // Do nothing length
-            smoke_frames.push(24)
-        }
-        this.tile.animations.add(ANIMATION.SMOKE + '', smoke_frames);
+        this.addAnimations();
         this.tile.anchor.set(0.5, 1.0 + 8/25);
 
         this.loadAnimation(ANIMATION.FREEZE, true, false);
@@ -75,9 +64,10 @@ export class Human {
     update() {
         if (!this.state.isActive()) {
             const states = [
-                new SmokeState(this),
+                new SmokeState(this, this.tile.animations.getAnimation(ANIMATION.SMOKE + '').frameTotal * Phaser.Timer.SECOND / FRAME_RATE),
                 new FreezeState(this),
-                new MoveRandomState(this, this.world)
+                new MoveRandomState(this, this.world),
+                new SitState(this, this.tile.animations.getAnimation(ANIMATION.SIT_DOWN + '').frameTotal * Phaser.Timer.SECOND / FRAME_RATE),
             ];
             this.state = states[Math.floor(Math.random() * states.length)];
             this.state.start(this.game);
@@ -197,6 +187,15 @@ export class Human {
                     this.tile.animations.play(animationSmokeName, FRAME_RATE, true);
                 }
                 break;
+            case ANIMATION.SIT_DOWN:
+            case ANIMATION.STAND_UP:
+                const animationSitDownName = animation + '';
+                if (this.tile.animations.name !== animationSitDownName) {
+                    this.tile.animations.play(animationSitDownName, FRAME_RATE, false);
+                }
+                break;
+            default:
+                console.log('UNKNOWN ANIMATION ' + animation);
         }
     }
 
@@ -214,5 +213,25 @@ export class Human {
 
     isMoving(): boolean {
         return this.moving;
+    }
+
+    private addAnimations() {
+        this.tile.animations.add(ANIMATION.WALK + '', [0, 1, 2, 3, 4, 5]);
+        this.tile.animations.add(ANIMATION.WALK + TOP_ORIENTED_ANIMATION, [6, 7, 8, 9, 10, 11]);
+        this.tile.animations.add(ANIMATION.FREEZE + '', [12, 13, 14]);
+        this.tile.animations.add(ANIMATION.FREEZE + TOP_ORIENTED_ANIMATION, [18, 19, 20]);
+        let smoke_frames = [24, 25, 26, 27, 30, 31, 32, 33];
+        for (let i = 0; i < 6; i++) {
+            // Take smoke length
+            smoke_frames.push(33)
+        }
+        smoke_frames = smoke_frames.concat([32, 31, 30, 27, 26, 25, 24]);
+        for (let i = 0; i < 20; i++) {
+            // Do nothing length
+            smoke_frames.push(24)
+        }
+        this.tile.animations.add(ANIMATION.SMOKE + '', smoke_frames);
+        this.tile.animations.add(ANIMATION.SIT_DOWN + '', [36, 37, 38, 39]);
+        this.tile.animations.add(ANIMATION.STAND_UP + '', [39, 38, 37, 36]);
     }
 }

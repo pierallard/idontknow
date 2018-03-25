@@ -50,4 +50,4 @@ for x in range(width):
         elif _has_colored_neighbor(pixels, x, y, width, height):
             pixelsResult[x, y] = (0, 0, 0, 255)
 
-imageResult.save("../assets/human_selected2.png")
+imageResult.save("../assets/human_selected.png")
