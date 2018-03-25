@@ -50,7 +50,6 @@ export class Ground {
         const acceptableIndexes = this.getAcceptables();
         const random = Math.floor(Math.random() * acceptableIndexes.length);
 
-        console.log(this.cells[acceptableIndexes[random]].getPosition());
         return this.cells[acceptableIndexes[random]].getPosition();
     }
 

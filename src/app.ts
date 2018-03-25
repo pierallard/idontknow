@@ -26,8 +26,6 @@ class SimpleGame extends Phaser.Game {
         this.state.add('Preload', Preload);
         this.state.add('Play', Play);
         this.state.start('Boot');
-
-        console.log(this.context);
     }
 }
 

@@ -1,4 +1,4 @@
-import {Human} from "../Human";
+import {ANIMATION, Human} from "../Human";
 import {HumanState} from "./HumanState";
 
 export class SmokeState implements HumanState {
@@ -16,7 +16,7 @@ export class SmokeState implements HumanState {
     start(game: Phaser.Game): void {
         game.time.events.add(Phaser.Math.random(1, 3) * Phaser.Timer.SECOND, this.end, this);
         this.active = true;
-        this.human.smoke();
+        this.human.loadAnimation(ANIMATION.SMOKE);
     }
 
     end(): void {
