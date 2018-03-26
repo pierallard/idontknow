@@ -87,28 +87,55 @@ export class Human {
         this.tile.loadTexture('human_selected', this.tile.frame, false);
     }
 
-    moveTo(cell: PIXI.Point) {
+    hasPath(cell: PIXI.Point): boolean {
+        return this.getPath(cell) !== null;
+    }
+
+    getPath(cell: PIXI.Point): PIXI.Point[] {
         if (this.cell.x === cell.x && this.cell.y === cell.y) {
-            return;
+            return [];
         }
 
+        let result = null;
         this.pathfinder.setCallbackFunction((path: ({x: number, y: number}[])) => {
             if (path) {
-                this.goal = cell;
-                this.path = [];
+                result = [];
                 for (let i = 1, ilen = path.length; i < ilen; i++) {
-                    this.path.push(new PIXI.Point(path[i].x, path[i].y));
-                }
-                if (!this.moving) {
-                    this.continueMoving(null, null);
+                    result.push(new PIXI.Point(path[i].x, path[i].y));
                 }
             } else {
-                console.log('No path found!');
+                result = null;
             }
         });
 
-        this.pathfinder.preparePathCalculation([this.cell.x, this.cell.y], [cell.x, cell.y]);
-        this.pathfinder.calculatePath();
+        try {
+            this.pathfinder.preparePathCalculation([this.cell.x, this.cell.y], [cell.x, cell.y]);
+            this.pathfinder.calculatePath();
+
+            let tries = 1000;
+            while (tries > 0) {
+                if (result) {
+                    return result;
+                }
+                tries--;
+            }
+
+            console.log('No answer');
+            return null;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    moveTo(cell: PIXI.Point) {
+        const path = this.getPath(cell);
+        if (path !== null) {
+            this.goal = cell;
+            this.path = path;
+            if (!this.moving) {
+                this.continueMoving(null, null);
+            }
+        }
     }
 
     moveToClosest(cell: PIXI.Point) {
@@ -244,5 +271,9 @@ export class Human {
         this.tile.animations.add(ANIMATION.SMOKE + '', smoke_frames);
         this.tile.animations.add(ANIMATION.SIT_DOWN + '', [36, 37, 38, 39]);
         this.tile.animations.add(ANIMATION.STAND_UP + '', [39, 38, 37, 36]);
+    }
+
+    moveToForbiddenNeighbor(position: PIXI.Point) {
+        console.log('MoveToNeighbor');
     }
 }

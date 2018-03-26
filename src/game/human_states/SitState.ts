@@ -16,6 +16,10 @@ export class SitState implements HumanState {
     }
 
     isActive(): boolean {
+        if (this.isNeighborPosition()) {
+            this.human.moveToForbiddenNeighbor(this.sofa.getPosition());
+        }
+
         return this.active;
     }
 
@@ -35,4 +39,8 @@ export class SitState implements HumanState {
         this.active = false;
     }
 
+    private isNeighborPosition() {
+        return !this.human.isMoving() && (this.human.getPosition().x - this.sofa.getPosition().x) * (this.human.getPosition().x - this.sofa.getPosition().x) +
+            (this.human.getPosition().y - this.sofa.getPosition().y) * (this.human.getPosition().y - this.sofa.getPosition().y) === 1;
+    }
 }
