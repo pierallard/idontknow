@@ -5,6 +5,7 @@ import {FreezeState} from "./human_states/FreezeState";
 import {MoveRandomState} from "./human_states/MoveRandomState";
 import {SmokeState} from "./human_states/SmokeState";
 import {SitState} from "./human_states/SitState";
+import {ClosestPathFinder} from "./ClosestPathFinder";
 
 const FRAME_RATE = 12;
 export enum ANIMATION {
@@ -26,6 +27,7 @@ export class Human {
     private path: PIXI.Point[];
     private world: World;
     private state: HumanState;
+    private closestPathFinder: ClosestPathFinder;
 
     constructor(cell: PIXI.Point) {
         this.cell = cell;
@@ -57,6 +59,8 @@ export class Human {
 
         this.pathfinder = game.plugins.add(Phaser.Plugin.PathFinderPlugin);
         this.pathfinder.setGrid(world.getGround().getGrid(), world.getGround().getAcceptables());
+
+        this.closestPathFinder = new ClosestPathFinder(game, world);
 
         this.state.start(game);
     }
@@ -108,83 +112,7 @@ export class Human {
     }
 
     moveToClosest(cell: PIXI.Point) {
-        this._tryMoveLeft(cell);
-    }
-
-    private _tryMoveLeft(cell: PIXI.Point) {
-        if (this.cell.x === cell.x + 1 && this.cell.y === cell.y) {
-            this._tryMoveRight(cell, { 'left': [] });
-        }
-
-        this.pathfinder.setCallbackFunction((path: ({x: number, y: number}[])) => {
-            this._tryMoveRight(cell, { 'left': path });
-        });
-
-        try {
-            this.pathfinder.preparePathCalculation([this.cell.x, this.cell.y], [cell.x + 1, cell.y]);
-            this.pathfinder.calculatePath();
-        } catch (e) {
-            console.log('_tryMoveLeft (' + this.cell.x + ',' + this.cell.y + ')->(' + (cell.x + 1) + ',' + (cell.y) + ') encountered exception : ' + e);
-            this._tryMoveRight(cell, { 'left': null });
-        }
-    }
-
-    private _tryMoveRight(cell: PIXI.Point, previousPaths) {
-        if (this.cell.x === cell.x - 1 && this.cell.y === cell.y) {
-            this._tryMoveTop(cell, Object.assign(previousPaths, { 'right': [] }));
-        }
-
-        this.pathfinder.setCallbackFunction((path: ({x: number, y: number}[])) => {
-            this._tryMoveTop(cell, Object.assign(previousPaths, { 'right': path }));
-        });
-
-        try {
-            this.pathfinder.preparePathCalculation([this.cell.x, this.cell.y], [cell.x - 1, cell.y]);
-            this.pathfinder.calculatePath();
-        } catch (e) {
-            console.log('_tryMoveRight (' + this.cell.x + ',' + this.cell.y + ')->(' + (cell.x - 1) + ',' + (cell.y) + ') encountered exception : ' + e);
-            this._tryMoveTop(cell, Object.assign(previousPaths, { 'right': null }));
-        }
-    }
-
-    private _tryMoveTop(cell: PIXI.Point, previousPaths) {
-        if (this.cell.x === cell.x && this.cell.y === cell.y + 1) {
-            this._tryMoveBottom(cell, Object.assign(previousPaths, { 'top': [] }));
-        }
-
-        this.pathfinder.setCallbackFunction((path: ({x: number, y: number}[])) => {
-            this._tryMoveBottom(cell, Object.assign(previousPaths, { 'top': path }));
-        });
-
-        try {
-            this.pathfinder.preparePathCalculation([this.cell.x, this.cell.y], [cell.x, cell.y + 1]);
-            this.pathfinder.calculatePath();
-        } catch (e) {
-            console.log('_tryMoveTop (' + this.cell.x + ',' + this.cell.y + ')->(' + (cell.x) + ',' + (cell.y + 1) + ') encountered exception : ' + e);;
-            this._tryMoveBottom(cell, Object.assign(previousPaths, { 'top': null }));
-        }
-    }
-
-    private _tryMoveBottom(cell: PIXI.Point, previousPaths) {
-        if (this.cell.x === cell.x && this.cell.y === cell.y - 1) {
-            this._finishMoveClosest(cell, Object.assign(previousPaths, { 'bottom': [] }));
-        }
-
-        this.pathfinder.setCallbackFunction((path: ({x: number, y: number}[])) => {
-            this._finishMoveClosest(cell, Object.assign(previousPaths, { 'bottom': path }));
-        });
-
-        try {
-            this.pathfinder.preparePathCalculation([this.cell.x, this.cell.y], [cell.x, cell.y - 1]);
-            this.pathfinder.calculatePath();
-        } catch (e) {
-            console.log('_tryMoveBottom (' + this.cell.x + ',' + this.cell.y + ')->(' + (cell.x) + ',' + (cell.y - 1) + ') encountered exception : ' + e);
-            this._finishMoveClosest(cell, Object.assign(previousPaths, { 'bottom': null }));
-        }
-    }
-
-    private _finishMoveClosest(cell, previousPaths) {
-        console.log(previousPaths);
+        this.closestPathFinder.getPath(this.cell, cell, this.moveTo.bind(this), this);
     }
 
     private moveLeft() {

@@ -3,6 +3,9 @@ import {Desk} from "./objects/Desk";
 import {WallRepository} from "./repositories/WallRepository";
 import {Sofa} from "./objects/Sofa";
 
+const WIDTH = 10;
+const HEIGHT = 10;
+
 export class Ground {
     private desks: Desk[];
     private cells: Cell[];
@@ -23,8 +26,8 @@ export class Ground {
             this.wallRepository.addWall(cell);
         });
 
-        for (let y = 0; y < 6; y++) {
-            for (let x = 0; x < 6; x++) {
+        for (let y = 0; y < HEIGHT; y++) {
+            for (let x = 0; x < WIDTH; x++) {
                 this.cells.push(new Cell(new PIXI.Point(x, y)));
             }
         }
