@@ -88,47 +88,11 @@ export class Human {
     }
 
     hasPath(cell: PIXI.Point): boolean {
-        return this.getPath(cell) !== null;
-    }
-
-    getPath(cell: PIXI.Point): PIXI.Point[] {
-        if (this.cell.x === cell.x && this.cell.y === cell.y) {
-            return [];
-        }
-
-        let result = null;
-        this.pathfinder.setCallbackFunction((path: ({x: number, y: number}[])) => {
-            if (path) {
-                result = [];
-                for (let i = 1, ilen = path.length; i < ilen; i++) {
-                    result.push(new PIXI.Point(path[i].x, path[i].y));
-                }
-            } else {
-                result = null;
-            }
-        });
-
-        try {
-            this.pathfinder.preparePathCalculation([this.cell.x, this.cell.y], [cell.x, cell.y]);
-            this.pathfinder.calculatePath();
-
-            let tries = 1000;
-            while (tries > 0) {
-                if (result) {
-                    return result;
-                }
-                tries--;
-            }
-
-            console.log('No answer');
-            return null;
-        } catch (e) {
-            return null;
-        }
+        return this.closestPathFinder.getPath(this.cell, cell) !== null;
     }
 
     moveTo(cell: PIXI.Point) {
-        const path = this.getPath(cell);
+        const path = this.closestPathFinder.getPath(this.cell, cell);
         if (path !== null) {
             this.goal = cell;
             this.path = path;
@@ -139,7 +103,15 @@ export class Human {
     }
 
     moveToClosest(cell: PIXI.Point) {
-        this.closestPathFinder.getPath(this.cell, cell, this.moveTo.bind(this));
+        const path = this.closestPathFinder.getNeighborPath(this.cell, cell);
+        if (path !== null) {
+            console.log(path);
+            this.goal = cell;
+            this.path = path;
+            if (!this.moving) {
+                this.continueMoving(null, null);
+            }
+        }
     }
 
     private moveLeft() {
