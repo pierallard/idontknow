@@ -21,7 +21,7 @@ export class SitState implements HumanState {
 
     start(game: Phaser.Game): void {
         this.active = true;
-        this.human.moveTo(this.sofa.getPosition());
+        this.human.moveToClosest(this.sofa.getPosition());
         // this.human.loadAnimation(ANIMATION.SIT_DOWN);
         // game.time.events.add(Phaser.Math.random(1, 3) * Phaser.Timer.SECOND + this.loopTime, this.standup, this, game);
     }
