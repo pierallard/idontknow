@@ -64,13 +64,18 @@ export class Human {
     update() {
         if (!this.state.isActive()) {
             const states = [
-                new SmokeState(this, this.tile.animations.getAnimation(ANIMATION.SMOKE + '').frameTotal * Phaser.Timer.SECOND / FRAME_RATE),
+                // new SmokeState(this, this.tile.animations.getAnimation(ANIMATION.SMOKE + '').frameTotal * Phaser.Timer.SECOND / FRAME_RATE),
                 new FreezeState(this),
-                new MoveRandomState(this, this.world),
-                new SitState(this, this.tile.animations.getAnimation(ANIMATION.SIT_DOWN + '').frameTotal * Phaser.Timer.SECOND / FRAME_RATE),
+                // new MoveRandomState(this, this.world),
+                new SitState(
+                    this,
+                    this.tile.animations.getAnimation(ANIMATION.SIT_DOWN + '').frameTotal * Phaser.Timer.SECOND / FRAME_RATE,
+                    this.world
+                ),
             ];
             this.state = states[Math.floor(Math.random() * states.length)];
             this.state.start(this.game);
+            console.log('New state: ' + this.state.constructor.name);
         }
     }
 
@@ -93,15 +98,13 @@ export class Human {
                 if (!this.moving) {
                     this.continueMoving(null, null);
                 }
+            } else {
+                console.log('No path found!');
             }
         });
 
-        try {
-            this.pathfinder.preparePathCalculation([this.cell.x, this.cell.y], [cell.x, cell.y]);
-            this.pathfinder.calculatePath();
-        } catch(error) {
-            console.log(error);
-        }
+        this.pathfinder.preparePathCalculation([this.cell.x, this.cell.y], [cell.x, cell.y]);
+        this.pathfinder.calculatePath();
     }
 
     private moveLeft() {

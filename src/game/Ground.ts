@@ -1,15 +1,18 @@
 import {Cell} from "./Cell";
-import {Desk} from "./Desk";
+import {Desk} from "./objects/Desk";
 import {WallRepository} from "./repositories/WallRepository";
+import {Sofa} from "./objects/Sofa";
 
 export class Ground {
     private desks: Desk[];
     private cells: Cell[];
+    private sofas: Sofa[];
     private wallRepository: WallRepository;
 
     constructor() {
         this.cells = [];
         this.desks = [];
+        this.sofas = [];
         this.wallRepository = new WallRepository();
         [
             new PIXI.Point(3,3),
@@ -29,6 +32,10 @@ export class Ground {
         for (let i = 0; i < 3; i++) {
             this.desks.push(new Desk(this.getRandomCell()));
         }
+
+        for (let i = 0; i < 3; i++) {
+            this.sofas.push(new Sofa(this.getRandomCell()));
+        }
     }
 
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}) {
@@ -41,6 +48,10 @@ export class Ground {
 
         this.desks.forEach((desk: Desk) => {
             desk.create(game, noname);
+        });
+
+        this.sofas.forEach((sofa: Sofa) => {
+            sofa.create(game, noname);
         });
 
         this.wallRepository.create(game, noname);
@@ -79,6 +90,13 @@ export class Ground {
                     found = true;
                 }
             }
+
+            for (let j = 0; j < this.sofas.length; j++) {
+                if (this.sofas[j].getPosition().x === x && this.sofas[j].getPosition().y === y) {
+                    found = true;
+                }
+            }
+
             if (this.wallRepository.hasWall(x, y)) {
                 found = true;
             }
@@ -92,5 +110,9 @@ export class Ground {
 
     getWallRepository(): WallRepository {
         return this.wallRepository
+    }
+
+    getRandomSofa(): Sofa {
+        return this.sofas[Math.floor(Math.random() * this.sofas.length)];
     }
 }

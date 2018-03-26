@@ -1,4 +1,4 @@
-import {PositionTransformer} from "./PositionTransformer";
+import {PositionTransformer} from "../PositionTransformer";
 
 export class Desk {
     private deskSprite: Phaser.Sprite;

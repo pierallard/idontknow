@@ -46,4 +46,8 @@ export class World {
             (humanPosition.x == wallPosition.x && humanPosition.y == wallPosition.y + 1) ||
             (humanPosition.x == wallPosition.x + 1 && humanPosition.y == wallPosition.y);
     }
+
+    getRandomSofa() {
+        return this.ground.getRandomSofa();
+    }
 }

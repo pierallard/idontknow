@@ -29,6 +29,7 @@ export default class Preload extends Phaser.State {
         this.game.load.spritesheet('chair', 'assets/chair.png', 40, 40);
         this.game.load.spritesheet('desk', 'assets/desk.png', 40, 40);
         this.game.load.spritesheet('wall', 'assets/wall.png', 40, 40, 16);
+        this.game.load.spritesheet('sofa', 'assets/sofa.png', 8, 6);
     }
 
     private loadFonts() {
