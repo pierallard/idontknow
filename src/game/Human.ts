@@ -112,7 +112,7 @@ export class Human {
     }
 
     moveToClosest(cell: PIXI.Point) {
-        this.closestPathFinder.getPath(this.cell, cell, this.moveTo.bind(this), this);
+        this.closestPathFinder.getPath(this.cell, cell, this.moveTo.bind(this));
     }
 
     private moveLeft() {

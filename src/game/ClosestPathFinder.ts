@@ -1,93 +1,50 @@
 import {World} from "./World";
 
+enum DIRECTION {
+    TOP,
+    BOTTOM,
+    LEFT,
+    RIGHT
+}
+
 export class ClosestPathFinder {
-    private topFinder: Phaser.Plugin.PathFinderPlugin;
-    private bottomFinder: Phaser.Plugin.PathFinderPlugin;
-    private leftFinder: Phaser.Plugin.PathFinderPlugin;
-    private rightFinder: Phaser.Plugin.PathFinderPlugin;
+    private finders: Object;
 
     constructor(game: Phaser.Game, world: World) {
-        this.topFinder = game.plugins.add(Phaser.Plugin.PathFinderPlugin);
-        this.bottomFinder = game.plugins.add(Phaser.Plugin.PathFinderPlugin);
-        this.leftFinder = game.plugins.add(Phaser.Plugin.PathFinderPlugin);
-        this.rightFinder = game.plugins.add(Phaser.Plugin.PathFinderPlugin);
-
-        this.topFinder.setGrid(world.getGround().getGrid(), world.getGround().getAcceptables());
-        this.bottomFinder.setGrid(world.getGround().getGrid(), world.getGround().getAcceptables());
-        this.leftFinder.setGrid(world.getGround().getGrid(), world.getGround().getAcceptables());
-        this.rightFinder.setGrid(world.getGround().getGrid(), world.getGround().getAcceptables());
+        this.finders = {};
+        const grid = world.getGround().getGrid();
+        const acceptables = world.getGround().getAcceptables();
+        ClosestPathFinder.directions().forEach((direction: DIRECTION) => {
+            this.finders[direction] = game.plugins.add(Phaser.Plugin.PathFinderPlugin);
+            this.finders[direction].setGrid(grid, acceptables);
+        });
     }
 
-    getPath(originCell: PIXI.Point, goalCell: PIXI.Point, callback, referee) {
+    getPath(originCell: PIXI.Point, goalCell: PIXI.Point, callback: Function) {
         let results = {};
 
-        this.topFinder.setCallbackFunction((path: ({x: number, y: number}[])) => {
-            results['top'] = path;
-            if (Object.keys(results).length >= 4) {
-                this.doIt(results, callback, referee);
+        ClosestPathFinder.directions().forEach((direction: DIRECTION) => {
+            this.finders[direction].setCallbackFunction((path: ({x: number, y: number}[])) => {
+                results[direction] = path;
+                if (Object.keys(results).length >= 4) {
+                    this.doIt(results, callback);
+                }
+            });
+
+            try {
+                const gappedPoint = ClosestPathFinder.getGap(new PIXI.Point(goalCell.x, goalCell.y), direction);
+                this.finders[direction].preparePathCalculation([originCell.x, originCell.y], [gappedPoint.x, gappedPoint.y]);
+                this.finders[direction].calculatePath();
+            } catch (e) {
+                results[direction] = null;
+                if (Object.keys(results).length >= 4) {
+                    this.doIt(results, callback);
+                }
             }
         });
-        this.bottomFinder.setCallbackFunction((path: ({x: number, y: number}[])) => {
-            results['bottom'] = path;
-            if (Object.keys(results).length >= 4) {
-                this.doIt(results, callback, referee);
-            }
-        });
-        this.leftFinder.setCallbackFunction((path: ({x: number, y: number}[])) => {
-            results['left'] = path;
-            if (Object.keys(results).length >= 4) {
-                this.doIt(results, callback, referee);
-            }
-        });
-        this.rightFinder.setCallbackFunction((path: ({x: number, y: number}[])) => {
-            results['right'] = path;
-            if (Object.keys(results).length >= 4) {
-                this.doIt(results, callback, referee);
-            }
-        });
-
-        try {
-            this.topFinder.preparePathCalculation([originCell.x, originCell.y], [goalCell.x, goalCell.y + 1]);
-            this.topFinder.calculatePath();
-        } catch (e) {
-            results['top'] = null;
-            if (Object.keys(results).length >= 4) {
-                this.doIt(results, callback, referee);
-            }
-        }
-
-        try {
-            this.bottomFinder.preparePathCalculation([originCell.x, originCell.y], [goalCell.x, goalCell.y - 1]);
-            this.bottomFinder.calculatePath();
-        } catch (e) {
-            results['bottom'] = null;
-            if (Object.keys(results).length >= 4) {
-                this.doIt(results, callback, referee);
-            }
-        }
-
-        try {
-            this.leftFinder.preparePathCalculation([originCell.x, originCell.y], [goalCell.x + 1, goalCell.y]);
-            this.leftFinder.calculatePath();
-        } catch (e) {
-            results['left'] = null;
-            if (Object.keys(results).length >= 4) {
-                this.doIt(results, callback, referee);
-            }
-        }
-
-        try {
-            this.rightFinder.preparePathCalculation([originCell.x, originCell.y], [goalCell.x - 1, goalCell.y]);
-            this.rightFinder.calculatePath();
-        } catch (e) {
-            results['right'] = null;
-            if (Object.keys(results).length >= 4) {
-                this.doIt(results, callback, referee);
-            }
-        }
     }
 
-    private doIt(results, callback, referee) {
+    private doIt(results, callback) {
         let bestPath = null;
         for (let i = 0; i < Object.keys(results).length; i++) {
             const path = results[Object.keys(results)[i]];
@@ -96,10 +53,29 @@ export class ClosestPathFinder {
             }
         }
         if (bestPath) {
+            console.log('Path found !');
             const lastCell = bestPath[bestPath.length - 1];
             callback.call(this, new PIXI.Point(lastCell.x, lastCell.y));
         } else {
             console.log('No path found');
+        }
+    }
+
+    private static directions(): DIRECTION[] {
+        return [
+            DIRECTION.TOP,
+            DIRECTION.BOTTOM,
+            DIRECTION.LEFT,
+            DIRECTION.RIGHT
+        ];
+    }
+
+    private static getGap(point: PIXI.Point, direction: DIRECTION): PIXI.Point {
+        switch (direction) {
+            case DIRECTION.TOP: return new PIXI.Point(point.x, point.y + 1);
+            case DIRECTION.BOTTOM: return new PIXI.Point(point.x, point.y - 1);
+            case DIRECTION.LEFT: return new PIXI.Point(point.x + 1, point.y);
+            case DIRECTION.RIGHT: return new PIXI.Point(point.x - 1, point.y);
         }
     }
 }
