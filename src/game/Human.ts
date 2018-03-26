@@ -17,6 +17,9 @@ export enum ANIMATION {
 }
 const TOP_ORIENTED_ANIMATION = '_reverse';
 
+const TILE_WIDTH = 24;
+const TILE_HEIGHT = 25;
+
 export class Human {
     private tile: Phaser.TileSprite;
     private cell: PIXI.Point;
@@ -28,12 +31,14 @@ export class Human {
     private world: World;
     private state: HumanState;
     private closestPathFinder: ClosestPathFinder;
+    private anchorPixels: PIXI.Point;
 
     constructor(cell: PIXI.Point) {
         this.cell = cell;
         this.moving = false;
         this.path = [];
         this.state = new FreezeState(this);
+        this.anchorPixels = new PIXI.Point(0, 0);
     }
 
     create(game: Phaser.Game, group: Phaser.Group, world: World) {
@@ -48,7 +53,7 @@ export class Human {
             'human'
         );
         this.addAnimations();
-        this.tile.anchor.set(0.5, 1.0 + 8/25);
+        this.tile.anchor.set(0.5, 1.0 + 8/TILE_HEIGHT);
 
         this.loadAnimation(ANIMATION.FREEZE, true, false);
 
@@ -149,6 +154,10 @@ export class Human {
             x: PositionTransformer.getRealPosition(this.cell).x,
             y: PositionTransformer.getRealPosition(this.cell).y
         }, 1200, 'Linear', true).onComplete.add(this.moveFinished, this, 0, isLeft, isTop);
+        this.game.add.tween(this.tile.anchor).to({
+            x: 0.5 - this.anchorPixels.x / TILE_WIDTH,
+            y: 1.0 + (8 + this.anchorPixels.y)/TILE_WIDTH
+        }, 1200, 'Linear', true);
     }
 
     private moveFinished(_tweenValues: any, _game: any, isLeft: boolean, isTop: boolean) {
@@ -246,6 +255,9 @@ export class Human {
     }
 
     moveToForbiddenNeighbor(position: PIXI.Point) {
-        console.log('MoveToNeighbor');
+        this.anchorPixels.x = -5;
+        this.anchorPixels.y = -7;
+        this.cell = position;
+        this.runTween(true, false);
     }
 }

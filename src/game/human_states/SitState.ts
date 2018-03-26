@@ -18,6 +18,8 @@ export class SitState implements HumanState {
     isActive(): boolean {
         if (this.isNeighborPosition()) {
             this.human.moveToForbiddenNeighbor(this.sofa.getPosition());
+        } else if (this.isRightPosition()) {
+            this.human.loadAnimation(ANIMATION.SIT_DOWN);
         }
 
         return this.active;
@@ -26,7 +28,6 @@ export class SitState implements HumanState {
     start(game: Phaser.Game): void {
         this.active = true;
         this.human.moveToClosest(this.sofa.getPosition());
-        // this.human.loadAnimation(ANIMATION.SIT_DOWN);
         // game.time.events.add(Phaser.Math.random(1, 3) * Phaser.Timer.SECOND + this.loopTime, this.standup, this, game);
     }
 
@@ -42,5 +43,9 @@ export class SitState implements HumanState {
     private isNeighborPosition() {
         return !this.human.isMoving() && (this.human.getPosition().x - this.sofa.getPosition().x) * (this.human.getPosition().x - this.sofa.getPosition().x) +
             (this.human.getPosition().y - this.sofa.getPosition().y) * (this.human.getPosition().y - this.sofa.getPosition().y) === 1;
+    }
+
+    private isRightPosition() {
+        return !this.human.isMoving() && this.human.getPosition().x === this.sofa.getPosition().x && this.human.getPosition().y === this.sofa.getPosition().y;
     }
 }
