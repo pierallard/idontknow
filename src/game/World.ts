@@ -1,6 +1,7 @@
 import {Ground} from "./Ground";
 import {HumanRepository} from "./repositories/HumanRepository";
 import {Wall} from "./Wall";
+import {Sofa} from "./objects/Sofa";
 
 export class World {
     private ground: Ground;
@@ -31,12 +32,23 @@ export class World {
         walls.forEach((wall: Wall) => {
             let visible = true;
             positions.forEach((position: PIXI.Point) => {
-                if (World.humanIsAboveWall(position, wall)) {
+                if (this.anyHumanIsAboveWall(wall)) {
                     visible = false;
                 }
             });
             wall.setVisibility(visible);
         })
+    }
+
+    private anyHumanIsAboveWall(wall: Wall) {
+        const humans = this.humanRepository.humans;
+        for (let i = 0; i < humans.length; i++) {
+            if (World.humanIsAboveWall(humans[i].getPosition(), wall)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static humanIsAboveWall(humanPosition, wall: Wall) {
@@ -47,7 +59,11 @@ export class World {
             (humanPosition.x == wallPosition.x + 1 && humanPosition.y == wallPosition.y);
     }
 
-    getRandomSofa() {
-        return this.ground.getRandomSofa();
+    getRandomFreeSofa(): Sofa {
+        return this.ground.getRandomFreeSofa(this.humanRepository.humans);
+    }
+
+    isSofaTaken(sofa: Sofa) {
+        return this.ground.isSofaTaken(sofa, this.humanRepository.humans);
     }
 }

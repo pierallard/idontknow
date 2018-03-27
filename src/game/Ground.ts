@@ -2,6 +2,7 @@ import {Cell} from "./Cell";
 import {Desk} from "./objects/Desk";
 import {WallRepository} from "./repositories/WallRepository";
 import {Sofa} from "./objects/Sofa";
+import {Human} from "./Human";
 
 const WIDTH = 10;
 const HEIGHT = 10;
@@ -84,26 +85,7 @@ export class Ground {
     getAcceptables(): number[] {
         let acceptables = [];
         for (let i = 0; i < this.cells.length; i++) {
-            const x = this.cells[i].getPosition().x;
-            const y = this.cells[i].getPosition().y;
-
-            let found = false;
-            for (let j = 0; j < this.desks.length; j++) {
-                if (this.desks[j].getPosition().x === x && this.desks[j].getPosition().y === y) {
-                    found = true;
-                }
-            }
-
-            for (let j = 0; j < this.sofas.length; j++) {
-                if (this.sofas[j].getPosition().x === x && this.sofas[j].getPosition().y === y) {
-                    found = true;
-                }
-            }
-
-            if (this.wallRepository.hasWall(x, y)) {
-                found = true;
-            }
-            if (!found) {
+            if (this.isFree(this.cells[i].getPosition())) {
                 acceptables.push(i);
             }
         }
@@ -111,11 +93,54 @@ export class Ground {
         return acceptables;
     }
 
+    isFree(point: PIXI.Point): boolean {
+        if (point.x < 0 || point.y < 0 || point.x >= WIDTH || point.y >= HEIGHT) {
+            return false;
+        }
+
+        for (let j = 0; j < this.desks.length; j++) {
+            if (this.desks[j].getPosition().x === point.x && this.desks[j].getPosition().y === point.y) {
+                return false;
+            }
+        }
+
+        for (let j = 0; j < this.sofas.length; j++) {
+            if (this.sofas[j].getPosition().x === point.x && this.sofas[j].getPosition().y === point.y) {
+                return false;
+            }
+        }
+
+        if (this.wallRepository.hasWall(point.x, point.y)) {
+            return false;
+        }
+
+        return true;
+    }
+
     getWallRepository(): WallRepository {
         return this.wallRepository
     }
 
-    getRandomSofa(): Sofa {
-        return this.sofas[Math.floor(Math.random() * this.sofas.length)];
+    getRandomFreeSofa(humans: Human[]): Sofa {
+        const freeSofas = this.sofas.filter((sofa) => {
+            return !this.isSofaTaken(sofa, humans);
+        });
+
+        if (freeSofas.length === 0) {
+            return null;
+        }
+
+        return freeSofas[Math.floor(Math.random() * freeSofas.length)];
+    }
+
+    isSofaTaken(sofa: Sofa, humans: Human[]) {
+        for (let i = 0; i < humans.length; i++) {
+            const human = humans[i];
+            if (sofa.getPosition().x === human.getPosition().x && sofa.getPosition().y === human.getPosition().y) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

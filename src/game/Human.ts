@@ -7,6 +7,7 @@ import {SmokeState} from "./human_states/SmokeState";
 import {SitState} from "./human_states/SitState";
 import {ClosestPathFinder} from "./ClosestPathFinder";
 import {DIRECTION, Direction} from "./Direction";
+import {Sofa, SOFA_BOTTOM, SOFA_LEFT} from "./objects/Sofa";
 
 const FRAME_RATE = 12;
 export enum ANIMATION {
@@ -17,9 +18,8 @@ export enum ANIMATION {
     STAND_UP
 }
 const TOP_ORIENTED_ANIMATION = '_reverse';
-
-const TILE_WIDTH = 24;
-const TILE_HEIGHT = 25;
+export const WALK_CELL_DURATION = 1200;
+const GAP_FROM_BOTTOM = -8;
 
 export class Human {
     private tile: Phaser.TileSprite;
@@ -39,7 +39,7 @@ export class Human {
         this.moving = false;
         this.path = [];
         this.state = new FreezeState(this);
-        this.anchorPixels = new PIXI.Point(0, 0);
+        this.anchorPixels = new PIXI.Point(0, GAP_FROM_BOTTOM);
     }
 
     create(game: Phaser.Game, group: Phaser.Group, world: World) {
@@ -47,14 +47,14 @@ export class Human {
         this.world = world;
 
         this.tile = game.add.tileSprite(
-            PositionTransformer.getRealPosition(this.cell).x,
-            PositionTransformer.getRealPosition(this.cell).y,
+            PositionTransformer.getRealPosition(this.cell).x + this.anchorPixels.x,
+            PositionTransformer.getRealPosition(this.cell).y + this.anchorPixels.y,
             24,
             25,
             'human'
         );
         this.addAnimations();
-        this.tile.anchor.set(0.5, 1.0 + 8/TILE_HEIGHT);
+        this.tile.anchor.set(0.5, 1.0);
 
         this.loadAnimation(ANIMATION.FREEZE, true, false);
 
@@ -72,17 +72,22 @@ export class Human {
     }
 
     update() {
+        // console.log(Math.round(this.tile.anchor.y * this.tile.height) + ', ' + Math.round(this.tile.anchor.x * this.tile.width) + ' - ' + Math.round(this.tile.position.x) + ', ' + Math.round(this.tile.position.y));
         if (!this.state.isActive()) {
-            const states = [
-                // new SmokeState(this, this.tile.animations.getAnimation(ANIMATION.SMOKE + '').frameTotal * Phaser.Timer.SECOND / FRAME_RATE),
+            const states: HumanState[] = [
+                new SmokeState(this, this.tile.animations.getAnimation(ANIMATION.SMOKE + '').frameTotal * Phaser.Timer.SECOND / FRAME_RATE),
                 new FreezeState(this),
-                // new MoveRandomState(this, this.world),
-                new SitState(
+                new MoveRandomState(this, this.world),
+            ];
+            const randomSofa = this.world.getRandomFreeSofa();
+            if (randomSofa !== null) {
+                states.push(new SitState(
                     this,
                     this.tile.animations.getAnimation(ANIMATION.SIT_DOWN + '').frameTotal * Phaser.Timer.SECOND / FRAME_RATE,
+                    randomSofa,
                     this.world
-                ),
-            ];
+                ));
+            }
             this.state = states[Math.floor(Math.random() * states.length)];
             this.state.start(this.game);
             console.log('New state: ' + this.state.constructor.name);
@@ -103,7 +108,7 @@ export class Human {
             this.goal = cell;
             this.path = path;
             if (!this.moving) {
-                this.continueMoving(null, null);
+                this.popPath(null, null);
             }
         }
     }
@@ -111,35 +116,29 @@ export class Human {
     moveToClosest(cell: PIXI.Point) {
         const path = this.closestPathFinder.getNeighborPath(this.cell, cell);
         if (path !== null) {
-            console.log(path);
             this.goal = cell;
             this.path = path;
             if (!this.moving) {
-                this.continueMoving(null, null);
+                this.popPath(null, null);
             }
         }
     }
 
-    private runTween(direction: DIRECTION) {
+    private animateMove(direction: DIRECTION) {
         const isLeft = Human.isHumanLeft(direction);
         const isTop = Human.isHumanTop(direction);
         this.loadAnimation(ANIMATION.WALK, isLeft, isTop);
         this.moving = true;
         this.game.add.tween(this.tile.position).to({
-            x: PositionTransformer.getRealPosition(this.cell).x,
-            y: PositionTransformer.getRealPosition(this.cell).y
-        }, 1200, 'Linear', true).onComplete.add(this.moveFinished, this, 0, isLeft, isTop);
-        this.game.add.tween(this.tile.anchor).to({
-            x: 0.5 - this.anchorPixels.x / TILE_WIDTH,
-            y: 1.0 + (8 + this.anchorPixels.y)/TILE_WIDTH
-        }, 1200, 'Linear', true);
+            x: PositionTransformer.getRealPosition(this.cell).x + this.anchorPixels.x,
+            y: PositionTransformer.getRealPosition(this.cell).y + this.anchorPixels.y
+        }, WALK_CELL_DURATION, 'Linear', true)
+            .onComplete.add((_tweenValues: any, _game: any, isLeft: boolean, isTop: boolean) => {
+            this.popPath(isLeft, isTop);
+        }, this, 0, isLeft, isTop);
     }
 
-    private moveFinished(_tweenValues: any, _game: any, isLeft: boolean, isTop: boolean) {
-        this.continueMoving(isLeft, isTop);
-    }
-
-    private continueMoving(isLeft: boolean, isTop: boolean) {
+    private popPath(isLeft: boolean, isTop: boolean) {
         this.moving = false;
         let humanPositions = [this.cell];
         if (this.path.length == 0) {
@@ -150,7 +149,9 @@ export class Human {
             const direction = Direction.getNeighborDirection(this.cell, next);
             if (!this.moving) {
                 this.cell = next;
-                this.runTween(direction);
+                this.anchorPixels.x = 0;
+                this.anchorPixels.y = GAP_FROM_BOTTOM;
+                this.animateMove(direction);
             }
             humanPositions.push(this.cell);
         }
@@ -219,16 +220,17 @@ export class Human {
             smoke_frames.push(24)
         }
         this.tile.animations.add(ANIMATION.SMOKE + '', smoke_frames);
-        this.tile.animations.add(ANIMATION.SIT_DOWN + '', [36, 37, 38, 39]);
-        this.tile.animations.add(ANIMATION.STAND_UP + '', [39, 38, 37, 36]);
+        this.tile.animations.add(ANIMATION.SIT_DOWN + '', [12, 36, 37, 38, 39]);
+        this.tile.animations.add(ANIMATION.STAND_UP + '', [39, 38, 37, 36, 12]);
     }
 
     goToSofa(position: PIXI.Point) {
-        this.anchorPixels.x = -5;
-        this.anchorPixels.y = -7;
         const direction = Direction.getNeighborDirection(this.cell, position);
+        // Human has to gap 5px from the sofa to be sit properly, and 1px from the bottom.
+        this.anchorPixels.x = SOFA_LEFT + (Human.isHumanLeft(direction) ? -5 : 5);
+        this.anchorPixels.y = SOFA_BOTTOM - 1;
         this.cell = position;
-        this.runTween(direction);
+        this.animateMove(direction);
     }
 
     private static isHumanLeft(direction: DIRECTION) {
@@ -237,5 +239,21 @@ export class Human {
 
     private static isHumanTop(direction: DIRECTION) {
         return [DIRECTION.LEFT, DIRECTION.TOP].indexOf(direction) > -1;
+    }
+
+    goToFreeCell() {
+        const cells = [];
+        Direction.neighborDirections().forEach((direction) => {
+            const tryCell = Direction.getGap(this.cell, direction);
+            if (this.world.getGround().isFree(tryCell)) {
+                cells.push(tryCell);
+            }
+        });
+        const freeCell = cells[Math.floor(Math.random() * cells.length)];
+        this.goal = freeCell;
+        this.path = [freeCell];
+        if (!this.moving) {
+            this.popPath(null, null);
+        }
     }
 }
