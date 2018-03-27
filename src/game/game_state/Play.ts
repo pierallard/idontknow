@@ -19,7 +19,12 @@ export default class Play extends Phaser.State {
     }
 
     update() {
-        this.groups['noname'].sort('y', Phaser.Group.SORT_ASCENDING);
+        this.groups['noname'].customSort((obj1: Phaser.Sprite, obj2: Phaser.Sprite) => {
+            const bottom1 = obj1.y + obj1.anchor.y * obj1.height;
+            const bottom2 = obj2.y + obj2.anchor.y * obj2.height;
+
+            return bottom1 - bottom2;
+        });
         this.worldKnowledge.update();
     }
 }
