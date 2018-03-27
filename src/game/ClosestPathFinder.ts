@@ -1,12 +1,5 @@
 import {World} from "./World";
-
-enum DIRECTION {
-    CURRENT,
-    TOP,
-    BOTTOM,
-    LEFT,
-    RIGHT
-}
+import {Direction, DIRECTION} from "./Direction";
 
 export class ClosestPathFinder {
     private finders: Object;
@@ -15,14 +8,14 @@ export class ClosestPathFinder {
         this.finders = {};
         const grid = world.getGround().getGrid();
         const acceptables = world.getGround().getAcceptables();
-        ClosestPathFinder.directions().concat([DIRECTION.CURRENT]).forEach((direction: DIRECTION) => {
+        Direction.neighborDirections().concat([DIRECTION.CURRENT]).forEach((direction: DIRECTION) => {
             this.finders[direction] = game.plugins.add(Phaser.Plugin.PathFinderPlugin);
             this.finders[direction].setGrid(grid, acceptables);
         });
     }
 
     getNeighborPath(originCell: PIXI.Point, goalCell: PIXI.Point): PIXI.Point[] {
-        return this.getPathInner(originCell, goalCell, ClosestPathFinder.directions());
+        return this.getPathInner(originCell, goalCell, Direction.neighborDirections());
     }
 
     getPath(originCell: PIXI.Point, goalCell: PIXI.Point): PIXI.Point[] {
@@ -34,7 +27,7 @@ export class ClosestPathFinder {
         for (let i = 0; i < directions.length; i++) {
             const direction = directions[i];
             try {
-                const gappedCell = ClosestPathFinder.getGap(goalCell, direction);
+                const gappedCell = Direction.getGap(goalCell, direction);
                 if (originCell.x === gappedCell.x && originCell.y === gappedCell.y) {
                     results[direction] = [];
                     if (Object.keys(results).length >= directions.length) {
@@ -96,25 +89,6 @@ export class ClosestPathFinder {
             return bestPath;
         } else {
             return null;
-        }
-    }
-
-    private static directions(): DIRECTION[] {
-        return [
-            DIRECTION.TOP,
-            DIRECTION.BOTTOM,
-            DIRECTION.LEFT,
-            DIRECTION.RIGHT
-        ];
-    }
-
-    private static getGap(point: PIXI.Point, direction: DIRECTION): PIXI.Point {
-        switch (direction) {
-            case DIRECTION.TOP: return new PIXI.Point(point.x, point.y + 1);
-            case DIRECTION.BOTTOM: return new PIXI.Point(point.x, point.y - 1);
-            case DIRECTION.LEFT: return new PIXI.Point(point.x + 1, point.y);
-            case DIRECTION.RIGHT: return new PIXI.Point(point.x - 1, point.y);
-            case DIRECTION.CURRENT: return point;
         }
     }
 }

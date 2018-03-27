@@ -6,6 +6,7 @@ import {MoveRandomState} from "./human_states/MoveRandomState";
 import {SmokeState} from "./human_states/SmokeState";
 import {SitState} from "./human_states/SitState";
 import {ClosestPathFinder} from "./ClosestPathFinder";
+import {DIRECTION, Direction} from "./Direction";
 
 const FRAME_RATE = 12;
 export enum ANIMATION {
@@ -119,35 +120,9 @@ export class Human {
         }
     }
 
-    private moveLeft() {
-        if (!this.moving) {
-            this.cell.x += 1;
-            this.runTween(true, true);
-        }
-    }
-
-    private moveRight() {
-        if (!this.moving) {
-            this.cell.x -= 1;
-            this.runTween(false, false);
-        }
-    }
-
-    private moveUp() {
-        if (!this.moving) {
-            this.cell.y += 1;
-            this.runTween(false, true);
-        }
-    }
-
-    private moveDown() {
-        if (!this.moving) {
-            this.cell.y -= 1;
-            this.runTween(true, false);
-        }
-    }
-
-    private runTween(isLeft: boolean, isTop: boolean) {
+    private runTween(direction: DIRECTION) {
+        const isLeft = Human.isHumanLeft(direction);
+        const isTop = Human.isHumanTop(direction);
         this.loadAnimation(ANIMATION.WALK, isLeft, isTop);
         this.moving = true;
         this.game.add.tween(this.tile.position).to({
@@ -172,16 +147,10 @@ export class Human {
             this.loadAnimation(ANIMATION.FREEZE, isLeft, isTop);
         } else {
             const next = this.path.shift();
-            if (next.x > this.cell.x) {
-                this.moveLeft();
-            } else if (next.x < this.cell.x) {
-                this.moveRight();
-            } else if (next.y > this.cell.y) {
-                this.moveUp();
-            } else if (next.y < this.cell.y) {
-                this.moveDown();
-            } else {
-                debugger;
+            const direction = Direction.getNeighborDirection(this.cell, next);
+            if (!this.moving) {
+                this.cell = next;
+                this.runTween(direction);
             }
             humanPositions.push(this.cell);
         }
@@ -254,10 +223,19 @@ export class Human {
         this.tile.animations.add(ANIMATION.STAND_UP + '', [39, 38, 37, 36]);
     }
 
-    moveToForbiddenNeighbor(position: PIXI.Point) {
+    goToSofa(position: PIXI.Point) {
         this.anchorPixels.x = -5;
         this.anchorPixels.y = -7;
+        const direction = Direction.getNeighborDirection(this.cell, position);
         this.cell = position;
-        this.runTween(true, false);
+        this.runTween(direction);
+    }
+
+    private static isHumanLeft(direction: DIRECTION) {
+        return [DIRECTION.LEFT, DIRECTION.BOTTOM].indexOf(direction) > -1;
+    }
+
+    private static isHumanTop(direction: DIRECTION) {
+        return [DIRECTION.LEFT, DIRECTION.TOP].indexOf(direction) > -1;
     }
 }

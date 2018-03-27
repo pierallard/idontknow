@@ -17,7 +17,7 @@ export class SitState implements HumanState {
 
     isActive(): boolean {
         if (this.isNeighborPosition()) {
-            this.human.moveToForbiddenNeighbor(this.sofa.getPosition());
+            this.human.goToSofa(this.sofa.getPosition());
         } else if (this.isRightPosition()) {
             this.human.loadAnimation(ANIMATION.SIT_DOWN);
         }
