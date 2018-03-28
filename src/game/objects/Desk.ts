@@ -32,8 +32,10 @@ export class Desk implements SittableInterface {
     }
 
     create(game: Phaser.Game, group: Phaser.Group) {
+        const isLeftOriented = Math.random() >= 0.5;
+
         this.chairSprite = game.add.sprite(
-            PositionTransformer.getRealPosition(this.position).x + GAP_HORIZONTAL,
+            PositionTransformer.getRealPosition(this.position).x + (isLeftOriented ? - GAP_HORIZONTAL : GAP_HORIZONTAL),
             PositionTransformer.getRealPosition(this.position).y + FAKE_ANCHOR_BOTTOM + GAP_VERTICAL,
             'chair'
         );
@@ -41,10 +43,10 @@ export class Desk implements SittableInterface {
         this.chairSprite.anchor.set(0.5, 1 + FAKE_ANCHOR_BOTTOM/this.chairSprite.height);
         this.deskSprite.anchor.set(0.5, 1);
 
-        // if (Math.random() >= 0.5) {
-        //     this.deskSprite.scale.set(-1, 1);
-        //     this.chairSprite.scale.set(-1, 1);
-        // }
+        if (isLeftOriented) {
+            this.deskSprite.scale.set(-1, 1);
+            this.chairSprite.scale.set(-1, 1);
+        }
 
         group.add(this.chairSprite);
         group.add(this.deskSprite);
@@ -55,10 +57,18 @@ export class Desk implements SittableInterface {
     }
 
     getPositionGap(): PIXI.Point {
-        return new PIXI.Point(GAP_HORIZONTAL, GAP_VERTICAL - 2);
+        return new PIXI.Point(this.isLeftOriented() ? - GAP_HORIZONTAL : GAP_HORIZONTAL, GAP_VERTICAL - 2);
     }
 
     getEntries(): DIRECTION[] {
-        return [DIRECTION.BOTTOM];
+        return this.isLeftOriented() ? [DIRECTION.LEFT, DIRECTION.RIGHT] : [DIRECTION.BOTTOM, DIRECTION.TOP];
+    }
+
+    private isLeftOriented() {
+        return this.deskSprite.scale.x === -1;
+    }
+
+    forceOrientation(): boolean {
+        return this.isLeftOriented();
     }
 }

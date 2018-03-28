@@ -47,7 +47,7 @@ export class HumanAnimationManager {
         switch (animation) {
             case ANIMATION.FREEZE:
             case ANIMATION.WALK:
-                // Looped sided animation (bottom/top)
+                // Looped sided animation (bottom/top + left/right)
                 const animationName = this.getAnimationName(animation, isTop);
                 if (this.humanTile.animations.name !== animationName) {
                     this.humanTile.animations.play(animationName, FRAME_RATE, true);
@@ -58,18 +58,24 @@ export class HumanAnimationManager {
                 break;
             case ANIMATION.SMOKE:
             case ANIMATION.TYPE:
-                // Looped non sided animation
+                // Looped sided animation (left/right)
                 const animationSmokeName = animation + '';
                 if (this.humanTile.animations.name !== animationSmokeName) {
                     this.humanTile.animations.play(animationSmokeName, FRAME_RATE, true);
                 }
+                if (isLeft != null) {
+                    this.humanTile.scale.set(isLeft ? 1 : -1, 1);
+                }
                 break;
             case ANIMATION.SIT_DOWN:
             case ANIMATION.STAND_UP:
-                // Non looped non sided animation
+                // Non looped sided animation (left/right)
                 const animationSitDownName = animation + '';
                 if (this.humanTile.animations.name !== animationSitDownName) {
                     this.humanTile.animations.play(animationSitDownName, FRAME_RATE, false);
+                }
+                if (isLeft != null) {
+                    this.humanTile.scale.set(isLeft ? 1 : -1, 1);
                 }
                 break;
             default:

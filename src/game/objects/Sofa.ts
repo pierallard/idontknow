@@ -36,4 +36,8 @@ export class Sofa implements SittableInterface {
     getEntries(): DIRECTION[] {
         return [DIRECTION.LEFT, DIRECTION.TOP, DIRECTION.RIGHT, DIRECTION.BOTTOM];
     }
+
+    forceOrientation(): boolean {
+        return null;
+    }
 }

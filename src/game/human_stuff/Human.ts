@@ -130,10 +130,11 @@ export class Human {
         return this.moving;
     }
 
-    goToSittable(sittable: SittableInterface) {
+    goToSittable(sittable: SittableInterface, isLeft: boolean = null) {
         const direction = Direction.getNeighborDirection(this.cell, sittable.getPosition());
+        const side = (isLeft !== null) ? isLeft : Human.isHumanLeft(direction);
         // Human has to gap 5px from the sofa to be sit properly, and 1px from the bottom.
-        this.anchorPixels.x = sittable.getPositionGap().x + (Human.isHumanLeft(direction) ? -5 : 5);
+        this.anchorPixels.x = sittable.getPositionGap().x + (side ? -5 : 5);
         this.anchorPixels.y = sittable.getPositionGap().y - 1;
         this.cell = sittable.getPosition();
         this.animateMove(direction);
@@ -162,7 +163,7 @@ export class Human {
         }
     }
 
-    loadAnimation(animation: ANIMATION) {
-        this.animationManager.loadAnimation(animation);
+    loadAnimation(animation: ANIMATION, isLeft: boolean = null) {
+        this.animationManager.loadAnimation(animation, isLeft);
     }
 }

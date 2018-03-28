@@ -31,9 +31,9 @@ export class TypeState implements HumanState {
         }
         if (!this.isHumanOnTheRightCell && this.isNeighborPosition()) {
             this.isHumanOnTheRightCell = true;
-            this.human.goToSittable(this.sittable);
+            this.human.goToSittable(this.sittable, this.sittable.forceOrientation());
             this.game.time.events.add(WALK_CELL_DURATION + 100, () => {
-                this.human.loadAnimation(ANIMATION.SIT_DOWN);
+                this.human.loadAnimation(ANIMATION.SIT_DOWN, this.sittable.forceOrientation());
                 this.game.time.events.add(this.loopTime, () => {
                     this.human.loadAnimation(ANIMATION.TYPE);
                     this.game.time.events.add(Phaser.Math.random(5, 10) * Phaser.Timer.SECOND, () => {

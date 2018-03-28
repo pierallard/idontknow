@@ -12,4 +12,10 @@ export interface SittableInterface {
      */
     getPositionGap(): PIXI.Point;
     getEntries(): DIRECTION[];
+
+    /**
+     * Returns true if the human has to be right-sided, false if the human has to be left-sided, null if yolo.
+     * @returns {boolean}
+     */
+    forceOrientation(): boolean;
 }
