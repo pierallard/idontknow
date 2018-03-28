@@ -2,9 +2,25 @@ import {PositionTransformer} from "../PositionTransformer";
 import {SittableInterface} from "./SittableInterface";
 import {DIRECTION} from "../Direction";
 
-const CHAIR_BOTTOM = -10;
-const CHAIR_LEFT = -10;
-const CHAIR_ANCHOR_BOTTOM = 2;
+/**
+ * This variable will fake the position of the sprite without changing it for the enduser.
+ * A negative number (e.g. -10) will draw the object 10 pixels on the top but will update the anchor to put it back
+ * to its position.
+ * If the Human is not seen because the object is in front of it, you have to put a more negative number.
+ * @type {number}
+ */
+const FAKE_ANCHOR_BOTTOM = -4;
+/**
+ * Negative : will display the object to the left
+ * @type {number}
+ */
+const GAP_HORIZONTAL = -10;
+
+/**
+ * Negative: Will display the object to the top
+ * @type {number}
+ */
+const GAP_VERTICAL = -8;
 
 export class Desk implements SittableInterface {
     private deskSprite: Phaser.Sprite;
@@ -17,12 +33,12 @@ export class Desk implements SittableInterface {
 
     create(game: Phaser.Game, group: Phaser.Group) {
         this.chairSprite = game.add.sprite(
-            PositionTransformer.getRealPosition(this.position).x + CHAIR_LEFT,
-            PositionTransformer.getRealPosition(this.position).y + CHAIR_BOTTOM,
+            PositionTransformer.getRealPosition(this.position).x + GAP_HORIZONTAL,
+            PositionTransformer.getRealPosition(this.position).y + FAKE_ANCHOR_BOTTOM + GAP_VERTICAL,
             'chair'
         );
         this.deskSprite = game.add.sprite(PositionTransformer.getRealPosition(this.position).x, PositionTransformer.getRealPosition(this.position).y, 'desk');
-        this.chairSprite.anchor.set(0.5, 1 - CHAIR_ANCHOR_BOTTOM/this.chairSprite.height);
+        this.chairSprite.anchor.set(0.5, 1 + FAKE_ANCHOR_BOTTOM/this.chairSprite.height);
         this.deskSprite.anchor.set(0.5, 1);
 
         // if (Math.random() >= 0.5) {
@@ -39,11 +55,10 @@ export class Desk implements SittableInterface {
     }
 
     getPositionGap(): PIXI.Point {
-        return new PIXI.Point(CHAIR_LEFT, CHAIR_BOTTOM);
+        return new PIXI.Point(GAP_HORIZONTAL, GAP_VERTICAL - 2);
     }
 
     getEntries(): DIRECTION[] {
-        // return [DIRECTION.LEFT, DIRECTION.TOP, DIRECTION.BOTTOM];
         return [DIRECTION.BOTTOM];
     }
 }

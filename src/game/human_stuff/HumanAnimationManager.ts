@@ -1,7 +1,14 @@
-import {ANIMATION} from "./Human";
-
 const TOP_ORIENTED_ANIMATION = '_reverse';
 const FRAME_RATE = 12;
+
+export enum ANIMATION {
+    FREEZE,
+    WALK,
+    SMOKE,
+    SIT_DOWN,
+    STAND_UP,
+    TYPE,
+}
 
 export class HumanAnimationManager {
     humanTile: Phaser.TileSprite;
@@ -25,6 +32,7 @@ export class HumanAnimationManager {
         this.humanTile.animations.add(ANIMATION.SMOKE + '', smoke_frames);
         this.humanTile.animations.add(ANIMATION.SIT_DOWN + '', [12, 36, 37, 38, 39]);
         this.humanTile.animations.add(ANIMATION.STAND_UP + '', [39, 38, 37, 36, 12]);
+        this.humanTile.animations.add(ANIMATION.TYPE + '', [42, 43, 44, 45]);
     }
 
     private getAnimationName(animation: ANIMATION, isTop: boolean = null): string {
@@ -35,11 +43,11 @@ export class HumanAnimationManager {
         return animation + (isTop ? TOP_ORIENTED_ANIMATION : '');
     }
 
-
     loadAnimation(animation: ANIMATION, isLeft: boolean = null, isTop: boolean = null) {
         switch (animation) {
             case ANIMATION.FREEZE:
             case ANIMATION.WALK:
+                // Looped sided animation (bottom/top)
                 const animationName = this.getAnimationName(animation, isTop);
                 if (this.humanTile.animations.name !== animationName) {
                     this.humanTile.animations.play(animationName, FRAME_RATE, true);
@@ -49,6 +57,8 @@ export class HumanAnimationManager {
                 }
                 break;
             case ANIMATION.SMOKE:
+            case ANIMATION.TYPE:
+                // Looped non sided animation
                 const animationSmokeName = animation + '';
                 if (this.humanTile.animations.name !== animationSmokeName) {
                     this.humanTile.animations.play(animationSmokeName, FRAME_RATE, true);
@@ -56,6 +66,7 @@ export class HumanAnimationManager {
                 break;
             case ANIMATION.SIT_DOWN:
             case ANIMATION.STAND_UP:
+                // Non looped non sided animation
                 const animationSitDownName = animation + '';
                 if (this.humanTile.animations.name !== animationSitDownName) {
                     this.humanTile.animations.play(animationSitDownName, FRAME_RATE, false);

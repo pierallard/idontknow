@@ -1,11 +1,12 @@
-import {ANIMATION, Human} from "./Human";
+import {Human} from "./Human";
 import {HumanState} from "../human_states/HumanState";
 import {FreezeState} from "../human_states/FreezeState";
 import {SmokeState} from "../human_states/SmokeState";
 import {SitState} from "../human_states/SitState";
 import {MoveRandomState} from "../human_states/MoveRandomState";
 import {World} from "../World";
-import {HumanAnimationManager} from "./HumanAnimationManager";
+import {ANIMATION, HumanAnimationManager} from "./HumanAnimationManager";
+import {TypeState} from "../human_states/TypeState";
 
 export class HumanStateManager {
     private human: Human;
@@ -42,7 +43,7 @@ export class HumanStateManager {
             }
             const randomDesk = this.world.getRandomFreeDesk();
             if (randomDesk !== null) {
-                states.push(new SitState(
+                states.push(new TypeState(
                     this.human,
                     this.animationManager.getAnimationTime(ANIMATION.SIT_DOWN),
                     randomDesk,

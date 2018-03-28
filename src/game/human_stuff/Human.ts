@@ -3,21 +3,14 @@ import {World} from "../World";
 import {ClosestPathFinder} from "../ClosestPathFinder";
 import {DIRECTION, Direction} from "../Direction";
 import {SittableInterface} from "../objects/SittableInterface";
-import {HumanAnimationManager} from "./HumanAnimationManager";
+import {ANIMATION, HumanAnimationManager} from "./HumanAnimationManager";
 import {HumanStateManager} from "./HumanStateManager";
 
-export enum ANIMATION {
-    FREEZE,
-    WALK,
-    SMOKE,
-    SIT_DOWN,
-    STAND_UP
-}
 export const WALK_CELL_DURATION = 1200;
 const GAP_FROM_BOTTOM = -8;
 
 export class Human {
-    private tile: Phaser.TileSprite;
+    tile: Phaser.TileSprite;
     private cell: PIXI.Point;
     private game: Phaser.Game;
     private moving: boolean;

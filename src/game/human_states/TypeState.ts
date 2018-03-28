@@ -4,7 +4,7 @@ import {World} from "../World";
 import {SittableInterface} from "../objects/SittableInterface";
 import {ANIMATION} from "../human_stuff/HumanAnimationManager";
 
-export class SitState implements HumanState {
+export class TypeState implements HumanState {
     private human: Human;
     private loopTime: number;
     private active: boolean;
@@ -34,15 +34,18 @@ export class SitState implements HumanState {
             this.human.goToSittable(this.sittable);
             this.game.time.events.add(WALK_CELL_DURATION + 100, () => {
                 this.human.loadAnimation(ANIMATION.SIT_DOWN);
-                this.game.time.events.add(Phaser.Math.random(1, 3) * Phaser.Timer.SECOND + this.loopTime, () => {
-                    this.human.loadAnimation(ANIMATION.STAND_UP);
-                    this.game.time.events.add(this.loopTime + 100, () => {
-                        this.human.goToFreeCell(this.sittable.getEntries());
-                        this.game.time.events.add(WALK_CELL_DURATION + 100, () => {
-                            this.active = false;
+                this.game.time.events.add(this.loopTime, () => {
+                    this.human.loadAnimation(ANIMATION.TYPE);
+                    this.game.time.events.add(Phaser.Math.random(5, 10) * Phaser.Timer.SECOND, () => {
+                        this.human.loadAnimation(ANIMATION.STAND_UP);
+                        this.game.time.events.add(this.loopTime + 100, () => {
+                            this.human.goToFreeCell(this.sittable.getEntries());
+                            this.game.time.events.add(WALK_CELL_DURATION + 100, () => {
+                                this.active = false;
+                            }, this);
                         }, this);
                     }, this);
-                }, this);
+                })
             }, this);
         }
 
@@ -54,7 +57,6 @@ export class SitState implements HumanState {
         this.game = game;
         this.human.moveToClosest(this.sittable.getPosition(), this.sittable.getEntries());
     }
-
 
     private isNeighborPosition() {
         return !this.human.isMoving() && (this.human.getPosition().x - this.sittable.getPosition().x) * (this.human.getPosition().x - this.sittable.getPosition().x) +

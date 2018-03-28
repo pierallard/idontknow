@@ -10,8 +10,6 @@ export class HumanRepository {
             new Human(world.getGround().getRandomCell()),
             new Human(world.getGround().getRandomCell()),
             new Human(world.getGround().getRandomCell()),
-            new Human(world.getGround().getRandomCell()),
-            new Human(world.getGround().getRandomCell()),
             new Human(world.getGround().getRandomCell())
         ];
     }

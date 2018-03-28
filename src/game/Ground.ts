@@ -8,6 +8,8 @@ import {SittableInterface} from "./objects/SittableInterface";
 const WIDTH = 10;
 const HEIGHT = 10;
 
+export const DEBUG_WORLD = false;
+
 export class Ground {
     private desks: Desk[];
     private cells: Cell[];
@@ -19,6 +21,20 @@ export class Ground {
         this.desks = [];
         this.sofas = [];
         this.wallRepository = new WallRepository();
+
+        for (let y = 0; y < HEIGHT; y++) {
+            for (let x = 0; x < WIDTH; x++) {
+                this.cells.push(new Cell(new PIXI.Point(x, y)));
+            }
+        }
+
+        if (DEBUG_WORLD) {
+            this.wallRepository.addWall(new PIXI.Point(5, 5));
+            this.wallRepository.addWall(new PIXI.Point(6, 5));
+            this.desks.push(new Desk(new PIXI.Point(4, 5)));
+            return;
+        }
+
         for (let x = 0; x < WIDTH; x++) {
             this.wallRepository.addWall(new PIXI.Point(x, 0));
             this.wallRepository.addWall(new PIXI.Point(x, HEIGHT - 1));
@@ -41,12 +57,6 @@ export class Ground {
         ].forEach((cell) => {
             this.wallRepository.addWall(cell);
         });
-
-        for (let y = 0; y < HEIGHT; y++) {
-            for (let x = 0; x < WIDTH; x++) {
-                this.cells.push(new Cell(new PIXI.Point(x, y)));
-            }
-        }
 
         for (let i = 0; i < 3; i++) {
             this.desks.push(new Desk(this.getRandomCell()));

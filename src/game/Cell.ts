@@ -1,4 +1,5 @@
 import {PositionTransformer} from "./PositionTransformer";
+import {DEBUG_WORLD} from "./Ground";
 
 export class Cell {
     private position: PIXI.Point;
@@ -14,7 +15,7 @@ export class Cell {
         this.sprite = game.add.sprite(
             PositionTransformer.getRealPosition(this.position).x,
             PositionTransformer.getRealPosition(this.position).y,
-            'woodcell'
+            DEBUG_WORLD ? 'casedefault' : 'woodcell'
         );
 
         this.sprite.anchor.setTo(0.5, 1);
