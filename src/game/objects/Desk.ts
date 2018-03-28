@@ -61,7 +61,9 @@ export class Desk implements SittableInterface {
     }
 
     getEntries(): DIRECTION[] {
-        return this.isLeftOriented() ? [DIRECTION.LEFT, DIRECTION.RIGHT] : [DIRECTION.BOTTOM, DIRECTION.TOP];
+        return this.isLeftOriented() ?
+            [DIRECTION.LEFT, DIRECTION.RIGHT, DIRECTION.TOP] :
+            [DIRECTION.BOTTOM, DIRECTION.TOP, DIRECTION.LEFT];
     }
 
     private isLeftOriented() {

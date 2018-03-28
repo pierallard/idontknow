@@ -8,6 +8,14 @@ import {World} from "../World";
 import {ANIMATION, HumanAnimationManager} from "./HumanAnimationManager";
 import {TypeState} from "../human_states/TypeState";
 
+enum STATE {
+    'SMOKE',
+    'FREEZE',
+    'MOVE_RANDOM',
+    'SIT',
+    'TYPE',
+}
+
 export class HumanStateManager {
     private human: Human;
     private state: HumanState;
@@ -27,32 +35,63 @@ export class HumanStateManager {
 
     updateState(game: Phaser.Game) {
         if (!this.state.isActive()) {
-            const states: HumanState[] = [
-                new SmokeState(this.human, this.animationManager.getAnimationTime(ANIMATION.SMOKE)),
-                new FreezeState(this.human),
-                new MoveRandomState(this.human, this.world)
-            ];
-            const randomSofa = this.world.getRandomFreeSofa();
-            if (randomSofa !== null) {
-                states.push(new SitState(
-                    this.human,
-                    this.animationManager.getAnimationTime(ANIMATION.SIT_DOWN),
-                    randomSofa,
-                    this.world
-                ));
+            switch(this.randomNextStepName()) {
+                case STATE.SMOKE:
+                    this.state = new SmokeState(this.human, this.animationManager.getAnimationTime(ANIMATION.SMOKE));
+                    break;
+                case STATE.MOVE_RANDOM:
+                    this.state = new MoveRandomState(this.human, this.world);
+                    break;
+                case STATE.SIT:
+                    this.state = new SitState(
+                        this.human,
+                        this.animationManager.getAnimationTime(ANIMATION.SIT_DOWN),
+                        this.world.getRandomFreeSofa(),
+                        this.world
+                    );
+                    break;
+                case STATE.TYPE:
+                    this.state = new TypeState(
+                        this.human,
+                        this.animationManager.getAnimationTime(ANIMATION.SIT_DOWN),
+                        this.world.getRandomFreeDesk(),
+                        this.world
+                    );
+                    break;
+                case STATE.FREEZE:
+                default:
+                    this.state = new FreezeState(this.human);
             }
-            const randomDesk = this.world.getRandomFreeDesk();
-            if (randomDesk !== null) {
-                states.push(new TypeState(
-                    this.human,
-                    this.animationManager.getAnimationTime(ANIMATION.SIT_DOWN),
-                    randomDesk,
-                    this.world
-                ));
-            }
-            this.state = states[Math.floor(Math.random() * states.length)];
+
             this.state.start(game);
             console.log('New state: ' + this.state.constructor.name);
+        }
+    }
+
+    private randomNextStepName(): STATE {
+        const states = [];
+        states.push({state: STATE.SMOKE, probability: 5});
+        states.push({state: STATE.FREEZE, probability: 5});
+        states.push({state: STATE.MOVE_RANDOM, probability: 2});
+
+        if (this.world.getRandomFreeSofa() !== null) {
+            states.push({state: STATE.SIT, probability: 2});
+        }
+        if (this.world.getRandomFreeDesk() !== null) {
+            states.push({state: STATE.TYPE, probability: 20});
+        }
+
+        const sum = states.reduce((prev, state) => {
+            return prev + state.probability;
+        }, 0);
+
+        const random = Phaser.Math.random(0, sum);
+        let counter = 0;
+        for (let i = 0; i < states.length; i++) {
+            counter += states[i].probability;
+            if (counter > random) {
+                return states[i].state;
+            }
         }
     }
 }
