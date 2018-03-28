@@ -14,8 +14,8 @@ export class ClosestPathFinder {
         });
     }
 
-    getNeighborPath(originCell: PIXI.Point, goalCell: PIXI.Point): PIXI.Point[] {
-        return this.getPathInner(originCell, goalCell, Direction.neighborDirections());
+    getNeighborPath(originCell: PIXI.Point, goalCell: PIXI.Point, entries: DIRECTION[] = [DIRECTION.BOTTOM, DIRECTION.RIGHT, DIRECTION.TOP, DIRECTION.LEFT]): PIXI.Point[] {
+        return this.getPathInner(originCell, goalCell, entries);
     }
 
     getPath(originCell: PIXI.Point, goalCell: PIXI.Point): PIXI.Point[] {

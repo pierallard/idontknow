@@ -86,8 +86,8 @@ export class Human {
         }
     }
 
-    moveToClosest(cell: PIXI.Point) {
-        const path = this.closestPathFinder.getNeighborPath(this.cell, cell);
+    moveToClosest(cell: PIXI.Point, entries: DIRECTION[] = [DIRECTION.BOTTOM, DIRECTION.RIGHT, DIRECTION.TOP, DIRECTION.LEFT]) {
+        const path = this.closestPathFinder.getNeighborPath(this.cell, cell, entries);
         if (path !== null) {
             this.path = path;
             if (!this.moving) {
@@ -154,9 +154,9 @@ export class Human {
         return [DIRECTION.LEFT, DIRECTION.TOP].indexOf(direction) > -1;
     }
 
-    goToFreeCell() {
+    goToFreeCell(entries: DIRECTION[] = [DIRECTION.BOTTOM, DIRECTION.RIGHT, DIRECTION.TOP, DIRECTION.LEFT]) {
         const cells = [];
-        Direction.neighborDirections().forEach((direction) => {
+        entries.forEach((direction) => {
             const tryCell = Direction.getGap(this.cell, direction);
             if (this.world.getGround().isFree(tryCell)) {
                 cells.push(tryCell);

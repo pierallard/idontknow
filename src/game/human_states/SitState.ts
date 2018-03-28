@@ -36,7 +36,7 @@ export class SitState implements HumanState {
                 this.game.time.events.add(Phaser.Math.random(1, 3) * Phaser.Timer.SECOND + this.loopTime, () => {
                     this.human.loadAnimation(ANIMATION.STAND_UP);
                     this.game.time.events.add(this.loopTime + 100, () => {
-                        this.human.goToFreeCell();
+                        this.human.goToFreeCell(this.sittable.getEntries());
                         this.game.time.events.add(WALK_CELL_DURATION + 100, () => {
                             this.active = false;
                         }, this);
@@ -51,7 +51,7 @@ export class SitState implements HumanState {
     start(game: Phaser.Game): void {
         this.active = true;
         this.game = game;
-        this.human.moveToClosest(this.sittable.getPosition());
+        this.human.moveToClosest(this.sittable.getPosition(), this.sittable.getEntries());
     }
 
 

@@ -1,5 +1,6 @@
 import {PositionTransformer} from "../PositionTransformer";
 import {SittableInterface} from "./SittableInterface";
+import {DIRECTION} from "../Direction";
 
 const CHAIR_BOTTOM = -10;
 const CHAIR_LEFT = -10;
@@ -39,5 +40,10 @@ export class Desk implements SittableInterface {
 
     getPositionGap(): PIXI.Point {
         return new PIXI.Point(CHAIR_LEFT, CHAIR_BOTTOM);
+    }
+
+    getEntries(): DIRECTION[] {
+        // return [DIRECTION.LEFT, DIRECTION.TOP, DIRECTION.BOTTOM];
+        return [DIRECTION.BOTTOM];
     }
 }

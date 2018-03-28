@@ -19,11 +19,25 @@ export class Ground {
         this.desks = [];
         this.sofas = [];
         this.wallRepository = new WallRepository();
+        for (let x = 0; x < WIDTH; x++) {
+            this.wallRepository.addWall(new PIXI.Point(x, 0));
+            this.wallRepository.addWall(new PIXI.Point(x, HEIGHT - 1));
+        }
+        for (let y = 1; y < (HEIGHT - 1); y++) {
+            this.wallRepository.addWall(new PIXI.Point(0, y));
+            this.wallRepository.addWall(new PIXI.Point(WIDTH - 1, y));
+        }
+        for (let x = 1; x < 3 - 1; x++) {
+            this.wallRepository.addWall(new PIXI.Point(x, WIDTH / 2 + 1));
+        }
+        for (let x = 5; x < WIDTH - 1; x++) {
+            this.wallRepository.addWall(new PIXI.Point(x, WIDTH / 2 + 1));
+        }
         [
-            new PIXI.Point(3,3),
+            new PIXI.Point(4,3),
+            new PIXI.Point(4,4),
             new PIXI.Point(3,4),
-            new PIXI.Point(2,4),
-            new PIXI.Point(2,3),
+            new PIXI.Point(3,3),
         ].forEach((cell) => {
             this.wallRepository.addWall(cell);
         });
