@@ -7,7 +7,7 @@ import {SmokeState} from "./human_states/SmokeState";
 import {SitState} from "./human_states/SitState";
 import {ClosestPathFinder} from "./ClosestPathFinder";
 import {DIRECTION, Direction} from "./Direction";
-import {Sofa, SOFA_BOTTOM, SOFA_LEFT} from "./objects/Sofa";
+import {SittableInterface} from "./objects/SittableInterface";
 
 const FRAME_RATE = 12;
 export enum ANIMATION {
@@ -72,7 +72,6 @@ export class Human {
     }
 
     update() {
-        // console.log(Math.round(this.tile.anchor.y * this.tile.height) + ', ' + Math.round(this.tile.anchor.x * this.tile.width) + ' - ' + Math.round(this.tile.position.x) + ', ' + Math.round(this.tile.position.y));
         if (!this.state.isActive()) {
             const states: HumanState[] = [
                 new SmokeState(this, this.tile.animations.getAnimation(ANIMATION.SMOKE + '').frameTotal * Phaser.Timer.SECOND / FRAME_RATE),
@@ -88,6 +87,15 @@ export class Human {
                     this.world
                 ));
             }
+            const randomDesk = this.world.getRandomFreeDesk();
+            if (randomDesk !== null) {
+                states.push(new SitState(
+                    this,
+                    this.tile.animations.getAnimation(ANIMATION.SIT_DOWN + '').frameTotal * Phaser.Timer.SECOND / FRAME_RATE,
+                    randomDesk,
+                    this.world
+                ));
+            }
             this.state = states[Math.floor(Math.random() * states.length)];
             this.state.start(this.game);
             console.log('New state: ' + this.state.constructor.name);
@@ -96,10 +104,6 @@ export class Human {
 
     private select() {
         this.tile.loadTexture('human_selected', this.tile.frame, false);
-    }
-
-    hasPath(cell: PIXI.Point): boolean {
-        return this.closestPathFinder.getPath(this.cell, cell) !== null;
     }
 
     moveTo(cell: PIXI.Point) {
@@ -224,12 +228,12 @@ export class Human {
         this.tile.animations.add(ANIMATION.STAND_UP + '', [39, 38, 37, 36, 12]);
     }
 
-    goToSofa(position: PIXI.Point) {
-        const direction = Direction.getNeighborDirection(this.cell, position);
+    goToSittable(sittable: SittableInterface) {
+        const direction = Direction.getNeighborDirection(this.cell, sittable.getPosition());
         // Human has to gap 5px from the sofa to be sit properly, and 1px from the bottom.
-        this.anchorPixels.x = SOFA_LEFT + (Human.isHumanLeft(direction) ? -5 : 5);
-        this.anchorPixels.y = SOFA_BOTTOM - 1;
-        this.cell = position;
+        this.anchorPixels.x = sittable.getPositionGap().x + (Human.isHumanLeft(direction) ? -5 : 5);
+        this.anchorPixels.y = sittable.getPositionGap().y - 1;
+        this.cell = sittable.getPosition();
         this.animateMove(direction);
     }
 

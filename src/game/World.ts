@@ -2,6 +2,7 @@ import {Ground} from "./Ground";
 import {HumanRepository} from "./repositories/HumanRepository";
 import {Wall} from "./Wall";
 import {Sofa} from "./objects/Sofa";
+import {SittableInterface} from "./objects/SittableInterface";
 
 export class World {
     private ground: Ground;
@@ -63,7 +64,11 @@ export class World {
         return this.ground.getRandomFreeSofa(this.humanRepository.humans);
     }
 
-    isSofaTaken(sofa: Sofa) {
-        return this.ground.isSofaTaken(sofa, this.humanRepository.humans);
+    isSittableTaken(sittable: SittableInterface) {
+        return Ground.isSittableTaken(sittable, this.humanRepository.humans);
+    }
+
+    getRandomFreeDesk() {
+        return this.ground.getRandomFreeDesk(this.humanRepository.humans);
     }
 }

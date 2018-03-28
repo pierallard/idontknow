@@ -1,10 +1,11 @@
 import {PositionTransformer} from "../PositionTransformer";
+import {SittableInterface} from "./SittableInterface";
 
-export const SOFA_BOTTOM = -8;
-export const SOFA_LEFT = 0;
+const SOFA_BOTTOM = -8;
+const SOFA_LEFT = 0;
 const SOFA_ANCHOR_BOTTOM = 3;
 
-export class Sofa {
+export class Sofa implements SittableInterface {
     private sprite: Phaser.Sprite;
     private position: PIXI.Point;
 
@@ -25,5 +26,9 @@ export class Sofa {
 
     getPosition(): PIXI.Point {
         return this.position;
+    }
+
+    getPositionGap(): PIXI.Point {
+        return new PIXI.Point(SOFA_LEFT, SOFA_BOTTOM);
     }
 }

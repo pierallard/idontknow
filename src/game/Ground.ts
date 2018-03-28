@@ -3,6 +3,7 @@ import {Desk} from "./objects/Desk";
 import {WallRepository} from "./repositories/WallRepository";
 import {Sofa} from "./objects/Sofa";
 import {Human} from "./Human";
+import {SittableInterface} from "./objects/SittableInterface";
 
 const WIDTH = 10;
 const HEIGHT = 10;
@@ -123,7 +124,7 @@ export class Ground {
 
     getRandomFreeSofa(humans: Human[]): Sofa {
         const freeSofas = this.sofas.filter((sofa) => {
-            return !this.isSofaTaken(sofa, humans);
+            return !Ground.isSittableTaken(sofa, humans);
         });
 
         if (freeSofas.length === 0) {
@@ -133,14 +134,26 @@ export class Ground {
         return freeSofas[Math.floor(Math.random() * freeSofas.length)];
     }
 
-    isSofaTaken(sofa: Sofa, humans: Human[]) {
+    static isSittableTaken(sittable: SittableInterface, humans: Human[]) {
         for (let i = 0; i < humans.length; i++) {
             const human = humans[i];
-            if (sofa.getPosition().x === human.getPosition().x && sofa.getPosition().y === human.getPosition().y) {
+            if (sittable.getPosition().x === human.getPosition().x && sittable.getPosition().y === human.getPosition().y) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    getRandomFreeDesk(humans: Human[]) {
+        const freeDesks = this.desks.filter((desks) => {
+            return !Ground.isSittableTaken(desks, humans);
+        });
+
+        if (freeDesks.length === 0) {
+            return null;
+        }
+
+        return freeDesks[Math.floor(Math.random() * freeDesks.length)];
     }
 }
