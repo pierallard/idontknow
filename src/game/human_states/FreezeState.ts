@@ -1,4 +1,4 @@
-import {ANIMATION, Human} from "../Human";
+import {ANIMATION, Human} from "../human_stuff/Human";
 import {HumanState} from "./HumanState";
 
 export class FreezeState implements HumanState {

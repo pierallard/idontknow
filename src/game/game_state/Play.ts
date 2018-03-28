@@ -18,7 +18,7 @@ export default class Play extends Phaser.State {
         this.worldKnowledge.create(this.game, this.groups);
     }
 
-    update() {
+    update(game: Phaser.Game) {
         this.groups['noname'].customSort((obj1: Phaser.Sprite, obj2: Phaser.Sprite) => {
             const bottom1 = obj1.y - (1.0 - obj1.anchor.y) * obj1.height;
             const bottom2 = obj2.y - (1.0 - obj2.anchor.y) * obj2.height;

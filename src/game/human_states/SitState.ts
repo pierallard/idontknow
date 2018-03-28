@@ -1,5 +1,5 @@
 import {HumanState} from "./HumanState";
-import {ANIMATION, Human, WALK_CELL_DURATION} from "../Human";
+import {ANIMATION, Human, WALK_CELL_DURATION} from "../human_stuff/Human";
 import {World} from "../World";
 import {SittableInterface} from "../objects/SittableInterface";
 

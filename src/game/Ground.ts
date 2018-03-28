@@ -2,7 +2,7 @@ import {Cell} from "./Cell";
 import {Desk} from "./objects/Desk";
 import {WallRepository} from "./repositories/WallRepository";
 import {Sofa} from "./objects/Sofa";
-import {Human} from "./Human";
+import {Human} from "./human_stuff/Human";
 import {SittableInterface} from "./objects/SittableInterface";
 
 const WIDTH = 10;

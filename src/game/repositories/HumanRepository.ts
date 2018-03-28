@@ -1,4 +1,4 @@
-import {Human} from "../Human";
+import {Human} from "../human_stuff/Human";
 import {World} from "../World";
 
 export class HumanRepository {
