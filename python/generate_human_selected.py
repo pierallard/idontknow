@@ -1,6 +1,11 @@
 from PIL import Image
+import sys
 
-imageSource = Image.open("../assets/human.png")
+asset = 'human'
+if len(sys.argv) > 1:
+    asset = sys.argv[1]
+
+imageSource = Image.open("../assets/{asset}.png".format(asset=asset))
 imageResult = Image.new(imageSource.mode, imageSource.size, (0, 0, 0, 0))
 pixels = imageSource.load()
 pixelsResult = imageResult.load()
@@ -50,4 +55,6 @@ for x in range(width):
         elif _has_colored_neighbor(pixels, x, y, width, height):
             pixelsResult[x, y] = (0, 0, 0, 255)
 
-imageResult.save("../assets/human_selected.png")
+generated_file = "../assets/{asset}_selected.png".format(asset=asset)
+print('Generated file: "{generated_file}"'.format(generated_file=generated_file))
+imageResult.save(generated_file)

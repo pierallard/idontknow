@@ -5,8 +5,8 @@ import {Sofa} from "./objects/Sofa";
 import {Human} from "./human_stuff/Human";
 import {SittableInterface} from "./objects/SittableInterface";
 
-const WIDTH = 10;
-const HEIGHT = 10;
+const GRID_WIDTH = 12;
+const GRID_HEIGHT = 12;
 
 export const DEBUG_WORLD = false;
 
@@ -22,8 +22,8 @@ export class Ground {
         this.sofas = [];
         this.wallRepository = new WallRepository();
 
-        for (let y = 0; y < HEIGHT; y++) {
-            for (let x = 0; x < WIDTH; x++) {
+        for (let y = 0; y < GRID_HEIGHT; y++) {
+            for (let x = 0; x < GRID_WIDTH; x++) {
                 this.cells.push(new Cell(new PIXI.Point(x, y)));
             }
         }
@@ -35,19 +35,19 @@ export class Ground {
             return;
         }
 
-        for (let x = 0; x < WIDTH; x++) {
+        for (let x = 0; x < GRID_WIDTH; x++) {
             this.wallRepository.addWall(new PIXI.Point(x, 0));
-            this.wallRepository.addWall(new PIXI.Point(x, HEIGHT - 1));
+            this.wallRepository.addWall(new PIXI.Point(x, GRID_HEIGHT - 1));
         }
-        for (let y = 1; y < (HEIGHT - 1); y++) {
+        for (let y = 1; y < (GRID_HEIGHT - 1); y++) {
             this.wallRepository.addWall(new PIXI.Point(0, y));
-            this.wallRepository.addWall(new PIXI.Point(WIDTH - 1, y));
+            this.wallRepository.addWall(new PIXI.Point(GRID_WIDTH - 1, y));
         }
         for (let x = 1; x < 3 - 1; x++) {
-            this.wallRepository.addWall(new PIXI.Point(x, WIDTH / 2 + 1));
+            this.wallRepository.addWall(new PIXI.Point(x, GRID_WIDTH / 2 + 1));
         }
-        for (let x = 5; x < WIDTH - 1; x++) {
-            this.wallRepository.addWall(new PIXI.Point(x, WIDTH / 2 + 1));
+        for (let x = 5; x < GRID_WIDTH - 1; x++) {
+            this.wallRepository.addWall(new PIXI.Point(x, GRID_WIDTH / 2 + 1));
         }
         [
             new PIXI.Point(4,3),
@@ -119,7 +119,7 @@ export class Ground {
     }
 
     isFree(point: PIXI.Point): boolean {
-        if (point.x < 0 || point.y < 0 || point.x >= WIDTH || point.y >= HEIGHT) {
+        if (point.x < 0 || point.y < 0 || point.x >= GRID_WIDTH || point.y >= GRID_HEIGHT) {
             return false;
         }
 

@@ -5,14 +5,16 @@ import Preload from "./game/game_state/Preload";
 import Play from "./game/game_state/Play";
 
 export const SCALE = 3;
-export const GAME_WIDTH = 1600 * 0.8 / SCALE;
-export const GAME_HEIGHT = 900 * 0.8 / SCALE;
+export const CAMERA_WIDTH_PIXELS = 1280 / SCALE;
+export const CAMERA_HEIGHT_PIXELS = 720 / SCALE;
+export const WORLD_WIDTH = 1280 * 1.1 / SCALE;
+export const WORLD_HEIGHT = 720 * 1.1 / SCALE;
 
 class SimpleGame extends Phaser.Game {
     constructor() {
         super(
-            GAME_WIDTH,
-            GAME_HEIGHT,
+            CAMERA_WIDTH_PIXELS,
+            CAMERA_HEIGHT_PIXELS,
             Phaser.CANVAS, // Open GL for effect / shader ?
             'content',
             null,

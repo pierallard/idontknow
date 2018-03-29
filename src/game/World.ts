@@ -71,4 +71,8 @@ export class World {
     getRandomFreeDesk() {
         return this.ground.getRandomFreeDesk(this.humanRepository.humans);
     }
+
+    getSelectedHumanSprite() {
+        return this.humanRepository.getSelectedHumanSprite();
+    }
 }

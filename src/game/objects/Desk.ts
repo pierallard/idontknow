@@ -43,6 +43,18 @@ export class Desk implements SittableInterface {
         this.chairSprite.anchor.set(0.5, 1 + FAKE_ANCHOR_BOTTOM/this.chairSprite.height);
         this.deskSprite.anchor.set(0.5, 1);
 
+        this.deskSprite.inputEnabled = true;
+        this.deskSprite.input.pixelPerfectOver = true;
+        this.deskSprite.input.pixelPerfectClick = true;
+        this.deskSprite.input.useHandCursor = true;
+        this.deskSprite.events.onInputDown.add(this.select, this);
+
+        this.chairSprite.inputEnabled = true;
+        this.chairSprite.input.pixelPerfectOver = true;
+        this.chairSprite.input.pixelPerfectClick = true;
+        this.chairSprite.input.useHandCursor = true;
+        this.chairSprite.events.onInputDown.add(this.select, this);
+
         if (isLeftOriented) {
             this.deskSprite.scale.set(-1, 1);
             this.chairSprite.scale.set(-1, 1);
@@ -72,5 +84,15 @@ export class Desk implements SittableInterface {
 
     forceOrientation(): boolean {
         return this.isLeftOriented();
+    }
+
+    private select() {
+        const isSelected = this.isSelected();
+        this.deskSprite.loadTexture(isSelected ? 'desk' : 'desk_selected', this.deskSprite.frame, false);
+        this.chairSprite.loadTexture(isSelected ? 'chair' : 'chair_selected', this.chairSprite.frame, false);
+    }
+
+    private isSelected() {
+        return this.deskSprite.key === 'desk_selected';
     }
 }

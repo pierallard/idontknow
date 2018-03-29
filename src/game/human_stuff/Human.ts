@@ -10,7 +10,7 @@ export const WALK_CELL_DURATION = 1200;
 const GAP_FROM_BOTTOM = -8;
 
 export class Human {
-    tile: Phaser.TileSprite;
+    private tile: Phaser.TileSprite;
     private cell: PIXI.Point;
     private game: Phaser.Game;
     private moving: boolean;
@@ -43,21 +43,19 @@ export class Human {
             'human'
         );
         this.animationManager.create(this.tile);
-
         this.tile.anchor.set(0.5, 1.0);
-
-        this.animationManager.loadAnimation(ANIMATION.FREEZE, true, false);
-
         this.tile.inputEnabled = true;
+        this.tile.input.pixelPerfectOver = true;
+        this.tile.input.pixelPerfectClick = true;
+        this.tile.input.useHandCursor = true;
         this.tile.events.onInputDown.add(this.select, this);
-
         group.add(this.tile);
 
         this.pathfinder = game.plugins.add(Phaser.Plugin.PathFinderPlugin);
         this.pathfinder.setGrid(world.getGround().getGrid(), world.getGround().getAcceptables());
 
+        this.animationManager.loadAnimation(ANIMATION.FREEZE, true, false);
         this.closestPathFinder = new ClosestPathFinder(game, world);
-
         this.stateManager.create(game, world, this.animationManager);
     }
 
@@ -66,7 +64,7 @@ export class Human {
     }
 
     private select() {
-        this.tile.loadTexture('human_selected', this.tile.frame, false);
+        this.tile.loadTexture(this.isSelected() ? 'human' : 'human_selected', this.tile.frame, false);
     }
 
     moveTo(cell: PIXI.Point) {
@@ -165,5 +163,13 @@ export class Human {
 
     loadAnimation(animation: ANIMATION, isLeft: boolean = null) {
         this.animationManager.loadAnimation(animation, isLeft);
+    }
+
+    isSelected(): boolean {
+        return this.tile.key === 'human_selected';
+    }
+
+    getSprite(): any {
+        return this.tile;
     }
 }
