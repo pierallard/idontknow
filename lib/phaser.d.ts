@@ -2077,7 +2077,7 @@ declare module Phaser {
         minPriorityID: number;
         mouse: Phaser.Mouse;
         mousePointer: Phaser.Pointer;
-        moveCallbacks: (pointer: Phaser.Pointer, x: number, y: number) => void[];
+        moveCallbacks: ((pointer: Phaser.Pointer, x: number, y: number) => void)[];
         mspointer: Phaser.MSPointer;
         multiInputOverride: number;
         onDown: Phaser.Signal;

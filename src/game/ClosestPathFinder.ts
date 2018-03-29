@@ -3,9 +3,11 @@ import {Direction, DIRECTION} from "./Direction";
 
 export class ClosestPathFinder {
     private finders: Object;
+    private world: World;
 
     constructor(game: Phaser.Game, world: World) {
         this.finders = {};
+        this.world = world;
         const grid = world.getGround().getGrid();
         const acceptables = world.getGround().getAcceptables();
         Direction.neighborDirections().concat([DIRECTION.CURRENT]).forEach((direction: DIRECTION) => {
@@ -90,5 +92,13 @@ export class ClosestPathFinder {
         } else {
             return null;
         }
+    }
+
+    reset() {
+        const grid = this.world.getGround().getGrid();
+        const acceptables = this.world.getGround().getAcceptables();
+        Object.keys(this.finders).forEach((key) => {
+            this.finders[key].setGrid(grid, acceptables);
+        });
     }
 }

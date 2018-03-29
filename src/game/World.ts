@@ -3,13 +3,14 @@ import {HumanRepository} from "./repositories/HumanRepository";
 import {Wall} from "./Wall";
 import {Sofa} from "./objects/Sofa";
 import {SittableInterface} from "./objects/SittableInterface";
+import {ObjectInterface} from "./objects/ObjectInterface";
 
 export class World {
     private ground: Ground;
     private humanRepository: HumanRepository;
 
     constructor() {
-        this.ground = new Ground();
+        this.ground = new Ground(this);
         this.humanRepository = new HumanRepository(this);
     }
 
@@ -74,5 +75,15 @@ export class World {
 
     getSelectedHumanSprite() {
         return this.humanRepository.getSelectedHumanSprite();
+    }
+
+    isValidPosition(tryPosition: PIXI.Point, object: ObjectInterface) {
+        return this.ground.isFree(tryPosition, object);
+    }
+
+    resetAStar() {
+        this.humanRepository.humans.forEach((human) => {
+            human.resetAStar();
+        });
     }
 }
