@@ -1,6 +1,7 @@
 import {DIRECTION} from "../Direction";
+import {ObjectInterface} from "./ObjectInterface";
 
-export interface SittableInterface {
+export interface SittableInterface extends ObjectInterface {
     getPosition(): PIXI.Point;
 
     /**

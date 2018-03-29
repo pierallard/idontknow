@@ -5,6 +5,7 @@ import {DIRECTION, Direction} from "../Direction";
 import {SittableInterface} from "../objects/SittableInterface";
 import {ANIMATION, HumanAnimationManager} from "./HumanAnimationManager";
 import {HumanStateManager} from "./HumanStateManager";
+import {ObjectSelector} from "../objects/ObjectSelector";
 
 export const WALK_CELL_DURATION = 1200;
 const GAP_FROM_BOTTOM = -8;
@@ -44,11 +45,8 @@ export class Human {
         );
         this.animationManager.create(this.tile);
         this.tile.anchor.set(0.5, 1.0);
-        this.tile.inputEnabled = true;
-        this.tile.input.pixelPerfectOver = true;
-        this.tile.input.pixelPerfectClick = true;
-        this.tile.input.useHandCursor = true;
-        this.tile.events.onInputDown.add(this.select, this);
+
+        ObjectSelector.makeSelectable([this.tile]);
         group.add(this.tile);
 
         this.pathfinder = game.plugins.add(Phaser.Plugin.PathFinderPlugin);
@@ -61,10 +59,6 @@ export class Human {
 
     update() {
         this.stateManager.updateState(this.game);
-    }
-
-    private select() {
-        this.tile.loadTexture(this.isSelected() ? 'human' : 'human_selected', this.tile.frame, false);
     }
 
     moveTo(cell: PIXI.Point) {
@@ -166,10 +160,14 @@ export class Human {
     }
 
     isSelected(): boolean {
-        return this.tile.key === 'human_selected';
+        return ObjectSelector.isSelected(this.tile);
     }
 
     getSprite(): any {
         return this.tile;
+    }
+
+    resetAStar() {
+        this.closestPathFinder.reset();
     }
 }

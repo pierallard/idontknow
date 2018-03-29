@@ -4,6 +4,8 @@ import {WallRepository} from "./repositories/WallRepository";
 import {Sofa} from "./objects/Sofa";
 import {Human} from "./human_stuff/Human";
 import {SittableInterface} from "./objects/SittableInterface";
+import {World} from "./World";
+import {ObjectInterface} from "./objects/ObjectInterface";
 
 const GRID_WIDTH = 12;
 const GRID_HEIGHT = 12;
@@ -16,7 +18,7 @@ export class Ground {
     private sofas: Sofa[];
     private wallRepository: WallRepository;
 
-    constructor() {
+    constructor(world: World) {
         this.cells = [];
         this.desks = [];
         this.sofas = [];
@@ -31,7 +33,7 @@ export class Ground {
         if (DEBUG_WORLD) {
             this.wallRepository.addWall(new PIXI.Point(5, 5));
             this.wallRepository.addWall(new PIXI.Point(6, 5));
-            this.desks.push(new Desk(new PIXI.Point(4, 5)));
+            this.desks.push(new Desk(new PIXI.Point(4, 5), world));
             return;
         }
 
@@ -59,7 +61,7 @@ export class Ground {
         });
 
         for (let i = 0; i < 3; i++) {
-            this.desks.push(new Desk(this.getRandomCell()));
+            this.desks.push(new Desk(this.getRandomCell(), world));
         }
 
         for (let i = 0; i < 3; i++) {
@@ -118,19 +120,19 @@ export class Ground {
         return acceptables;
     }
 
-    isFree(point: PIXI.Point): boolean {
+    isFree(point: PIXI.Point, object: ObjectInterface = null): boolean {
         if (point.x < 0 || point.y < 0 || point.x >= GRID_WIDTH || point.y >= GRID_HEIGHT) {
             return false;
         }
 
         for (let j = 0; j < this.desks.length; j++) {
-            if (this.desks[j].getPosition().x === point.x && this.desks[j].getPosition().y === point.y) {
+            if (this.desks[j].getPosition().x === point.x && this.desks[j].getPosition().y === point.y && this.desks[j] !== object) {
                 return false;
             }
         }
 
         for (let j = 0; j < this.sofas.length; j++) {
-            if (this.sofas[j].getPosition().x === point.x && this.sofas[j].getPosition().y === point.y) {
+            if (this.sofas[j].getPosition().x === point.x && this.sofas[j].getPosition().y === point.y && this.sofas[j] !== object) {
                 return false;
             }
         }

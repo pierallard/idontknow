@@ -24,14 +24,18 @@ export class WallRepository {
         })
     }
 
-    hasWall(x: number, y: number): boolean {
+    private getWall(x: number, y: number): Wall {
         for (let i = 0; i < this.walls.length; i++) {
             if (this.walls[i].getPosition().x === x && this.walls[i].getPosition().y === y) {
-                return true;
+                return this.walls[i];
             }
         }
 
-        return false;
+        return null;
+    }
+
+    hasWall(x: number, y: number): boolean {
+        return this.getWall(x, y) !== null;
     }
 
     getWalls(): Wall[] {
