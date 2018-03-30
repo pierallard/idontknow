@@ -35,6 +35,6 @@ export class ObjectMover {
         movableObject.getSprites().forEach((sprite) => {
             ObjectSelector.setSelected(sprite, false);
         });
-        world.resetAStar();
+        world.resetAStar(movableObject.getPosition());
     }
 }

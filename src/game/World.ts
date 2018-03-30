@@ -81,9 +81,9 @@ export class World {
         return this.ground.isFree(tryPosition, object);
     }
 
-    resetAStar() {
+    resetAStar(position: PIXI.Point) {
         this.humanRepository.humans.forEach((human) => {
-            human.resetAStar();
+            human.resetAStar(position);
         });
     }
 }

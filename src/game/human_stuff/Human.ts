@@ -1,4 +1,4 @@
-import {PositionTransformer} from "../PositionTransformer";
+import {CELL_HEIGHT, PositionTransformer} from "../PositionTransformer";
 import {World} from "../World";
 import {ClosestPathFinder} from "../ClosestPathFinder";
 import {DIRECTION, Direction} from "../Direction";
@@ -9,6 +9,7 @@ import {ObjectSelector} from "../objects/ObjectSelector";
 
 export const WALK_CELL_DURATION = 1200;
 const GAP_FROM_BOTTOM = -8;
+const PATH_DEBUG = true;
 
 export class Human {
     private tile: Phaser.TileSprite;
@@ -22,6 +23,7 @@ export class Human {
     private anchorPixels: PIXI.Point;
     private animationManager: HumanAnimationManager;
     private stateManager: HumanStateManager;
+    private pathGraphics: Phaser.Graphics;
 
     constructor(cell: PIXI.Point) {
         this.cell = cell;
@@ -55,29 +57,57 @@ export class Human {
         this.animationManager.loadAnimation(ANIMATION.FREEZE, true, false);
         this.closestPathFinder = new ClosestPathFinder(game, world);
         this.stateManager.create(game, world, this.animationManager);
+
+        if (PATH_DEBUG) {
+            this.pathGraphics = game.add.graphics(0, 0, group);
+            group.add(this.pathGraphics);
+        }
     }
 
     update() {
         this.stateManager.updateState(this.game);
+
+        if (PATH_DEBUG) {
+            this.pathGraphics.clear();
+            this.pathGraphics.lineStyle(2, 0x00ff00);
+            if (this.path !== null && this.path.length > 0) {
+                this.pathGraphics.moveTo(
+                    this.tile.position.x,
+                    this.tile.position.y
+                );
+                this.path.forEach((pathItem) => {
+                    this.pathGraphics.lineTo(
+                        PositionTransformer.getRealPosition(pathItem).x,
+                        PositionTransformer.getRealPosition(pathItem).y - CELL_HEIGHT / 2
+                    );
+                })
+            }
+        }
     }
 
     moveTo(cell: PIXI.Point) {
         const path = this.closestPathFinder.getPath(this.cell, cell);
-        if (path !== null) {
-            this.path = path;
-            if (!this.moving) {
-                this.popPath(null, null);
-            }
+        if (path === null) {
+            this.stateManager.reset(this.game);
+            return;
+        }
+
+        this.path = path;
+        if (!this.moving) {
+            this.popPath(null, null);
         }
     }
 
     moveToClosest(cell: PIXI.Point, entries: DIRECTION[] = [DIRECTION.BOTTOM, DIRECTION.RIGHT, DIRECTION.TOP, DIRECTION.LEFT]) {
         const path = this.closestPathFinder.getNeighborPath(this.cell, cell, entries);
-        if (path !== null) {
-            this.path = path;
-            if (!this.moving) {
-                this.popPath(null, null);
-            }
+        if (path === null) {
+            this.stateManager.reset(this.game);
+            return;
+        }
+
+        this.path = path;
+        if (!this.moving) {
+            this.popPath(null, null);
         }
     }
 
@@ -148,10 +178,15 @@ export class Human {
                 cells.push(tryCell);
             }
         });
-        const freeCell = cells[Math.floor(Math.random() * cells.length)];
-        this.path = [freeCell];
-        if (!this.moving) {
-            this.popPath(null, null);
+        if (cells.length === 0) {
+            console.log('oops');
+            debugger;
+        } else {
+            const freeCell = cells[Math.floor(Math.random() * cells.length)];
+            this.path = [freeCell];
+            if (!this.moving) {
+                this.popPath(null, null);
+            }
         }
     }
 
@@ -167,7 +202,19 @@ export class Human {
         return this.tile;
     }
 
-    resetAStar() {
+    resetAStar(position: PIXI.Point) {
         this.closestPathFinder.reset();
+        if (this.path !== null) {
+            console.log('This human is moving !')
+            const matchingPath = this.path.filter((cell) => {
+                return cell.x === position.x && cell.y === position.y;
+            });
+            console.log(matchingPath);
+            if (matchingPath.length > 0) {
+                const goal = this.path[this.path.length - 1];
+                console.log('goooooal');
+                this.moveTo(goal);
+            }
+        }
     }
 }
