@@ -43,7 +43,7 @@ export class Human {
             PositionTransformer.getRealPosition(this.cell).y + this.anchorPixels.y,
             24,
             25,
-            'human'
+            Math.random() > 0.5 ? 'human' : 'human_red'
         );
         this.animationManager.create(this.tile);
         this.tile.anchor.set(0.5, 1.0);
