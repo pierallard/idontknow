@@ -7,13 +7,15 @@ import {MoveRandomState} from "../human_states/MoveRandomState";
 import {World} from "../World";
 import {HumanAnimationManager} from "./HumanAnimationManager";
 import {TypeState} from "../human_states/TypeState";
+import {TalkState} from "../human_states/TalkState";
 
 enum STATE {
-    'SMOKE',
-    'FREEZE',
-    'MOVE_RANDOM',
-    'SIT',
-    'TYPE',
+    SMOKE,
+    FREEZE,
+    MOVE_RANDOM,
+    SIT,
+    TYPE,
+    TALK,
 }
 
 export class HumanStateManager {
@@ -56,6 +58,9 @@ export class HumanStateManager {
                         this.world
                     );
                     break;
+                case STATE.TALK:
+                    this.state = new TalkState(this.human);
+                    break;
                 case STATE.FREEZE:
                 default:
                     this.state = new FreezeState(this.human);
@@ -71,6 +76,7 @@ export class HumanStateManager {
         states.push({state: STATE.SMOKE, probability: 5});
         states.push({state: STATE.FREEZE, probability: 5});
         states.push({state: STATE.MOVE_RANDOM, probability: 2});
+        states.push({state: STATE.TALK, probability: 2000});
 
         if (this.world.getRandomFreeSofa() !== null) {
             states.push({state: STATE.SIT, probability: 2});

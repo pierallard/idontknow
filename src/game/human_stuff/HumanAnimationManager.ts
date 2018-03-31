@@ -8,6 +8,7 @@ export enum ANIMATION {
     SIT_DOWN,
     STAND_UP,
     TYPE,
+    TALK,
 }
 
 export class HumanAnimationManager {
@@ -48,6 +49,7 @@ export class HumanAnimationManager {
                 break;
             case ANIMATION.SMOKE:
             case ANIMATION.TYPE:
+            case ANIMATION.TALK:
                 // Looped sided animation (left/right)
                 const animationSmokeName = animation + '';
                 if (this.humanTile.animations.name !== animationSmokeName) {
@@ -84,6 +86,7 @@ export class HumanAnimationManager {
             case ANIMATION.SIT_DOWN: return [12, 36, 37, 38, 39];
             case ANIMATION.STAND_UP: return [39, 38, 37, 36, 12];
             case ANIMATION.TYPE: return [42, 43, 44, 45];
+            case ANIMATION.TALK: return [48, 49, 50, 51, 52, 53];
             case ANIMATION.SMOKE:
                 let smoke_frames = [24, 25, 26, 27, 30, 31, 32, 33];
                 for (let i = 0; i < 6; i++) {
@@ -109,6 +112,7 @@ export class HumanAnimationManager {
             ANIMATION.SIT_DOWN,
             ANIMATION.STAND_UP,
             ANIMATION.TYPE,
+            ANIMATION.TALK,
         ];
     }
 
