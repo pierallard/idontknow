@@ -28,7 +28,7 @@ export class ObjectSelector {
     private static click(sprite, _pointer, sprites) {
         const isSelected = this.isSelected(sprite);
         sprites.forEach((sprite) => {
-            this.setSelected(sprite, isSelected);
+            this.setSelected(sprite, !isSelected);
         });
     }
 
