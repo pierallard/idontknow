@@ -1,7 +1,6 @@
 import {PositionTransformer} from "../PositionTransformer";
 import {SittableInterface} from "./SittableInterface";
 import {DIRECTION} from "../Direction";
-import {ObjectSelector} from "./ObjectSelector";
 import {ObjectMover} from "./ObjectMover";
 import {World} from "../World";
 import {MovableObjectInterface} from "./MovableObjectInterface";
@@ -55,8 +54,6 @@ export class Desk implements SittableInterface, MovableObjectInterface {
 
         ObjectMover.makeMovable(this, this.world);
 
-        this.deskSprite.events.onInputUp.add(this.release);
-
         if (isLeftOriented) {
             this.deskSprite.scale.set(-1, 1);
             this.chairSprite.scale.set(-1, 1);
@@ -64,10 +61,6 @@ export class Desk implements SittableInterface, MovableObjectInterface {
 
         group.add(this.chairSprite);
         group.add(this.deskSprite);
-    }
-
-    private release(deskSprite) {
-        console.log('release');
     }
 
     getPosition(): PIXI.Point {
@@ -96,10 +89,9 @@ export class Desk implements SittableInterface, MovableObjectInterface {
         return [this.deskSprite, this.chairSprite];
     }
 
-    tryToMove(realPoint: PIXI.Point): void {
-        const tryPosition = PositionTransformer.getCellPosition(realPoint);
-        if (this.world.isValidPosition(tryPosition, this)) {
-            this.position = tryPosition;
+    tryToMove(point: PIXI.Point): void {
+        if (this.world.isFreePosition(point, this)) {
+            this.position = point;
             this.chairSprite.position.x = PositionTransformer.getRealPosition(this.position).x + (this.isLeftOriented() ? - GAP_HORIZONTAL : GAP_HORIZONTAL);
             this.chairSprite.position.y = PositionTransformer.getRealPosition(this.position).y + FAKE_ANCHOR_BOTTOM + GAP_VERTICAL;
             this.deskSprite.position.x = PositionTransformer.getRealPosition(this.position).x;

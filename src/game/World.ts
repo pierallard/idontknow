@@ -77,13 +77,13 @@ export class World {
         return this.humanRepository.getSelectedHumanSprite();
     }
 
-    isValidPosition(tryPosition: PIXI.Point, object: ObjectInterface) {
+    isFreePosition(tryPosition: PIXI.Point, object: ObjectInterface) {
         return this.ground.isFree(tryPosition, object);
     }
 
-    resetAStar(position: PIXI.Point) {
+    resetAStar(startPosition: PIXI.Point, endPosition: PIXI.Point) {
         this.humanRepository.humans.forEach((human) => {
-            human.resetAStar(position);
+            human.resetAStar(startPosition, endPosition);
         });
     }
 }

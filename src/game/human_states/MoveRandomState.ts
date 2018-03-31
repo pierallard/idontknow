@@ -23,4 +23,7 @@ export class MoveRandomState implements HumanState {
     start(game: Phaser.Game): void {
         this.human.moveTo(this.goal);
     }
+
+    stop(game: Phaser.Game): void {
+    }
 }

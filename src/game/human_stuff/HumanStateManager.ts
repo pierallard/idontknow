@@ -96,6 +96,7 @@ export class HumanStateManager {
     }
 
     reset(game: Phaser.Game) {
+        this.state.stop(game);
         this.state = new FreezeState(this.human);
         this.state.start(game);
     }

@@ -25,4 +25,7 @@ export class SmokeState implements HumanState {
     end(): void {
         this.active = false;
     }
+
+    stop(game: Phaser.Game): void {
+    }
 }

@@ -202,19 +202,20 @@ export class Human {
         return this.tile;
     }
 
-    resetAStar(position: PIXI.Point) {
+    resetAStar(startPosition: PIXI.Point, endPosition: PIXI.Point) {
         this.closestPathFinder.reset();
         if (this.path !== null) {
-            console.log('This human is moving !')
             const matchingPath = this.path.filter((cell) => {
-                return cell.x === position.x && cell.y === position.y;
+                return cell.x === endPosition.x && cell.y === endPosition.y;
             });
-            console.log(matchingPath);
             if (matchingPath.length > 0) {
                 const goal = this.path[this.path.length - 1];
-                console.log('goooooal');
                 this.moveTo(goal);
+                return;
             }
+        }
+        if (this.cell.x == startPosition.x && this.cell.y == startPosition.y) {
+            this.stateManager.reset(this.game);
         }
     }
 }

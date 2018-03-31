@@ -65,7 +65,7 @@ export class Ground {
         }
 
         for (let i = 0; i < 3; i++) {
-            this.sofas.push(new Sofa(this.getRandomCell()));
+            this.sofas.push(new Sofa(this.getRandomCell(), world));
         }
     }
 

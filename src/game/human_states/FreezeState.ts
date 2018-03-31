@@ -1,10 +1,11 @@
-import { Human} from "../human_stuff/Human";
+import {Human} from "../human_stuff/Human";
 import {HumanState} from "./HumanState";
 import {ANIMATION} from "../human_stuff/HumanAnimationManager";
 
 export class FreezeState implements HumanState {
     private human: Human;
     private active: boolean;
+    private event: Phaser.TimerEvent;
 
     constructor(human: Human) {
         this.human = human;
@@ -15,12 +16,18 @@ export class FreezeState implements HumanState {
     }
 
     start(game: Phaser.Game): void {
-        game.time.events.add(Phaser.Math.random(1, 3) * Phaser.Timer.SECOND, this.end, this);
         this.active = true;
         this.human.loadAnimation(ANIMATION.FREEZE);
+        this.event = game.time.events.add(Phaser.Math.random(1, 3) * Phaser.Timer.SECOND, this.end, this);
     }
 
     end(): void {
         this.active = false;
+    }
+
+    stop(game: Phaser.Game): void {
+        if (this.event) {
+            game.time.events.remove(this.event);
+        }
     }
 }

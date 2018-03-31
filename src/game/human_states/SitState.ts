@@ -12,6 +12,7 @@ export class SitState implements HumanState {
     private game: Phaser.Game;
     private isHumanOnTheRightCell: boolean;
     private world: World;
+    private events: Phaser.TimerEvent[];
 
     constructor(human: Human, loopTime: number, sittable: SittableInterface, world: World) {
         this.human = human;
@@ -19,6 +20,7 @@ export class SitState implements HumanState {
         this.sittable = sittable;
         this.isHumanOnTheRightCell = false;
         this.world = world;
+        this.events = [];
     }
 
     isActive(): boolean {
@@ -32,18 +34,18 @@ export class SitState implements HumanState {
         if (!this.isHumanOnTheRightCell && this.isNeighborPosition()) {
             this.isHumanOnTheRightCell = true;
             this.human.goToSittable(this.sittable);
-            this.game.time.events.add(WALK_CELL_DURATION + 100, () => {
+            this.events.push(this.game.time.events.add(WALK_CELL_DURATION + 100, () => {
                 this.human.loadAnimation(ANIMATION.SIT_DOWN);
-                this.game.time.events.add(Phaser.Math.random(1, 3) * Phaser.Timer.SECOND + this.loopTime, () => {
+                this.events.push(this.game.time.events.add(Phaser.Math.random(3, 10) * Phaser.Timer.SECOND + this.loopTime, () => {
                     this.human.loadAnimation(ANIMATION.STAND_UP);
-                    this.game.time.events.add(this.loopTime + 100, () => {
+                    this.events.push(this.game.time.events.add(this.loopTime + 100, () => {
                         this.human.goToFreeCell(this.sittable.getEntries());
-                        this.game.time.events.add(WALK_CELL_DURATION + 100, () => {
+                        this.events.push(this.game.time.events.add(WALK_CELL_DURATION + 100, () => {
                             this.active = false;
-                        }, this);
-                    }, this);
-                }, this);
-            }, this);
+                        }, this));
+                    }, this));
+                }, this));
+            }, this));
         }
 
         return this.active;
@@ -59,5 +61,11 @@ export class SitState implements HumanState {
     private isNeighborPosition() {
         return !this.human.isMoving() && (this.human.getPosition().x - this.sittable.getPosition().x) * (this.human.getPosition().x - this.sittable.getPosition().x) +
             (this.human.getPosition().y - this.sittable.getPosition().y) * (this.human.getPosition().y - this.sittable.getPosition().y) === 1;
+    }
+
+    stop(game: Phaser.Game): void {
+        this.events.forEach((event) => {
+            game.time.events.remove(event);
+        });
     }
 }
