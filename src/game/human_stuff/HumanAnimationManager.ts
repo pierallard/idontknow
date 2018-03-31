@@ -15,24 +15,14 @@ export class HumanAnimationManager {
 
     create(humanTile: Phaser.TileSprite) {
         this.humanTile = humanTile;
-        this.humanTile.animations.add(ANIMATION.WALK + '', [0, 1, 2, 3, 4, 5]);
-        this.humanTile.animations.add(ANIMATION.WALK + TOP_ORIENTED_ANIMATION, [6, 7, 8, 9, 10, 11]);
-        this.humanTile.animations.add(ANIMATION.FREEZE + '', [12, 13, 14]);
-        this.humanTile.animations.add(ANIMATION.FREEZE + TOP_ORIENTED_ANIMATION, [18, 19, 20]);
-        let smoke_frames = [24, 25, 26, 27, 30, 31, 32, 33];
-        for (let i = 0; i < 6; i++) {
-            // Take smoke length
-            smoke_frames.push(33)
-        }
-        smoke_frames = smoke_frames.concat([32, 31, 30, 27, 26, 25, 24]);
-        for (let i = 0; i < 20; i++) {
-            // Do nothing length
-            smoke_frames.push(24)
-        }
-        this.humanTile.animations.add(ANIMATION.SMOKE + '', smoke_frames);
-        this.humanTile.animations.add(ANIMATION.SIT_DOWN + '', [12, 36, 37, 38, 39]);
-        this.humanTile.animations.add(ANIMATION.STAND_UP + '', [39, 38, 37, 36, 12]);
-        this.humanTile.animations.add(ANIMATION.TYPE + '', [42, 43, 44, 45]);
+        HumanAnimationManager.getAnimations().forEach((animation) => {
+            if (HumanAnimationManager.hasTopOrientedVariation(animation)) {
+                this.humanTile.animations.add(animation + '', HumanAnimationManager.getAnimationFrames(animation, false));
+                this.humanTile.animations.add(animation + TOP_ORIENTED_ANIMATION, HumanAnimationManager.getAnimationFrames(animation, true));
+            } else {
+                this.humanTile.animations.add(animation + '', HumanAnimationManager.getAnimationFrames(animation));
+            }
+        });
     }
 
     private getAnimationName(animation: ANIMATION, isTop: boolean = null): string {
@@ -83,7 +73,46 @@ export class HumanAnimationManager {
         }
     }
 
-    getAnimationTime(animation: ANIMATION) {
-        return this.humanTile.animations.getAnimation(animation + '').frameTotal * Phaser.Timer.SECOND / FRAME_RATE;
+    static getAnimationTime(animation: ANIMATION) {
+        return this.getAnimationFrames(animation).length * Phaser.Timer.SECOND / FRAME_RATE;
+    }
+
+    private static getAnimationFrames(animation: ANIMATION, topOriented: boolean = null) {
+        switch (animation) {
+            case ANIMATION.FREEZE: return topOriented ? [18, 19, 20] : [12, 13, 14];
+            case ANIMATION.WALK: return topOriented ? [6, 7, 8, 9, 10, 11] : [0, 1, 2, 3, 4, 5];
+            case ANIMATION.SIT_DOWN: return [12, 36, 37, 38, 39];
+            case ANIMATION.STAND_UP: return [39, 38, 37, 36, 12];
+            case ANIMATION.TYPE: return [42, 43, 44, 45];
+            case ANIMATION.SMOKE:
+                let smoke_frames = [24, 25, 26, 27, 30, 31, 32, 33];
+                for (let i = 0; i < 6; i++) {
+                    // Take smoke length
+                    smoke_frames.push(33)
+                }
+                smoke_frames = smoke_frames.concat([32, 31, 30, 27, 26, 25, 24]);
+                for (let i = 0; i < 20; i++) {
+                    // Do nothing length
+                    smoke_frames.push(24)
+                }
+                return smoke_frames;
+            default:
+                console.log('UNKNOWN ANIMATION ' + animation);
+        }
+    }
+
+    private static getAnimations(): ANIMATION[] {
+        return [
+            ANIMATION.FREEZE,
+            ANIMATION.WALK,
+            ANIMATION.SMOKE,
+            ANIMATION.SIT_DOWN,
+            ANIMATION.STAND_UP,
+            ANIMATION.TYPE,
+        ];
+    }
+
+    private static hasTopOrientedVariation(animation: ANIMATION) {
+        return [ANIMATION.WALK, ANIMATION.FREEZE].indexOf(animation) > -1;
     }
 }

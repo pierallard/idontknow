@@ -2,11 +2,10 @@ import {HumanState} from "./HumanState";
 import {Human, WALK_CELL_DURATION} from "../human_stuff/Human";
 import {World} from "../World";
 import {SittableInterface} from "../objects/SittableInterface";
-import {ANIMATION} from "../human_stuff/HumanAnimationManager";
+import {ANIMATION, HumanAnimationManager} from "../human_stuff/HumanAnimationManager";
 
 export class SitState implements HumanState {
     private human: Human;
-    private loopTime: number;
     private active: boolean;
     private sittable: SittableInterface;
     private game: Phaser.Game;
@@ -14,9 +13,8 @@ export class SitState implements HumanState {
     private world: World;
     private events: Phaser.TimerEvent[];
 
-    constructor(human: Human, loopTime: number, sittable: SittableInterface, world: World) {
+    constructor(human: Human, sittable: SittableInterface, world: World) {
         this.human = human;
-        this.loopTime = loopTime;
         this.sittable = sittable;
         this.isHumanOnTheRightCell = false;
         this.world = world;
@@ -36,9 +34,9 @@ export class SitState implements HumanState {
             this.human.goToSittable(this.sittable);
             this.events.push(this.game.time.events.add(WALK_CELL_DURATION + 100, () => {
                 this.human.loadAnimation(ANIMATION.SIT_DOWN);
-                this.events.push(this.game.time.events.add(Phaser.Math.random(3, 10) * Phaser.Timer.SECOND + this.loopTime, () => {
+                this.events.push(this.game.time.events.add(Phaser.Math.random(3, 10) * Phaser.Timer.SECOND + HumanAnimationManager.getAnimationTime(ANIMATION.SIT_DOWN), () => {
                     this.human.loadAnimation(ANIMATION.STAND_UP);
-                    this.events.push(this.game.time.events.add(this.loopTime + 100, () => {
+                    this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.STAND_UP) + 100, () => {
                         this.human.goToFreeCell(this.sittable.getEntries());
                         this.events.push(this.game.time.events.add(WALK_CELL_DURATION + 100, () => {
                             this.active = false;

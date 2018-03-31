@@ -5,7 +5,7 @@ import {SmokeState} from "../human_states/SmokeState";
 import {SitState} from "../human_states/SitState";
 import {MoveRandomState} from "../human_states/MoveRandomState";
 import {World} from "../World";
-import {ANIMATION, HumanAnimationManager} from "./HumanAnimationManager";
+import {HumanAnimationManager} from "./HumanAnimationManager";
 import {TypeState} from "../human_states/TypeState";
 
 enum STATE {
@@ -37,7 +37,7 @@ export class HumanStateManager {
         if (!this.state.isActive()) {
             switch(this.randomNextStepName()) {
                 case STATE.SMOKE:
-                    this.state = new SmokeState(this.human, this.animationManager.getAnimationTime(ANIMATION.SMOKE));
+                    this.state = new SmokeState(this.human);
                     break;
                 case STATE.MOVE_RANDOM:
                     this.state = new MoveRandomState(this.human, this.world);
@@ -45,7 +45,6 @@ export class HumanStateManager {
                 case STATE.SIT:
                     this.state = new SitState(
                         this.human,
-                        this.animationManager.getAnimationTime(ANIMATION.SIT_DOWN),
                         this.world.getRandomFreeSofa(),
                         this.world
                     );
@@ -53,7 +52,6 @@ export class HumanStateManager {
                 case STATE.TYPE:
                     this.state = new TypeState(
                         this.human,
-                        this.animationManager.getAnimationTime(ANIMATION.SIT_DOWN),
                         this.world.getRandomFreeDesk(),
                         this.world
                     );
