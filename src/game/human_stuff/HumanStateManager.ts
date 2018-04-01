@@ -10,7 +10,7 @@ import {TypeState} from "../human_states/TypeState";
 import {TalkState} from "../human_states/TalkState";
 import {Meeting} from "../human_states/Meeting";
 
-enum STATE {
+export enum STATE {
     SMOKE,
     FREEZE,
     MOVE_RANDOM,
@@ -60,7 +60,7 @@ export class HumanStateManager {
                     );
                     break;
                 case STATE.TALK:
-                    this.state = new TalkState(this.human, this.world.getAnotherHuman(this.human), game, this.world);
+                    this.state = new TalkState(this.human, this.world.getAnotherFreeHuman(this.human), game, this.world);
                     break;
                 case STATE.FREEZE:
                 default:
@@ -75,19 +75,25 @@ export class HumanStateManager {
     private randomNextStepName(): STATE {
         const states = [];
         states.push({state: STATE.SMOKE, probability: 5});
-        states.push({state: STATE.FREEZE, probability: 5});
-        states.push({state: STATE.MOVE_RANDOM, probability: 2});
+        states.push({state: STATE.FREEZE, probability: 3});
+        states.push({state: STATE.MOVE_RANDOM, probability: 1});
 
-        if (this.world.getAnotherHuman(this.human) !== null) {
-            states.push({state: STATE.TALK, probability: 10});
+        if (this.world.getAnotherFreeHuman(this.human) !== null) {
+            states.push({state: STATE.TALK, probability: 8});
         }
 
         if (this.world.getRandomFreeSofa() !== null) {
             states.push({state: STATE.SIT, probability: 2});
         }
         if (this.world.getRandomFreeDesk() !== null) {
-            states.push({state: STATE.TYPE, probability: 20});
+            states.push({state: STATE.TYPE, probability: 25});
         }
+
+        states.forEach((state) => {
+            if (state.state === this.state.getState()) {
+                state.probability = state.probability / 10;
+            }
+        });
 
         const sum = states.reduce((prev, state) => {
             return prev + state.probability;
@@ -113,5 +119,9 @@ export class HumanStateManager {
         this.state.stop(game);
         this.state = new TalkState(this.human, null, game, this.world, meeting);
         this.state.start(game);
+    }
+
+    getState() {
+        return this.state.getState();
     }
 }

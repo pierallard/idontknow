@@ -4,13 +4,13 @@ import {ClosestPathFinder} from "../ClosestPathFinder";
 import {DIRECTION, Direction} from "../Direction";
 import {SittableInterface} from "../objects/SittableInterface";
 import {ANIMATION, HumanAnimationManager} from "./HumanAnimationManager";
-import {HumanStateManager} from "./HumanStateManager";
+import {HumanStateManager, STATE} from "./HumanStateManager";
 import {ObjectSelector} from "../objects/ObjectSelector";
 import {Meeting} from "../human_states/Meeting";
 
 export const WALK_CELL_DURATION = 1200;
 const GAP_FROM_BOTTOM = -8;
-const PATH_DEBUG = true;
+const PATH_DEBUG = false;
 
 export class Human {
     private tile: Phaser.TileSprite;
@@ -222,5 +222,13 @@ export class Human {
         if (this.cell.x == startPosition.x && this.cell.y == startPosition.y) {
             this.stateManager.reset(this.game);
         }
+    }
+
+    isFree() {
+        return [STATE.SIT, STATE.MOVE_RANDOM, STATE.FREEZE, STATE.SMOKE].indexOf(this.getState()) > -1;
+    }
+
+    private getState() {
+        return this.stateManager.getState();
     }
 }

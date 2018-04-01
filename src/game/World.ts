@@ -88,9 +88,9 @@ export class World {
         });
     }
 
-    getAnotherHuman(human: Human): Human {
-        const availableHumans = this.humanRepository.humans.filter((anotherHuman) => {
-            return anotherHuman !== human
+    getAnotherFreeHuman(human: Human): Human {
+        const availableHumans = this.humanRepository.humans.filter((anotherHuman: Human) => {
+            return anotherHuman !== human && anotherHuman.isFree()
         });
 
         if (availableHumans.length === 0) {

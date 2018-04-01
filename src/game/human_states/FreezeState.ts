@@ -1,6 +1,7 @@
 import {Human} from "../human_stuff/Human";
 import {HumanState} from "./HumanState";
 import {ANIMATION} from "../human_stuff/HumanAnimationManager";
+import {STATE} from "../human_stuff/HumanStateManager";
 
 export class FreezeState implements HumanState {
     private human: Human;
@@ -29,5 +30,9 @@ export class FreezeState implements HumanState {
         if (this.event) {
             game.time.events.remove(this.event);
         }
+    }
+
+    getState(): STATE {
+        return STATE.FREEZE;
     }
 }

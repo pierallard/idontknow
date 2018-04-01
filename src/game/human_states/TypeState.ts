@@ -3,6 +3,7 @@ import {Human, WALK_CELL_DURATION} from "../human_stuff/Human";
 import {World} from "../World";
 import {SittableInterface} from "../objects/SittableInterface";
 import {ANIMATION, HumanAnimationManager} from "../human_stuff/HumanAnimationManager";
+import {STATE} from "../human_stuff/HumanStateManager";
 
 export class TypeState implements HumanState {
     private human: Human;
@@ -67,5 +68,10 @@ export class TypeState implements HumanState {
         this.events.forEach((event) => {
             game.time.events.remove(event);
         });
+    }
+
+
+    getState(): STATE {
+        return STATE.TYPE;
     }
 }

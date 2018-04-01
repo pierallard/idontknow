@@ -4,6 +4,7 @@ import {World} from "../World";
 import {ANIMATION, HumanAnimationManager} from "../human_stuff/HumanAnimationManager";
 import {Meeting} from "./Meeting";
 import {Direction} from "../Direction";
+import {STATE} from "../human_stuff/HumanStateManager";
 
 export class TalkState implements HumanState {
     private human: Human;
@@ -96,5 +97,9 @@ export class TalkState implements HumanState {
 
     private static otherAnimation(animation: ANIMATION) {
         return animation === ANIMATION.TALK ? ANIMATION.FREEZE : ANIMATION.TALK;
+    }
+
+    getState(): STATE {
+        return STATE.TALK;
     }
 }
