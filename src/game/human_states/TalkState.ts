@@ -2,52 +2,45 @@ import {Human} from "../human_stuff/Human";
 import {HumanState} from "./HumanState";
 import {World} from "../World";
 import {ANIMATION, HumanAnimationManager} from "../human_stuff/HumanAnimationManager";
+import {Meeting} from "./Meeting";
 
 export class TalkState implements HumanState {
     private human: Human;
     private active: boolean;
     private anotherHuman: Human;
-    private isHumanOnTheRightCell: boolean;
     private game: Phaser.Game;
     private world: World;
-    private goalCell: PIXI.Point;
-    private cells: PIXI.Point[];
     private meetingStarted: boolean;
     private events: Phaser.TimerEvent[];
-    private time: number;
+    private meeting: Meeting;
 
     constructor(
         human: Human,
         anotherHuman: Human,
         game: Phaser.Game,
         world: World,
-        cells: PIXI.Point[] = null,
-        goalCell: PIXI.Point = null,
-        time: number = null
+        meeting: Meeting = null
     ) {
         this.human = human;
         this.anotherHuman = anotherHuman;
-        this.isHumanOnTheRightCell = false;
         this.game = game;
         this.world = world;
-        this.goalCell = goalCell;
-        this.cells = cells;
         this.meetingStarted = false;
         this.events = [];
-        this.time = time ? time : Phaser.Math.random(8, 20) * Phaser.Timer.SECOND;
+        this.meeting = meeting;
     }
 
     isActive(): boolean {
-        if (!this.meetingStarted && this.isMeetingReady()) {
+        if (!this.meetingStarted && this.meeting.isReady()) {
             this.meetingStarted = true;
-            this.game.time.events.add(this.time, this.end, this);
+            this.game.time.events.add(this.meeting.getTime(), this.end, this);
 
             let animation = ANIMATION.TALK;
             if (Math.random() > 0.5) {
                 animation = TalkState.otherAnimation(animation);
             }
             this.human.loadAnimation(animation);
-            this.events.push(this.game.time.events.add(Phaser.Math.random(1, 3) * HumanAnimationManager.getAnimationTime(animation), this.switchAnimation, this, TalkState.otherAnimation(animation)));
+            this.events.push(this.game.time.events.add(Phaser.Math.random(3, 6) * HumanAnimationManager.getAnimationTime(animation), this.switchAnimation, this, TalkState.otherAnimation(animation)));
         }
 
         return this.active;
@@ -55,23 +48,19 @@ export class TalkState implements HumanState {
 
     switchAnimation(animation: ANIMATION) {
         this.human.loadAnimation(animation);
-        this.events.push(this.game.time.events.add(Phaser.Math.random(1, 3) * HumanAnimationManager.getAnimationTime(animation), this.switchAnimation, this, TalkState.otherAnimation(animation)));
+        this.events.push(this.game.time.events.add(Phaser.Math.random(3, 6) * HumanAnimationManager.getAnimationTime(animation), this.switchAnimation, this, TalkState.otherAnimation(animation)));
     }
 
     start(game: Phaser.Game): void {
-        if (this.cells === null) {
-            // This human is the initiator of the talk. He have to find meeting place.
-            this.cells = this.world.getGround().getRandomNeighborCells();
-            if (this.cells === null) {
-                console.log('No meeting point found!');
-                this.active = false;
-                return;
-            }
-            this.goalCell = this.cells[0];
-            this.anotherHuman.forceTalk(this.cells, this.cells[1], this.time);
+        if (this.meeting === null) {
+            this.meeting = new Meeting(
+                [this.human, this.anotherHuman],
+                Phaser.Math.random(8, 20) * Phaser.Timer.SECOND,
+                this.world
+            );
+            this.anotherHuman.goMeeting(this.meeting);
         }
-
-        this.human.moveTo(this.goalCell);
+        this.human.moveTo(this.meeting.getCell(this.human));
         this.active = true;
     }
 
@@ -86,17 +75,6 @@ export class TalkState implements HumanState {
         this.events.forEach((event) => {
             this.game.time.events.remove(event);
         });
-    }
-
-    private isMeetingReady() {
-        for (let i = 0; i < this.cells.length; i++) {
-            const human = this.world.getHumanAt(this.cells[i]);
-            if (human === null || human.isMoving()) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     private static otherAnimation(animation: ANIMATION) {

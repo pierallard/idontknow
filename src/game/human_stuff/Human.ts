@@ -6,6 +6,7 @@ import {SittableInterface} from "../objects/SittableInterface";
 import {ANIMATION, HumanAnimationManager} from "./HumanAnimationManager";
 import {HumanStateManager} from "./HumanStateManager";
 import {ObjectSelector} from "../objects/ObjectSelector";
+import {Meeting} from "../human_states/Meeting";
 
 export const WALK_CELL_DURATION = 1200;
 const GAP_FROM_BOTTOM = -8;
@@ -85,8 +86,8 @@ export class Human {
         }
     }
 
-    forceTalk(cells: PIXI.Point[], point: PIXI.Point, time: number) {
-        this.stateManager.forceTalk(this.game, cells, point, time);
+    goMeeting(meeting: Meeting) {
+        this.stateManager.goMeeting(this.game, meeting);
     }
 
     moveTo(cell: PIXI.Point) {

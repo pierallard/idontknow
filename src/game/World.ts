@@ -99,15 +99,4 @@ export class World {
 
         return availableHumans[Math.floor(Math.random() * availableHumans.length)];
     }
-
-    getHumanAt(point: PIXI.Point): Human {
-        for (let i = 0; i < this.humanRepository.humans.length; i++) {
-            if (this.humanRepository.humans[i].getPosition().x === point.x &&
-                this.humanRepository.humans[i].getPosition().y === point.y) {
-                return this.humanRepository.humans[i];
-            }
-        }
-
-        return null;
-    }
 }

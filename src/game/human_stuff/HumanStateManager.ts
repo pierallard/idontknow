@@ -8,6 +8,7 @@ import {World} from "../World";
 import {HumanAnimationManager} from "./HumanAnimationManager";
 import {TypeState} from "../human_states/TypeState";
 import {TalkState} from "../human_states/TalkState";
+import {Meeting} from "../human_states/Meeting";
 
 enum STATE {
     SMOKE,
@@ -108,9 +109,9 @@ export class HumanStateManager {
         this.state.start(game);
     }
 
-    forceTalk(game: Phaser.Game, cells: PIXI.Point[], point: PIXI.Point, time: number) {
+    goMeeting(game: Phaser.Game, meeting: Meeting) {
         this.state.stop(game);
-        this.state = new TalkState(this.human, null, game, this.world, cells, point, time);
+        this.state = new TalkState(this.human, null, game, this.world, meeting);
         this.state.start(game);
     }
 }
