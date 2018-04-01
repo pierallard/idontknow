@@ -6,6 +6,7 @@ import {Human} from "./human_stuff/Human";
 import {SittableInterface} from "./objects/SittableInterface";
 import {World} from "./World";
 import {ObjectInterface} from "./objects/ObjectInterface";
+import {Dispenser} from "./objects/Dispenser";
 
 const GRID_WIDTH = 8;
 const GRID_HEIGHT = 8;
@@ -13,15 +14,13 @@ const GRID_HEIGHT = 8;
 export const DEBUG_WORLD = false;
 
 export class Ground {
-    private desks: Desk[];
     private cells: Cell[];
-    private sofas: Sofa[];
+    private objects: ObjectInterface[];
     private wallRepository: WallRepository;
 
     constructor(world: World) {
         this.cells = [];
-        this.desks = [];
-        this.sofas = [];
+        this.objects = [];
         this.wallRepository = new WallRepository();
 
         for (let y = 0; y < GRID_HEIGHT; y++) {
@@ -33,7 +32,7 @@ export class Ground {
         if (DEBUG_WORLD) {
             this.wallRepository.addWall(new PIXI.Point(5, 5));
             this.wallRepository.addWall(new PIXI.Point(6, 5));
-            this.desks.push(new Desk(new PIXI.Point(4, 5), world));
+            this.objects.push(new Desk(new PIXI.Point(4, 5), world));
             return;
         }
 
@@ -61,12 +60,14 @@ export class Ground {
         });
 
         for (let i = 0; i < 3; i++) {
-            this.desks.push(new Desk(this.getRandomCell(), world));
+            this.objects.push(new Desk(this.getRandomCell(), world));
         }
 
         for (let i = 0; i < 3; i++) {
-            this.sofas.push(new Sofa(this.getRandomCell(), world));
+            this.objects.push(new Sofa(this.getRandomCell(), world));
         }
+
+        this.objects.push(new Dispenser(this.getRandomCell(), world));
     }
 
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}) {
@@ -77,12 +78,8 @@ export class Ground {
             cell.create(game, floor);
         });
 
-        this.desks.forEach((desk: Desk) => {
+        this.objects.forEach((desk: Desk) => {
             desk.create(game, noname);
-        });
-
-        this.sofas.forEach((sofa: Sofa) => {
-            sofa.create(game, noname);
         });
 
         this.wallRepository.create(game, noname);
@@ -146,14 +143,8 @@ export class Ground {
             return false;
         }
 
-        for (let j = 0; j < this.desks.length; j++) {
-            if (this.desks[j].getPosition().x === point.x && this.desks[j].getPosition().y === point.y && this.desks[j] !== object) {
-                return false;
-            }
-        }
-
-        for (let j = 0; j < this.sofas.length; j++) {
-            if (this.sofas[j].getPosition().x === point.x && this.sofas[j].getPosition().y === point.y && this.sofas[j] !== object) {
+        for (let j = 0; j < this.objects.length; j++) {
+            if (this.objects[j].getPosition().x === point.x && this.objects[j].getPosition().y === point.y && this.objects[j] !== object) {
                 return false;
             }
         }
@@ -170,15 +161,15 @@ export class Ground {
     }
 
     getRandomFreeSofa(humans: Human[]): Sofa {
-        const freeSofas = this.sofas.filter((sofa) => {
-            return !Ground.isSittableTaken(sofa, humans);
+        const freeSofas = this.objects.filter((object) => {
+            return object.constructor.name === 'Sofa' && !Ground.isSittableTaken(<Sofa> object, humans);
         });
 
         if (freeSofas.length === 0) {
             return null;
         }
 
-        return freeSofas[Math.floor(Math.random() * freeSofas.length)];
+        return <Sofa> freeSofas[Math.floor(Math.random() * freeSofas.length)];
     }
 
     static isSittableTaken(sittable: SittableInterface, humans: Human[]) {
@@ -192,16 +183,16 @@ export class Ground {
         return false;
     }
 
-    getRandomFreeDesk(humans: Human[]) {
-        const freeDesks = this.desks.filter((desks) => {
-            return !Ground.isSittableTaken(desks, humans);
+    getRandomFreeDesk(humans: Human[]): Desk {
+        const freeDesks = this.objects.filter((object) => {
+            return object.constructor.name === 'Desk' && !Ground.isSittableTaken(<Desk> object, humans);
         });
 
         if (freeDesks.length === 0) {
             return null;
         }
 
-        return freeDesks[Math.floor(Math.random() * freeDesks.length)];
+        return <Desk> freeDesks[Math.floor(Math.random() * freeDesks.length)];
     }
 
     private static areNeighbors(position: PIXI.Point, position2: PIXI.Point): boolean {
