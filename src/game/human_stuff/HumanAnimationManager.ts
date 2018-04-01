@@ -35,43 +35,15 @@ export class HumanAnimationManager {
     }
 
     loadAnimation(animation: ANIMATION, isLeft: boolean = null, isTop: boolean = null) {
-        switch (animation) {
-            case ANIMATION.FREEZE:
-            case ANIMATION.WALK:
-                // Looped sided animation (bottom/top + left/right)
-                const animationName = this.getAnimationName(animation, isTop);
-                if (this.humanTile.animations.name !== animationName) {
-                    this.humanTile.animations.play(animationName, FRAME_RATE, true);
-                }
-                if (isLeft != null) {
-                    this.humanTile.scale.set(isLeft ? 1 : -1, 1);
-                }
-                break;
-            case ANIMATION.SMOKE:
-            case ANIMATION.TYPE:
-            case ANIMATION.TALK:
-                // Looped sided animation (left/right)
-                const animationSmokeName = animation + '';
-                if (this.humanTile.animations.name !== animationSmokeName) {
-                    this.humanTile.animations.play(animationSmokeName, FRAME_RATE, true);
-                }
-                if (isLeft != null) {
-                    this.humanTile.scale.set(isLeft ? 1 : -1, 1);
-                }
-                break;
-            case ANIMATION.SIT_DOWN:
-            case ANIMATION.STAND_UP:
-                // Non looped sided animation (left/right)
-                const animationSitDownName = animation + '';
-                if (this.humanTile.animations.name !== animationSitDownName) {
-                    this.humanTile.animations.play(animationSitDownName, FRAME_RATE, false);
-                }
-                if (isLeft != null) {
-                    this.humanTile.scale.set(isLeft ? 1 : -1, 1);
-                }
-                break;
-            default:
-                console.log('UNKNOWN ANIMATION ' + animation);
+        let animationName = animation + '';
+        if (HumanAnimationManager.hasTopOrientedVariation(animation)) {
+            animationName = this.getAnimationName(animation, isTop);
+        }
+        if (this.humanTile.animations.name !== animationName) {
+            this.humanTile.animations.play(animationName, FRAME_RATE, HumanAnimationManager.isLooped(animation));
+        }
+        if (isLeft != null) {
+            this.humanTile.scale.set(isLeft ? 1 : -1, 1);
         }
     }
 
@@ -86,7 +58,7 @@ export class HumanAnimationManager {
             case ANIMATION.SIT_DOWN: return [12, 36, 37, 38, 39];
             case ANIMATION.STAND_UP: return [39, 38, 37, 36, 12];
             case ANIMATION.TYPE: return [42, 43, 44, 45];
-            case ANIMATION.TALK: return [48, 49, 50, 51, 52, 53];
+            case ANIMATION.TALK: return topOriented ? [54, 55, 56, 57, 58, 59] : [48, 49, 50, 51, 52, 53];
             case ANIMATION.SMOKE:
                 let smoke_frames = [24, 25, 26, 27, 30, 31, 32, 33];
                 for (let i = 0; i < 6; i++) {
@@ -117,6 +89,11 @@ export class HumanAnimationManager {
     }
 
     private static hasTopOrientedVariation(animation: ANIMATION) {
-        return [ANIMATION.WALK, ANIMATION.FREEZE].indexOf(animation) > -1;
+        return [ANIMATION.WALK, ANIMATION.FREEZE, ANIMATION.TALK].indexOf(animation) > -1;
+    }
+
+
+    private static isLooped(animation: ANIMATION) {
+        return [ANIMATION.FREEZE, ANIMATION.WALK, ANIMATION.TALK, ANIMATION.SMOKE, ANIMATION.TYPE].indexOf(animation) > -1;
     }
 }

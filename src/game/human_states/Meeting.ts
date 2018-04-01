@@ -46,4 +46,15 @@ export class Meeting {
     getTime(): number {
         return this.time;
     }
+
+    getAnotherHuman(human: Human): Human {
+        let anotherHumans = [];
+        this.places.forEach((place) => {
+            if (place.human !== human) {
+                anotherHumans.push(place.human);
+            }
+        });
+
+        return anotherHumans[Math.floor(Math.random() * anotherHumans.length)];
+    }
 }

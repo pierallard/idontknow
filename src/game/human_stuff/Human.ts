@@ -195,8 +195,8 @@ export class Human {
         }
     }
 
-    loadAnimation(animation: ANIMATION, isLeft: boolean = null) {
-        this.animationManager.loadAnimation(animation, isLeft);
+    loadAnimation(animation: ANIMATION, isLeft: boolean = null, isTop: boolean = null) {
+        this.animationManager.loadAnimation(animation, isLeft, isTop);
     }
 
     isSelected(): boolean {

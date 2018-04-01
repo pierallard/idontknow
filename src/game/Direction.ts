@@ -39,4 +39,12 @@ export class Direction {
             debugger;
         }
     }
+
+    static isLeft(direction: DIRECTION): boolean {
+        return direction === DIRECTION.LEFT || direction === DIRECTION.BOTTOM;
+    }
+
+    static isTop(direction: DIRECTION): boolean {
+        return direction === DIRECTION.TOP || direction === DIRECTION.LEFT;
+    }
 }

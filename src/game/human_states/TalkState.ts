@@ -3,6 +3,7 @@ import {HumanState} from "./HumanState";
 import {World} from "../World";
 import {ANIMATION, HumanAnimationManager} from "../human_stuff/HumanAnimationManager";
 import {Meeting} from "./Meeting";
+import {Direction} from "../Direction";
 
 export class TalkState implements HumanState {
     private human: Human;
@@ -31,24 +32,40 @@ export class TalkState implements HumanState {
     }
 
     isActive(): boolean {
-        if (!this.meetingStarted && this.meeting.isReady()) {
-            this.meetingStarted = true;
-            this.game.time.events.add(this.meeting.getTime(), this.end, this);
+        if (!this.meetingStarted) {
+            if (this.meeting.isReady()) {
+                this.meetingStarted = true;
+                this.game.time.events.add(this.meeting.getTime(), this.end, this);
 
-            let animation = ANIMATION.TALK;
-            if (Math.random() > 0.5) {
-                animation = TalkState.otherAnimation(animation);
+                let animation = ANIMATION.TALK;
+                if (Math.random() > 0.5) {
+                    animation = TalkState.otherAnimation(animation);
+                }
+                this.switchAnimation(animation);
+            } else if (!this.human.isMoving()) {
+                const direction = Direction.getNeighborDirection(
+                    this.human.getPosition(),
+                    this.meeting.getAnotherHuman(this.human).getPosition()
+                );
+                this.human.loadAnimation(ANIMATION.FREEZE, Direction.isLeft(direction), Direction.isTop(direction));
             }
-            this.human.loadAnimation(animation);
-            this.events.push(this.game.time.events.add(Phaser.Math.random(3, 6) * HumanAnimationManager.getAnimationTime(animation), this.switchAnimation, this, TalkState.otherAnimation(animation)));
         }
 
         return this.active;
     }
 
     switchAnimation(animation: ANIMATION) {
-        this.human.loadAnimation(animation);
-        this.events.push(this.game.time.events.add(Phaser.Math.random(3, 6) * HumanAnimationManager.getAnimationTime(animation), this.switchAnimation, this, TalkState.otherAnimation(animation)));
+        const direction = Direction.getNeighborDirection(
+            this.human.getPosition(),
+            this.meeting.getAnotherHuman(this.human).getPosition()
+        );
+        this.human.loadAnimation(animation, Direction.isLeft(direction), Direction.isTop(direction));
+        this.events.push(this.game.time.events.add(
+            Phaser.Math.random(3, 6) * HumanAnimationManager.getAnimationTime(animation),
+            this.switchAnimation,
+            this,
+            TalkState.otherAnimation(animation)
+        ));
     }
 
     start(game: Phaser.Game): void {
