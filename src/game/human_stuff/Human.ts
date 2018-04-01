@@ -86,34 +86,39 @@ export class Human {
         }
     }
 
-    goMeeting(meeting: Meeting) {
-        this.stateManager.goMeeting(this.game, meeting);
+    goMeeting(meeting: Meeting): boolean {
+        return this.stateManager.goMeeting(this.game, meeting);
     }
 
-    moveTo(cell: PIXI.Point) {
+    moveTo(cell: PIXI.Point): boolean {
         const path = this.closestPathFinder.getPath(this.cell, cell);
         if (path === null) {
             this.stateManager.reset(this.game);
-            return;
+
+            return false;
         }
 
         this.path = path;
         if (!this.moving) {
             this.popPath(null, null);
         }
+        return true;
     }
 
-    moveToClosest(cell: PIXI.Point, entries: DIRECTION[] = [DIRECTION.BOTTOM, DIRECTION.RIGHT, DIRECTION.TOP, DIRECTION.LEFT]) {
+    moveToClosest(cell: PIXI.Point, entries: DIRECTION[] = [DIRECTION.BOTTOM, DIRECTION.RIGHT, DIRECTION.TOP, DIRECTION.LEFT]): boolean {
         const path = this.closestPathFinder.getNeighborPath(this.cell, cell, entries);
         if (path === null) {
             this.stateManager.reset(this.game);
-            return;
+
+            return false;
         }
 
         this.path = path;
         if (!this.moving) {
             this.popPath(null, null);
         }
+
+        return true;
     }
 
     private animateMove(direction: DIRECTION) {
@@ -208,6 +213,7 @@ export class Human {
     }
 
     resetAStar(startPosition: PIXI.Point, endPosition: PIXI.Point) {
+        console.log('Move object -> reset');
         this.closestPathFinder.reset();
         if (this.path !== null) {
             const matchingPath = this.path.filter((cell) => {

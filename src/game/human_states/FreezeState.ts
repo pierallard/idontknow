@@ -16,10 +16,11 @@ export class FreezeState implements HumanState {
         return this.active;
     }
 
-    start(game: Phaser.Game): void {
+    start(game: Phaser.Game): boolean {
         this.active = true;
         this.human.loadAnimation(ANIMATION.FREEZE);
-        this.event = game.time.events.add(Phaser.Math.random(1, 3) * Phaser.Timer.SECOND, this.end, this);
+        this.event = game.time.events.add(Phaser.Math.random(1, 2) * Phaser.Timer.SECOND, this.end, this);
+        return true;
     }
 
     end(): void {
@@ -30,6 +31,7 @@ export class FreezeState implements HumanState {
         if (this.event) {
             game.time.events.remove(this.event);
         }
+        this.end();
     }
 
     getState(): STATE {

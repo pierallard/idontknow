@@ -50,10 +50,17 @@ export class SitState implements HumanState {
         return this.active;
     }
 
-    start(game: Phaser.Game): void {
+    start(game: Phaser.Game): boolean {
         this.active = true;
         this.game = game;
-        this.human.moveToClosest(this.sittable.getPosition(), this.sittable.getEntries());
+
+        if (!this.human.moveToClosest(this.sittable.getPosition(), this.sittable.getEntries())) {
+            this.active = false;
+            this.stop(game);
+            return false;
+        }
+
+        return true;
     }
 
 
@@ -66,6 +73,7 @@ export class SitState implements HumanState {
         this.events.forEach((event) => {
             game.time.events.remove(event);
         });
+        this.active = false;
     }
 
     getState(): STATE {

@@ -8,8 +8,8 @@ import {World} from "./World";
 import {ObjectInterface} from "./objects/ObjectInterface";
 import {Dispenser} from "./objects/Dispenser";
 
-const GRID_WIDTH = 8;
-const GRID_HEIGHT = 8;
+const GRID_WIDTH = 12;
+const GRID_HEIGHT = 12;
 
 export const DEBUG_WORLD = false;
 

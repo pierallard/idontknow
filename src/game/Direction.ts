@@ -36,7 +36,7 @@ export class Direction {
         } else if (goalPoint.y < originPoint.y) {
             return DIRECTION.BOTTOM;
         } else {
-            debugger;
+            return DIRECTION.CURRENT;
         }
     }
 

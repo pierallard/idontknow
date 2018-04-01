@@ -36,7 +36,7 @@ export class TalkState implements HumanState {
         if (!this.meetingStarted) {
             if (this.meeting.isReady()) {
                 this.meetingStarted = true;
-                this.game.time.events.add(this.meeting.getTime(), this.end, this);
+                this.game.time.events.add(this.meeting.getTime() + Math.random() * Phaser.Timer.SECOND, this.end, this);
 
                 let animation = ANIMATION.TALK;
                 if (Math.random() > 0.5) {
@@ -69,17 +69,27 @@ export class TalkState implements HumanState {
         ));
     }
 
-    start(game: Phaser.Game): void {
+    start(game: Phaser.Game): boolean {
+        this.active = true;
+
         if (this.meeting === null) {
             this.meeting = new Meeting(
                 [this.human, this.anotherHuman],
                 Phaser.Math.random(8, 20) * Phaser.Timer.SECOND,
                 this.world
             );
-            this.anotherHuman.goMeeting(this.meeting);
+
+            if (!this.anotherHuman.goMeeting(this.meeting)) {
+                this.end();
+                return false;
+            }
         }
-        this.human.moveTo(this.meeting.getCell(this.human));
-        this.active = true;
+        if (!this.human.moveTo(this.meeting.getCell(this.human))) {
+            this.end();
+            return false;
+        }
+
+        return true;
     }
 
     end(): void {
@@ -90,16 +100,14 @@ export class TalkState implements HumanState {
     }
 
     stop(game: Phaser.Game): void {
-        this.events.forEach((event) => {
-            this.game.time.events.remove(event);
-        });
-    }
-
-    private static otherAnimation(animation: ANIMATION) {
-        return animation === ANIMATION.TALK ? ANIMATION.FREEZE : ANIMATION.TALK;
+        this.end();
     }
 
     getState(): STATE {
         return STATE.TALK;
+    }
+
+    private static otherAnimation(animation: ANIMATION) {
+        return animation === ANIMATION.TALK ? ANIMATION.FREEZE : ANIMATION.TALK;
     }
 }

@@ -67,16 +67,20 @@ export class HumanStateManager {
                     this.state = new FreezeState(this.human);
             }
 
-            this.state.start(game);
-            console.log('New state: ' + this.state.constructor.name);
+            if (this.state.start(game)) {
+                console.log('New state: ' + this.state.constructor.name);
+            } else {
+                console.log('State ' + this.state.constructor.name + ' failed. Retry.')
+                this.updateState(game);
+            }
         }
     }
 
     private randomNextStepName(): STATE {
         const states = [];
         states.push({state: STATE.SMOKE, probability: 5});
-        states.push({state: STATE.FREEZE, probability: 3});
-        states.push({state: STATE.MOVE_RANDOM, probability: 1});
+        states.push({state: STATE.FREEZE, probability: 1});
+        states.push({state: STATE.MOVE_RANDOM, probability: 2});
 
         if (this.world.getAnotherFreeHuman(this.human) !== null) {
             states.push({state: STATE.TALK, probability: 8});
@@ -111,14 +115,14 @@ export class HumanStateManager {
 
     reset(game: Phaser.Game) {
         this.state.stop(game);
-        this.state = new FreezeState(this.human);
-        this.state.start(game);
+        this.updateState(game);
     }
 
-    goMeeting(game: Phaser.Game, meeting: Meeting) {
+    goMeeting(game: Phaser.Game, meeting: Meeting): boolean {
         this.state.stop(game);
         this.state = new TalkState(this.human, null, game, this.world, meeting);
-        this.state.start(game);
+        
+        return this.state.start(game);
     }
 
     getState() {
