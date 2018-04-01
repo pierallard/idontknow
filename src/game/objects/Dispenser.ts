@@ -2,12 +2,14 @@ import {MovableObjectInterface} from "./MovableObjectInterface";
 import {PositionTransformer} from "../PositionTransformer";
 import {World} from "../World";
 import {ObjectMover} from "./ObjectMover";
+import {DIRECTION} from "../Direction";
+import {SittableInterface} from "./SittableInterface";
 
-const DISPENSER_BOTTOM = -8;
-const DISPENSER_LEFT = 0;
+const DISPENSER_BOTTOM = -4;
+const DISPENSER_LEFT = 4;
 const DISPENSER_ANCHOR_BOTTOM = 3;
 
-export class Dispenser implements MovableObjectInterface {
+export class Dispenser implements MovableObjectInterface, SittableInterface {
     private sprite: Phaser.Sprite;
     private position: PIXI.Point;
     private world: World;
@@ -46,4 +48,15 @@ export class Dispenser implements MovableObjectInterface {
         }
     }
 
+    getEntries(): DIRECTION[] {
+        return [DIRECTION.BOTTOM];
+    }
+
+    getPositionGap(): PIXI.Point {
+        return new PIXI.Point(0, 0);
+    }
+
+    forceOrientation(): boolean {
+        return true;
+    }
 }

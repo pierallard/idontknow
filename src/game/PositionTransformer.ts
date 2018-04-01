@@ -21,4 +21,13 @@ export class PositionTransformer {
                 (point.x - (WORLD_WIDTH / 2)) / (2 * (- CELL_WIDTH / 2)))
         )
     }
+
+    static dist(position1: PIXI.Point, position2: PIXI.Point): number {
+        return (position1.x - position2.x) * (position1.x - position2.x) +
+            (position1.y - position2.y) * (position1.y - position2.y);
+    }
+
+    static isNeighbor(position1: PIXI.Point, position2: PIXI.Point): boolean {
+        return this.dist(position1, position2) === 1;
+    }
 }

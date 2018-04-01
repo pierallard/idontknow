@@ -4,6 +4,7 @@ import {World} from "../World";
 import {SittableInterface} from "../objects/SittableInterface";
 import {ANIMATION, HumanAnimationManager} from "../human_stuff/HumanAnimationManager";
 import {STATE} from "../human_stuff/HumanStateManager";
+import {PositionTransformer} from "../PositionTransformer";
 
 export class TypeState implements HumanState {
     private human: Human;
@@ -66,8 +67,8 @@ export class TypeState implements HumanState {
     }
 
     private isNeighborPosition() {
-        return !this.human.isMoving() && (this.human.getPosition().x - this.sittable.getPosition().x) * (this.human.getPosition().x - this.sittable.getPosition().x) +
-            (this.human.getPosition().y - this.sittable.getPosition().y) * (this.human.getPosition().y - this.sittable.getPosition().y) === 1;
+        return !this.human.isMoving() &&
+            PositionTransformer.isNeighbor(this.human.getPosition(), this.sittable.getPosition());
     }
 
     stop(game: Phaser.Game): void {

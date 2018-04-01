@@ -2,6 +2,8 @@ import {DIRECTION} from "../Direction";
 import {ObjectInterface} from "./ObjectInterface";
 
 export interface SittableInterface extends ObjectInterface {
+    // TODO RENAME THIS
+
     /**
      * Returns the gap for the human to sit on it.
      * For y value: -10px implies the human will be placed 10 px on the TOP direction (has to go up to 10 pixels) from

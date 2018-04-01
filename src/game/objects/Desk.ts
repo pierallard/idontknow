@@ -46,11 +46,14 @@ export class Desk implements SittableInterface, MovableObjectInterface {
         );
         this.deskSprite = game.add.sprite(
             PositionTransformer.getRealPosition(this.position).x,
-            PositionTransformer.getRealPosition(this.position).y,
+            PositionTransformer.getRealPosition(this.position).y + FAKE_ANCHOR_BOTTOM,
             'desk'
         );
         this.chairSprite.anchor.set(0.5, 1 + FAKE_ANCHOR_BOTTOM/this.chairSprite.height);
-        this.deskSprite.anchor.set(0.5, 1);
+        this.deskSprite.anchor.set(0.5, 1 + FAKE_ANCHOR_BOTTOM/this.deskSprite.height);
+
+        console.log('chair: ' + this.chairSprite.y);
+        console.log('desk:  ' + this.deskSprite.y);
 
         ObjectMover.makeMovable(this, this.world);
 
@@ -95,7 +98,7 @@ export class Desk implements SittableInterface, MovableObjectInterface {
             this.chairSprite.position.x = PositionTransformer.getRealPosition(this.position).x + (this.isLeftOriented() ? - GAP_HORIZONTAL : GAP_HORIZONTAL);
             this.chairSprite.position.y = PositionTransformer.getRealPosition(this.position).y + FAKE_ANCHOR_BOTTOM + GAP_VERTICAL;
             this.deskSprite.position.x = PositionTransformer.getRealPosition(this.position).x;
-            this.deskSprite.position.y = PositionTransformer.getRealPosition(this.position).y;
+            this.deskSprite.position.y = PositionTransformer.getRealPosition(this.position).y + FAKE_ANCHOR_BOTTOM;
         }
     }
 }

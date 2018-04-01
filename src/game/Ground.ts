@@ -7,6 +7,7 @@ import {SittableInterface} from "./objects/SittableInterface";
 import {World} from "./World";
 import {ObjectInterface} from "./objects/ObjectInterface";
 import {Dispenser} from "./objects/Dispenser";
+import {PositionTransformer} from "./PositionTransformer";
 
 const GRID_WIDTH = 12;
 const GRID_HEIGHT = 12;
@@ -33,6 +34,8 @@ export class Ground {
             this.wallRepository.addWall(new PIXI.Point(5, 5));
             this.wallRepository.addWall(new PIXI.Point(6, 5));
             this.objects.push(new Desk(new PIXI.Point(4, 5), world));
+            this.objects.push(new Desk(new PIXI.Point(4, 6), world));
+            this.objects.push(new Dispenser(new PIXI.Point(5, 4), world));
             return;
         }
 
@@ -100,7 +103,7 @@ export class Ground {
             const position1 = this.cells[acceptableIndexes[i]].getPosition();
             for (let j = i + 1; j < acceptableIndexes.length; j++) {
                 const position2 = this.cells[acceptableIndexes[j]].getPosition();
-                if (Ground.areNeighbors(position1, position2)) {
+                if (PositionTransformer.isNeighbor(position1, position2)) {
                     const newDist = Ground.getDist(cells, position1);
                     if (result === null || newDist < dist) {
                         dist = newDist;
@@ -195,19 +198,22 @@ export class Ground {
         return <Desk> freeDesks[Math.floor(Math.random() * freeDesks.length)];
     }
 
-    private static areNeighbors(position: PIXI.Point, position2: PIXI.Point): boolean {
-        return this.dist(position, position2) === 1;
-    }
+    getRandomFreeDispenser(humans: Human[]): Dispenser {
+        const freeDispensers = this.objects.filter((object) => {
+            return object.constructor.name === 'Dispenser' && !Ground.isSittableTaken(<Dispenser> object, humans);
+        });
 
-    private static dist(position: PIXI.Point, position2: PIXI.Point): number {
-        return (position.x - position2.x) * (position.x - position2.x) +
-            (position.y - position2.y) * (position.y - position2.y);
+        if (freeDispensers.length === 0) {
+            return null;
+        }
+
+        return <Dispenser> freeDispensers[Math.floor(Math.random() * freeDispensers.length)];
     }
 
     private static getDist(sources: PIXI.Point[], point: PIXI.Point): number {
         let dist = 0;
         sources.forEach((source) => {
-            dist += this.dist(source, point);
+            dist += PositionTransformer.dist(source, point);
         });
 
         return dist;

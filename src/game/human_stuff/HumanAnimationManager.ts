@@ -9,6 +9,7 @@ export enum ANIMATION {
     STAND_UP,
     TYPE,
     TALK,
+    DRINK,
 }
 
 export class HumanAnimationManager {
@@ -59,6 +60,8 @@ export class HumanAnimationManager {
             case ANIMATION.STAND_UP: return [39, 38, 37, 36, 12];
             case ANIMATION.TYPE: return [42, 43, 44, 45];
             case ANIMATION.TALK: return topOriented ? [54, 55, 56, 57, 58, 59] : [48, 49, 50, 51, 52, 53];
+            case ANIMATION.DRINK:
+                return [60, 61, 60, 60, 60, 62, 63, 63, 64, 63, 63, 64, 63, 62, 60, 60, 60, 60, 60, 60, 60];
             case ANIMATION.SMOKE:
                 let smoke_frames = [24, 25, 26, 27, 30, 31, 32, 33];
                 for (let i = 0; i < 6; i++) {
@@ -85,6 +88,7 @@ export class HumanAnimationManager {
             ANIMATION.STAND_UP,
             ANIMATION.TYPE,
             ANIMATION.TALK,
+            ANIMATION.DRINK,
         ];
     }
 
@@ -94,6 +98,13 @@ export class HumanAnimationManager {
 
 
     private static isLooped(animation: ANIMATION) {
-        return [ANIMATION.FREEZE, ANIMATION.WALK, ANIMATION.TALK, ANIMATION.SMOKE, ANIMATION.TYPE].indexOf(animation) > -1;
+        return [
+            ANIMATION.FREEZE,
+            ANIMATION.WALK,
+            ANIMATION.TALK,
+            ANIMATION.SMOKE,
+            ANIMATION.TYPE,
+            ANIMATION.DRINK,
+        ].indexOf(animation) > -1;
     }
 }

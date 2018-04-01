@@ -6,6 +6,7 @@ import {SittableInterface} from "./objects/SittableInterface";
 import {ObjectInterface} from "./objects/ObjectInterface";
 import {Human} from "./human_stuff/Human";
 import {Desk} from "./objects/Desk";
+import {Dispenser} from "./objects/Dispenser";
 
 export class World {
     private ground: Ground;
@@ -73,6 +74,10 @@ export class World {
 
     getRandomFreeDesk(): Desk {
         return this.ground.getRandomFreeDesk(this.humanRepository.humans);
+    }
+
+    getRandomFreeDispenser(): Dispenser {
+        return this.ground.getRandomFreeDispenser(this.humanRepository.humans);
     }
 
     getSelectedHumanSprite() {

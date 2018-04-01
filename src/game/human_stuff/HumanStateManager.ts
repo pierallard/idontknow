@@ -9,6 +9,7 @@ import {HumanAnimationManager} from "./HumanAnimationManager";
 import {TypeState} from "../human_states/TypeState";
 import {TalkState} from "../human_states/TalkState";
 import {Meeting} from "../human_states/Meeting";
+import {CoffeeState} from "../human_states/CoffeeState";
 
 export enum STATE {
     SMOKE,
@@ -17,6 +18,7 @@ export enum STATE {
     SIT,
     TYPE,
     TALK,
+    COFFEE,
 }
 
 export class HumanStateManager {
@@ -59,6 +61,13 @@ export class HumanStateManager {
                         this.world
                     );
                     break;
+                case STATE.COFFEE:
+                    this.state = new CoffeeState(
+                        this.human,
+                        this.world.getRandomFreeDispenser(),
+                        this.world
+                    );
+                    break;
                 case STATE.TALK:
                     this.state = new TalkState(this.human, this.world.getAnotherFreeHuman(this.human), game, this.world);
                     break;
@@ -93,6 +102,10 @@ export class HumanStateManager {
             states.push({state: STATE.TYPE, probability: 25});
         }
 
+        if (this.world.getRandomFreeDispenser() !== null) {
+            states.push({state: STATE.COFFEE, probability: 6});
+        }
+
         states.forEach((state) => {
             if (state.state === this.state.getState()) {
                 state.probability = state.probability / 10;
@@ -121,7 +134,7 @@ export class HumanStateManager {
     goMeeting(game: Phaser.Game, meeting: Meeting): boolean {
         this.state.stop(game);
         this.state = new TalkState(this.human, null, game, this.world, meeting);
-        
+
         return this.state.start(game);
     }
 
