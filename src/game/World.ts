@@ -4,6 +4,7 @@ import {Wall} from "./Wall";
 import {Sofa} from "./objects/Sofa";
 import {SittableInterface} from "./objects/SittableInterface";
 import {ObjectInterface} from "./objects/ObjectInterface";
+import {Human} from "./human_stuff/Human";
 
 export class World {
     private ground: Ground;
@@ -85,5 +86,28 @@ export class World {
         this.humanRepository.humans.forEach((human) => {
             human.resetAStar(startPosition, endPosition);
         });
+    }
+
+    getAnotherHuman(human: Human): Human {
+        const availableHumans = this.humanRepository.humans.filter((anotherHuman) => {
+            return anotherHuman !== human
+        });
+
+        if (availableHumans.length === 0) {
+            return null;
+        }
+
+        return availableHumans[Math.floor(Math.random() * availableHumans.length)];
+    }
+
+    getHumanAt(point: PIXI.Point): Human {
+        for (let i = 0; i < this.humanRepository.humans.length; i++) {
+            if (this.humanRepository.humans[i].getPosition().x === point.x &&
+                this.humanRepository.humans[i].getPosition().y === point.y) {
+                return this.humanRepository.humans[i];
+            }
+        }
+
+        return null;
     }
 }

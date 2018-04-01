@@ -85,6 +85,10 @@ export class Human {
         }
     }
 
+    forceTalk(cells: PIXI.Point[], point: PIXI.Point, time: number) {
+        this.stateManager.forceTalk(this.game, cells, point, time);
+    }
+
     moveTo(cell: PIXI.Point) {
         const path = this.closestPathFinder.getPath(this.cell, cell);
         if (path === null) {

@@ -59,7 +59,7 @@ export class HumanStateManager {
                     );
                     break;
                 case STATE.TALK:
-                    this.state = new TalkState(this.human);
+                    this.state = new TalkState(this.human, this.world.getAnotherHuman(this.human), game, this.world);
                     break;
                 case STATE.FREEZE:
                 default:
@@ -76,7 +76,10 @@ export class HumanStateManager {
         states.push({state: STATE.SMOKE, probability: 5});
         states.push({state: STATE.FREEZE, probability: 5});
         states.push({state: STATE.MOVE_RANDOM, probability: 2});
-        states.push({state: STATE.TALK, probability: 2000});
+
+        if (this.world.getAnotherHuman(this.human) !== null) {
+            states.push({state: STATE.TALK, probability: 10});
+        }
 
         if (this.world.getRandomFreeSofa() !== null) {
             states.push({state: STATE.SIT, probability: 2});
@@ -102,6 +105,12 @@ export class HumanStateManager {
     reset(game: Phaser.Game) {
         this.state.stop(game);
         this.state = new FreezeState(this.human);
+        this.state.start(game);
+    }
+
+    forceTalk(game: Phaser.Game, cells: PIXI.Point[], point: PIXI.Point, time: number) {
+        this.state.stop(game);
+        this.state = new TalkState(this.human, null, game, this.world, cells, point, time);
         this.state.start(game);
     }
 }

@@ -95,6 +95,24 @@ export class Ground {
         return this.cells[acceptableIndexes[random]].getPosition();
     }
 
+    getRandomNeighborCells(): PIXI.Point[] {
+        const acceptableIndexes = this.getAcceptables();
+        acceptableIndexes.sort(() => {
+            return Math.random() - 0.5;
+        });
+        for (let i = 0; i < acceptableIndexes.length; i++) {
+            const position1 = this.cells[acceptableIndexes[i]].getPosition();
+            for (let j = i + 1; j < acceptableIndexes.length; j++) {
+                const position2 = this.cells[acceptableIndexes[j]].getPosition();
+                if (Ground.areNeighbors(position1, position2)) {
+                    return [position1, position2];
+                }
+            }
+        }
+
+        return null;
+    }
+
     getGrid(): {index: number}[][] {
         let grid = [];
         for (let i = 0; i < this.cells.length; i++) {
@@ -181,5 +199,10 @@ export class Ground {
         }
 
         return freeDesks[Math.floor(Math.random() * freeDesks.length)];
+    }
+
+    private static areNeighbors(position: PIXI.Point, position2: PIXI.Point) {
+        return (position.x - position2.x) * (position.x - position2.x) +
+            (position.y - position2.y) * (position.y - position2.y) === 1;
     }
 }

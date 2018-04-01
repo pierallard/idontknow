@@ -7,9 +7,6 @@ export class HumanRepository {
     constructor(world: World) {
         this.humans = [
             new Human(world.getGround().getRandomCell()),
-            new Human(world.getGround().getRandomCell()),
-            new Human(world.getGround().getRandomCell()),
-            new Human(world.getGround().getRandomCell()),
             new Human(world.getGround().getRandomCell())
         ];
     }
