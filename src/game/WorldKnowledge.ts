@@ -70,6 +70,8 @@ export class WorldKnowledge {
             }
 
             this.objects.push(new Dispenser(this.getRandomCell(), this));
+            this.objects.push(new Dispenser(this.getRandomCell(), this));
+            this.objects.push(new Dispenser(this.getRandomCell(), this));
         }
 
         this.humanRepository = new HumanRepository(this);

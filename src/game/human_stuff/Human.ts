@@ -9,7 +9,7 @@ import {ObjectSelector} from "../objects/ObjectSelector";
 import {Meeting} from "../human_states/Meeting";
 import {TalkBubble} from "./TalkBubble";
 import {HumanHumorManager, HUMOR} from "./HumanHumorManager";
-import {HumanState} from "../human_states/HumanState";
+import {HumorSprite} from "./HumorSprite";
 
 export const WALK_CELL_DURATION = 1200;
 const GAP_FROM_BOTTOM = -8;
@@ -29,6 +29,7 @@ export class Human {
     private pathGraphics: Phaser.Graphics;
     private talkBubble: TalkBubble;
     private humorManager: HumanHumorManager;
+    private humorSprite: HumorSprite;
 
     constructor(cell: PIXI.Point) {
         this.cell = cell;
@@ -39,6 +40,7 @@ export class Human {
         this.animationManager = new HumanAnimationManager();
         this.talkBubble = new TalkBubble();
         this.humorManager = new HumanHumorManager();
+        this.humorSprite = new HumorSprite();
     }
 
     create(game: Phaser.Game, group: Phaser.Group, worldKnowledge: WorldKnowledge) {
@@ -63,6 +65,7 @@ export class Human {
         this.closestPathFinder = new ClosestPathFinder(game, worldKnowledge);
         this.stateManager.create(game, worldKnowledge, this.animationManager);
         this.talkBubble.create(this.sprite, this.game, group);
+        this.humorSprite.create(this.sprite, this.game, group);
 
         if (PATH_DEBUG) {
             this.pathGraphics = game.add.graphics(0, 0, group);
@@ -74,6 +77,7 @@ export class Human {
         this.talkBubble.update();
         this.stateManager.updateState(this.game);
         this.humorManager.update();
+        this.humorSprite.update(this.humorManager.getGeneralHumor());
 
         if (PATH_DEBUG) {
             this.pathGraphics.clear();

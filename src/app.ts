@@ -4,7 +4,7 @@ import Boot from "./game/game_state/Boot";
 import Preload from "./game/game_state/Preload";
 import Play from "./game/game_state/Play";
 
-export const SCALE = 4;
+export const SCALE = 3;
 export const CAMERA_WIDTH_PIXELS = 1280 / SCALE;
 export const CAMERA_HEIGHT_PIXELS = 720 / SCALE;
 export const WORLD_WIDTH = 1280 * 1.1 / 3;

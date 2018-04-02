@@ -61,4 +61,8 @@ export class HumanHumorManager {
     getHumor(humor: HUMOR): number {
         return this.humors[humor];
     }
+
+    getGeneralHumor() {
+        return (this.humors[HUMOR.RELAXATION] + this.humors[HUMOR.SOCIAL] + this.humors[HUMOR.HUNGER]) / 3;
+    }
 }
