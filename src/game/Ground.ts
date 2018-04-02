@@ -3,8 +3,8 @@ import {Desk} from "./objects/Desk";
 import {WallRepository} from "./repositories/WallRepository";
 import {Sofa} from "./objects/Sofa";
 import {Human} from "./human_stuff/Human";
-import {SittableInterface} from "./objects/SittableInterface";
-import {World} from "./World";
+import {InteractiveObjectInterface} from "./objects/InteractiveObjectInterface";
+import {WorldKnowledge} from "./WorldKnowledge";
 import {ObjectInterface} from "./objects/ObjectInterface";
 import {Dispenser} from "./objects/Dispenser";
 import {PositionTransformer} from "./PositionTransformer";
@@ -19,7 +19,7 @@ export class Ground {
     private objects: ObjectInterface[];
     private wallRepository: WallRepository;
 
-    constructor(world: World) {
+    constructor(worldKnowledge: WorldKnowledge) {
         this.cells = [];
         this.objects = [];
         this.wallRepository = new WallRepository();
@@ -33,9 +33,9 @@ export class Ground {
         if (DEBUG_WORLD) {
             this.wallRepository.addWall(new PIXI.Point(5, 5));
             this.wallRepository.addWall(new PIXI.Point(6, 5));
-            this.objects.push(new Desk(new PIXI.Point(4, 5), world));
-            this.objects.push(new Desk(new PIXI.Point(4, 6), world));
-            this.objects.push(new Dispenser(new PIXI.Point(5, 4), world));
+            this.objects.push(new Desk(new PIXI.Point(4, 5), worldKnowledge));
+            this.objects.push(new Desk(new PIXI.Point(4, 6), worldKnowledge));
+            this.objects.push(new Dispenser(new PIXI.Point(5, 4), worldKnowledge));
             return;
         }
 
@@ -63,14 +63,14 @@ export class Ground {
         });
 
         for (let i = 0; i < 3; i++) {
-            this.objects.push(new Desk(this.getRandomCell(), world));
+            this.objects.push(new Desk(this.getRandomCell(), worldKnowledge));
         }
 
         for (let i = 0; i < 3; i++) {
-            this.objects.push(new Sofa(this.getRandomCell(), world));
+            this.objects.push(new Sofa(this.getRandomCell(), worldKnowledge));
         }
 
-        this.objects.push(new Dispenser(this.getRandomCell(), world));
+        this.objects.push(new Dispenser(this.getRandomCell(), worldKnowledge));
     }
 
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}) {
@@ -165,7 +165,7 @@ export class Ground {
 
     getRandomFreeSofa(humans: Human[]): Sofa {
         const freeSofas = this.objects.filter((object) => {
-            return object.constructor.name === 'Sofa' && !Ground.isSittableTaken(<Sofa> object, humans);
+            return object.constructor.name === 'Sofa' && !Ground.isObjectUsed(<Sofa> object, humans);
         });
 
         if (freeSofas.length === 0) {
@@ -175,10 +175,10 @@ export class Ground {
         return <Sofa> freeSofas[Math.floor(Math.random() * freeSofas.length)];
     }
 
-    static isSittableTaken(sittable: SittableInterface, humans: Human[]) {
+    static isObjectUsed(interactiveObject: InteractiveObjectInterface, humans: Human[]) {
         for (let i = 0; i < humans.length; i++) {
             const human = humans[i];
-            if (sittable.getPosition().x === human.getPosition().x && sittable.getPosition().y === human.getPosition().y) {
+            if (interactiveObject.getPosition().x === human.getPosition().x && interactiveObject.getPosition().y === human.getPosition().y) {
                 return true;
             }
         }
@@ -188,7 +188,7 @@ export class Ground {
 
     getRandomFreeDesk(humans: Human[]): Desk {
         const freeDesks = this.objects.filter((object) => {
-            return object.constructor.name === 'Desk' && !Ground.isSittableTaken(<Desk> object, humans);
+            return object.constructor.name === 'Desk' && !Ground.isObjectUsed(<Desk> object, humans);
         });
 
         if (freeDesks.length === 0) {
@@ -200,7 +200,7 @@ export class Ground {
 
     getRandomFreeDispenser(humans: Human[]): Dispenser {
         const freeDispensers = this.objects.filter((object) => {
-            return object.constructor.name === 'Dispenser' && !Ground.isSittableTaken(<Dispenser> object, humans);
+            return object.constructor.name === 'Dispenser' && !Ground.isObjectUsed(<Dispenser> object, humans);
         });
 
         if (freeDispensers.length === 0) {

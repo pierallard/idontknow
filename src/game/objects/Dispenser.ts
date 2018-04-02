@@ -1,22 +1,22 @@
 import {MovableObjectInterface} from "./MovableObjectInterface";
 import {PositionTransformer} from "../PositionTransformer";
-import {World} from "../World";
+import {WorldKnowledge} from "../WorldKnowledge";
 import {ObjectMover} from "./ObjectMover";
 import {DIRECTION} from "../Direction";
-import {SittableInterface} from "./SittableInterface";
+import {InteractiveObjectInterface} from "./InteractiveObjectInterface";
 
 const DISPENSER_BOTTOM = -4;
 const DISPENSER_LEFT = 4;
 const DISPENSER_ANCHOR_BOTTOM = 3;
 
-export class Dispenser implements MovableObjectInterface, SittableInterface {
+export class Dispenser implements MovableObjectInterface, InteractiveObjectInterface {
     private sprite: Phaser.Sprite;
     private position: PIXI.Point;
-    private world: World;
+    private worldKnowledge: WorldKnowledge;
 
-    constructor(point: PIXI.Point, world: World) {
+    constructor(point: PIXI.Point, worldKnowledge: WorldKnowledge) {
         this.position = point;
-        this.world = world;
+        this.worldKnowledge = worldKnowledge;
     }
 
     create(game: Phaser.Game, group: Phaser.Group) {
@@ -27,7 +27,7 @@ export class Dispenser implements MovableObjectInterface, SittableInterface {
         );
         this.sprite.anchor.set(0.5, 1.0 - DISPENSER_ANCHOR_BOTTOM/this.sprite.height);
 
-        ObjectMover.makeMovable(this, this.world);
+        ObjectMover.makeMovable(this, this.worldKnowledge);
 
         group.add(this.sprite);
     }
@@ -41,7 +41,7 @@ export class Dispenser implements MovableObjectInterface, SittableInterface {
     }
 
     tryToMove(point: PIXI.Point): void {
-        if (this.world.isFreePosition(point, this)) {
+        if (this.worldKnowledge.isFreePosition(point, this)) {
             this.position = point;
             this.sprite.x = PositionTransformer.getRealPosition(this.position).x + DISPENSER_LEFT;
             this.sprite.y = PositionTransformer.getRealPosition(this.position).y + DISPENSER_BOTTOM - DISPENSER_ANCHOR_BOTTOM;

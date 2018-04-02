@@ -1,8 +1,8 @@
 import {CELL_HEIGHT, PositionTransformer} from "../PositionTransformer";
-import {World} from "../World";
+import {WorldKnowledge} from "../WorldKnowledge";
 import {ClosestPathFinder} from "../ClosestPathFinder";
 import {DIRECTION, Direction} from "../Direction";
-import {SittableInterface} from "../objects/SittableInterface";
+import {InteractiveObjectInterface} from "../objects/InteractiveObjectInterface";
 import {ANIMATION, HumanAnimationManager} from "./HumanAnimationManager";
 import {HumanStateManager, STATE} from "./HumanStateManager";
 import {ObjectSelector} from "../objects/ObjectSelector";
@@ -18,9 +18,8 @@ export class Human {
     private cell: PIXI.Point;
     private game: Phaser.Game;
     private moving: boolean;
-    private pathfinder: Phaser.Plugin.PathFinderPlugin;
     private path: PIXI.Point[];
-    private world: World;
+    private worldKnowledge: WorldKnowledge;
     private closestPathFinder: ClosestPathFinder;
     private anchorPixels: PIXI.Point;
     private animationManager: HumanAnimationManager;
@@ -38,9 +37,9 @@ export class Human {
         this.talkBubble = new TalkBubble();
     }
 
-    create(game: Phaser.Game, group: Phaser.Group, world: World) {
+    create(game: Phaser.Game, group: Phaser.Group, worldKnowledge: WorldKnowledge) {
         this.game = game;
-        this.world = world;
+        this.worldKnowledge = worldKnowledge;
 
         this.sprite = game.add.tileSprite(
             PositionTransformer.getRealPosition(this.cell).x + this.anchorPixels.x,
@@ -55,12 +54,9 @@ export class Human {
         ObjectSelector.makeSelectable([this.sprite]);
         group.add(this.sprite);
 
-        this.pathfinder = game.plugins.add(Phaser.Plugin.PathFinderPlugin);
-        this.pathfinder.setGrid(world.getGround().getGrid(), world.getGround().getAcceptables());
-
         this.animationManager.loadAnimation(ANIMATION.FREEZE, true, false);
-        this.closestPathFinder = new ClosestPathFinder(game, world);
-        this.stateManager.create(game, world, this.animationManager);
+        this.closestPathFinder = new ClosestPathFinder(game, worldKnowledge);
+        this.stateManager.create(game, worldKnowledge, this.animationManager);
         this.talkBubble.create(this.sprite, this.game, group);
 
         if (PATH_DEBUG) {
@@ -156,7 +152,7 @@ export class Human {
             }
             humanPositions.push(this.cell);
         }
-        this.world.humanMoved(humanPositions);
+        this.worldKnowledge.humanMoved(humanPositions);
     }
 
     getPosition() {
@@ -167,13 +163,13 @@ export class Human {
         return this.moving;
     }
 
-    goToSittable(sittable: SittableInterface, isLeft: boolean = null) {
-        const direction = Direction.getNeighborDirection(this.cell, sittable.getPosition());
+    interactWith(interactiveObject: InteractiveObjectInterface, isLeft: boolean = null) {
+        const direction = Direction.getNeighborDirection(this.cell, interactiveObject.getPosition());
         const side = (isLeft !== null) ? isLeft : Human.isHumanLeft(direction);
         // Human has to gap 5px from the sofa to be sit properly, and 1px from the bottom.
-        this.anchorPixels.x = sittable.getPositionGap().x + (side ? -5 : 5);
-        this.anchorPixels.y = sittable.getPositionGap().y - 1;
-        this.cell = sittable.getPosition();
+        this.anchorPixels.x = interactiveObject.getPositionGap().x + (side ? -5 : 5);
+        this.anchorPixels.y = interactiveObject.getPositionGap().y - 1;
+        this.cell = interactiveObject.getPosition();
         this.animateMove(direction);
     }
 
@@ -189,7 +185,7 @@ export class Human {
         const cells = [];
         entries.forEach((direction) => {
             const tryCell = Direction.getGap(this.cell, direction);
-            if (this.world.getGround().isFree(tryCell)) {
+            if (this.worldKnowledge.getGround().isFree(tryCell)) {
                 cells.push(tryCell);
             }
         });

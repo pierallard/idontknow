@@ -4,7 +4,7 @@ import {FreezeState} from "../human_states/FreezeState";
 import {SmokeState} from "../human_states/SmokeState";
 import {SitState} from "../human_states/SitState";
 import {MoveRandomState} from "../human_states/MoveRandomState";
-import {World} from "../World";
+import {WorldKnowledge} from "../WorldKnowledge";
 import {HumanAnimationManager} from "./HumanAnimationManager";
 import {TypeState} from "../human_states/TypeState";
 import {TalkState} from "../human_states/TalkState";
@@ -24,7 +24,7 @@ export enum STATE {
 export class HumanStateManager {
     private human: Human;
     private state: HumanState;
-    private world: World;
+    private worldKnowledge: WorldKnowledge;
     private animationManager: HumanAnimationManager;
 
     constructor(human: Human) {
@@ -32,9 +32,9 @@ export class HumanStateManager {
         this.state = new FreezeState(human);
     }
 
-    create(game: Phaser.Game, world: World, animationManager: HumanAnimationManager) {
+    create(game: Phaser.Game, worldKnowledge: WorldKnowledge, animationManager: HumanAnimationManager) {
         this.state.start(game);
-        this.world = world;
+        this.worldKnowledge = worldKnowledge;
         this.animationManager = animationManager;
     }
 
@@ -45,31 +45,31 @@ export class HumanStateManager {
                     this.state = new SmokeState(this.human);
                     break;
                 case STATE.MOVE_RANDOM:
-                    this.state = new MoveRandomState(this.human, this.world);
+                    this.state = new MoveRandomState(this.human, this.worldKnowledge);
                     break;
                 case STATE.SIT:
                     this.state = new SitState(
                         this.human,
-                        this.world.getRandomFreeSofa(),
-                        this.world
+                        this.worldKnowledge.getRandomFreeSofa(),
+                        this.worldKnowledge
                     );
                     break;
                 case STATE.TYPE:
                     this.state = new TypeState(
                         this.human,
-                        this.world.getRandomFreeDesk(),
-                        this.world
+                        this.worldKnowledge.getRandomFreeDesk(),
+                        this.worldKnowledge
                     );
                     break;
                 case STATE.COFFEE:
                     this.state = new CoffeeState(
                         this.human,
-                        this.world.getRandomFreeDispenser(),
-                        this.world
+                        this.worldKnowledge.getRandomFreeDispenser(),
+                        this.worldKnowledge
                     );
                     break;
                 case STATE.TALK:
-                    this.state = new TalkState(this.human, this.world.getAnotherFreeHuman(this.human), game, this.world);
+                    this.state = new TalkState(this.human, this.worldKnowledge.getAnotherFreeHuman(this.human), game, this.worldKnowledge);
                     break;
                 case STATE.FREEZE:
                 default:
@@ -91,18 +91,18 @@ export class HumanStateManager {
         states.push({state: STATE.FREEZE, probability: 1});
         states.push({state: STATE.MOVE_RANDOM, probability: 2});
 
-        if (this.world.getAnotherFreeHuman(this.human) !== null) {
+        if (this.worldKnowledge.getAnotherFreeHuman(this.human) !== null) {
             states.push({state: STATE.TALK, probability: 8});
         }
 
-        if (this.world.getRandomFreeSofa() !== null) {
+        if (this.worldKnowledge.getRandomFreeSofa() !== null) {
             states.push({state: STATE.SIT, probability: 2});
         }
-        if (this.world.getRandomFreeDesk() !== null) {
+        if (this.worldKnowledge.getRandomFreeDesk() !== null) {
             states.push({state: STATE.TYPE, probability: 25});
         }
 
-        if (this.world.getRandomFreeDispenser() !== null) {
+        if (this.worldKnowledge.getRandomFreeDispenser() !== null) {
             states.push({state: STATE.COFFEE, probability: 6});
         }
 
@@ -133,7 +133,7 @@ export class HumanStateManager {
 
     goMeeting(game: Phaser.Game, meeting: Meeting): boolean {
         this.state.stop(game);
-        this.state = new TalkState(this.human, null, game, this.world, meeting);
+        this.state = new TalkState(this.human, null, game, this.worldKnowledge, meeting);
 
         return this.state.start(game);
     }

@@ -2,13 +2,13 @@ import {Ground} from "./Ground";
 import {HumanRepository} from "./repositories/HumanRepository";
 import {Wall} from "./Wall";
 import {Sofa} from "./objects/Sofa";
-import {SittableInterface} from "./objects/SittableInterface";
+import {InteractiveObjectInterface} from "./objects/InteractiveObjectInterface";
 import {ObjectInterface} from "./objects/ObjectInterface";
 import {Human} from "./human_stuff/Human";
 import {Desk} from "./objects/Desk";
 import {Dispenser} from "./objects/Dispenser";
 
-export class World {
+export class WorldKnowledge {
     private ground: Ground;
     private humanRepository: HumanRepository;
 
@@ -48,7 +48,7 @@ export class World {
     private anyHumanIsAboveWall(wall: Wall) {
         const humans = this.humanRepository.humans;
         for (let i = 0; i < humans.length; i++) {
-            if (World.humanIsAboveWall(humans[i].getPosition(), wall)) {
+            if (WorldKnowledge.humanIsAboveWall(humans[i].getPosition(), wall)) {
                 return true;
             }
         }
@@ -68,8 +68,8 @@ export class World {
         return this.ground.getRandomFreeSofa(this.humanRepository.humans);
     }
 
-    isSittableTaken(sittable: SittableInterface) {
-        return Ground.isSittableTaken(sittable, this.humanRepository.humans);
+    isObjectUsed(interactiveObject: InteractiveObjectInterface) {
+        return Ground.isObjectUsed(interactiveObject, this.humanRepository.humans);
     }
 
     getRandomFreeDesk(): Desk {

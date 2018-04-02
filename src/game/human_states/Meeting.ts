@@ -1,12 +1,12 @@
 import {Human} from "../human_stuff/Human";
-import {World} from "../World";
+import {WorldKnowledge} from "../WorldKnowledge";
 
 export class Meeting {
     private time: number;
     private places: {human:Human, position: PIXI.Point}[];
 
-    constructor(humans: Human[], time: number, world: World) {
-        const cells = world.getGround().getMeetingCells(humans.map((human) => {
+    constructor(humans: Human[], time: number, worldKnowledge: WorldKnowledge) {
+        const cells = worldKnowledge.getGround().getMeetingCells(humans.map((human) => {
             return human.getPosition();
         }));
         if (cells === null) {

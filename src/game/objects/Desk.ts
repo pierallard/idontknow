@@ -1,8 +1,8 @@
 import {PositionTransformer} from "../PositionTransformer";
-import {SittableInterface} from "./SittableInterface";
+import {InteractiveObjectInterface} from "./InteractiveObjectInterface";
 import {DIRECTION} from "../Direction";
 import {ObjectMover} from "./ObjectMover";
-import {World} from "../World";
+import {WorldKnowledge} from "../WorldKnowledge";
 import {MovableObjectInterface} from "./MovableObjectInterface";
 
 /**
@@ -25,15 +25,15 @@ const GAP_HORIZONTAL = -10;
  */
 const GAP_VERTICAL = -8;
 
-export class Desk implements SittableInterface, MovableObjectInterface {
+export class Desk implements InteractiveObjectInterface, MovableObjectInterface {
     private deskSprite: Phaser.Sprite;
     private chairSprite: Phaser.Sprite;
     private position: PIXI.Point;
-    private world: World;
+    private worldKnowledge: WorldKnowledge;
 
-    constructor(point: PIXI.Point, world: World) {
+    constructor(point: PIXI.Point, worldKnowledge: WorldKnowledge) {
         this.position = point;
-        this.world = world;
+        this.worldKnowledge = worldKnowledge;
     }
 
     create(game: Phaser.Game, group: Phaser.Group) {
@@ -55,7 +55,7 @@ export class Desk implements SittableInterface, MovableObjectInterface {
         console.log('chair: ' + this.chairSprite.y);
         console.log('desk:  ' + this.deskSprite.y);
 
-        ObjectMover.makeMovable(this, this.world);
+        ObjectMover.makeMovable(this, this.worldKnowledge);
 
         if (isLeftOriented) {
             this.deskSprite.scale.set(-1, 1);
@@ -93,7 +93,7 @@ export class Desk implements SittableInterface, MovableObjectInterface {
     }
 
     tryToMove(point: PIXI.Point): void {
-        if (this.world.isFreePosition(point, this)) {
+        if (this.worldKnowledge.isFreePosition(point, this)) {
             this.position = point;
             this.chairSprite.position.x = PositionTransformer.getRealPosition(this.position).x + (this.isLeftOriented() ? - GAP_HORIZONTAL : GAP_HORIZONTAL);
             this.chairSprite.position.y = PositionTransformer.getRealPosition(this.position).y + FAKE_ANCHOR_BOTTOM + GAP_VERTICAL;

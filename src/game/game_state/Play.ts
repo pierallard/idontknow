@@ -1,13 +1,13 @@
-import {World} from "../World";
+import {WorldKnowledge} from "../WorldKnowledge";
 import {CAMERA_HEIGHT_PIXELS, CAMERA_WIDTH_PIXELS, WORLD_HEIGHT, WORLD_WIDTH} from "../../app";
 
 export default class Play extends Phaser.State {
-    private worldKnowledge: World;
+    private worldKnowledge: WorldKnowledge;
     private groups: {[index: string] : Phaser.Group};
 
     constructor() {
         super();
-        this.worldKnowledge = new World();
+        this.worldKnowledge = new WorldKnowledge();
     }
 
     public create() {

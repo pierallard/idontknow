@@ -1,23 +1,23 @@
 import {Human} from "../human_stuff/Human";
-import {World} from "../World";
+import {WorldKnowledge} from "../WorldKnowledge";
 
 export class HumanRepository {
     humans: Human[];
 
-    constructor(world: World) {
+    constructor(worldKnowledge: WorldKnowledge) {
         this.humans = [
-            new Human(world.getGround().getRandomCell()),
-            new Human(world.getGround().getRandomCell()),
-            new Human(world.getGround().getRandomCell()),
-            new Human(world.getGround().getRandomCell()),
-            new Human(world.getGround().getRandomCell()),
-            new Human(world.getGround().getRandomCell())
+            new Human(worldKnowledge.getGround().getRandomCell()),
+            new Human(worldKnowledge.getGround().getRandomCell()),
+            new Human(worldKnowledge.getGround().getRandomCell()),
+            new Human(worldKnowledge.getGround().getRandomCell()),
+            new Human(worldKnowledge.getGround().getRandomCell()),
+            new Human(worldKnowledge.getGround().getRandomCell())
         ];
     }
 
-    create(game: Phaser.Game, groups: {[index: string]: Phaser.Group }, world: World) {
+    create(game: Phaser.Game, groups: {[index: string]: Phaser.Group }, worldKnowledge: WorldKnowledge) {
         this.humans.forEach((human) => {
-            human.create(game, groups['noname'], world);
+            human.create(game, groups['noname'], worldKnowledge);
         })
     }
 

@@ -1,6 +1,6 @@
 import {HumanState} from "./HumanState";
 import {Human, WALK_CELL_DURATION} from "../human_stuff/Human";
-import {World} from "../World";
+import {WorldKnowledge} from "../WorldKnowledge";
 import {STATE} from "../human_stuff/HumanStateManager";
 import {Dispenser} from "../objects/Dispenser";
 import {PositionTransformer} from "../PositionTransformer";
@@ -12,20 +12,20 @@ export class CoffeeState implements HumanState {
     private dispenser: Dispenser;
     private game: Phaser.Game;
     private isHumanOnTheRightCell: boolean;
-    private world: World;
+    private worldKnowledge: WorldKnowledge;
     private events: Phaser.TimerEvent[];
 
-    constructor(human: Human, dispenser: Dispenser, world: World) {
+    constructor(human: Human, dispenser: Dispenser, worldKnowledge: WorldKnowledge) {
         this.human = human;
         this.dispenser = dispenser;
         this.isHumanOnTheRightCell = false;
-        this.world = world;
+        this.worldKnowledge = worldKnowledge;
         this.events = [];
     }
 
     isActive(): boolean {
         if (!this.isHumanOnTheRightCell) {
-            if (this.world.isSittableTaken(this.dispenser)) {
+            if (this.worldKnowledge.isObjectUsed(this.dispenser)) {
                 this.active = false;
 
                 return false;
@@ -34,7 +34,7 @@ export class CoffeeState implements HumanState {
 
         if (!this.isHumanOnTheRightCell && this.isNeighborPosition()) {
             this.isHumanOnTheRightCell = true;
-            this.human.goToSittable(this.dispenser, this.dispenser.forceOrientation());
+            this.human.interactWith(this.dispenser, this.dispenser.forceOrientation());
             this.events.push(this.game.time.events.add(WALK_CELL_DURATION + 100, () => {
                 this.human.loadAnimation(ANIMATION.DRINK);
                 this.events.push(this.game.time.events.add(Math.floor(Phaser.Math.random(2, 4)) * HumanAnimationManager.getAnimationTime(ANIMATION.DRINK), () => {

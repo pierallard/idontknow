@@ -1,32 +1,31 @@
 import {HumanState} from "./HumanState";
 import {Human, WALK_CELL_DURATION} from "../human_stuff/Human";
-import {World} from "../World";
-import {SittableInterface} from "../objects/SittableInterface";
+import {WorldKnowledge} from "../WorldKnowledge";
+import {InteractiveObjectInterface} from "../objects/InteractiveObjectInterface";
 import {ANIMATION, HumanAnimationManager} from "../human_stuff/HumanAnimationManager";
 import {STATE} from "../human_stuff/HumanStateManager";
-import {Direction} from "../Direction";
 import {PositionTransformer} from "../PositionTransformer";
 
 export class SitState implements HumanState {
     private human: Human;
     private active: boolean;
-    private sittable: SittableInterface;
+    private interactiveObject: InteractiveObjectInterface;
     private game: Phaser.Game;
     private isHumanOnTheRightCell: boolean;
-    private world: World;
+    private worldKnowledge: WorldKnowledge;
     private events: Phaser.TimerEvent[];
 
-    constructor(human: Human, sittable: SittableInterface, world: World) {
+    constructor(human: Human, interactiveObject: InteractiveObjectInterface, worldKnowledge: WorldKnowledge) {
         this.human = human;
-        this.sittable = sittable;
+        this.interactiveObject = interactiveObject;
         this.isHumanOnTheRightCell = false;
-        this.world = world;
+        this.worldKnowledge = worldKnowledge;
         this.events = [];
     }
 
     isActive(): boolean {
         if (!this.isHumanOnTheRightCell) {
-            if (this.world.isSittableTaken(this.sittable)) {
+            if (this.worldKnowledge.isObjectUsed(this.interactiveObject)) {
                 this.active = false;
 
                 return false;
@@ -34,13 +33,13 @@ export class SitState implements HumanState {
         }
         if (!this.isHumanOnTheRightCell && this.isNeighborPosition()) {
             this.isHumanOnTheRightCell = true;
-            this.human.goToSittable(this.sittable);
+            this.human.interactWith(this.interactiveObject);
             this.events.push(this.game.time.events.add(WALK_CELL_DURATION + 100, () => {
                 this.human.loadAnimation(ANIMATION.SIT_DOWN);
                 this.events.push(this.game.time.events.add(Phaser.Math.random(3, 10) * Phaser.Timer.SECOND + HumanAnimationManager.getAnimationTime(ANIMATION.SIT_DOWN), () => {
                     this.human.loadAnimation(ANIMATION.STAND_UP);
                     this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.STAND_UP) + 100, () => {
-                        this.human.goToFreeCell(this.sittable.getEntries());
+                        this.human.goToFreeCell(this.interactiveObject.getEntries());
                         this.events.push(this.game.time.events.add(WALK_CELL_DURATION + 100, () => {
                             this.active = false;
                         }, this));
@@ -56,7 +55,7 @@ export class SitState implements HumanState {
         this.active = true;
         this.game = game;
 
-        if (!this.human.moveToClosest(this.sittable.getPosition(), this.sittable.getEntries())) {
+        if (!this.human.moveToClosest(this.interactiveObject.getPosition(), this.interactiveObject.getEntries())) {
             this.active = false;
             this.stop(game);
             return false;
@@ -67,7 +66,7 @@ export class SitState implements HumanState {
 
     private isNeighborPosition() {
         return !this.human.isMoving() &&
-            PositionTransformer.isNeighbor(this.human.getPosition(), this.sittable.getPosition());
+            PositionTransformer.isNeighbor(this.human.getPosition(), this.interactiveObject.getPosition());
     }
 
     stop(game: Phaser.Game): void {

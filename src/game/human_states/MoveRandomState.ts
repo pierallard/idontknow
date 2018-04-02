@@ -1,6 +1,6 @@
 import {Human} from "../human_stuff/Human";
 import {HumanState} from "./HumanState";
-import {World} from "../World";
+import {WorldKnowledge} from "../WorldKnowledge";
 import {STATE} from "../human_stuff/HumanStateManager";
 
 export class MoveRandomState implements HumanState {
@@ -8,12 +8,12 @@ export class MoveRandomState implements HumanState {
     private goal: PIXI.Point;
     private active: boolean;
 
-    constructor(human: Human, world: World) {
+    constructor(human: Human, worldKnowledge: WorldKnowledge) {
         this.active = false;
         this.human = human;
-        this.goal = world.getGround().getRandomCell();
+        this.goal = worldKnowledge.getGround().getRandomCell();
         while (this.human.getPosition().x === this.goal.x && this.human.getPosition().y === this.goal.y) {
-            this.goal = world.getGround().getRandomCell();
+            this.goal = worldKnowledge.getGround().getRandomCell();
         }
     }
 

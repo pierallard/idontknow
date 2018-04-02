@@ -1,15 +1,15 @@
-import {World} from "./World";
+import {WorldKnowledge} from "./WorldKnowledge";
 import {Direction, DIRECTION} from "./Direction";
 
 export class ClosestPathFinder {
     private finders: Object;
-    private world: World;
+    private worldKnowledge: WorldKnowledge;
 
-    constructor(game: Phaser.Game, world: World) {
+    constructor(game: Phaser.Game, worldKnowledge: WorldKnowledge) {
         this.finders = {};
-        this.world = world;
-        const grid = world.getGround().getGrid();
-        const acceptables = world.getGround().getAcceptables();
+        this.worldKnowledge = worldKnowledge;
+        const grid = worldKnowledge.getGround().getGrid();
+        const acceptables = worldKnowledge.getGround().getAcceptables();
         Direction.neighborDirections().concat([DIRECTION.CURRENT]).forEach((direction: DIRECTION) => {
             this.finders[direction] = game.plugins.add(Phaser.Plugin.PathFinderPlugin);
             this.finders[direction].setGrid(grid, acceptables);
@@ -95,8 +95,8 @@ export class ClosestPathFinder {
     }
 
     reset() {
-        const grid = this.world.getGround().getGrid();
-        const acceptables = this.world.getGround().getAcceptables();
+        const grid = this.worldKnowledge.getGround().getGrid();
+        const acceptables = this.worldKnowledge.getGround().getAcceptables();
         Object.keys(this.finders).forEach((key) => {
             this.finders[key].setGrid(grid, acceptables);
         });

@@ -1,6 +1,6 @@
 import {Human} from "../human_stuff/Human";
 import {HumanState} from "./HumanState";
-import {World} from "../World";
+import {WorldKnowledge} from "../WorldKnowledge";
 import {ANIMATION, HumanAnimationManager} from "../human_stuff/HumanAnimationManager";
 import {Meeting} from "./Meeting";
 import {Direction} from "../Direction";
@@ -11,7 +11,7 @@ export class TalkState implements HumanState {
     private active: boolean;
     private anotherHuman: Human;
     private game: Phaser.Game;
-    private world: World;
+    private worldKnowledge: WorldKnowledge;
     private meetingStarted: boolean;
     private events: Phaser.TimerEvent[];
     private meeting: Meeting;
@@ -20,13 +20,13 @@ export class TalkState implements HumanState {
         human: Human,
         anotherHuman: Human,
         game: Phaser.Game,
-        world: World,
+        worldKnowledge: WorldKnowledge,
         meeting: Meeting = null
     ) {
         this.human = human;
         this.anotherHuman = anotherHuman;
         this.game = game;
-        this.world = world;
+        this.worldKnowledge = worldKnowledge;
         this.meetingStarted = false;
         this.events = [];
         this.meeting = meeting;
@@ -81,7 +81,7 @@ export class TalkState implements HumanState {
             this.meeting = new Meeting(
                 [this.human, this.anotherHuman],
                 Phaser.Math.random(8, 20) * Phaser.Timer.SECOND,
-                this.world
+                this.worldKnowledge
             );
 
             if (!this.anotherHuman.goMeeting(this.meeting)) {

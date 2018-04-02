@@ -1,20 +1,20 @@
 import {PositionTransformer} from "../PositionTransformer";
 import {MovableObjectInterface} from "./MovableObjectInterface";
 import {ObjectSelector} from "./ObjectSelector";
-import {World} from "../World";
+import {WorldKnowledge} from "../WorldKnowledge";
 
 export class ObjectMover {
-    static makeMovable(movableObject: MovableObjectInterface, world: World) {
+    static makeMovable(movableObject: MovableObjectInterface, worldKnowledge: WorldKnowledge) {
         movableObject.getSprites().forEach((sprite) => {
             sprite.inputEnabled = true;
             sprite.input.pixelPerfectOver = true;
             sprite.input.pixelPerfectClick = true;
             sprite.input.useHandCursor = true;
-            sprite.events.onInputDown.add(this.select, this, 0, movableObject, world)
+            sprite.events.onInputDown.add(this.select, this, 0, movableObject, worldKnowledge)
         })
     }
 
-    private static select(sprite, _pointer: Phaser.Pointer, movableObject: MovableObjectInterface, world) {
+    private static select(sprite, _pointer: Phaser.Pointer, movableObject: MovableObjectInterface, worldKnowledge) {
         const gap = new PIXI.Point(
             _pointer.position.x - PositionTransformer.getRealPosition(movableObject.getPosition()).x,
             _pointer.position.y - PositionTransformer.getRealPosition(movableObject.getPosition()).y
@@ -27,7 +27,7 @@ export class ObjectMover {
         });
 
         _pointer.game.input.addMoveCallback(moveCallback, this);
-        sprite.events.onInputUp.add(this.unselect, this, 0, movableObject, world, movableObject.getPosition());
+        sprite.events.onInputUp.add(this.unselect, this, 0, movableObject, worldKnowledge, movableObject.getPosition());
     }
 
     private static unselect(
@@ -35,7 +35,7 @@ export class ObjectMover {
         _pointer: Phaser.Pointer,
         bool,
         movableObject: MovableObjectInterface,
-        world: World,
+        worldKnowledge: WorldKnowledge,
         startPoint: PIXI.Point
     ) {
         _pointer.game.input.moveCallbacks = [];
@@ -43,7 +43,7 @@ export class ObjectMover {
             ObjectSelector.setSelected(sprite, false);
         });
         if (startPoint.x !== movableObject.getPosition().x || startPoint.y !== movableObject.getPosition().y) {
-            world.resetAStar(startPoint, movableObject.getPosition());
+            worldKnowledge.resetAStar(startPoint, movableObject.getPosition());
         }
     }
 }

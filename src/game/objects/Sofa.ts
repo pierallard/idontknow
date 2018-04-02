@@ -1,22 +1,22 @@
 import {PositionTransformer} from "../PositionTransformer";
-import {SittableInterface} from "./SittableInterface";
+import {InteractiveObjectInterface} from "./InteractiveObjectInterface";
 import {DIRECTION} from "../Direction";
 import {ObjectMover} from "./ObjectMover";
-import {World} from "../World";
+import {WorldKnowledge} from "../WorldKnowledge";
 import {MovableObjectInterface} from "./MovableObjectInterface";
 
 const SOFA_BOTTOM = -8;
 const SOFA_LEFT = 0;
 const SOFA_ANCHOR_BOTTOM = 3;
 
-export class Sofa implements SittableInterface, MovableObjectInterface {
+export class Sofa implements InteractiveObjectInterface, MovableObjectInterface {
     private sprite: Phaser.Sprite;
     private position: PIXI.Point;
-    private world: World;
+    private worldKnowledge: WorldKnowledge;
 
-    constructor(point: PIXI.Point, world: World) {
+    constructor(point: PIXI.Point, worldKnowledge: WorldKnowledge) {
         this.position = point;
-        this.world = world;
+        this.worldKnowledge = worldKnowledge;
     }
 
     create(game: Phaser.Game, group: Phaser.Group) {
@@ -27,7 +27,7 @@ export class Sofa implements SittableInterface, MovableObjectInterface {
         );
         this.sprite.anchor.set(0.5, 1.0 - SOFA_ANCHOR_BOTTOM/this.sprite.height);
 
-        ObjectMover.makeMovable(this, this.world);
+        ObjectMover.makeMovable(this, this.worldKnowledge);
 
         group.add(this.sprite);
     }
@@ -53,7 +53,7 @@ export class Sofa implements SittableInterface, MovableObjectInterface {
     }
 
     tryToMove(point: PIXI.Point): void {
-        if (this.world.isFreePosition(point, this)) {
+        if (this.worldKnowledge.isFreePosition(point, this)) {
             this.position = point;
             this.sprite.x = PositionTransformer.getRealPosition(this.position).x + SOFA_LEFT;
             this.sprite.y = PositionTransformer.getRealPosition(this.position).y + SOFA_BOTTOM - SOFA_ANCHOR_BOTTOM;
