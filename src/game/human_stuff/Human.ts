@@ -1,13 +1,13 @@
 import {CELL_HEIGHT, PositionTransformer} from "../PositionTransformer";
 import {WorldKnowledge} from "../WorldKnowledge";
-import {ClosestPathFinder} from "../ClosestPathFinder";
+import {ClosestPathFinder} from "./ClosestPathFinder";
 import {DIRECTION, Direction} from "../Direction";
 import {InteractiveObjectInterface} from "../objects/InteractiveObjectInterface";
 import {ANIMATION, HumanAnimationManager} from "./HumanAnimationManager";
 import {HumanStateManager, STATE} from "./HumanStateManager";
 import {ObjectSelector} from "../objects/ObjectSelector";
 import {Meeting} from "../human_states/Meeting";
-import {TalkBubble} from "../TalkBubble";
+import {TalkBubble} from "./TalkBubble";
 
 export const WALK_CELL_DURATION = 1200;
 const GAP_FROM_BOTTOM = -8;
@@ -185,7 +185,7 @@ export class Human {
         const cells = [];
         entries.forEach((direction) => {
             const tryCell = Direction.getGap(this.cell, direction);
-            if (this.worldKnowledge.getGround().isFree(tryCell)) {
+            if (this.worldKnowledge.isFree(tryCell)) {
                 cells.push(tryCell);
             }
         });

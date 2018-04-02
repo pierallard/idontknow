@@ -1,4 +1,4 @@
-import {Wall} from "../Wall";
+import {Wall} from "../objects/Wall";
 
 export class WallRepository {
     private walls: Wall[];

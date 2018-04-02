@@ -11,9 +11,9 @@ export class MoveRandomState implements HumanState {
     constructor(human: Human, worldKnowledge: WorldKnowledge) {
         this.active = false;
         this.human = human;
-        this.goal = worldKnowledge.getGround().getRandomCell();
+        this.goal = worldKnowledge.getRandomCell();
         while (this.human.getPosition().x === this.goal.x && this.human.getPosition().y === this.goal.y) {
-            this.goal = worldKnowledge.getGround().getRandomCell();
+            this.goal = worldKnowledge.getRandomCell();
         }
     }
 

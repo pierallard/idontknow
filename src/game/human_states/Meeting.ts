@@ -6,7 +6,7 @@ export class Meeting {
     private places: {human:Human, position: PIXI.Point}[];
 
     constructor(humans: Human[], time: number, worldKnowledge: WorldKnowledge) {
-        const cells = worldKnowledge.getGround().getMeetingCells(humans.map((human) => {
+        const cells = worldKnowledge.getMeetingCells(humans.map((human) => {
             return human.getPosition();
         }));
         if (cells === null) {

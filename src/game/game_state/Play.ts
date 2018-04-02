@@ -27,7 +27,7 @@ export default class Play extends Phaser.State {
 
         const selected = this.worldKnowledge.getSelectedHumanSprite();
         if (selected) {
-            this.game.camera.follow(selected, Phaser.Camera.FOLLOW_LOCKON, 0.02, 0.02);
+            this.game.camera.follow(selected, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
         }
     }
 }

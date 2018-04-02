@@ -53,7 +53,7 @@ export class Sofa implements InteractiveObjectInterface, MovableObjectInterface 
     }
 
     tryToMove(point: PIXI.Point): void {
-        if (this.worldKnowledge.isFreePosition(point, this)) {
+        if (this.worldKnowledge.isFree(point, this)) {
             this.position = point;
             this.sprite.x = PositionTransformer.getRealPosition(this.position).x + SOFA_LEFT;
             this.sprite.y = PositionTransformer.getRealPosition(this.position).y + SOFA_BOTTOM - SOFA_ANCHOR_BOTTOM;

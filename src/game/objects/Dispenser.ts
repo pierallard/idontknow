@@ -41,7 +41,7 @@ export class Dispenser implements MovableObjectInterface, InteractiveObjectInter
     }
 
     tryToMove(point: PIXI.Point): void {
-        if (this.worldKnowledge.isFreePosition(point, this)) {
+        if (this.worldKnowledge.isFree(point, this)) {
             this.position = point;
             this.sprite.x = PositionTransformer.getRealPosition(this.position).x + DISPENSER_LEFT;
             this.sprite.y = PositionTransformer.getRealPosition(this.position).y + DISPENSER_BOTTOM - DISPENSER_ANCHOR_BOTTOM;

@@ -1,4 +1,4 @@
-import {PositionTransformer} from "./PositionTransformer";
+import {PositionTransformer} from "../PositionTransformer";
 
 const FAKE_MACHIN = -4;
 

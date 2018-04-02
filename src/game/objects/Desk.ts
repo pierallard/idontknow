@@ -93,7 +93,7 @@ export class Desk implements InteractiveObjectInterface, MovableObjectInterface 
     }
 
     tryToMove(point: PIXI.Point): void {
-        if (this.worldKnowledge.isFreePosition(point, this)) {
+        if (this.worldKnowledge.isFree(point, this)) {
             this.position = point;
             this.chairSprite.position.x = PositionTransformer.getRealPosition(this.position).x + (this.isLeftOriented() ? - GAP_HORIZONTAL : GAP_HORIZONTAL);
             this.chairSprite.position.y = PositionTransformer.getRealPosition(this.position).y + FAKE_ANCHOR_BOTTOM + GAP_VERTICAL;

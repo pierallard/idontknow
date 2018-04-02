@@ -1,14 +1,12 @@
 import {PositionTransformer} from "./PositionTransformer";
-import {DEBUG_WORLD} from "./Ground";
+import {DEBUG_WORLD} from "./WorldKnowledge";
 
 export class Cell {
     private position: PIXI.Point;
     private sprite: Phaser.Sprite;
 
     constructor(point: PIXI.Point) {
-
         this.position = point;
-
     }
 
     create(game: Phaser.Game, group: Phaser.Group) {
