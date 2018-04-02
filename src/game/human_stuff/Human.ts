@@ -7,13 +7,14 @@ import {ANIMATION, HumanAnimationManager} from "./HumanAnimationManager";
 import {HumanStateManager, STATE} from "./HumanStateManager";
 import {ObjectSelector} from "../objects/ObjectSelector";
 import {Meeting} from "../human_states/Meeting";
+import {TalkBubble} from "../TalkBubble";
 
 export const WALK_CELL_DURATION = 1200;
 const GAP_FROM_BOTTOM = -8;
 const PATH_DEBUG = false;
 
 export class Human {
-    private tile: Phaser.TileSprite;
+    private sprite: Phaser.TileSprite;
     private cell: PIXI.Point;
     private game: Phaser.Game;
     private moving: boolean;
@@ -25,6 +26,7 @@ export class Human {
     private animationManager: HumanAnimationManager;
     private stateManager: HumanStateManager;
     private pathGraphics: Phaser.Graphics;
+    private talkBubble: TalkBubble;
 
     constructor(cell: PIXI.Point) {
         this.cell = cell;
@@ -33,24 +35,25 @@ export class Human {
         this.stateManager = new HumanStateManager(this);
         this.anchorPixels = new PIXI.Point(0, GAP_FROM_BOTTOM);
         this.animationManager = new HumanAnimationManager();
+        this.talkBubble = new TalkBubble();
     }
 
     create(game: Phaser.Game, group: Phaser.Group, world: World) {
         this.game = game;
         this.world = world;
 
-        this.tile = game.add.tileSprite(
+        this.sprite = game.add.tileSprite(
             PositionTransformer.getRealPosition(this.cell).x + this.anchorPixels.x,
             PositionTransformer.getRealPosition(this.cell).y + this.anchorPixels.y,
             24,
             25,
             Math.random() > 0.5 ? 'human' : 'human_red'
         );
-        this.animationManager.create(this.tile);
-        this.tile.anchor.set(0.5, 1.0);
+        this.animationManager.create(this.sprite);
+        this.sprite.anchor.set(0.5, 1.0);
 
-        ObjectSelector.makeSelectable([this.tile]);
-        group.add(this.tile);
+        ObjectSelector.makeSelectable([this.sprite]);
+        group.add(this.sprite);
 
         this.pathfinder = game.plugins.add(Phaser.Plugin.PathFinderPlugin);
         this.pathfinder.setGrid(world.getGround().getGrid(), world.getGround().getAcceptables());
@@ -58,6 +61,7 @@ export class Human {
         this.animationManager.loadAnimation(ANIMATION.FREEZE, true, false);
         this.closestPathFinder = new ClosestPathFinder(game, world);
         this.stateManager.create(game, world, this.animationManager);
+        this.talkBubble.create(this.sprite, this.game, group);
 
         if (PATH_DEBUG) {
             this.pathGraphics = game.add.graphics(0, 0, group);
@@ -66,6 +70,7 @@ export class Human {
     }
 
     update() {
+        this.talkBubble.update();
         this.stateManager.updateState(this.game);
 
         if (PATH_DEBUG) {
@@ -73,8 +78,8 @@ export class Human {
             this.pathGraphics.lineStyle(2, 0x00ff00);
             if (this.path !== null && this.path.length > 0) {
                 this.pathGraphics.moveTo(
-                    this.tile.position.x,
-                    this.tile.position.y
+                    this.sprite.position.x,
+                    this.sprite.position.y
                 );
                 this.path.forEach((pathItem) => {
                     this.pathGraphics.lineTo(
@@ -126,7 +131,7 @@ export class Human {
         const isTop = Human.isHumanTop(direction);
         this.animationManager.loadAnimation(ANIMATION.WALK, isLeft, isTop);
         this.moving = true;
-        this.game.add.tween(this.tile.position).to({
+        this.game.add.tween(this.sprite.position).to({
             x: PositionTransformer.getRealPosition(this.cell).x + this.anchorPixels.x,
             y: PositionTransformer.getRealPosition(this.cell).y + this.anchorPixels.y
         }, WALK_CELL_DURATION, 'Linear', true)
@@ -205,11 +210,11 @@ export class Human {
     }
 
     isSelected(): boolean {
-        return ObjectSelector.isSelected(this.tile);
+        return ObjectSelector.isSelected(this.sprite);
     }
 
     getSprite(): any {
-        return this.tile;
+        return this.sprite;
     }
 
     resetAStar(startPosition: PIXI.Point, endPosition: PIXI.Point) {
@@ -236,5 +241,13 @@ export class Human {
 
     private getState() {
         return this.stateManager.getState();
+    }
+
+    showTalkBubble() {
+        this.talkBubble.show();
+    }
+
+    hideTalkBubble() {
+        this.talkBubble.hide();
     }
 }

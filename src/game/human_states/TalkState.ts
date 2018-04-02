@@ -60,6 +60,11 @@ export class TalkState implements HumanState {
             this.human.getPosition(),
             this.meeting.getAnotherHuman(this.human).getPosition()
         );
+        if (animation === ANIMATION.TALK) {
+            this.human.showTalkBubble();
+        } else {
+            this.human.hideTalkBubble();
+        }
         this.human.loadAnimation(animation, Direction.isLeft(direction), Direction.isTop(direction));
         this.events.push(this.game.time.events.add(
             Phaser.Math.random(3, 6) * HumanAnimationManager.getAnimationTime(animation),
@@ -93,6 +98,7 @@ export class TalkState implements HumanState {
     }
 
     end(): void {
+        this.human.hideTalkBubble();
         this.events.forEach((event) => {
             this.game.time.events.remove(event);
         });
