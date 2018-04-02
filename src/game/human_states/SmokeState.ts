@@ -2,6 +2,7 @@ import {Human} from "../human_stuff/Human";
 import {HumanState} from "./HumanState";
 import {ANIMATION, HumanAnimationManager} from "../human_stuff/HumanAnimationManager";
 import {STATE} from "../human_stuff/HumanStateManager";
+import {HUMOR} from "../human_stuff/HumanHumorManager";
 
 export class SmokeState implements HumanState {
     private human: Human;
@@ -19,6 +20,7 @@ export class SmokeState implements HumanState {
         game.time.events.add(Phaser.Math.random(1, 3) * HumanAnimationManager.getAnimationTime(ANIMATION.SMOKE), this.end, this);
         this.active = true;
         this.human.loadAnimation(ANIMATION.SMOKE);
+        this.human.updateHumorFromState();
 
         return true;
     }

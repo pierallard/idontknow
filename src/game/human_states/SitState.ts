@@ -5,6 +5,7 @@ import {InteractiveObjectInterface} from "../objects/InteractiveObjectInterface"
 import {ANIMATION, HumanAnimationManager} from "../human_stuff/HumanAnimationManager";
 import {STATE} from "../human_stuff/HumanStateManager";
 import {PositionTransformer} from "../PositionTransformer";
+import {HUMOR} from "../human_stuff/HumanHumorManager";
 
 export class SitState implements HumanState {
     private human: Human;
@@ -36,6 +37,7 @@ export class SitState implements HumanState {
             this.human.interactWith(this.interactiveObject);
             this.events.push(this.game.time.events.add(WALK_CELL_DURATION + 100, () => {
                 this.human.loadAnimation(ANIMATION.SIT_DOWN);
+                this.human.updateHumorFromState();
                 this.events.push(this.game.time.events.add(Phaser.Math.random(3, 10) * Phaser.Timer.SECOND + HumanAnimationManager.getAnimationTime(ANIMATION.SIT_DOWN), () => {
                     this.human.loadAnimation(ANIMATION.STAND_UP);
                     this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.STAND_UP) + 100, () => {

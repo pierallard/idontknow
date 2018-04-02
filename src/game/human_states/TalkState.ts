@@ -5,6 +5,9 @@ import {ANIMATION, HumanAnimationManager} from "../human_stuff/HumanAnimationMan
 import {Meeting} from "./Meeting";
 import {Direction} from "../Direction";
 import {STATE} from "../human_stuff/HumanStateManager";
+import {HUMOR} from "../human_stuff/HumanHumorManager";
+
+const HUMOR_WIN = 0.5;
 
 export class TalkState implements HumanState {
     private human: Human;
@@ -37,6 +40,7 @@ export class TalkState implements HumanState {
             if (this.meeting.isReady()) {
                 this.meetingStarted = true;
                 this.game.time.events.add(this.meeting.getTime() + Math.random() * Phaser.Timer.SECOND, this.end, this);
+                this.human.updateHumorFromState();
 
                 let animation = ANIMATION.TALK;
                 if (Math.random() > 0.5) {

@@ -2,6 +2,7 @@ import {Human} from "../human_stuff/Human";
 import {HumanState} from "./HumanState";
 import {WorldKnowledge} from "../WorldKnowledge";
 import {STATE} from "../human_stuff/HumanStateManager";
+import {HUMOR} from "../human_stuff/HumanHumorManager";
 
 export class MoveRandomState implements HumanState {
     private human: Human;

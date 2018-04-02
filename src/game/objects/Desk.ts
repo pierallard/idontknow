@@ -52,9 +52,6 @@ export class Desk implements InteractiveObjectInterface, MovableObjectInterface 
         this.chairSprite.anchor.set(0.5, 1 + FAKE_ANCHOR_BOTTOM/this.chairSprite.height);
         this.deskSprite.anchor.set(0.5, 1 + FAKE_ANCHOR_BOTTOM/this.deskSprite.height);
 
-        console.log('chair: ' + this.chairSprite.y);
-        console.log('desk:  ' + this.deskSprite.y);
-
         ObjectMover.makeMovable(this, this.worldKnowledge);
 
         if (isLeftOriented) {

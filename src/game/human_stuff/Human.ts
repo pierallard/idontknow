@@ -8,6 +8,8 @@ import {HumanStateManager, STATE} from "./HumanStateManager";
 import {ObjectSelector} from "../objects/ObjectSelector";
 import {Meeting} from "../human_states/Meeting";
 import {TalkBubble} from "./TalkBubble";
+import {HumanHumorManager, HUMOR} from "./HumanHumorManager";
+import {HumanState} from "../human_states/HumanState";
 
 export const WALK_CELL_DURATION = 1200;
 const GAP_FROM_BOTTOM = -8;
@@ -26,6 +28,7 @@ export class Human {
     private stateManager: HumanStateManager;
     private pathGraphics: Phaser.Graphics;
     private talkBubble: TalkBubble;
+    private humorManager: HumanHumorManager;
 
     constructor(cell: PIXI.Point) {
         this.cell = cell;
@@ -35,11 +38,13 @@ export class Human {
         this.anchorPixels = new PIXI.Point(0, GAP_FROM_BOTTOM);
         this.animationManager = new HumanAnimationManager();
         this.talkBubble = new TalkBubble();
+        this.humorManager = new HumanHumorManager();
     }
 
     create(game: Phaser.Game, group: Phaser.Group, worldKnowledge: WorldKnowledge) {
         this.game = game;
         this.worldKnowledge = worldKnowledge;
+        this.humorManager.create(game);
 
         this.sprite = game.add.tileSprite(
             PositionTransformer.getRealPosition(this.cell).x + this.anchorPixels.x,
@@ -68,6 +73,7 @@ export class Human {
     update() {
         this.talkBubble.update();
         this.stateManager.updateState(this.game);
+        this.humorManager.update();
 
         if (PATH_DEBUG) {
             this.pathGraphics.clear();
@@ -231,19 +237,27 @@ export class Human {
         }
     }
 
-    isFree() {
+    isFree(): boolean {
         return [STATE.SIT, STATE.MOVE_RANDOM, STATE.FREEZE, STATE.SMOKE].indexOf(this.getState()) > -1;
     }
 
-    private getState() {
+    private getState(): STATE {
         return this.stateManager.getState();
     }
 
-    showTalkBubble() {
+    showTalkBubble(): void {
         this.talkBubble.show();
     }
 
-    hideTalkBubble() {
+    hideTalkBubble(): void {
         this.talkBubble.hide();
+    }
+
+    updateHumorFromState(): void {
+        this.humorManager.updateFromState(this.getState());
+    }
+
+    getHumor(humor: HUMOR): number {
+        return this.humorManager.getHumor(humor);
     }
 }

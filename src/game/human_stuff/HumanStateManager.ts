@@ -10,6 +10,7 @@ import {TypeState} from "../human_states/TypeState";
 import {TalkState} from "../human_states/TalkState";
 import {Meeting} from "../human_states/Meeting";
 import {CoffeeState} from "../human_states/CoffeeState";
+import {HumanHumorManager, HUMOR} from "./HumanHumorManager";
 
 export enum STATE {
     SMOKE,
@@ -87,30 +88,37 @@ export class HumanStateManager {
 
     private randomNextStepName(): STATE {
         const states = [];
-        states.push({state: STATE.SMOKE, probability: 5});
-        states.push({state: STATE.FREEZE, probability: 1});
-        states.push({state: STATE.MOVE_RANDOM, probability: 2});
+        states.push({state: STATE.SMOKE, probability: this.getProbability(STATE.SMOKE)});
+        states.push({state: STATE.FREEZE, probability: this.getProbability(STATE.FREEZE)});
+        states.push({state: STATE.MOVE_RANDOM, probability: this.getProbability(STATE.MOVE_RANDOM)});
 
         if (this.worldKnowledge.getAnotherFreeHuman(this.human) !== null) {
-            states.push({state: STATE.TALK, probability: 8});
+            states.push({state: STATE.TALK, probability: this.getProbability(STATE.TALK)});
         }
 
         if (this.worldKnowledge.getRandomFreeSofa() !== null) {
-            states.push({state: STATE.SIT, probability: 2});
+            states.push({state: STATE.SIT, probability: this.getProbability(STATE.SIT)});
         }
         if (this.worldKnowledge.getRandomFreeDesk() !== null) {
-            states.push({state: STATE.TYPE, probability: 25});
+            states.push({state: STATE.TYPE, probability: this.getProbability(STATE.TYPE)});
         }
 
         if (this.worldKnowledge.getRandomFreeDispenser() !== null) {
-            states.push({state: STATE.COFFEE, probability: 6});
+            states.push({state: STATE.COFFEE, probability: this.getProbability(STATE.COFFEE)});
         }
 
-        states.forEach((state) => {
-            if (state.state === this.state.getState()) {
-                state.probability = state.probability / 10;
-            }
-        });
+        let debug = '';
+        debug += 'Rlx[' + Math.ceil(this.human.getHumor(HUMOR.RELAXATION) * 100) + '%], ';
+        debug += 'Hng[' + Math.ceil(this.human.getHumor(HUMOR.HUNGER) * 100) + '%], ';
+        debug += 'Soc[' + Math.ceil(this.human.getHumor(HUMOR.SOCIAL) * 100) + '%] ---> ';
+        debug += 'Smk(' + Math.ceil(this.getProbability(STATE.SMOKE)) + '), ' ;
+        debug += 'Frz(' + Math.ceil(this.getProbability(STATE.FREEZE)) + '), ' ;
+        debug += 'MvR(' + Math.ceil(this.getProbability(STATE.MOVE_RANDOM)) + '), ' ;
+        debug += 'Tak(' + Math.ceil(this.getProbability(STATE.TALK)) + '), ' ;
+        debug += 'Sit(' + Math.ceil(this.getProbability(STATE.SIT)) + '), ' ;
+        debug += 'Typ(' + Math.ceil(this.getProbability(STATE.TYPE)) + '), ' ;
+        debug += 'Cof(' + Math.ceil(this.getProbability(STATE.COFFEE)) + '), ' ;
+        console.log(debug);
 
         const sum = states.reduce((prev, state) => {
             return prev + state.probability;
@@ -124,6 +132,46 @@ export class HumanStateManager {
                 return states[i].state;
             }
         }
+    }
+
+    private getProbability(state: STATE): number {
+        let result = 1;
+        switch(state) {
+            case STATE.SMOKE: result = 5; break;
+            case STATE.FREEZE: result = 1; break;
+            case STATE.MOVE_RANDOM: result = 2; break;
+            case STATE.TALK: result = 8; break;
+            case STATE.SIT: result = 2; break;
+            case STATE.TYPE: result = 25; break;
+            case STATE.COFFEE: result = 6; break;
+        }
+
+        if (state === this.state.getState()) {
+            result = result / 10;
+        }
+
+        HumanHumorManager.getHumors().forEach((humor: HUMOR) => {
+            if (this.human.getHumor(humor) < 0.5) {
+                if (HumanStateManager.getHumorGains(state)[humor] > 0) {
+                    result = result * HumanStateManager.getHumorGains(state)[humor] * 8;
+                    result = result * (1 - this.human.getHumor(humor)) * 3;
+                }
+            }
+        });
+
+        return result;
+    }
+
+    static getHumorGains(state: STATE): object {
+        let result = {};
+        switch(state) {
+            case STATE.SMOKE: result[HUMOR.RELAXATION] = 0.4; break;
+            case STATE.TALK: result[HUMOR.SOCIAL] = 0.5; break;
+            case STATE.SIT: result[HUMOR.RELAXATION] = 0.2; break;
+            case STATE.COFFEE: result[HUMOR.HUNGER] = 0.5; break;
+        }
+
+        return result;
     }
 
     reset(game: Phaser.Game) {
