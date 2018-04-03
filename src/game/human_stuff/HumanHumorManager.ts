@@ -1,6 +1,7 @@
 import {HumanStateManager, STATE} from "./HumanStateManager";
 
 const LOSS = -0.05;
+const DEFAULT = 0.75;
 
 export enum HUMOR {
     RELAXATION,
@@ -15,9 +16,9 @@ export class HumanHumorManager {
 
     constructor() {
         this.humors = {};
-        this.humors[HUMOR.RELAXATION] = 0.5;
-        this.humors[HUMOR.HUNGER] = 0.5;
-        this.humors[HUMOR.SOCIAL] = 0.5;
+        this.humors[HUMOR.RELAXATION] = DEFAULT;
+        this.humors[HUMOR.HUNGER] = DEFAULT;
+        this.humors[HUMOR.SOCIAL] = DEFAULT;
         this.hasToBeUpdated = true;
     }
 

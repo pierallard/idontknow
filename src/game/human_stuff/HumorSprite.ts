@@ -1,5 +1,7 @@
-const GAP_X = -9;
-const GAP_Y = -28;
+const GAP_X = -7;
+const GAP_Y = 1;
+
+const DEBUG = false;
 
 export class HumorSprite {
     private sprite: Phaser.Graphics;
@@ -14,18 +16,23 @@ export class HumorSprite {
         group.add(this.sprite);
     }
 
-    update(generalHumor: number) {
+    update(generalHumor: number, humors: number[]) {
         this.sprite.position.x = Math.ceil(this.parent.position.x + GAP_X);
         this.sprite.position.y = Math.ceil(this.parent.position.y + GAP_Y);
         this.sprite.clear();
-        this.sprite.moveTo(0, 0);
-        if (generalHumor < 0.1) {
-            this.sprite.lineStyle(2, 0xff004d);
-        } else if (generalHumor < 0.5) {
-            this.sprite.lineStyle(2, 0xfca203);
-        } else {
-            this.sprite.lineStyle(2, 0x00de2d);
+        if (!DEBUG) {
+            humors = [generalHumor];
         }
-        this.sprite.lineTo(generalHumor * 15, 0);
+        for (let i = 0; i < humors.length; i++) {
+            this.sprite.moveTo(0, i * 2);
+            if (humors[i] < 0.1) {
+                this.sprite.lineStyle(2, 0xff004d);
+            } else if (humors[i] < 0.5) {
+                this.sprite.lineStyle(2, 0xfca203);
+            } else {
+                this.sprite.lineStyle(2, 0x00de2d);
+            }
+            this.sprite.lineTo(humors[i] * 15 + 1,   i * 2);
+        }
     }
 }

@@ -43,7 +43,7 @@ export class Human {
         this.humorSprite = new HumorSprite();
     }
 
-    create(game: Phaser.Game, group: Phaser.Group, worldKnowledge: WorldKnowledge) {
+    create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}, worldKnowledge: WorldKnowledge) {
         this.game = game;
         this.worldKnowledge = worldKnowledge;
         this.humorManager.create(game);
@@ -59,17 +59,17 @@ export class Human {
         this.sprite.anchor.set(0.5, 1.0);
 
         ObjectSelector.makeSelectable([this.sprite]);
-        group.add(this.sprite);
+        groups['noname'].add(this.sprite);
 
         this.animationManager.loadAnimation(ANIMATION.FREEZE, true, false);
         this.closestPathFinder = new ClosestPathFinder(game, worldKnowledge);
         this.stateManager.create(game, worldKnowledge, this.animationManager);
-        this.talkBubble.create(this.sprite, this.game, group);
-        this.humorSprite.create(this.sprite, this.game, group);
+        this.talkBubble.create(this.sprite, this.game, groups['noname']);
+        this.humorSprite.create(this.sprite, this.game, groups['upper']);
 
         if (PATH_DEBUG) {
-            this.pathGraphics = game.add.graphics(0, 0, group);
-            group.add(this.pathGraphics);
+            this.pathGraphics = game.add.graphics(0, 0, groups['upper']);
+            groups['upper'].add(this.pathGraphics);
         }
     }
 
@@ -77,7 +77,11 @@ export class Human {
         this.talkBubble.update();
         this.stateManager.updateState(this.game);
         this.humorManager.update();
-        this.humorSprite.update(this.humorManager.getGeneralHumor());
+        this.humorSprite.update(this.humorManager.getGeneralHumor(), [
+            this.humorManager.getHumor(HUMOR.HUNGER),
+            this.humorManager.getHumor(HUMOR.SOCIAL),
+            this.humorManager.getHumor(HUMOR.RELAXATION)
+        ]);
 
         if (PATH_DEBUG) {
             this.pathGraphics.clear();

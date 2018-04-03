@@ -142,7 +142,7 @@ export class HumanStateManager {
             case STATE.MOVE_RANDOM: result = 2; break;
             case STATE.TALK: result = 8; break;
             case STATE.SIT: result = 2; break;
-            case STATE.TYPE: result = 25; break;
+            case STATE.TYPE: result = 30; break;
             case STATE.COFFEE: result = 6; break;
         }
 

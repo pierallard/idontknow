@@ -14,7 +14,8 @@ export default class Play extends Phaser.State {
         this.game.stage.backgroundColor = "#4488AA";
         this.groups = {
             'floor': this.game.add.group(),
-            'noname':  this.game.add.group()
+            'noname':  this.game.add.group(),
+            'upper': this.game.add.group(),
         };
         this.worldKnowledge.create(this.game, this.groups);
         this.game.world.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);

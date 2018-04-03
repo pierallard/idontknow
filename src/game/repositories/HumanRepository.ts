@@ -11,13 +11,22 @@ export class HumanRepository {
             new Human(worldKnowledge.getRandomCell()),
             new Human(worldKnowledge.getRandomCell()),
             new Human(worldKnowledge.getRandomCell()),
+            new Human(worldKnowledge.getRandomCell()),
+            new Human(worldKnowledge.getRandomCell()),
+            new Human(worldKnowledge.getRandomCell()),
+            new Human(worldKnowledge.getRandomCell()),
+            new Human(worldKnowledge.getRandomCell()),
+            new Human(worldKnowledge.getRandomCell()),
+            new Human(worldKnowledge.getRandomCell()),
+            new Human(worldKnowledge.getRandomCell()),
+            new Human(worldKnowledge.getRandomCell()),
             new Human(worldKnowledge.getRandomCell())
         ];
     }
 
     create(game: Phaser.Game, groups: {[index: string]: Phaser.Group }, worldKnowledge: WorldKnowledge) {
         this.humans.forEach((human) => {
-            human.create(game, groups['noname'], worldKnowledge);
+            human.create(game, groups, worldKnowledge);
         })
     }
 
