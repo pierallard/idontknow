@@ -1,5 +1,6 @@
 import {Human} from "../human_stuff/Human";
 import {WorldKnowledge} from "../WorldKnowledge";
+import {STATE} from "../human_stuff/HumanStateManager";
 
 export class Meeting {
     private time: number;
@@ -56,5 +57,16 @@ export class Meeting {
         });
 
         return anotherHumans[Math.floor(Math.random() * anotherHumans.length)];
+    }
+
+    areAllHumanStillInMeeting() {
+        for (let i = 0; i < this.places.length; i++) {
+            const human = this.places[i].human;
+            if (human.getState() !== STATE.TALK) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

@@ -249,7 +249,7 @@ export class Human {
         return [STATE.SIT, STATE.MOVE_RANDOM, STATE.FREEZE, STATE.SMOKE].indexOf(this.getState()) > -1;
     }
 
-    private getState(): STATE {
+    getState(): STATE {
         return this.stateManager.getState();
     }
 

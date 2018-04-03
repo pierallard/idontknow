@@ -80,7 +80,7 @@ export class HumanStateManager {
             if (this.state.start(game)) {
                 console.log('New state: ' + this.state.constructor.name);
             } else {
-                console.log('State ' + this.state.constructor.name + ' failed. Retry.')
+                console.log('State ' + this.state.constructor.name + ' failed. Retry.');
                 this.updateState(game);
             }
         }
@@ -142,8 +142,8 @@ export class HumanStateManager {
             case STATE.MOVE_RANDOM: result = 2; break;
             case STATE.TALK: result = 8; break;
             case STATE.SIT: result = 2; break;
-            case STATE.TYPE: result = 30; break;
             case STATE.COFFEE: result = 6; break;
+            case STATE.TYPE: result = 5 + 1 + 2 + 8 + 2 + 6; break;
         }
 
         if (state === this.state.getState()) {

@@ -37,22 +37,26 @@ export class TalkState implements HumanState {
 
     isActive(): boolean {
         if (!this.meetingStarted) {
-            if (this.meeting.isReady()) {
-                this.meetingStarted = true;
-                this.game.time.events.add(this.meeting.getTime() + Math.random() * Phaser.Timer.SECOND, this.end, this);
-                this.human.updateHumorFromState();
+            if (!this.meeting.areAllHumanStillInMeeting()) {
+                this.active = false;
+            } else {
+                if (this.meeting.isReady()) {
+                    this.meetingStarted = true;
+                    this.game.time.events.add(this.meeting.getTime() + Math.random() * Phaser.Timer.SECOND, this.end, this);
+                    this.human.updateHumorFromState();
 
-                let animation = ANIMATION.TALK;
-                if (Math.random() > 0.5) {
-                    animation = TalkState.otherAnimation(animation);
+                    let animation = ANIMATION.TALK;
+                    if (Math.random() > 0.5) {
+                        animation = TalkState.otherAnimation(animation);
+                    }
+                    this.switchAnimation(animation);
+                } else if (!this.human.isMoving()) {
+                    const direction = Direction.getNeighborDirection(
+                        this.human.getPosition(),
+                        this.meeting.getAnotherHuman(this.human).getPosition()
+                    );
+                    this.human.loadAnimation(ANIMATION.FREEZE, Direction.isLeft(direction), Direction.isTop(direction));
                 }
-                this.switchAnimation(animation);
-            } else if (!this.human.isMoving()) {
-                const direction = Direction.getNeighborDirection(
-                    this.human.getPosition(),
-                    this.meeting.getAnotherHuman(this.human).getPosition()
-                );
-                this.human.loadAnimation(ANIMATION.FREEZE, Direction.isLeft(direction), Direction.isTop(direction));
             }
         }
 
