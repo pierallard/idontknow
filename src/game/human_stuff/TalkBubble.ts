@@ -1,4 +1,4 @@
-const IMAGE_COUNT = 1;
+const IMAGE_COUNT = 3;
 
 export class TalkBubble {
     private sprite: Phaser.Sprite;
@@ -16,7 +16,7 @@ export class TalkBubble {
             0,
             group
         );
-        this.sprite.anchor.set(1, 35/this.sprite.height);
+        this.sprite.anchor.set(1, 37/this.sprite.height);
         group.add(this.sprite);
 
         this.imageSprite = game.add.sprite(
@@ -26,7 +26,7 @@ export class TalkBubble {
             0,
             group
         );
-        this.imageSprite.anchor.set(1.2, 64/this.sprite.height);
+        this.imageSprite.anchor.set(1.2, 76/this.sprite.height);
         group.add(this.imageSprite);
 
         this.switchImage();
@@ -56,6 +56,6 @@ export class TalkBubble {
 
     private switchImage() {
         this.imageSprite.loadTexture(this.imageSprite.key, TalkBubble.getRandomFrame());
-        this.game.time.events.add(Phaser.Math.random(1, 3), this.switchImage, this)
+        this.game.time.events.add(Phaser.Math.random(2, 4) * Phaser.Timer.SECOND, this.switchImage, this)
     }
 }
