@@ -10,6 +10,7 @@ import {Meeting} from "../human_states/Meeting";
 import {TalkBubble} from "./TalkBubble";
 import {HumanMoodManager, MOOD} from "./HumanMoodManager";
 import {MoodSprite} from "./MoodSprite";
+import {GROUP_OBJECTS_AND_HUMANS, GROUP_INFOS} from "../game_state/Play";
 
 export const WALK_CELL_DURATION = 1200;
 const GAP_FROM_BOTTOM = -8;
@@ -59,17 +60,17 @@ export class Human {
         this.sprite.anchor.set(0.5, 1.0);
 
         ObjectSelector.makeSelectable([this.sprite]);
-        groups['noname'].add(this.sprite);
+        groups[GROUP_OBJECTS_AND_HUMANS].add(this.sprite);
 
         this.animationManager.loadAnimation(ANIMATION.FREEZE, true, false);
         this.closestPathFinder = new ClosestPathFinder(game, worldKnowledge);
         this.stateManager.create(game, worldKnowledge, this.animationManager);
-        this.talkBubble.create(this.sprite, this.game, groups['noname']);
-        this.moodSprite.create(this.sprite, this.game, groups['upper']);
+        this.talkBubble.create(this.sprite, this.game, groups[GROUP_OBJECTS_AND_HUMANS]);
+        this.moodSprite.create(this.sprite, this.game, groups[GROUP_INFOS]);
 
         if (PATH_DEBUG) {
-            this.pathGraphics = game.add.graphics(0, 0, groups['upper']);
-            groups['upper'].add(this.pathGraphics);
+            this.pathGraphics = game.add.graphics(0, 0, groups[GROUP_INFOS]);
+            groups[GROUP_INFOS].add(this.pathGraphics);
         }
     }
 

@@ -9,6 +9,7 @@ import {Dispenser} from "./objects/Dispenser";
 import {WallRepository} from "./repositories/WallRepository";
 import {Cell} from "./Cell";
 import {PositionTransformer} from "./PositionTransformer";
+import {GROUP_FLOOR, GROUP_OBJECTS_AND_HUMANS} from "./game_state/Play";
 
 const GRID_WIDTH = 12;
 const GRID_HEIGHT = 12;
@@ -78,8 +79,9 @@ export class WorldKnowledge {
     }
 
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}) {
-        const floor = groups['floor'];
-        const noname = groups['noname'];
+        console.log(GROUP_OBJECTS_AND_HUMANS);
+        const floor = groups[GROUP_FLOOR];
+        const noname = groups[GROUP_OBJECTS_AND_HUMANS];
 
         this.cells.forEach((cell: Cell) => {
             cell.create(game, floor);
