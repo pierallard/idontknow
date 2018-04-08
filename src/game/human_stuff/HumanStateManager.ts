@@ -10,7 +10,7 @@ import {TypeState} from "../human_states/TypeState";
 import {TalkState} from "../human_states/TalkState";
 import {Meeting} from "../human_states/Meeting";
 import {CoffeeState} from "../human_states/CoffeeState";
-import {HumanHumorManager, HUMOR} from "./HumanHumorManager";
+import {HumanMoodManager, MOOD} from "./HumanMoodManager";
 
 export enum STATE {
     SMOKE,
@@ -108,9 +108,9 @@ export class HumanStateManager {
         }
 
         let debug = '';
-        debug += 'Rlx[' + Math.ceil(this.human.getHumor(HUMOR.RELAXATION) * 100) + '%], ';
-        debug += 'Hng[' + Math.ceil(this.human.getHumor(HUMOR.HUNGER) * 100) + '%], ';
-        debug += 'Soc[' + Math.ceil(this.human.getHumor(HUMOR.SOCIAL) * 100) + '%] ---> ';
+        debug += 'Rlx[' + Math.ceil(this.human.getMood(MOOD.RELAXATION) * 100) + '%], ';
+        debug += 'Hng[' + Math.ceil(this.human.getMood(MOOD.HUNGER) * 100) + '%], ';
+        debug += 'Soc[' + Math.ceil(this.human.getMood(MOOD.SOCIAL) * 100) + '%] ---> ';
         debug += 'Smk(' + Math.ceil(this.getProbability(STATE.SMOKE)) + '), ' ;
         debug += 'Frz(' + Math.ceil(this.getProbability(STATE.FREEZE)) + '), ' ;
         debug += 'MvR(' + Math.ceil(this.getProbability(STATE.MOVE_RANDOM)) + '), ' ;
@@ -150,11 +150,11 @@ export class HumanStateManager {
             result = result / 10;
         }
 
-        HumanHumorManager.getHumors().forEach((humor: HUMOR) => {
-            if (this.human.getHumor(humor) < 0.5) {
-                if (HumanStateManager.getHumorGains(state)[humor] > 0) {
-                    result = result * HumanStateManager.getHumorGains(state)[humor] * 8;
-                    result = result * (1 - this.human.getHumor(humor)) * 3;
+        HumanMoodManager.getMoods().forEach((mood: MOOD) => {
+            if (this.human.getMood(mood) < 0.5) {
+                if (HumanStateManager.getMoodGains(state)[mood] > 0) {
+                    result = result * HumanStateManager.getMoodGains(state)[mood] * 8;
+                    result = result * (1 - this.human.getMood(mood)) * 3;
                 }
             }
         });
@@ -162,13 +162,13 @@ export class HumanStateManager {
         return result;
     }
 
-    static getHumorGains(state: STATE): object {
+    static getMoodGains(state: STATE): object {
         let result = {};
         switch(state) {
-            case STATE.SMOKE: result[HUMOR.RELAXATION] = 0.4; break;
-            case STATE.TALK: result[HUMOR.SOCIAL] = 0.5; break;
-            case STATE.SIT: result[HUMOR.RELAXATION] = 0.2; break;
-            case STATE.COFFEE: result[HUMOR.HUNGER] = 0.5; break;
+            case STATE.SMOKE: result[MOOD.RELAXATION] = 0.4; break;
+            case STATE.TALK: result[MOOD.SOCIAL] = 0.5; break;
+            case STATE.SIT: result[MOOD.RELAXATION] = 0.2; break;
+            case STATE.COFFEE: result[MOOD.HUNGER] = 0.5; break;
         }
 
         return result;

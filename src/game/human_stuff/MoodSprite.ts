@@ -3,7 +3,7 @@ const GAP_Y = 1;
 
 const DEBUG = false;
 
-export class HumorSprite {
+export class MoodSprite {
     private sprite: Phaser.Graphics;
     private parent: Phaser.TileSprite;
 
@@ -16,23 +16,23 @@ export class HumorSprite {
         group.add(this.sprite);
     }
 
-    update(generalHumor: number, humors: number[]) {
+    update(generalMood: number, moods: number[]) {
         this.sprite.position.x = Math.ceil(this.parent.position.x + GAP_X);
         this.sprite.position.y = Math.ceil(this.parent.position.y + GAP_Y);
         this.sprite.clear();
         if (!DEBUG) {
-            humors = [generalHumor];
+            moods = [generalMood];
         }
-        for (let i = 0; i < humors.length; i++) {
+        for (let i = 0; i < moods.length; i++) {
             this.sprite.moveTo(0, i * 2);
-            if (humors[i] < 0.1) {
+            if (moods[i] < 0.1) {
                 this.sprite.lineStyle(2, 0xff004d);
-            } else if (humors[i] < 0.5) {
+            } else if (moods[i] < 0.5) {
                 this.sprite.lineStyle(2, 0xfca203);
             } else {
                 this.sprite.lineStyle(2, 0x00de2d);
             }
-            this.sprite.lineTo(humors[i] * 15 + 1,   i * 2);
+            this.sprite.lineTo(moods[i] * 15 + 1,   i * 2);
         }
     }
 }

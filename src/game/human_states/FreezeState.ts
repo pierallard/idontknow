@@ -2,7 +2,6 @@ import {Human} from "../human_stuff/Human";
 import {HumanState} from "./HumanState";
 import {ANIMATION} from "../human_stuff/HumanAnimationManager";
 import {STATE} from "../human_stuff/HumanStateManager";
-import {HUMOR} from "../human_stuff/HumanHumorManager";
 
 export class FreezeState implements HumanState {
     private human: Human;

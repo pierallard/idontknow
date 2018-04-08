@@ -8,8 +8,8 @@ import {HumanStateManager, STATE} from "./HumanStateManager";
 import {ObjectSelector} from "../objects/ObjectSelector";
 import {Meeting} from "../human_states/Meeting";
 import {TalkBubble} from "./TalkBubble";
-import {HumanHumorManager, HUMOR} from "./HumanHumorManager";
-import {HumorSprite} from "./HumorSprite";
+import {HumanMoodManager, MOOD} from "./HumanMoodManager";
+import {MoodSprite} from "./MoodSprite";
 
 export const WALK_CELL_DURATION = 1200;
 const GAP_FROM_BOTTOM = -8;
@@ -28,8 +28,8 @@ export class Human {
     private stateManager: HumanStateManager;
     private pathGraphics: Phaser.Graphics;
     private talkBubble: TalkBubble;
-    private humorManager: HumanHumorManager;
-    private humorSprite: HumorSprite;
+    private moodManager: HumanMoodManager;
+    private moodSprite: MoodSprite;
 
     constructor(cell: PIXI.Point) {
         this.cell = cell;
@@ -39,14 +39,14 @@ export class Human {
         this.anchorPixels = new PIXI.Point(0, GAP_FROM_BOTTOM);
         this.animationManager = new HumanAnimationManager();
         this.talkBubble = new TalkBubble();
-        this.humorManager = new HumanHumorManager();
-        this.humorSprite = new HumorSprite();
+        this.moodManager = new HumanMoodManager();
+        this.moodSprite = new MoodSprite();
     }
 
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}, worldKnowledge: WorldKnowledge) {
         this.game = game;
         this.worldKnowledge = worldKnowledge;
-        this.humorManager.create(game);
+        this.moodManager.create(game);
 
         this.sprite = game.add.tileSprite(
             PositionTransformer.getRealPosition(this.cell).x + this.anchorPixels.x,
@@ -65,7 +65,7 @@ export class Human {
         this.closestPathFinder = new ClosestPathFinder(game, worldKnowledge);
         this.stateManager.create(game, worldKnowledge, this.animationManager);
         this.talkBubble.create(this.sprite, this.game, groups['noname']);
-        this.humorSprite.create(this.sprite, this.game, groups['upper']);
+        this.moodSprite.create(this.sprite, this.game, groups['upper']);
 
         if (PATH_DEBUG) {
             this.pathGraphics = game.add.graphics(0, 0, groups['upper']);
@@ -76,11 +76,11 @@ export class Human {
     update() {
         this.talkBubble.update();
         this.stateManager.updateState(this.game);
-        this.humorManager.update();
-        this.humorSprite.update(this.humorManager.getGeneralHumor(), [
-            this.humorManager.getHumor(HUMOR.HUNGER),
-            this.humorManager.getHumor(HUMOR.SOCIAL),
-            this.humorManager.getHumor(HUMOR.RELAXATION)
+        this.moodManager.update();
+        this.moodSprite.update(this.moodManager.getGeneralMood(), [
+            this.moodManager.getMood(MOOD.HUNGER),
+            this.moodManager.getMood(MOOD.SOCIAL),
+            this.moodManager.getMood(MOOD.RELAXATION)
         ]);
 
         if (PATH_DEBUG) {
@@ -261,11 +261,11 @@ export class Human {
         this.talkBubble.hide();
     }
 
-    updateHumorFromState(): void {
-        this.humorManager.updateFromState(this.getState());
+    updateMoodFromState(): void {
+        this.moodManager.updateFromState(this.getState());
     }
 
-    getHumor(humor: HUMOR): number {
-        return this.humorManager.getHumor(humor);
+    getMood(mmod: MOOD): number {
+        return this.moodManager.getMood(mmod);
     }
 }

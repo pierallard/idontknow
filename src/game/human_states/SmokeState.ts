@@ -19,7 +19,7 @@ export class SmokeState implements HumanState {
         game.time.events.add(Phaser.Math.random(1, 3) * HumanAnimationManager.getAnimationTime(ANIMATION.SMOKE), this.end, this);
         this.active = true;
         this.human.loadAnimation(ANIMATION.SMOKE);
-        this.human.updateHumorFromState();
+        this.human.updateMoodFromState();
 
         return true;
     }

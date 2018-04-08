@@ -5,7 +5,6 @@ import {STATE} from "../human_stuff/HumanStateManager";
 import {Dispenser} from "../objects/Dispenser";
 import {PositionTransformer} from "../PositionTransformer";
 import {ANIMATION, HumanAnimationManager} from "../human_stuff/HumanAnimationManager";
-import {HUMOR} from "../human_stuff/HumanHumorManager";
 
 export class CoffeeState implements HumanState {
     private human: Human;
@@ -38,7 +37,7 @@ export class CoffeeState implements HumanState {
             this.human.interactWith(this.dispenser, this.dispenser.forceOrientation());
             this.events.push(this.game.time.events.add(WALK_CELL_DURATION + 100, () => {
                 this.human.loadAnimation(ANIMATION.DRINK);
-                this.human.updateHumorFromState();
+                this.human.updateMoodFromState();
                 this.events.push(this.game.time.events.add(Math.floor(Phaser.Math.random(2, 4)) * HumanAnimationManager.getAnimationTime(ANIMATION.DRINK), () => {
                     this.human.goToFreeCell(this.dispenser.getEntries());
                     this.events.push(this.game.time.events.add(WALK_CELL_DURATION + 100, () => {
