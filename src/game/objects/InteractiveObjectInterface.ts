@@ -13,7 +13,7 @@ export interface InteractiveObjectInterface extends ObjectInterface {
     getEntries(): DIRECTION[];
 
     /**
-     * Returns true if the human has to be right-sided, false if the human has to be left-sided, null if yolo.
+     * Returns true if the human has to be right-sided, false if the human has to be left-sided, null if percentage.
      * @returns {boolean}
      */
     forceOrientation(): boolean;

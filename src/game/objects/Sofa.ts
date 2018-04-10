@@ -4,6 +4,7 @@ import {DIRECTION} from "../Direction";
 import {ObjectMover} from "./ObjectMover";
 import {WorldKnowledge} from "../WorldKnowledge";
 import {MovableObjectInterface} from "./MovableObjectInterface";
+import {GROUP_OBJECTS_AND_HUMANS} from "../game_state/Play";
 
 const SOFA_BOTTOM = -8;
 const SOFA_LEFT = 0;
@@ -19,7 +20,7 @@ export class Sofa implements InteractiveObjectInterface, MovableObjectInterface 
         this.worldKnowledge = worldKnowledge;
     }
 
-    create(game: Phaser.Game, group: Phaser.Group) {
+    create(game: Phaser.Game, groups: { [index: string]: Phaser.Group }) {
         this.sprite = game.add.sprite(
             PositionTransformer.getRealPosition(this.position).x + SOFA_LEFT,
             PositionTransformer.getRealPosition(this.position).y + SOFA_BOTTOM - SOFA_ANCHOR_BOTTOM,
@@ -29,7 +30,7 @@ export class Sofa implements InteractiveObjectInterface, MovableObjectInterface 
 
         ObjectMover.makeMovable(this, this.worldKnowledge);
 
-        group.add(this.sprite);
+        groups[GROUP_OBJECTS_AND_HUMANS].add(this.sprite);
     }
 
     getPosition(): PIXI.Point {

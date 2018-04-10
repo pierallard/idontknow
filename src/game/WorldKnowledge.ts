@@ -10,6 +10,8 @@ import {WallRepository} from "./repositories/WallRepository";
 import {Cell} from "./Cell";
 import {PositionTransformer} from "./PositionTransformer";
 import {GROUP_FLOOR, GROUP_OBJECTS_AND_HUMANS} from "./game_state/Play";
+import {Depot} from "./objects/Depot";
+import {DeletableObjectInterface} from "./objects/DeletableObjectInterface";
 
 const GRID_WIDTH = 12;
 const GRID_HEIGHT = 12;
@@ -20,6 +22,7 @@ export class WorldKnowledge {
     private cells: Cell[];
     private objects: ObjectInterface[];
     private wallRepository: WallRepository;
+    private depot: Depot;
 
     constructor() {
         this.cells = [];
@@ -31,6 +34,7 @@ export class WorldKnowledge {
         }
 
         this.wallRepository = new WallRepository();
+        this.depot = new Depot();
 
         if (DEBUG_WORLD) {
             this.wallRepository.addWall(new PIXI.Point(5, 5));
@@ -87,8 +91,8 @@ export class WorldKnowledge {
             cell.create(game, floor);
         });
 
-        this.objects.forEach((desk: Desk) => {
-            desk.create(game, noname);
+        this.objects.forEach((object: ObjectInterface) => {
+            object.create(game, groups);
         });
 
         this.wallRepository.create(game, noname);
@@ -279,5 +283,13 @@ export class WorldKnowledge {
         });
 
         return dist;
+    }
+
+    moveToDepot(object: DeletableObjectInterface) {
+        const index = this.objects.indexOf(object, 0);
+        if (index > -1) {
+            this.objects.splice(index, 1);
+        }
+        this.depot.add(object.constructor.name);
     }
 }

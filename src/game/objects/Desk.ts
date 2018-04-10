@@ -4,6 +4,7 @@ import {DIRECTION} from "../Direction";
 import {ObjectMover} from "./ObjectMover";
 import {WorldKnowledge} from "../WorldKnowledge";
 import {MovableObjectInterface} from "./MovableObjectInterface";
+import {GROUP_OBJECTS_AND_HUMANS} from "../game_state/Play";
 
 /**
  * This variable will fake the position of the sprite without changing it for the enduser.
@@ -36,7 +37,7 @@ export class Desk implements InteractiveObjectInterface, MovableObjectInterface 
         this.worldKnowledge = worldKnowledge;
     }
 
-    create(game: Phaser.Game, group: Phaser.Group) {
+    create(game: Phaser.Game, groups: { [index: string]: Phaser.Group }) {
         const isLeftOriented = Math.random() >= 0.5;
 
         this.chairSprite = game.add.sprite(
@@ -59,8 +60,8 @@ export class Desk implements InteractiveObjectInterface, MovableObjectInterface 
             this.chairSprite.scale.set(-1, 1);
         }
 
-        group.add(this.chairSprite);
-        group.add(this.deskSprite);
+        groups[GROUP_OBJECTS_AND_HUMANS].add(this.chairSprite);
+        groups[GROUP_OBJECTS_AND_HUMANS].add(this.deskSprite);
     }
 
     getPosition(): PIXI.Point {
