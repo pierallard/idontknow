@@ -26,7 +26,7 @@ export class UserInterface {
             this.backgroundGraphics.drawRect(0, 10 + i * OBJECT_SELLER_CELL_SIZE, OBJECT_SELLER_CELL_SIZE, OBJECT_SELLER_CELL_SIZE);
         }
 
-        this.objectSeller.create(game, interfaceGroup);
+        this.objectSeller.create(game, groups);
     }
 
     update() {

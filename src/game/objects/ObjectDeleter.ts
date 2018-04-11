@@ -1,5 +1,4 @@
 import {DeletableObjectInterface} from "./DeletableObjectInterface";
-import {MovableObjectInterface} from "./MovableObjectInterface";
 
 const POINTS = 20;
 const RADIUS = 6;
@@ -21,10 +20,10 @@ export class ObjectDeleter {
     }
 
     private static select(
-        sprite,
+        sprite: Phaser.Sprite,
         _pointer: Phaser.Pointer,
         game: Phaser.Game,
-        object: MovableObjectInterface,
+        object: DeletableObjectInterface,
         circle: PartialCircle
     ) {
         circle.alpha = 1;
@@ -57,26 +56,30 @@ export class ObjectDeleter {
     }
 
     private static getPosition(object: DeletableObjectInterface) {
-        const xMin = object.getSprites().map((sprite) => {
+        return this.getCenterOfSprites(object.getSprites());
+    }
+
+    static getCenterOfSprites(sprites: Phaser.Sprite[]) {
+        const xMin = sprites.map((sprite) => {
             return (sprite.position.x - sprite.width / 2);
         }).reduce((a, b) => {
             return Math.min(a, b);
         });
 
-        const xMax = object.getSprites().map((sprite) => {
+        const xMax = sprites.map((sprite) => {
             return (sprite.position.x + sprite.width / 2);
         }).reduce((a, b) => {
             return Math.max(a, b);
         });
 
-        const yMin = object.getSprites().map((sprite) => {
+        const yMin = sprites.map((sprite) => {
             return (sprite.position.y);
         }).reduce((a, b) => {
             return Math.min(a, b);
         });
 
-        const yMax = object.getSprites().map((sprite) => {
-            return (sprite.position.y - sprite.width);
+        const yMax = sprites.map((sprite) => {
+            return (sprite.position.y - sprite.height);
         }).reduce((a, b) => {
             return Math.max(a, b);
         });

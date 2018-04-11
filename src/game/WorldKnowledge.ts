@@ -12,6 +12,8 @@ import {PositionTransformer} from "./PositionTransformer";
 import {GROUP_FLOOR, GROUP_OBJECTS_AND_HUMANS} from "./game_state/Play";
 import {Depot} from "./objects/Depot";
 import {DeletableObjectInterface} from "./objects/DeletableObjectInterface";
+import {ObjectPhantom} from "./objects/ObjectPhantom";
+import {Direction} from "./Direction";
 
 const GRID_WIDTH = 12;
 const GRID_HEIGHT = 12;
@@ -295,5 +297,40 @@ export class WorldKnowledge {
 
     getDepot(): Depot {
         return this.depot;
+    }
+
+    canPutHere(phantom: ObjectPhantom) {
+        if (!this.isFree(phantom.getPosition())) {
+            return false;
+        }
+
+        let isEntryPossible = false;
+        phantom.getEntries().forEach((entry) => {
+            if (this.isFree(Direction.getGap(phantom.getPosition(), entry))) {
+                isEntryPossible = true;
+            }
+        });
+        if (isEntryPossible === false) {
+            return false;
+        }
+
+        let doNotBlockOthers = true;
+        this.objects.forEach((object) => {
+            let isEntryPossible = false;
+            object.getEntries().forEach((entry) => {
+                const out = Direction.getGap(object.getPosition(), entry);
+                if (out.x !== phantom.getPosition().x || out.y !== phantom.getPosition().y) {
+                    isEntryPossible = true;
+                }
+            });
+            if (!isEntryPossible) {
+                doNotBlockOthers = false;
+            }
+        });
+        if (!doNotBlockOthers) {
+            return false;
+        }
+
+        return true;
     }
 }

@@ -47,4 +47,14 @@ export class Direction {
     static isTop(direction: DIRECTION): boolean {
         return direction === DIRECTION.TOP || direction === DIRECTION.LEFT;
     }
+
+    static getHorizontalMirror(direction: any) {
+        switch (direction) {
+            case DIRECTION.TOP: return DIRECTION.LEFT;
+            case DIRECTION.BOTTOM: return DIRECTION.RIGHT;
+            case DIRECTION.LEFT: return DIRECTION.TOP;
+            case DIRECTION.RIGHT: return DIRECTION.BOTTOM;
+            case DIRECTION.CURRENT: return DIRECTION.CURRENT;
+        }
+    }
 }
