@@ -11,4 +11,11 @@ export class Depot {
         }
         this.objects[name]++;
     }
+
+    getCount(name: string): number {
+        if (this.objects[name] === undefined) {
+            return 0;
+        }
+        return this.objects[name];
+    }
 }
