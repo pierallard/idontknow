@@ -31,7 +31,7 @@ export class HumanMoodManager {
             let moodUpdate = {};
             moodUpdate[MOOD.RELAXATION] = LOSS;
             moodUpdate[MOOD.HUNGER] = LOSS;
-            moodUpdate[MOOD.SOCIAL] = LOSS;
+            moodUpdate[MOOD.SOCIAL] = LOSS / 2;
             this.updateFromStateInner(moodUpdate);
             this.hasToBeUpdated = false;
 

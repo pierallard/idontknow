@@ -20,7 +20,7 @@ export default class Play extends Phaser.State {
     constructor() {
         super();
         this.worldKnowledge = new WorldKnowledge();
-        this.userInterface = new UserInterface();
+        this.userInterface = new UserInterface(this.worldKnowledge);
     }
 
     public create() {
@@ -48,6 +48,7 @@ export default class Play extends Phaser.State {
     update(game: Phaser.Game) {
         this.groups[GROUP_OBJECTS_AND_HUMANS].sort('y', Phaser.Group.SORT_ASCENDING);
         this.worldKnowledge.update();
+        this.userInterface.update();
 
         if (this.upKey.isDown) {
             this.game.camera.setPosition(this.game.camera.position.x, this.game.camera.position.y - CAMERA_GAP);

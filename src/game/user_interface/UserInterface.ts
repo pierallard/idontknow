@@ -1,6 +1,7 @@
 import {GROUP_INTERFACE} from "../game_state/Play";
 import {CAMERA_HEIGHT_PIXELS, CAMERA_WIDTH_PIXELS} from "../../app";
 import {OBJECT_SELLER_CELL_SIZE, ObjectSeller} from "./ObjectSeller";
+import {WorldKnowledge} from "../WorldKnowledge";
 
 export const INTERFACE_WIDTH = 100;
 
@@ -8,8 +9,8 @@ export class UserInterface {
     private backgroundGraphics: Phaser.Graphics;
     private objectSeller: ObjectSeller;
 
-    constructor() {
-        this.objectSeller = new ObjectSeller(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH);
+    constructor(worldKnowledge: WorldKnowledge) {
+        this.objectSeller = new ObjectSeller(worldKnowledge);
     }
 
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}) {
@@ -22,9 +23,13 @@ export class UserInterface {
         for (let i = 0; i < 10; i++) {
             this.backgroundGraphics.endFill();
             this.backgroundGraphics.lineStyle(1, 0xffffff);
-            this.backgroundGraphics.drawRect(0, i * OBJECT_SELLER_CELL_SIZE, OBJECT_SELLER_CELL_SIZE, OBJECT_SELLER_CELL_SIZE);
+            this.backgroundGraphics.drawRect(0, 10 + i * OBJECT_SELLER_CELL_SIZE, OBJECT_SELLER_CELL_SIZE, OBJECT_SELLER_CELL_SIZE);
         }
 
         this.objectSeller.create(game, interfaceGroup);
+    }
+
+    update() {
+        this.objectSeller.update();
     }
 }

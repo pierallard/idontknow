@@ -66,7 +66,7 @@ export class WorldKnowledge {
                 this.wallRepository.addWall(cell);
             });
 
-            for (let i = 0; i < 3; i++) {
+            for (let i = 0; i < 10; i++) {
                 this.objects.push(new Desk(this.getRandomCell(), this));
             }
 
@@ -74,9 +74,9 @@ export class WorldKnowledge {
                 this.objects.push(new Sofa(this.getRandomCell(), this));
             }
 
-            this.objects.push(new Dispenser(this.getRandomCell(), this));
-            this.objects.push(new Dispenser(this.getRandomCell(), this));
-            this.objects.push(new Dispenser(this.getRandomCell(), this));
+            for (let i = 0; i < 10; i++) {
+                this.objects.push(new Dispenser(this.getRandomCell(), this));
+            }
         }
 
         this.humanRepository = new HumanRepository(this);
@@ -291,5 +291,9 @@ export class WorldKnowledge {
             this.objects.splice(index, 1);
         }
         this.depot.add(object.constructor.name);
+    }
+
+    getDepot(): Depot {
+        return this.depot;
     }
 }
