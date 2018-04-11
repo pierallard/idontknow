@@ -5,6 +5,7 @@ import {ObjectInfo} from "../objects/ObjectInfo";
 import {ObjectInfoRegistry} from "../objects/ObjectInfoRegistry";
 import {ObjectPhantom} from "../objects/ObjectPhantom";
 import {GROUP_INFOS, GROUP_INTERFACE, GROUP_OBJECTS_AND_HUMANS} from "../game_state/Play";
+import {Depot} from "../objects/Depot";
 
 export const OBJECT_SELLER_CELL_SIZE = 42;
 
@@ -109,6 +110,7 @@ class SellerButton {
         game: Phaser.Game,
         group: Phaser.Group
     ) {
+        this.worldKnowledge.getDepot().remove(this.objectInfo.getName());
         const phantom = new ObjectPhantom(this.objectInfo.getName(), game, this.worldKnowledge);
         phantom.create(game, group);
     }

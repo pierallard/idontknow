@@ -15,4 +15,3 @@ export class Desk extends AbstractObject implements InteractiveObjectInterface, 
         return this.leftOriented;
     }
 }
-

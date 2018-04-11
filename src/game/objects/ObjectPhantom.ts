@@ -12,6 +12,7 @@ export class ObjectPhantom {
     private forbiddenSprite: Phaser.Sprite;
     private worldKnowledge: WorldKnowledge;
     private objectInfo: ObjectInfo;
+    private putEvent: Function;
 
     constructor(name, game: Phaser.Game, worldKnowledge: WorldKnowledge) {
         this.phantomSprites = [];
@@ -27,9 +28,16 @@ export class ObjectPhantom {
         game.input.addMoveCallback((_pointer, x, y) => {
             this.updatePosition(new PIXI.Point(x, y), game.camera);
         }, this);
+
+        this.putEvent = () => {
+            if (this.worldKnowledge.canPutHere(this)) {
+                this.put(game);
+            }
+        };
+        game.input.activePointer.leftButton.onDown.add(this.putEvent);
         game.input.keyboard.onUpCallback = (event) => {
             if (event.keyCode == Phaser.Keyboard.ESC) {
-                this.cancel();
+                this.cancel(game);
                 game.input.moveCallbacks = [];
             } else if (event.keyCode === Phaser.Keyboard.SPACEBAR) {
                 this.switchOrientation();
@@ -46,7 +54,14 @@ export class ObjectPhantom {
         this.forbiddenSprite.anchor.setTo(0.5, 0.5);
     }
 
-    private cancel() {
+    private cancel(game: Phaser.Game) {
+        this.destroy();
+
+        this.worldKnowledge.getDepot().add(this.objectInfo.getName());
+        game.input.activePointer.leftButton.onDown.remove(this.putEvent);
+    }
+
+    private destroy() {
         this.phantomSprites.forEach((phantomSprite) => {
             phantomSprite.destroy();
         });
@@ -89,6 +104,12 @@ export class ObjectPhantom {
         }));
         this.forbiddenSprite.position.set(center.x, center.y);
         this.forbiddenSprite.alpha = this.worldKnowledge.canPutHere(this) ? 0 : 1;
+    }
+
+    private put(game: Phaser.Game) {
+        game.input.activePointer.leftButton.onDown.remove(this.putEvent);
+        this.worldKnowledge.add(this.objectInfo.getName(), this.getPosition(), this.leftOriented);
+        this.destroy();
     }
 }
 

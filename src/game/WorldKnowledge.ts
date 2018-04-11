@@ -25,6 +25,8 @@ export class WorldKnowledge {
     private objects: ObjectInterface[];
     private wallRepository: WallRepository;
     private depot: Depot;
+    private game: Phaser.Game;
+    private groups: {[index: string] : Phaser.Group};
 
     constructor() {
         this.cells = [];
@@ -41,9 +43,9 @@ export class WorldKnowledge {
         if (DEBUG_WORLD) {
             this.wallRepository.addWall(new PIXI.Point(5, 5));
             this.wallRepository.addWall(new PIXI.Point(6, 5));
-            this.objects.push(new Desk(new PIXI.Point(4, 5), this));
-            this.objects.push(new Desk(new PIXI.Point(4, 6), this));
-            this.objects.push(new Dispenser(new PIXI.Point(5, 4), this));
+            this.objects.push(new Desk(new PIXI.Point(4, 5), this, false));
+            this.objects.push(new Desk(new PIXI.Point(4, 6), this, false));
+            this.objects.push(new Dispenser(new PIXI.Point(5, 4), this, false));
         } else {
             for (let x = 0; x < GRID_WIDTH; x++) {
                 this.wallRepository.addWall(new PIXI.Point(x, 0));
@@ -69,15 +71,15 @@ export class WorldKnowledge {
             });
 
             for (let i = 0; i < 10; i++) {
-                this.objects.push(new Desk(this.getRandomCell(), this));
+                this.objects.push(new Desk(this.getRandomCell(), this, false));
             }
 
             for (let i = 0; i < 3; i++) {
-                this.objects.push(new Sofa(this.getRandomCell(), this));
+                this.objects.push(new Sofa(this.getRandomCell(), this, false));
             }
 
             for (let i = 0; i < 10; i++) {
-                this.objects.push(new Dispenser(this.getRandomCell(), this));
+                this.objects.push(new Dispenser(this.getRandomCell(), this, false));
             }
         }
 
@@ -85,6 +87,8 @@ export class WorldKnowledge {
     }
 
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}) {
+        this.game = game;
+        this.groups = groups;
         console.log(GROUP_OBJECTS_AND_HUMANS);
         const floor = groups[GROUP_FLOOR];
         const noname = groups[GROUP_OBJECTS_AND_HUMANS];
@@ -291,6 +295,8 @@ export class WorldKnowledge {
         const index = this.objects.indexOf(object, 0);
         if (index > -1) {
             this.objects.splice(index, 1);
+        } else {
+            throw "Impossible to delete the object!";
         }
         this.depot.add(object.constructor.name);
     }
@@ -332,5 +338,17 @@ export class WorldKnowledge {
         }
 
         return true;
+    }
+
+    add(name: string, position: PIXI.Point, leftOriented: boolean) {
+        let object: ObjectInterface = null;
+        switch (name) {
+            case 'Desk': object = new Desk(position, this, leftOriented); break;
+            case 'Sofa': object = new Sofa(position, this, leftOriented); break;
+            case 'Dispenser': object = new Dispenser(position, this, leftOriented); break;
+            default: throw 'Unknown object ' + name;
+        }
+        this.objects.push(object);
+        object.create(this.game, this.groups)
     }
 }

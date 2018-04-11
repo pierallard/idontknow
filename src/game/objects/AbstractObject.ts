@@ -9,9 +9,9 @@ export abstract class AbstractObject {
     protected leftOriented: boolean;
     private worldKnowledge: WorldKnowledge;
 
-    constructor(point: PIXI.Point, worldKnowledge: WorldKnowledge) {
+    constructor(point: PIXI.Point, worldKnowledge: WorldKnowledge, leftOriented: boolean) {
         this.position = point;
-        this.leftOriented = false;
+        this.leftOriented = leftOriented;
         this.worldKnowledge = worldKnowledge;
     }
 
@@ -47,7 +47,6 @@ export abstract class AbstractObject {
     getEntries(): DIRECTION[] {
         return ObjectInfoRegistry.getObjectInfo(this.constructor.name).getEntryPoints(this.leftOriented);
     }
-
 
     getPosition(): PIXI.Point {
         return this.position;
