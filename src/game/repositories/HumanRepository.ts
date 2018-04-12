@@ -6,20 +6,6 @@ export class HumanRepository {
 
     constructor(worldKnowledge: WorldKnowledge) {
         this.humans = [
-            new Human(worldKnowledge.getRandomCell()),
-            new Human(worldKnowledge.getRandomCell()),
-            new Human(worldKnowledge.getRandomCell()),
-            new Human(worldKnowledge.getRandomCell()),
-            new Human(worldKnowledge.getRandomCell()),
-            new Human(worldKnowledge.getRandomCell()),
-            new Human(worldKnowledge.getRandomCell()),
-            new Human(worldKnowledge.getRandomCell()),
-            new Human(worldKnowledge.getRandomCell()),
-            new Human(worldKnowledge.getRandomCell()),
-            new Human(worldKnowledge.getRandomCell()),
-            new Human(worldKnowledge.getRandomCell()),
-            new Human(worldKnowledge.getRandomCell()),
-            new Human(worldKnowledge.getRandomCell()),
             new Human(worldKnowledge.getRandomCell())
         ];
     }

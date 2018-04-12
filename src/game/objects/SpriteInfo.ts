@@ -2,15 +2,17 @@ import {PositionTransformer} from "../PositionTransformer";
 
 export class SpriteInfo {
     private name: string;
-    private anchorBottom: number;
     private left: number;
     private bottom: number;
+    private anchorBottom: number;
+    private gapLeft: number;
 
-    constructor(name: string, left: number, bottom: number, anchorBottom: number) {
+    constructor(name: string, left: number, bottom: number, anchorBottom: number, gapLeft: number) {
         this.name = name;
         this.left = left;
         this.bottom = bottom;
         this.anchorBottom = anchorBottom;
+        this.gapLeft = gapLeft;
     }
 
     getSpriteName(): string {
@@ -26,7 +28,10 @@ export class SpriteInfo {
     }
 
     getSittablePosition(leftOriented: boolean): PIXI.Point {
-        return new PIXI.Point(leftOriented ? - this.left : this.left, this.bottom - this.anchorBottom + 3);
+        return new PIXI.Point(
+            leftOriented ? - (this.left + this.gapLeft) : (this.left + this.gapLeft),
+            this.bottom - this.anchorBottom + 3
+        );
     }
 
     getRealPositionFromOrigin(spriteSource: PIXI.Point, leftOriented: boolean) {

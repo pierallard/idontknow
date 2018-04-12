@@ -18,7 +18,7 @@ export class ObjectPhantom {
         this.phantomSprites = [];
         this.leftOriented = false;
         this.worldKnowledge = worldKnowledge;
-        this.position = new PIXI.Point(0, 0);
+        this.position = new PIXI.Point(-10, -10);
         this.objectInfo = ObjectInfoRegistry.getObjectInfo(name);
 
         this.objectInfo.getSpriteInfos().forEach((spriteInfo: SpriteInfo) => {
@@ -52,6 +52,7 @@ export class ObjectPhantom {
         });
         this.forbiddenSprite = game.add.sprite(0, 0, 'forbidden');
         this.forbiddenSprite.anchor.setTo(0.5, 0.5);
+        group.add(this.forbiddenSprite);
     }
 
     private cancel(game: Phaser.Game) {

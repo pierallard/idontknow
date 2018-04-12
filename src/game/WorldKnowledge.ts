@@ -69,18 +69,6 @@ export class WorldKnowledge {
             ].forEach((cell) => {
                 this.wallRepository.addWall(cell);
             });
-
-            for (let i = 0; i < 10; i++) {
-                this.objects.push(new Desk(this.getRandomCell(), this, false));
-            }
-
-            for (let i = 0; i < 3; i++) {
-                this.objects.push(new Sofa(this.getRandomCell(), this, false));
-            }
-
-            for (let i = 0; i < 10; i++) {
-                this.objects.push(new Dispenser(this.getRandomCell(), this, false));
-            }
         }
 
         this.humanRepository = new HumanRepository(this);
@@ -146,9 +134,15 @@ export class WorldKnowledge {
         return this.humanRepository.getSelectedHumanSprite();
     }
 
-    resetAStar(startPosition: PIXI.Point, endPosition: PIXI.Point) {
+    resetAStar(position: PIXI.Point) {
         this.humanRepository.humans.forEach((human) => {
-            human.resetAStar(startPosition, endPosition);
+            human.resetAStar(position);
+        });
+    }
+
+    resetStates(position: PIXI.Point) {
+        this.humanRepository.humans.forEach((human) => {
+            human.resetStateIfCellEmpty(position);
         });
     }
 
@@ -292,6 +286,7 @@ export class WorldKnowledge {
     }
 
     moveToDepot(object: DeletableObjectInterface) {
+        this.resetStates(object.getPosition());
         const index = this.objects.indexOf(object, 0);
         if (index > -1) {
             this.objects.splice(index, 1);
@@ -349,6 +344,7 @@ export class WorldKnowledge {
             default: throw 'Unknown object ' + name;
         }
         this.objects.push(object);
-        object.create(this.game, this.groups)
+        object.create(this.game, this.groups);
+        this.resetAStar(position);
     }
 }

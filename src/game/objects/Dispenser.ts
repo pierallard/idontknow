@@ -10,12 +10,4 @@ export class Dispenser extends AbstractObject implements InteractiveObjectInterf
 
         ObjectDeleter.makeDeletable(this, game, groups[GROUP_INFOS]);
     }
-
-    getPositionGap(): PIXI.Point {
-        return new PIXI.Point(0, 0);
-    }
-
-    forceOrientation(): boolean {
-        return true;
-    }
 }

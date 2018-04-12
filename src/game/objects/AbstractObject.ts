@@ -2,8 +2,9 @@ import {GROUP_OBJECTS_AND_HUMANS} from "../game_state/Play";
 import {ObjectInfoRegistry} from "./ObjectInfoRegistry";
 import {DIRECTION} from "../Direction";
 import {WorldKnowledge} from "../WorldKnowledge";
+import {InteractiveObjectInterface} from "./InteractiveObjectInterface";
 
-export abstract class AbstractObject {
+export abstract class AbstractObject implements InteractiveObjectInterface {
     protected sprites: Phaser.Sprite[];
     protected position: PIXI.Point;
     protected leftOriented: boolean;
@@ -61,5 +62,9 @@ export abstract class AbstractObject {
         this.getSprites().forEach((sprite) => {
             sprite.destroy(true);
         });
+    }
+
+    forceOrientation(): boolean {
+        return this.leftOriented;
     }
 }

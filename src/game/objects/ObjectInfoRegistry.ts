@@ -24,22 +24,22 @@ export class ObjectInfoRegistry {
         this.objectInfos.push(new ObjectInfo(
             'Dispenser',
             [
-                new SpriteInfo('dispenser', 4, -4, 3)
+                new SpriteInfo('dispenser', 4, -4, 3, -13)
             ],
             [DIRECTION.BOTTOM]
         ));
         this.objectInfos.push(new ObjectInfo(
             'Sofa',
             [
-                new SpriteInfo('sofa', 0, -8, 3)
+                new SpriteInfo('sofa', 0, -8, 3, 0)
             ],
             [DIRECTION.LEFT, DIRECTION.TOP, DIRECTION.RIGHT, DIRECTION.BOTTOM]
         ));
         this.objectInfos.push(new ObjectInfo(
             'Desk',
             [
-                new SpriteInfo('chair', -10, -8, 5),
-                new SpriteInfo('desk', 0, 0, 4)
+                new SpriteInfo('chair', -10, -8, 5, 0),
+                new SpriteInfo('desk', 0, 0, 4, 0)
             ],
             [DIRECTION.BOTTOM, DIRECTION.TOP, DIRECTION.LEFT]
         ));
