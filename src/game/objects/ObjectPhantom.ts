@@ -1,9 +1,12 @@
 import {ObjectInfoRegistry} from "./ObjectInfoRegistry";
 import {SpriteInfo} from "./SpriteInfo";
-import {PositionTransformer} from "../PositionTransformer";
+import {CELL_HEIGHT, CELL_WIDTH, PositionTransformer} from "../PositionTransformer";
 import {ObjectDeleter} from "./ObjectDeleter";
 import {WorldKnowledge} from "../WorldKnowledge";
 import {ObjectInfo} from "./ObjectInfo";
+
+const ARROW_SIZE = 0.9;
+const ARROW_MYBALLS = 0.9;
 
 export class ObjectPhantom {
     private position: PIXI.Point;
@@ -13,6 +16,7 @@ export class ObjectPhantom {
     private worldKnowledge: WorldKnowledge;
     private objectInfo: ObjectInfo;
     private putEvent: Function;
+    private directionsSprite: DirectionsSprite;
 
     constructor(name, game: Phaser.Game, worldKnowledge: WorldKnowledge) {
         this.phantomSprites = [];
@@ -25,11 +29,14 @@ export class ObjectPhantom {
             this.phantomSprites.push(new PhantomSprite(spriteInfo));
         });
 
+        this.directionsSprite = new DirectionsSprite(this.objectInfo);
+
         game.input.addMoveCallback((_pointer, x, y) => {
             this.updatePosition(new PIXI.Point(x, y), game.camera);
         }, this);
 
         this.putEvent = () => {
+            debugger;
             if (this.worldKnowledge.canPutHere(this)) {
                 this.put(game);
             }
@@ -46,12 +53,16 @@ export class ObjectPhantom {
     }
 
     create(game: Phaser.Game, group: Phaser.Group) {
+        this.directionsSprite.create(game, group);
+        this.directionsSprite.setPosition(this.position);
+
         this.phantomSprites.forEach((phantomSprite) => {
             phantomSprite.create(game, group);
             phantomSprite.setPosition(this.position);
         });
         this.forbiddenSprite = game.add.sprite(0, 0, 'forbidden');
         this.forbiddenSprite.anchor.setTo(0.5, 0.5);
+
         group.add(this.forbiddenSprite);
     }
 
@@ -67,6 +78,7 @@ export class ObjectPhantom {
             phantomSprite.destroy();
         });
         this.forbiddenSprite.destroy(true);
+        this.directionsSprite.destroy();
     }
 
     private updatePosition(point: PIXI.Point, camera: Phaser.Camera) {
@@ -79,6 +91,7 @@ export class ObjectPhantom {
         this.phantomSprites.forEach((phantomSprite) => {
             phantomSprite.setPosition(this.position);
         });
+        this.directionsSprite.setPosition(this.position);
         this.updateForbiddenSprite();
     }
 
@@ -111,6 +124,55 @@ export class ObjectPhantom {
         game.input.activePointer.leftButton.onDown.remove(this.putEvent);
         this.worldKnowledge.add(this.objectInfo.getName(), this.getPosition(), this.leftOriented);
         this.destroy();
+    }
+}
+
+class DirectionsSprite {
+    private graphics: Phaser.Graphics;
+
+    constructor(infos: ObjectInfo) {
+    }
+
+    create(game: Phaser.Game, group: Phaser.Group) {
+        this.graphics = game.add.graphics(0, 0, group);
+
+        this.graphics.clear();
+        this.graphics.beginFill(0x00de2d);
+        // Bottom
+        this.graphics.drawPolygon(
+            new PIXI.Point(0, CELL_HEIGHT / 2),
+            new PIXI.Point(- CELL_WIDTH / 2, 0),
+            new PIXI.Point(- CELL_WIDTH / 2 * ARROW_SIZE, CELL_HEIGHT / 2 * ARROW_SIZE),
+        );
+        // Left
+        this.graphics.drawPolygon(
+            new PIXI.Point(- CELL_WIDTH / 2, 0),
+            new PIXI.Point(0, - CELL_HEIGHT / 2),
+            new PIXI.Point(- CELL_WIDTH / 2 * ARROW_SIZE, - CELL_HEIGHT / 2 * ARROW_SIZE),
+        );
+        // Right
+        this.graphics.drawPolygon(
+            new PIXI.Point(CELL_WIDTH / 2, 0),
+            new PIXI.Point(0, - CELL_HEIGHT / 2),
+            new PIXI.Point(CELL_WIDTH / 2 * ARROW_SIZE, - CELL_HEIGHT / 2 * ARROW_SIZE),
+        );
+        // Top
+        this.graphics.drawPolygon(
+            new PIXI.Point(0, CELL_HEIGHT / 2),
+            new PIXI.Point(CELL_WIDTH / 2, 0),
+            new PIXI.Point(CELL_WIDTH / 2 * ARROW_SIZE, CELL_HEIGHT / 2 * ARROW_SIZE),
+        );
+
+        group.add(this.graphics);
+    }
+
+    setPosition(position: PIXI.Point) {
+        this.graphics.x = PositionTransformer.getRealPosition(position).x;
+        this.graphics.y = PositionTransformer.getRealPosition(position).y - CELL_HEIGHT / 2;
+    }
+
+    destroy() {
+        this.graphics.destroy(true);
     }
 }
 

@@ -320,7 +320,7 @@ export class WorldKnowledge {
             let isEntryPossible = false;
             object.getEntries().forEach((entry) => {
                 const out = Direction.getGap(object.getPosition(), entry);
-                if (out.x !== phantom.getPosition().x || out.y !== phantom.getPosition().y) {
+                if (this.isFree(out) && !(out.x === phantom.getPosition().x && out.y === phantom.getPosition().y)) {
                     isEntryPossible = true;
                 }
             });
