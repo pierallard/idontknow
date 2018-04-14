@@ -12,11 +12,10 @@ import {PositionTransformer} from "./PositionTransformer";
 import {GROUP_FLOOR, GROUP_OBJECTS_AND_HUMANS} from "./game_state/Play";
 import {Depot} from "./objects/Depot";
 import {DeletableObjectInterface} from "./objects/DeletableObjectInterface";
-import {ObjectPhantom} from "./objects/ObjectPhantom";
 import {DIRECTION, Direction} from "./Direction";
 
-const GRID_WIDTH = 12;
-const GRID_HEIGHT = 12;
+export const GRID_WIDTH = 16;
+export const GRID_HEIGHT = 16;
 export const DEBUG_WORLD = false;
 
 export class WorldKnowledge {

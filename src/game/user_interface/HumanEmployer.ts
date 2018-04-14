@@ -58,7 +58,7 @@ class ApplicantButton {
         this.sprite = game.add.sprite(spriteSource.x, spriteSource.y, this.humanProperties.getSpriteKey(), 12, groups[GROUP_INTERFACE]);
         this.sprite.anchor.set(0.5, 0.5);
 
-        this.name = game.add.text(spriteSource.x + OBJECT_SELLER_CELL_SIZE + 3, spriteSource.y, this.humanProperties.getName(), TEXT_STYLE, groups[GROUP_INTERFACE]);
+        this.name = game.add.text(left + OBJECT_SELLER_CELL_SIZE + 3, TOP_GAP + index * OBJECT_SELLER_CELL_SIZE, this.humanProperties.getName(), TEXT_STYLE, groups[GROUP_INTERFACE]);
     }
 
     hide() {
