@@ -301,20 +301,21 @@ export class WorldKnowledge {
     }
 
     canPutHere(phantom: ObjectInterface) {
+        // Check if there is nothing in the cell
         if (!this.isFree(phantom.getPosition())) {
             return false;
         }
 
+        // Check if the human can enter the interactive object by at least one of the entries
         let isEntryPossible = false;
         phantom.getEntries().forEach((entry) => {
-            if (this.ifIPutThisObjectHereThisEntryShouldBeAccessible(phantom, entry)) {
-                isEntryPossible = true;
-            }
+            isEntryPossible = isEntryPossible || this.isEntryAccessibleForObject(phantom, entry);
         });
         if (isEntryPossible === false) {
             return false;
         }
 
+        // Check that if we put an object here, every other objects have at least one possible entry.
         let doNotBlockOthers = true;
         this.objects.forEach((object) => {
             let isEntryPossible = false;
@@ -335,7 +336,7 @@ export class WorldKnowledge {
         return true;
     }
 
-    ifIPutThisObjectHereThisEntryShouldBeAccessible(phantom: ObjectInterface, entry: DIRECTION) {
+    isEntryAccessibleForObject(phantom: ObjectInterface, entry: DIRECTION) {
         return this.isFree(Direction.getGap(phantom.getPosition(), entry));
     }
 

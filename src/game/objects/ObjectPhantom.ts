@@ -139,11 +139,11 @@ export class ObjectPhantom implements ObjectInterface {
         return this.leftOriented
     }
 
-    totototo(direction: DIRECTION) {
-        return this.worldKnowledge.ifIPutThisObjectHereThisEntryShouldBeAccessible(this, direction);
+    isEntryAccessible(direction: DIRECTION) {
+        return this.worldKnowledge.isEntryAccessibleForObject(this, direction);
     }
 
-    tatatatata() {
+    isCellFree() {
         return this.worldKnowledge.isFree(this.getPosition());
     }
 }
@@ -168,7 +168,7 @@ class DirectionsSprite {
         Direction.neighborDirections().forEach((direction) => {
             if (this.phantom.getInfo().getEntryPoints(this.phantom.getLeftOriented()).indexOf(direction) <= -1) {
                 this.graphics.beginFill(0x494947); // Grey
-            } else if (this.phantom.totototo(direction)) {
+            } else if (this.phantom.isEntryAccessible(direction)) {
                 this.graphics.beginFill(0x00de2d); // Green
             } else {
                 this.graphics.beginFill(0xff004d); // Red
@@ -204,12 +204,7 @@ class DirectionsSprite {
             }
         });
 
-        if (this.phantom.tatatatata()) {
-            this.graphics.beginFill(0x00de2d);
-        } else {
-            this.graphics.beginFill(0xff004d);
-        }
-        // Center
+        this.graphics.beginFill(this.phantom.isCellFree() ? 0x00de2d : 0xff004d);
         this.graphics.drawPolygon(
             new PIXI.Point(- CELL_WIDTH / 2, 0),
             new PIXI.Point(0, CELL_HEIGHT / 2),
