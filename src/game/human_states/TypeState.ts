@@ -38,7 +38,7 @@ export class TypeState implements HumanState {
                 this.human.loadAnimation(ANIMATION.SIT_DOWN, this.interactiveObject.forceOrientation());
                 this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.SIT_DOWN), () => {
                     this.human.loadAnimation(ANIMATION.TYPE);
-                    this.events.push(this.game.time.events.add(Phaser.Math.random(5, 10) * Phaser.Timer.SECOND, () => {
+                    this.events.push(this.game.time.events.add(Phaser.Math.random(15, 60) * Phaser.Timer.SECOND, () => {
                         this.human.loadAnimation(ANIMATION.STAND_UP);
                         this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.STAND_UP) + 100, () => {
                             this.human.goToFreeCell(this.interactiveObject.getEntries());

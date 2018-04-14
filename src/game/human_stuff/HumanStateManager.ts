@@ -143,11 +143,11 @@ export class HumanStateManager {
             case STATE.TALK: result = 8; break;
             case STATE.SIT: result = 2; break;
             case STATE.COFFEE: result = 6; break;
-            case STATE.TYPE: result = 5 + 1 + 2 + 8 + 2 + 6; break;
+            case STATE.TYPE: result = (5 + 1 + 2 + 8 + 2 + 6) * 2; break;
         }
 
         if (state === this.state.getState()) {
-            result = result / 10;
+            result = result / 2;
         }
 
         HumanMoodManager.getMoods().forEach((mood: MOOD) => {

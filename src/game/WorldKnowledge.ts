@@ -13,6 +13,7 @@ import {GROUP_FLOOR, GROUP_OBJECTS_AND_HUMANS} from "./game_state/Play";
 import {Depot} from "./objects/Depot";
 import {DeletableObjectInterface} from "./objects/DeletableObjectInterface";
 import {DIRECTION, Direction} from "./Direction";
+import {HumanProperties} from "./human_stuff/HumanProperties";
 
 export const GRID_WIDTH = 16;
 export const GRID_HEIGHT = 16;
@@ -350,5 +351,11 @@ export class WorldKnowledge {
         this.objects.push(object);
         object.create(this.game, this.groups);
         this.resetAStar(position);
+    }
+
+    addEmployee(humanProperties: HumanProperties) {
+        const employee = new Employee(this.getRandomCell());
+        employee.create(this.game, this.groups, this);
+        this.humanRepository.humans.push(employee);
     }
 }
