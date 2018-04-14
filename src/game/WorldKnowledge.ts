@@ -354,7 +354,7 @@ export class WorldKnowledge {
     }
 
     addEmployee(humanProperties: HumanProperties) {
-        const employee = new Employee(this.getRandomCell());
+        const employee = new Employee(this.getRandomCell(), humanProperties);
         employee.create(this.game, this.groups, this);
         this.humanRepository.humans.push(employee);
     }

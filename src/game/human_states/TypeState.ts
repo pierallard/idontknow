@@ -1,5 +1,5 @@
 import {HumanState} from "./HumanState";
-import {Employee, WALK_CELL_DURATION} from "../human_stuff/Employee";
+import {Employee} from "../human_stuff/Employee";
 import {WorldKnowledge} from "../WorldKnowledge";
 import {InteractiveObjectInterface} from "../objects/InteractiveObjectInterface";
 import {ANIMATION, HumanAnimationManager} from "../human_stuff/HumanAnimationManager";
@@ -34,7 +34,7 @@ export class TypeState implements HumanState {
         if (!this.isHumanOnTheRightCell && this.isNeighborPosition()) {
             this.isHumanOnTheRightCell = true;
             this.human.interactWith(this.interactiveObject, this.interactiveObject.forceOrientation());
-            this.events.push(this.game.time.events.add(WALK_CELL_DURATION + 100, () => {
+            this.events.push(this.game.time.events.add(this.human.getWalkDuration() + 100, () => {
                 this.human.loadAnimation(ANIMATION.SIT_DOWN, this.interactiveObject.forceOrientation());
                 this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.SIT_DOWN), () => {
                     this.human.loadAnimation(ANIMATION.TYPE);
@@ -42,7 +42,7 @@ export class TypeState implements HumanState {
                         this.human.loadAnimation(ANIMATION.STAND_UP);
                         this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.STAND_UP) + 100, () => {
                             this.human.goToFreeCell(this.interactiveObject.getEntries());
-                            this.events.push(this.game.time.events.add(WALK_CELL_DURATION + 100, () => {
+                            this.events.push(this.game.time.events.add(this.human.getWalkDuration() + 100, () => {
                                 this.active = false;
                             }, this));
                         }, this));

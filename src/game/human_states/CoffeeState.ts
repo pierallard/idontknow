@@ -1,5 +1,5 @@
 import {HumanState} from "./HumanState";
-import {Employee, WALK_CELL_DURATION} from "../human_stuff/Employee";
+import {Employee} from "../human_stuff/Employee";
 import {WorldKnowledge} from "../WorldKnowledge";
 import {STATE} from "../human_stuff/HumanStateManager";
 import {Dispenser} from "../objects/Dispenser";
@@ -35,12 +35,12 @@ export class CoffeeState implements HumanState {
         if (!this.isHumanOnTheRightCell && this.isNeighborPosition()) {
             this.isHumanOnTheRightCell = true;
             this.human.interactWith(this.dispenser, this.dispenser.forceOrientation());
-            this.events.push(this.game.time.events.add(WALK_CELL_DURATION + 100, () => {
+            this.events.push(this.game.time.events.add(this.human.getWalkDuration() + 100, () => {
                 this.human.loadAnimation(ANIMATION.DRINK);
                 this.human.updateMoodFromState();
                 this.events.push(this.game.time.events.add(Math.floor(Phaser.Math.random(2, 4)) * HumanAnimationManager.getAnimationTime(ANIMATION.DRINK), () => {
                     this.human.goToFreeCell(this.dispenser.getEntries());
-                    this.events.push(this.game.time.events.add(WALK_CELL_DURATION + 100, () => {
+                    this.events.push(this.game.time.events.add(this.human.getWalkDuration() + 100, () => {
                         this.active = false;
                     }, this));
                 }, this));

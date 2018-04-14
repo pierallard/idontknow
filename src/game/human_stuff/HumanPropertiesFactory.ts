@@ -8,7 +8,7 @@ const NAMES = [
     'Albert'
 ];
 
-const USE_API = true;
+const USE_API = false;
 
 export class HumanPropertiesFactory {
     static create() {

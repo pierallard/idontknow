@@ -11,8 +11,10 @@ import {TalkBubble} from "./TalkBubble";
 import {HumanMoodManager, MOOD} from "./HumanMoodManager";
 import {MoodSprite} from "./MoodSprite";
 import {GROUP_OBJECTS_AND_HUMANS, GROUP_INFOS} from "../game_state/Play";
+import {HumanProperties} from "./HumanProperties";
 
-export const WALK_CELL_DURATION = 1200;
+const MAX_WALK_CELL_DURATION = 1500;
+const MIN_WALK_CELL_DURATION = 800;
 const GAP_FROM_BOTTOM = -8;
 const PATH_DEBUG = false;
 
@@ -31,8 +33,9 @@ export class Employee {
     private talkBubble: TalkBubble;
     private moodManager: HumanMoodManager;
     private moodSprite: MoodSprite;
+    private humanProperties: HumanProperties;
 
-    constructor(cell: PIXI.Point) {
+    constructor(cell: PIXI.Point, humanProperties: HumanProperties) {
         this.cell = cell;
         this.moving = false;
         this.path = [];
@@ -42,6 +45,7 @@ export class Employee {
         this.talkBubble = new TalkBubble();
         this.moodManager = new HumanMoodManager();
         this.moodSprite = new MoodSprite();
+        this.humanProperties = humanProperties;
     }
 
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}, worldKnowledge: WorldKnowledge) {
@@ -97,7 +101,7 @@ export class Employee {
                         PositionTransformer.getRealPosition(pathItem).x,
                         PositionTransformer.getRealPosition(pathItem).y - CELL_HEIGHT / 2
                     );
-                })
+                });
             }
         }
     }
@@ -145,10 +149,14 @@ export class Employee {
         this.game.add.tween(this.sprite.position).to({
             x: PositionTransformer.getRealPosition(this.cell).x + this.anchorPixels.x,
             y: PositionTransformer.getRealPosition(this.cell).y + this.anchorPixels.y
-        }, WALK_CELL_DURATION, 'Linear', true)
+        }, this.getWalkDuration(), 'Linear', true)
             .onComplete.add((_tweenValues: any, _game: any, isLeft: boolean, isTop: boolean) => {
             this.popPath(isLeft, isTop);
         }, this, 0, isLeft, isTop);
+    }
+
+    getWalkDuration(): number {
+        return MIN_WALK_CELL_DURATION + (MAX_WALK_CELL_DURATION - MIN_WALK_CELL_DURATION) * (1 - this.humanProperties.getSpeed());
     }
 
     private popPath(isLeft: boolean, isTop: boolean) {

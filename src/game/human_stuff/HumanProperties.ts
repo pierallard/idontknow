@@ -20,4 +20,8 @@ export class HumanProperties {
     getName(): string {
         return this.name;
     }
+
+    getSpeed() {
+        return this.speed;
+    }
 }
