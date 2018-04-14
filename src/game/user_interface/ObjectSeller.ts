@@ -13,10 +13,12 @@ const CIRCLE_GAP = 7;
 export class ObjectSeller {
     private sellerButtons: SellerButton[];
     private worldKnowledge: WorldKnowledge;
+    private visible: boolean;
 
     constructor(worldKnowledge: WorldKnowledge) {
         this.sellerButtons = [];
         this.worldKnowledge = worldKnowledge;
+        this.visible = true;
         ObjectInfoRegistry.getSellableObjects().forEach((object) => {
             this.sellerButtons.push(new SellerButton(object, this.worldKnowledge));
         });
@@ -41,15 +43,21 @@ export class ObjectSeller {
     }
 
     hide() {
-        this.sellerButtons.forEach((sellerButton) => {
-            sellerButton.hide();
-        });
+        if (this.visible) {
+            this.sellerButtons.forEach((sellerButton) => {
+                sellerButton.hide();
+            });
+        }
+        this.visible = false;
     }
 
     show() {
-        this.sellerButtons.forEach((sellerButton) => {
-            sellerButton.show();
-        });
+        if (!this.visible) {
+            this.sellerButtons.forEach((sellerButton) => {
+                sellerButton.show();
+            });
+        }
+        this.visible = true;
     }
 }
 
@@ -99,7 +107,7 @@ class SellerButton {
         this.circle.drawCircle(OBJECT_SELLER_CELL_SIZE, 0, 10);
         groups[GROUP_INTERFACE].add(this.circle);
 
-        this.counter = game.add.text(left + OBJECT_SELLER_CELL_SIZE - 4, index * OBJECT_SELLER_CELL_SIZE + TOP_GAP + CIRCLE_GAP - 6, '', TEXT_STYLE, groups[GROUP_INTERFACE]);
+        this.counter = game.add.text(left + OBJECT_SELLER_CELL_SIZE - 2, index * OBJECT_SELLER_CELL_SIZE + TOP_GAP + CIRCLE_GAP - 6, '0', TEXT_STYLE, groups[GROUP_INTERFACE]);
         groups[GROUP_INTERFACE].add(this.counter);
         this.updateCount(0);
     }
@@ -110,12 +118,10 @@ class SellerButton {
 
     updateCount(count: number) {
         const str = count + '';
+        const previousStr = this.counter.text;
+        const diff = str.length - previousStr.length;
         this.counter.setText(str);
-        if (str.length > 1) {
-            this.counter.position.set(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + OBJECT_SELLER_CELL_SIZE - 4, this.counter.position.y);
-        } else {
-            this.counter.position.set(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + OBJECT_SELLER_CELL_SIZE - 1, this.counter.position.y);
-        }
+        this.counter.position.x -= diff * 3;
     }
 
     private createPhantom(
@@ -130,20 +136,20 @@ class SellerButton {
     }
 
     hide() {
-        this.counter.alpha = 0;
-        this.fakeCell.alpha = 0;
-        this.circle.alpha = 0;
+        this.counter.position.x += INTERFACE_WIDTH;
+        this.fakeCell.position.x += INTERFACE_WIDTH;
+        this.circle.position.x += INTERFACE_WIDTH;
         this.sprites.forEach((sprite) => {
-            sprite.alpha = 0;
+            sprite.position.x += INTERFACE_WIDTH;
         });
     }
 
     show() {
-        this.counter.alpha = 1;
-        this.fakeCell.alpha = 1;
-        this.circle.alpha = 1;
+        this.counter.position.x -= INTERFACE_WIDTH;
+        this.fakeCell.position.x -= INTERFACE_WIDTH;
+        this.circle.position.x -= INTERFACE_WIDTH;
         this.sprites.forEach((sprite) => {
-            sprite.alpha = 1;
+            sprite.position.x -= INTERFACE_WIDTH;
         });
     }
 }

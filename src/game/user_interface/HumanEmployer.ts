@@ -10,10 +10,12 @@ import {TEXT_STYLE} from "../TextStyle";
 export class HumanEmployer {
     private worldKnowledge: WorldKnowledge;
     private applicantButtons: ApplicantButton[];
+    private visible: boolean;
 
     constructor(worldKnowledge: WorldKnowledge) {
         this.worldKnowledge = worldKnowledge;
         this.applicantButtons = [];
+        this.visible = true;
         for (let i = 0; i < 3; i++) {
             this.applicantButtons.push(new ApplicantButton(HumanPropertiesFactory.create()));
         }
@@ -28,15 +30,21 @@ export class HumanEmployer {
     }
 
     hide() {
-        this.applicantButtons.forEach((applicantButton) => {
-            applicantButton.hide();
-        });
+        if (this.visible) {
+            this.applicantButtons.forEach((applicantButton) => {
+                applicantButton.hide();
+            });
+        }
+        this.visible = false;
     }
 
     show() {
-        this.applicantButtons.forEach((applicantButton) => {
-            applicantButton.show();
-        });
+        if (!this.visible) {
+            this.applicantButtons.forEach((applicantButton) => {
+                applicantButton.show();
+            });
+        }
+        this.visible = true;
     }
 }
 
@@ -62,12 +70,12 @@ class ApplicantButton {
     }
 
     hide() {
-        this.sprite.alpha = 0;
-        this.name.alpha = 0;
+        this.sprite.position.x += INTERFACE_WIDTH;
+        this.name.position.x += INTERFACE_WIDTH;
     }
 
     show() {
-        this.sprite.alpha = 1;
-        this.name.alpha = 1;
+        this.sprite.position.x -= INTERFACE_WIDTH;
+        this.name.position.x -= INTERFACE_WIDTH;
     }
 }

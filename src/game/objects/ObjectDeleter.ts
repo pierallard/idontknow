@@ -2,7 +2,7 @@ import {DeletableObjectInterface} from "./DeletableObjectInterface";
 
 const POINTS = 20;
 const RADIUS = 6;
-const DELAY = 1500;
+const DELAY = 750;
 
 export class ObjectDeleter {
     static makeDeletable(object: DeletableObjectInterface, game: Phaser.Game, group: Phaser.Group) {
