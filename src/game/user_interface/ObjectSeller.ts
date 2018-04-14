@@ -72,7 +72,7 @@ class SellerButton {
             seller.input.pixelPerfectOver = true;
             seller.input.pixelPerfectClick = true;
             seller.input.useHandCursor = true;
-            seller.events.onInputDown.add(this.createPhantom, this, 0, game, groups[GROUP_INFOS]);
+            seller.events.onInputDown.add(this.createPhantom, this, 0, game, groups);
             groups[GROUP_INTERFACE].add(seller);
         });
 
@@ -108,10 +108,10 @@ class SellerButton {
         sprite: Phaser.Sprite,
         pointer: Phaser.Pointer,
         game: Phaser.Game,
-        group: Phaser.Group
+        groups: {[index: string] : Phaser.Group}
     ) {
         this.worldKnowledge.getDepot().remove(this.objectInfo.getName());
         const phantom = new ObjectPhantom(this.objectInfo.getName(), game, this.worldKnowledge);
-        phantom.create(game, group);
+        phantom.create(game, groups);
     }
 }

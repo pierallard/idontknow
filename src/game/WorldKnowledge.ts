@@ -13,7 +13,7 @@ import {GROUP_FLOOR, GROUP_OBJECTS_AND_HUMANS} from "./game_state/Play";
 import {Depot} from "./objects/Depot";
 import {DeletableObjectInterface} from "./objects/DeletableObjectInterface";
 import {ObjectPhantom} from "./objects/ObjectPhantom";
-import {Direction} from "./Direction";
+import {DIRECTION, Direction} from "./Direction";
 
 const GRID_WIDTH = 12;
 const GRID_HEIGHT = 12;
@@ -300,14 +300,14 @@ export class WorldKnowledge {
         return this.depot;
     }
 
-    canPutHere(phantom: ObjectPhantom) {
+    canPutHere(phantom: ObjectInterface) {
         if (!this.isFree(phantom.getPosition())) {
             return false;
         }
 
         let isEntryPossible = false;
         phantom.getEntries().forEach((entry) => {
-            if (this.isFree(Direction.getGap(phantom.getPosition(), entry))) {
+            if (this.ifIPutThisObjectHereThisEntryShouldBeAccessible(phantom, entry)) {
                 isEntryPossible = true;
             }
         });
@@ -333,6 +333,10 @@ export class WorldKnowledge {
         }
 
         return true;
+    }
+
+    ifIPutThisObjectHereThisEntryShouldBeAccessible(phantom: ObjectInterface, entry: DIRECTION) {
+        return this.isFree(Direction.getGap(phantom.getPosition(), entry));
     }
 
     add(name: string, position: PIXI.Point, leftOriented: boolean) {

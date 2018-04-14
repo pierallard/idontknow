@@ -4,11 +4,15 @@ import {CELL_HEIGHT, CELL_WIDTH, PositionTransformer} from "../PositionTransform
 import {ObjectDeleter} from "./ObjectDeleter";
 import {WorldKnowledge} from "../WorldKnowledge";
 import {ObjectInfo} from "./ObjectInfo";
+import {Direction, DIRECTION} from "../Direction";
+import {ObjectInterface} from "./ObjectInterface";
+import {GROUP_INFOS} from "../game_state/Play";
 
 const ARROW_SIZE = 0.9;
-const ARROW_MYBALLS = 0.9;
+const GAP = 4;
+const SPRITE_OPACITY = 0.7;
 
-export class ObjectPhantom {
+export class ObjectPhantom implements ObjectInterface {
     private position: PIXI.Point;
     private phantomSprites: PhantomSprite[];
     private leftOriented: boolean;
@@ -29,7 +33,7 @@ export class ObjectPhantom {
             this.phantomSprites.push(new PhantomSprite(spriteInfo));
         });
 
-        this.directionsSprite = new DirectionsSprite(this.objectInfo);
+        this.directionsSprite = new DirectionsSprite(this);
 
         game.input.addMoveCallback((_pointer, x, y) => {
             this.updatePosition(new PIXI.Point(x, y), game.camera);
@@ -52,18 +56,18 @@ export class ObjectPhantom {
         };
     }
 
-    create(game: Phaser.Game, group: Phaser.Group) {
-        this.directionsSprite.create(game, group);
+    create(game: Phaser.Game, groups: { [index: string]: Phaser.Group }) {
+        this.directionsSprite.create(game, groups[GROUP_INFOS]);
         this.directionsSprite.setPosition(this.position);
 
         this.phantomSprites.forEach((phantomSprite) => {
-            phantomSprite.create(game, group);
+            phantomSprite.create(game, groups[GROUP_INFOS]);
             phantomSprite.setPosition(this.position);
         });
         this.forbiddenSprite = game.add.sprite(0, 0, 'forbidden');
         this.forbiddenSprite.anchor.setTo(0.5, 0.5);
 
-        group.add(this.forbiddenSprite);
+        groups[GROUP_INFOS].add(this.forbiddenSprite);
     }
 
     private cancel(game: Phaser.Game) {
@@ -102,6 +106,7 @@ export class ObjectPhantom {
             phantomSprite.setPosition(this.position);
         });
         this.updateForbiddenSprite();
+        this.directionsSprite.updatePolygons();
     }
 
     getPosition(): PIXI.Point {
@@ -125,50 +130,98 @@ export class ObjectPhantom {
         this.worldKnowledge.add(this.objectInfo.getName(), this.getPosition(), this.leftOriented);
         this.destroy();
     }
+
+    getInfo(): ObjectInfo {
+        return this.objectInfo;
+    }
+
+    getLeftOriented(): boolean {
+        return this.leftOriented
+    }
+
+    totototo(direction: DIRECTION) {
+        return this.worldKnowledge.ifIPutThisObjectHereThisEntryShouldBeAccessible(this, direction);
+    }
+
+    tatatatata() {
+        return this.worldKnowledge.isFree(this.getPosition());
+    }
 }
 
 class DirectionsSprite {
     private graphics: Phaser.Graphics;
+    private phantom: ObjectPhantom;
 
-    constructor(infos: ObjectInfo) {
+    constructor(phantom: ObjectPhantom) {
+        this.phantom = phantom;
     }
 
     create(game: Phaser.Game, group: Phaser.Group) {
         this.graphics = game.add.graphics(0, 0, group);
-
-        this.graphics.clear();
-        this.graphics.beginFill(0x00de2d);
-        // Bottom
-        this.graphics.drawPolygon(
-            new PIXI.Point(0, CELL_HEIGHT / 2),
-            new PIXI.Point(- CELL_WIDTH / 2, 0),
-            new PIXI.Point(- CELL_WIDTH / 2 * ARROW_SIZE, CELL_HEIGHT / 2 * ARROW_SIZE),
-        );
-        // Left
-        this.graphics.drawPolygon(
-            new PIXI.Point(- CELL_WIDTH / 2, 0),
-            new PIXI.Point(0, - CELL_HEIGHT / 2),
-            new PIXI.Point(- CELL_WIDTH / 2 * ARROW_SIZE, - CELL_HEIGHT / 2 * ARROW_SIZE),
-        );
-        // Right
-        this.graphics.drawPolygon(
-            new PIXI.Point(CELL_WIDTH / 2, 0),
-            new PIXI.Point(0, - CELL_HEIGHT / 2),
-            new PIXI.Point(CELL_WIDTH / 2 * ARROW_SIZE, - CELL_HEIGHT / 2 * ARROW_SIZE),
-        );
-        // Top
-        this.graphics.drawPolygon(
-            new PIXI.Point(0, CELL_HEIGHT / 2),
-            new PIXI.Point(CELL_WIDTH / 2, 0),
-            new PIXI.Point(CELL_WIDTH / 2 * ARROW_SIZE, CELL_HEIGHT / 2 * ARROW_SIZE),
-        );
-
+        this.updatePolygons();
         group.add(this.graphics);
+    }
+
+    updatePolygons() {
+        this.graphics.clear();
+
+        Direction.neighborDirections().forEach((direction) => {
+            if (this.phantom.getInfo().getEntryPoints(this.phantom.getLeftOriented()).indexOf(direction) <= -1) {
+                this.graphics.beginFill(0x494947); // Grey
+            } else if (this.phantom.totototo(direction)) {
+                this.graphics.beginFill(0x00de2d); // Green
+            } else {
+                this.graphics.beginFill(0xff004d); // Red
+            }
+            switch (direction) {
+                case DIRECTION.BOTTOM:
+                    this.graphics.drawPolygon(
+                        new PIXI.Point(-GAP, CELL_HEIGHT / 2),
+                        new PIXI.Point(-CELL_WIDTH / 2, GAP),
+                        new PIXI.Point(-CELL_WIDTH / 2 * ARROW_SIZE, CELL_HEIGHT / 2 * ARROW_SIZE),
+                    );
+                    break;
+                case DIRECTION.LEFT:
+                    this.graphics.drawPolygon(
+                        new PIXI.Point(-CELL_WIDTH / 2, -GAP),
+                        new PIXI.Point(-GAP, -CELL_HEIGHT / 2),
+                        new PIXI.Point(-CELL_WIDTH / 2 * ARROW_SIZE, -CELL_HEIGHT / 2 * ARROW_SIZE),
+                    );
+                    break;
+                case DIRECTION.TOP:
+                    this.graphics.drawPolygon(
+                        new PIXI.Point(CELL_WIDTH / 2, -GAP),
+                        new PIXI.Point(GAP, -CELL_HEIGHT / 2),
+                        new PIXI.Point(CELL_WIDTH / 2 * ARROW_SIZE, -CELL_HEIGHT / 2 * ARROW_SIZE),
+                    );
+                    break;
+                case DIRECTION.RIGHT:
+                    this.graphics.drawPolygon(
+                        new PIXI.Point(GAP, CELL_HEIGHT / 2),
+                        new PIXI.Point(CELL_WIDTH / 2, GAP),
+                        new PIXI.Point(CELL_WIDTH / 2 * ARROW_SIZE, CELL_HEIGHT / 2 * ARROW_SIZE),
+                    );
+            }
+        });
+
+        if (this.phantom.tatatatata()) {
+            this.graphics.beginFill(0x00de2d);
+        } else {
+            this.graphics.beginFill(0xff004d);
+        }
+        // Center
+        this.graphics.drawPolygon(
+            new PIXI.Point(- CELL_WIDTH / 2, 0),
+            new PIXI.Point(0, CELL_HEIGHT / 2),
+            new PIXI.Point(CELL_WIDTH / 2, 0),
+            new PIXI.Point(0, - CELL_HEIGHT / 2)
+        );
     }
 
     setPosition(position: PIXI.Point) {
         this.graphics.x = PositionTransformer.getRealPosition(position).x;
         this.graphics.y = PositionTransformer.getRealPosition(position).y - CELL_HEIGHT / 2;
+        this.updatePolygons();
     }
 
     destroy() {
@@ -189,7 +242,7 @@ class PhantomSprite {
     create(game: Phaser.Game, group: Phaser.Group) {
         this.sprite = game.add.sprite(0, 0, this.spriteInfo.getSpriteName(), 0, group);
         this.sprite.anchor.set(0.5, 1.0 - this.spriteInfo.getAnchorBottom()/this.sprite.height);
-        this.sprite.alpha = 0.8;
+        this.sprite.alpha = SPRITE_OPACITY;
     }
 
     setPosition(position: PIXI.Point) {
