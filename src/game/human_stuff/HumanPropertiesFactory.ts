@@ -13,7 +13,7 @@ const USE_API = false;
 export class HumanPropertiesFactory {
     static create() {
         return new HumanProperties(
-            Math.random() > 0.5 ? 'human' : 'human_red',
+            ['human', 'human_red', 'human_pink'][Math.floor(Math.random() * 3)],
             USE_API ? this.generateName() : NAMES[Math.floor(Math.random() * NAMES.length)],
             Math.random(),
             Math.random(),

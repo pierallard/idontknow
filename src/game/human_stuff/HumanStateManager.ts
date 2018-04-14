@@ -58,7 +58,7 @@ export class HumanStateManager {
                 case STATE.TYPE:
                     this.state = new TypeState(
                         this.human,
-                        this.worldKnowledge.getRandomFreeDesk(),
+                        this.worldKnowledge.getClosestFreeDesk(this.human.getPosition()),
                         this.worldKnowledge
                     );
                     break;
@@ -99,7 +99,7 @@ export class HumanStateManager {
         if (this.worldKnowledge.getRandomFreeSofa() !== null) {
             states.push({state: STATE.SIT, probability: this.getProbability(STATE.SIT)});
         }
-        if (this.worldKnowledge.getRandomFreeDesk() !== null) {
+        if (this.worldKnowledge.getClosestFreeDesk(this.human.getPosition()) !== null) {
             states.push({state: STATE.TYPE, probability: this.getProbability(STATE.TYPE)});
         }
 

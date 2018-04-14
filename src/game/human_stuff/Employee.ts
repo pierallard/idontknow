@@ -58,7 +58,7 @@ export class Employee {
             PositionTransformer.getRealPosition(this.cell).y + this.anchorPixels.y,
             24,
             25,
-            Math.random() > 0.5 ? 'human' : 'human_red'
+            this.humanProperties.getSpriteKey()
         );
         this.animationManager.create(this.sprite);
         this.sprite.anchor.set(0.5, 1.0);

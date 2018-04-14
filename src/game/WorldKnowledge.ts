@@ -252,7 +252,7 @@ export class WorldKnowledge {
         return false;
     }
 
-    getRandomFreeDesk(): Desk {
+    getClosestFreeDesk(position: PIXI.Point): Desk {
         const freeDesks = this.objects.filter((object) => {
             return object.constructor.name === 'Desk' && !this.isObjectUsed(<Desk> object);
         });
@@ -261,7 +261,9 @@ export class WorldKnowledge {
             return null;
         }
 
-        return <Desk> freeDesks[Math.floor(Math.random() * freeDesks.length)];
+        return <Desk> freeDesks.sort((desk1, desk2) => {
+            return PositionTransformer.dist(position, desk1.getPosition()) - PositionTransformer.dist(position, desk2.getPosition());
+        })[0];
     }
 
     getRandomFreeDispenser(): Dispenser {
