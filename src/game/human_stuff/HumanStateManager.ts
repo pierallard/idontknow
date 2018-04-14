@@ -1,4 +1,4 @@
-import {Human} from "./Human";
+import {Employee} from "./Employee";
 import {HumanState} from "../human_states/HumanState";
 import {FreezeState} from "../human_states/FreezeState";
 import {SmokeState} from "../human_states/SmokeState";
@@ -23,12 +23,12 @@ export enum STATE {
 }
 
 export class HumanStateManager {
-    private human: Human;
+    private human: Employee;
     private state: HumanState;
     private worldKnowledge: WorldKnowledge;
     private animationManager: HumanAnimationManager;
 
-    constructor(human: Human) {
+    constructor(human: Employee) {
         this.human = human;
         this.state = new FreezeState(human);
     }

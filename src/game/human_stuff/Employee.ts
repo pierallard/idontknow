@@ -16,7 +16,7 @@ export const WALK_CELL_DURATION = 1200;
 const GAP_FROM_BOTTOM = -8;
 const PATH_DEBUG = false;
 
-export class Human {
+export class Employee {
     private sprite: Phaser.TileSprite;
     private cell: PIXI.Point;
     private game: Phaser.Game;
@@ -138,8 +138,8 @@ export class Human {
     }
 
     private animateMove(direction: DIRECTION) {
-        const isLeft = Human.isHumanLeft(direction);
-        const isTop = Human.isHumanTop(direction);
+        const isLeft = Employee.isHumanLeft(direction);
+        const isTop = Employee.isHumanTop(direction);
         this.animationManager.loadAnimation(ANIMATION.WALK, isLeft, isTop);
         this.moving = true;
         this.game.add.tween(this.sprite.position).to({
@@ -180,8 +180,8 @@ export class Human {
 
     interactWith(interactiveObject: InteractiveObjectInterface, isLeft: boolean = null) {
         const direction = Direction.getNeighborDirection(this.cell, interactiveObject.getPosition());
-        const side = (isLeft !== null) ? isLeft : Human.isHumanLeft(direction);
-        // Human has to gap 5px from the sofa to be sit properly, and 1px from the bottom.
+        const side = (isLeft !== null) ? isLeft : Employee.isHumanLeft(direction);
+        // Employee has to gap 5px from the sofa to be sit properly, and 1px from the bottom.
         this.anchorPixels.x = interactiveObject.getPositionGap().x + (side ? -5 : 5);
         this.anchorPixels.y = interactiveObject.getPositionGap().y - 1;
         this.cell = interactiveObject.getPosition();

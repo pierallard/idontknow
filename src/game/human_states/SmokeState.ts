@@ -1,13 +1,13 @@
-import {Human} from "../human_stuff/Human";
+import {Employee} from "../human_stuff/Employee";
 import {HumanState} from "./HumanState";
 import {ANIMATION, HumanAnimationManager} from "../human_stuff/HumanAnimationManager";
 import {STATE} from "../human_stuff/HumanStateManager";
 
 export class SmokeState implements HumanState {
-    private human: Human;
+    private human: Employee;
     private active: boolean;
 
-    constructor(human: Human) {
+    constructor(human: Employee) {
         this.human = human;
     }
 

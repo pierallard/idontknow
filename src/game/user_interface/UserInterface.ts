@@ -3,8 +3,9 @@ import {CAMERA_HEIGHT_PIXELS, CAMERA_WIDTH_PIXELS} from "../../app";
 import {OBJECT_SELLER_CELL_SIZE, ObjectSeller} from "./ObjectSeller";
 import {WorldKnowledge} from "../WorldKnowledge";
 import {TEXT_STYLE} from "../TextStyle";
+import {HumanEmployer} from "./HumanEmployer";
 
-export const INTERFACE_WIDTH = 100;
+export const INTERFACE_WIDTH = 150;
 export const TOP_GAP = 15;
 enum PANEL {
     INFO,
@@ -15,11 +16,13 @@ enum PANEL {
 export class UserInterface {
     private backgroundGraphics: Phaser.Graphics;
     private objectSeller: ObjectSeller;
+    private humanEmployer: HumanEmployer;
     private buttons: Phaser.Text[];
     private selectedPanel: PANEL;
 
     constructor(worldKnowledge: WorldKnowledge) {
         this.objectSeller = new ObjectSeller(worldKnowledge);
+        this.humanEmployer = new HumanEmployer(worldKnowledge);
         this.buttons = [];
         this.selectedPanel = PANEL.OBJ;
     }
@@ -38,6 +41,7 @@ export class UserInterface {
         }
 
         this.objectSeller.create(game, groups);
+        this.humanEmployer.create(game, groups);
 
         const buttonWidth = INTERFACE_WIDTH / 3;
 
@@ -64,10 +68,13 @@ export class UserInterface {
         this.selectedPanel = panel;
         if (this.selectedPanel === PANEL.INFO) {
             this.objectSeller.hide();
+            this.humanEmployer.hide();
         } else if (this.selectedPanel === PANEL.USR) {
             this.objectSeller.hide();
+            this.humanEmployer.show();
         } else {
             this.objectSeller.show();
+            this.humanEmployer.hide();
         }
     }
 }

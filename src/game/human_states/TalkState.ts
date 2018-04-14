@@ -1,4 +1,4 @@
-import {Human} from "../human_stuff/Human";
+import {Employee} from "../human_stuff/Employee";
 import {HumanState} from "./HumanState";
 import {WorldKnowledge} from "../WorldKnowledge";
 import {ANIMATION, HumanAnimationManager} from "../human_stuff/HumanAnimationManager";
@@ -7,9 +7,9 @@ import {Direction} from "../Direction";
 import {STATE} from "../human_stuff/HumanStateManager";
 
 export class TalkState implements HumanState {
-    private human: Human;
+    private human: Employee;
     private active: boolean;
-    private anotherHuman: Human;
+    private anotherHuman: Employee;
     private game: Phaser.Game;
     private worldKnowledge: WorldKnowledge;
     private meetingStarted: boolean;
@@ -17,8 +17,8 @@ export class TalkState implements HumanState {
     private meeting: Meeting;
 
     constructor(
-        human: Human,
-        anotherHuman: Human,
+        human: Employee,
+        anotherHuman: Employee,
         game: Phaser.Game,
         worldKnowledge: WorldKnowledge,
         meeting: Meeting = null

@@ -1,14 +1,14 @@
-import {Human} from "../human_stuff/Human";
+import {Employee} from "../human_stuff/Employee";
 import {HumanState} from "./HumanState";
 import {WorldKnowledge} from "../WorldKnowledge";
 import {STATE} from "../human_stuff/HumanStateManager";
 
 export class MoveRandomState implements HumanState {
-    private human: Human;
+    private human: Employee;
     private goal: PIXI.Point;
     private active: boolean;
 
-    constructor(human: Human, worldKnowledge: WorldKnowledge) {
+    constructor(human: Employee, worldKnowledge: WorldKnowledge) {
         this.active = false;
         this.human = human;
         this.goal = worldKnowledge.getRandomCell();

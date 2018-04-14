@@ -3,7 +3,7 @@ import {Wall} from "./objects/Wall";
 import {Sofa} from "./objects/Sofa";
 import {InteractiveObjectInterface} from "./objects/InteractiveObjectInterface";
 import {ObjectInterface} from "./objects/ObjectInterface";
-import {Human} from "./human_stuff/Human";
+import {Employee} from "./human_stuff/Employee";
 import {Desk} from "./objects/Desk";
 import {Dispenser} from "./objects/Dispenser";
 import {WallRepository} from "./repositories/WallRepository";
@@ -146,8 +146,8 @@ export class WorldKnowledge {
         });
     }
 
-    getAnotherFreeHuman(human: Human): Human {
-        const availableHumans = this.humanRepository.humans.filter((anotherHuman: Human) => {
+    getAnotherFreeHuman(human: Employee): Employee {
+        const availableHumans = this.humanRepository.humans.filter((anotherHuman: Employee) => {
             return anotherHuman !== human && anotherHuman.isFree()
         });
 

@@ -1,14 +1,14 @@
-import {Human} from "../human_stuff/Human";
+import {Employee} from "../human_stuff/Employee";
 import {HumanState} from "./HumanState";
 import {ANIMATION} from "../human_stuff/HumanAnimationManager";
 import {STATE} from "../human_stuff/HumanStateManager";
 
 export class FreezeState implements HumanState {
-    private human: Human;
+    private human: Employee;
     private active: boolean;
     private event: Phaser.TimerEvent;
 
-    constructor(human: Human) {
+    constructor(human: Employee) {
         this.human = human;
     }
 

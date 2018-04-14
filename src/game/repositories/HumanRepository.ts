@@ -1,12 +1,12 @@
-import {Human} from "../human_stuff/Human";
+import {Employee} from "../human_stuff/Employee";
 import {WorldKnowledge} from "../WorldKnowledge";
 
 export class HumanRepository {
-    humans: Human[];
+    humans: Employee[];
 
     constructor(worldKnowledge: WorldKnowledge) {
         this.humans = [
-            new Human(worldKnowledge.getRandomCell())
+            new Employee(worldKnowledge.getRandomCell())
         ];
     }
 
@@ -17,7 +17,7 @@ export class HumanRepository {
     }
 
     update() {
-        this.humans.forEach((human: Human) => {
+        this.humans.forEach((human: Employee) => {
             human.update();
         })
     }

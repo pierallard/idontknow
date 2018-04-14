@@ -1,5 +1,5 @@
 import {HumanState} from "./HumanState";
-import {Human, WALK_CELL_DURATION} from "../human_stuff/Human";
+import {Employee, WALK_CELL_DURATION} from "../human_stuff/Employee";
 import {WorldKnowledge} from "../WorldKnowledge";
 import {InteractiveObjectInterface} from "../objects/InteractiveObjectInterface";
 import {ANIMATION, HumanAnimationManager} from "../human_stuff/HumanAnimationManager";
@@ -7,7 +7,7 @@ import {STATE} from "../human_stuff/HumanStateManager";
 import {PositionTransformer} from "../PositionTransformer";
 
 export class TypeState implements HumanState {
-    private human: Human;
+    private human: Employee;
     private active: boolean;
     private interactiveObject: InteractiveObjectInterface;
     private game: Phaser.Game;
@@ -15,7 +15,7 @@ export class TypeState implements HumanState {
     private worldKnowledge: WorldKnowledge;
     private events: Phaser.TimerEvent[];
 
-    constructor(human: Human, interactiveObject: InteractiveObjectInterface, worldKnowledge: WorldKnowledge) {
+    constructor(human: Employee, interactiveObject: InteractiveObjectInterface, worldKnowledge: WorldKnowledge) {
         this.human = human;
         this.interactiveObject = interactiveObject;
         this.isHumanOnTheRightCell = false;
