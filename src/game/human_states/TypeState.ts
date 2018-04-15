@@ -25,7 +25,7 @@ export class TypeState implements HumanState {
 
     isActive(): boolean {
         if (!this.isHumanOnTheRightCell) {
-            if (this.worldKnowledge.hasObject(this.interactiveObject) && this.worldKnowledge.isObjectUsed(this.interactiveObject)) {
+            if (!this.worldKnowledge.hasObject(this.interactiveObject) || this.worldKnowledge.isObjectUsed(this.interactiveObject)) {
                 this.active = false;
 
                 return false;

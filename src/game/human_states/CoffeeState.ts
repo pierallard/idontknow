@@ -25,7 +25,7 @@ export class CoffeeState implements HumanState {
 
     isActive(): boolean {
         if (!this.isHumanOnTheRightCell) {
-            if (this.worldKnowledge.hasObject(this.dispenser) && this.worldKnowledge.isObjectUsed(this.dispenser)) {
+            if (!this.worldKnowledge.hasObject(this.dispenser) || this.worldKnowledge.isObjectUsed(this.dispenser)) {
                 this.active = false;
 
                 return false;
