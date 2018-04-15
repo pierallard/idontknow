@@ -277,7 +277,11 @@ export class Employee {
         this.moodManager.updateFromState(this.getState());
     }
 
-    getMood(mmod: MOOD): number {
-        return this.moodManager.getMood(mmod);
+    getMood(mood: MOOD = null): number {
+        if (mood === null) {
+            return this.moodManager.getGeneralMood();
+        }
+
+        return this.moodManager.getMood(mood);
     }
 }

@@ -4,6 +4,7 @@ import {ObjectSeller} from "./ObjectSeller";
 import {WorldKnowledge} from "../WorldKnowledge";
 import {TEXT_STYLE} from "../TextStyle";
 import {HumanEmployer} from "./HumanEmployer";
+import {InfoPanel} from "./InfoPanel";
 
 export const INTERFACE_WIDTH = 150.5;
 export const TOP_GAP = 15.5;
@@ -17,12 +18,14 @@ export class UserInterface {
     private backgroundGraphics: Phaser.Graphics;
     private objectSeller: ObjectSeller;
     private humanEmployer: HumanEmployer;
+    private infoPanel: InfoPanel;
     private buttons: Phaser.Text[];
     private selectedPanel: PANEL;
 
     constructor(worldKnowledge: WorldKnowledge) {
         this.objectSeller = new ObjectSeller(worldKnowledge);
         this.humanEmployer = new HumanEmployer(worldKnowledge);
+        this.infoPanel = new InfoPanel(worldKnowledge);
         this.buttons = [];
         this.selectedPanel = PANEL.OBJ;
     }
@@ -36,6 +39,7 @@ export class UserInterface {
 
         this.objectSeller.create(game, groups);
         this.humanEmployer.create(game, groups);
+        this.infoPanel.create(game, groups);
 
         const buttonWidth = INTERFACE_WIDTH / 3;
 
@@ -56,6 +60,7 @@ export class UserInterface {
 
     update() {
         this.objectSeller.update();
+        this.infoPanel.update();
     }
 
     private selectPanel(panel: PANEL) {
@@ -63,12 +68,15 @@ export class UserInterface {
         if (this.selectedPanel === PANEL.INFO) {
             this.objectSeller.hide();
             this.humanEmployer.hide();
+            this.infoPanel.show();
         } else if (this.selectedPanel === PANEL.USR) {
             this.objectSeller.hide();
             this.humanEmployer.show();
+            this.infoPanel.hide();
         } else {
             this.objectSeller.show();
             this.humanEmployer.hide();
+            this.infoPanel.hide();
         }
     }
 }

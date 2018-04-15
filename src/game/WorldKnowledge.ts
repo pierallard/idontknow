@@ -14,6 +14,7 @@ import {Depot} from "./objects/Depot";
 import {DeletableObjectInterface} from "./objects/DeletableObjectInterface";
 import {DIRECTION, Direction} from "./Direction";
 import {HumanProperties} from "./human_stuff/HumanProperties";
+import {MoodRegister} from "./human_stuff/MoodRegister";
 
 export const GRID_WIDTH = 16;
 export const GRID_HEIGHT = 16;
@@ -27,6 +28,7 @@ export class WorldKnowledge {
     private depot: Depot;
     private game: Phaser.Game;
     private groups: {[index: string] : Phaser.Group};
+    private moodRegister: MoodRegister;
 
     constructor() {
         this.cells = [];
@@ -72,6 +74,7 @@ export class WorldKnowledge {
         }
 
         this.humanRepository = new HumanRepository(this);
+        this.moodRegister = new MoodRegister(this.humanRepository);
     }
 
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}) {
@@ -91,6 +94,7 @@ export class WorldKnowledge {
 
         this.wallRepository.create(game, noname);
         this.humanRepository.create(game, groups, this);
+        this.moodRegister.create(game);
     }
 
     update() {
@@ -359,5 +363,9 @@ export class WorldKnowledge {
         const employee = new Employee(this.getRandomCell(), humanProperties);
         employee.create(this.game, this.groups, this);
         this.humanRepository.humans.push(employee);
+    }
+
+    getLastMoods(): number[] {
+        return this.moodRegister.getLastMoods();
     }
 }

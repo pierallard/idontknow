@@ -1,0 +1,32 @@
+import {HumanRepository} from "../repositories/HumanRepository";
+
+export class MoodRegister {
+    private humanRepository: HumanRepository
+    private moods: number[];
+
+    constructor(humanRepository: HumanRepository) {
+        this.humanRepository = humanRepository;
+        this.moods = [];
+    }
+
+    create(game: Phaser.Game) {
+        game.time.events.loop(Phaser.Timer.SECOND, this.updateMood, this);
+    }
+
+    updateMood() {
+        const moods = this.humanRepository.humans.map((human) => {
+            return human.getMood();
+        });
+        const avgMood = moods.reduce((prev, mood) => { return prev + mood; }, 0) / moods.length;
+        console.log(avgMood);
+        this.moods.push(avgMood);
+    }
+
+    getLastMoods(): number[] {
+        let result = [];
+        for (let i = 0; i < 100; i++) {
+            result.push(this.moods[this.moods.length - 1 - i]);
+        }
+        return result;
+    }
+}

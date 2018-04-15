@@ -40,7 +40,6 @@ export class ObjectPhantom implements ObjectInterface {
         }, this);
 
         this.putEvent = () => {
-            debugger;
             if (this.worldKnowledge.canPutHere(this)) {
                 this.put(game);
             }
