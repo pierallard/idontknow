@@ -1,4 +1,4 @@
-import {HumanState} from "./HumanState";
+import {HumanState, MAX_RETRIES} from "./HumanState";
 import {Employee} from "../human_stuff/Employee";
 import {WorldKnowledge} from "../WorldKnowledge";
 import {InteractiveObjectInterface} from "../objects/InteractiveObjectInterface";
@@ -15,22 +15,29 @@ export class SitState implements HumanState {
     private isHumanOnTheRightCell: boolean;
     private worldKnowledge: WorldKnowledge;
     private events: Phaser.TimerEvent[];
+    private tries: number;
 
-    constructor(human: Employee, interactiveObject: InteractiveObjectInterface, worldKnowledge: WorldKnowledge) {
+    constructor(human: Employee, interactiveObject: InteractiveObjectInterface, worldKnowledge: WorldKnowledge, tries: number = 0) {
         this.human = human;
         this.interactiveObject = interactiveObject;
         this.isHumanOnTheRightCell = false;
         this.worldKnowledge = worldKnowledge;
         this.events = [];
+        this.tries = tries;
     }
 
     getNextState(): HumanState {
         if (!this.isHumanOnTheRightCell) {
             if (!this.worldKnowledge.hasObject(this.interactiveObject) || this.worldKnowledge.isObjectUsed(this.interactiveObject)) {
-                this.active = false;
-                this.human.stopWalk();
+                const nextSofa = this.worldKnowledge.getRandomFreeSofa();
+                if (this.tries > MAX_RETRIES || nextSofa === null) {
+                    this.active = false;
+                    this.human.stopWalk();
 
-                return new RageState(this.human);
+                    return new RageState(this.human);
+                } else {
+                    return new SitState(this.human, nextSofa, this.worldKnowledge, this.tries + 1);
+                }
             }
         }
         if (!this.isHumanOnTheRightCell && this.isNeighborPosition()) {
@@ -51,7 +58,7 @@ export class SitState implements HumanState {
             }, this));
         }
 
-        return this;
+        return this.active ? this : null;
     }
 
     start(game: Phaser.Game): boolean {
