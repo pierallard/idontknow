@@ -370,4 +370,8 @@ export class WorldKnowledge {
     getLastMoods(): number[] {
         return this.moodRegister.getLastMoods();
     }
+
+    hasObject(interactiveObject: InteractiveObjectInterface) {
+        return this.objects.indexOf(interactiveObject) > -1;
+    }
 }
