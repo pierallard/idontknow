@@ -23,7 +23,7 @@ export class RageState implements HumanState {
         this.active = true;
 
         this.human.loadAnimation(ANIMATION.RAGE);
-        this.events.push(this.game.time.events.add(Math.floor(Phaser.Math.random(5, 10)) * HumanAnimationManager.getAnimationTime(ANIMATION.RAGE), () => {
+        this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.RAGE), () => {
             this.active = false;
         }, this));
 
