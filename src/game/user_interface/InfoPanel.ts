@@ -3,7 +3,7 @@ import {INTERFACE_WIDTH, TOP_GAP} from "./UserInterface";
 import {CAMERA_WIDTH_PIXELS} from "../../app";
 import {GROUP_INTERFACE} from "../game_state/Play";
 
-const HEIGHT = 100;
+const HEIGHT = 80;
 
 export class InfoPanel {
     private worldKnowledge: WorldKnowledge;
@@ -26,7 +26,7 @@ export class InfoPanel {
         this.moods.moveTo(0, 0);
         this.moods.lineTo(0, HEIGHT);
         this.moods.lineTo(INTERFACE_WIDTH, HEIGHT);
-        
+
         this.moods.moveTo(INTERFACE_WIDTH, HEIGHT - lastMoods[0] * HEIGHT);
         for (let i = 1; i < lastMoods.length; i++) {
             this.moods.lineTo(INTERFACE_WIDTH - i, HEIGHT - lastMoods[i] * HEIGHT);

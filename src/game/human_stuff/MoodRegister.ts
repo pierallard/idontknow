@@ -1,4 +1,5 @@
 import {HumanRepository} from "../repositories/HumanRepository";
+import {INTERFACE_WIDTH} from "../user_interface/UserInterface";
 
 export class MoodRegister {
     private humanRepository: HumanRepository
@@ -24,7 +25,7 @@ export class MoodRegister {
 
     getLastMoods(): number[] {
         let result = [];
-        for (let i = 0; i < 100; i++) {
+        for (let i = 0; i < INTERFACE_WIDTH; i++) {
             result.push(this.moods[this.moods.length - 1 - i]);
         }
         return result;

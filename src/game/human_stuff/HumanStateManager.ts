@@ -65,7 +65,7 @@ export class HumanStateManager {
                 case STATE.COFFEE:
                     this.state = new CoffeeState(
                         this.human,
-                        this.worldKnowledge.getRandomFreeDispenser(),
+                        this.worldKnowledge.getClosestFreeDispenser(this.human.getPosition()),
                         this.worldKnowledge
                     );
                     break;
@@ -103,7 +103,7 @@ export class HumanStateManager {
             states.push({state: STATE.TYPE, probability: this.getProbability(STATE.TYPE)});
         }
 
-        if (this.worldKnowledge.getRandomFreeDispenser() !== null) {
+        if (this.worldKnowledge.getClosestFreeDispenser(this.human.getPosition()) !== null) {
             states.push({state: STATE.COFFEE, probability: this.getProbability(STATE.COFFEE)});
         }
 

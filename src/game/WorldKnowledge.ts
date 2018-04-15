@@ -270,7 +270,7 @@ export class WorldKnowledge {
         })[0];
     }
 
-    getRandomFreeDispenser(): Dispenser {
+    getClosestFreeDispenser(position: PIXI.Point): Dispenser {
         const freeDispensers = this.objects.filter((object) => {
             return object.constructor.name === 'Dispenser' && !this.isObjectUsed(<Dispenser> object);
         });
@@ -279,7 +279,9 @@ export class WorldKnowledge {
             return null;
         }
 
-        return <Dispenser> freeDispensers[Math.floor(Math.random() * freeDispensers.length)];
+        return <Dispenser> freeDispensers.sort((dispenser1, dispenser2) => {
+            return PositionTransformer.dist(position, dispenser1.getPosition()) - PositionTransformer.dist(position, dispenser2.getPosition());
+        })[0];
     }
 
     private static getDist(sources: PIXI.Point[], point: PIXI.Point): number {
