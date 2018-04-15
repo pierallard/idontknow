@@ -10,6 +10,7 @@ export enum ANIMATION {
     TYPE,
     TALK,
     DRINK,
+    RAGE,
 }
 
 export class HumanAnimationManager {
@@ -60,6 +61,7 @@ export class HumanAnimationManager {
             case ANIMATION.STAND_UP: return [39, 38, 37, 36, 12];
             case ANIMATION.TYPE: return [42, 43, 44, 45];
             case ANIMATION.TALK: return topOriented ? [54, 55, 56, 57, 58, 59] : [48, 49, 50, 51, 52, 53];
+            case ANIMATION.RAGE: return [38,44,14,63,64]; // TODO
             case ANIMATION.DRINK:
                 return [60, 61, 60, 60, 60, 62, 63, 63, 64, 63, 63, 64, 63, 62, 60, 60, 60, 60, 60, 60, 60];
             case ANIMATION.SMOKE:
@@ -75,7 +77,7 @@ export class HumanAnimationManager {
                 }
                 return smoke_frames;
             default:
-                console.log('UNKNOWN ANIMATION ' + animation);
+                throw 'UNKNOWN ANIMATION ' + animation;
         }
     }
 
@@ -89,6 +91,7 @@ export class HumanAnimationManager {
             ANIMATION.TYPE,
             ANIMATION.TALK,
             ANIMATION.DRINK,
+            ANIMATION.RAGE,
         ];
     }
 
@@ -105,6 +108,7 @@ export class HumanAnimationManager {
             ANIMATION.SMOKE,
             ANIMATION.TYPE,
             ANIMATION.DRINK,
+            ANIMATION.RAGE,
         ].indexOf(animation) > -1;
     }
 }

@@ -17,10 +17,10 @@ export class MoveRandomState implements HumanState {
         }
     }
 
-    isActive(): boolean {
-        return this.active && this.human.getPosition().x !== this.goal.x ||
+    getNextState(): HumanState {
+        return (this.active && this.human.getPosition().x !== this.goal.x ||
             this.human.getPosition().y !== this.goal.y ||
-            this.human.isMoving();
+            this.human.isMoving()) ? this : null;
     }
 
     start(game: Phaser.Game): boolean {

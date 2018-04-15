@@ -162,8 +162,8 @@ export class Employee {
     private popPath(isLeft: boolean, isTop: boolean) {
         this.moving = false;
         let humanPositions = [this.cell];
-        if (this.path.length == 0) {
-            this.animationManager.loadAnimation(ANIMATION.FREEZE, isLeft, isTop);
+        if (this.path === null || this.path.length == 0) {
+            // this.animationManager.loadAnimation(ANIMATION.FREEZE, isLeft, isTop);
         } else {
             const next = this.path.shift();
             const direction = Direction.getNeighborDirection(this.cell, next);
@@ -283,5 +283,9 @@ export class Employee {
         }
 
         return this.moodManager.getMood(mood);
+    }
+
+    stopWalk() {
+        this.path = null;
     }
 }

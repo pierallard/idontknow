@@ -19,7 +19,6 @@ export class MoodRegister {
             return human.getMood();
         });
         const avgMood = moods.reduce((prev, mood) => { return prev + mood; }, 0) / moods.length;
-        console.log(avgMood);
         this.moods.push(avgMood);
     }
 

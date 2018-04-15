@@ -80,7 +80,6 @@ export class WorldKnowledge {
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}) {
         this.game = game;
         this.groups = groups;
-        console.log(GROUP_OBJECTS_AND_HUMANS);
         const floor = groups[GROUP_FLOOR];
         const noname = groups[GROUP_OBJECTS_AND_HUMANS];
 

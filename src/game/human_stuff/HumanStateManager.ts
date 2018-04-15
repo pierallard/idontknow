@@ -20,6 +20,7 @@ export enum STATE {
     TYPE,
     TALK,
     COFFEE,
+    RAGE,
 }
 
 export class HumanStateManager {
@@ -40,49 +41,62 @@ export class HumanStateManager {
     }
 
     updateState(game: Phaser.Game) {
-        if (!this.state.isActive()) {
-            switch(this.randomNextStepName()) {
-                case STATE.SMOKE:
-                    this.state = new SmokeState(this.human);
-                    break;
-                case STATE.MOVE_RANDOM:
-                    this.state = new MoveRandomState(this.human, this.worldKnowledge);
-                    break;
-                case STATE.SIT:
-                    this.state = new SitState(
-                        this.human,
-                        this.worldKnowledge.getRandomFreeSofa(),
-                        this.worldKnowledge
-                    );
-                    break;
-                case STATE.TYPE:
-                    this.state = new TypeState(
-                        this.human,
-                        this.worldKnowledge.getClosestFreeDesk(this.human.getPosition()),
-                        this.worldKnowledge
-                    );
-                    break;
-                case STATE.COFFEE:
-                    this.state = new CoffeeState(
-                        this.human,
-                        this.worldKnowledge.getClosestFreeDispenser(this.human.getPosition()),
-                        this.worldKnowledge
-                    );
-                    break;
-                case STATE.TALK:
-                    this.state = new TalkState(this.human, this.worldKnowledge.getAnotherFreeHuman(this.human), game, this.worldKnowledge);
-                    break;
-                case STATE.FREEZE:
-                default:
-                    this.state = new FreezeState(this.human);
-            }
+        const nextState = this.state.getNextState();
+        if (nextState === this.state) {
+            // Do nothing, current state is not ended.
+            return;
+        }
 
-            if (this.state.start(game)) {
-                console.log('New state: ' + this.state.constructor.name);
-            } else {
-                console.log('State ' + this.state.constructor.name + ' failed. Retry.');
-                this.updateState(game);
-            }
+        if (nextState !== null) {
+            // Next state is forced.
+            this.state = nextState;
+            this.state.start(game);
+            console.log('New forced state: ' + this.state.constructor.name);
+            return;
+        }
+
+        // Generates new state
+        switch(this.randomNextStepName()) {
+            case STATE.SMOKE:
+                this.state = new SmokeState(this.human);
+                break;
+            case STATE.MOVE_RANDOM:
+                this.state = new MoveRandomState(this.human, this.worldKnowledge);
+                break;
+            case STATE.SIT:
+                this.state = new SitState(
+                    this.human,
+                    this.worldKnowledge.getRandomFreeSofa(),
+                    this.worldKnowledge
+                );
+                break;
+            case STATE.TYPE:
+                this.state = new TypeState(
+                    this.human,
+                    this.worldKnowledge.getClosestFreeDesk(this.human.getPosition()),
+                    this.worldKnowledge
+                );
+                break;
+            case STATE.COFFEE:
+                this.state = new CoffeeState(
+                    this.human,
+                    this.worldKnowledge.getClosestFreeDispenser(this.human.getPosition()),
+                    this.worldKnowledge
+                );
+                break;
+            case STATE.TALK:
+                this.state = new TalkState(this.human, this.worldKnowledge.getAnotherFreeHuman(this.human), game, this.worldKnowledge);
+                break;
+            case STATE.FREEZE:
+            default:
+                this.state = new FreezeState(this.human);
+        }
+
+        if (this.state.start(game)) {
+            console.log('New random state: ' + this.state.constructor.name);
+        } else {
+            console.log('State ' + this.state.constructor.name + ' failed. Retry.');
+            this.updateState(game);
         }
     }
 

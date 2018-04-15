@@ -32,7 +32,7 @@ export class TalkState implements HumanState {
         this.meeting = meeting;
     }
 
-    isActive(): boolean {
+    getNextState(): HumanState {
         if (!this.meetingStarted) {
             if (!this.meeting.areAllHumanStillInMeeting()) {
                 this.active = false;
@@ -57,7 +57,7 @@ export class TalkState implements HumanState {
             }
         }
 
-        return this.active;
+        return this.active ? this : null;
     }
 
     switchAnimation(animation: ANIMATION) {

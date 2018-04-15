@@ -5,6 +5,7 @@ import {InteractiveObjectInterface} from "../objects/InteractiveObjectInterface"
 import {ANIMATION, HumanAnimationManager} from "../human_stuff/HumanAnimationManager";
 import {STATE} from "../human_stuff/HumanStateManager";
 import {PositionTransformer} from "../PositionTransformer";
+import {RageState} from "./RageState";
 
 export class SitState implements HumanState {
     private human: Employee;
@@ -23,12 +24,13 @@ export class SitState implements HumanState {
         this.events = [];
     }
 
-    isActive(): boolean {
+    getNextState(): HumanState {
         if (!this.isHumanOnTheRightCell) {
             if (!this.worldKnowledge.hasObject(this.interactiveObject) || this.worldKnowledge.isObjectUsed(this.interactiveObject)) {
                 this.active = false;
+                this.human.stopWalk();
 
-                return false;
+                return new RageState(this.human);
             }
         }
         if (!this.isHumanOnTheRightCell && this.isNeighborPosition()) {
@@ -49,7 +51,7 @@ export class SitState implements HumanState {
             }, this));
         }
 
-        return this.active;
+        return this;
     }
 
     start(game: Phaser.Game): boolean {

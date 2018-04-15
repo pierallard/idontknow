@@ -12,8 +12,8 @@ export class FreezeState implements HumanState {
         this.human = human;
     }
 
-    isActive(): boolean {
-        return this.active;
+    getNextState(): HumanState {
+        return this.active ? this : null;
     }
 
     start(game: Phaser.Game): boolean {
