@@ -1,12 +1,12 @@
 import {GROUP_INTERFACE} from "../game_state/Play";
 import {CAMERA_HEIGHT_PIXELS, CAMERA_WIDTH_PIXELS} from "../../app";
-import {OBJECT_SELLER_CELL_SIZE, ObjectSeller} from "./ObjectSeller";
+import {ObjectSeller} from "./ObjectSeller";
 import {WorldKnowledge} from "../WorldKnowledge";
 import {TEXT_STYLE} from "../TextStyle";
 import {HumanEmployer} from "./HumanEmployer";
 
-export const INTERFACE_WIDTH = 150;
-export const TOP_GAP = 15;
+export const INTERFACE_WIDTH = 150.5;
+export const TOP_GAP = 15.5;
 enum PANEL {
     INFO,
     USR,
@@ -31,14 +31,8 @@ export class UserInterface {
         const interfaceGroup = groups[GROUP_INTERFACE];
         this.backgroundGraphics = game.add.graphics(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH, 0, interfaceGroup);
         this.backgroundGraphics.beginFill(0x272a60);
-        this.backgroundGraphics.drawRect(0, 0, INTERFACE_WIDTH, CAMERA_HEIGHT_PIXELS);
+        this.backgroundGraphics.drawRect(-0.5, 0, INTERFACE_WIDTH, CAMERA_HEIGHT_PIXELS);
         interfaceGroup.add(this.backgroundGraphics);
-
-        for (let i = 0; i < 10; i++) {
-            this.backgroundGraphics.endFill();
-            this.backgroundGraphics.lineStyle(1, 0xffffff);
-            this.backgroundGraphics.drawRect(0, TOP_GAP + i * OBJECT_SELLER_CELL_SIZE, OBJECT_SELLER_CELL_SIZE, OBJECT_SELLER_CELL_SIZE);
-        }
 
         this.objectSeller.create(game, groups);
         this.humanEmployer.create(game, groups);

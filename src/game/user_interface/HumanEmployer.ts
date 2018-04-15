@@ -65,6 +65,7 @@ class ApplicantButton {
     private sprite: Phaser.Sprite;
     private name: Phaser.Text;
     private worldKnowledge: WorldKnowledge;
+    private square: Phaser.Graphics;
 
     constructor(humanEmployer: HumanEmployer, humanProperties: HumanProperties, worldKnowledge: WorldKnowledge) {
         this.humanEmployer = humanEmployer;
@@ -74,11 +75,17 @@ class ApplicantButton {
 
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}, index: number) {
         const left = CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH;
-        const spriteSource = new PIXI.Point(
+        const top = TOP_GAP + index * OBJECT_SELLER_CELL_SIZE;
+        const squareCenter = new PIXI.Point(
             left + OBJECT_SELLER_CELL_SIZE / 2,
-            TOP_GAP + (index + 0.5) * OBJECT_SELLER_CELL_SIZE
+            top + OBJECT_SELLER_CELL_SIZE / 2
         );
-        this.sprite = game.add.sprite(spriteSource.x, spriteSource.y, this.humanProperties.getSpriteKey(), 12, groups[GROUP_INTERFACE]);
+
+        this.square = game.add.graphics(left, TOP_GAP + index * OBJECT_SELLER_CELL_SIZE, groups[GROUP_INTERFACE]);
+        this.square.lineStyle(1, 0xffffff);
+        this.square.drawRect(0, 0, OBJECT_SELLER_CELL_SIZE, OBJECT_SELLER_CELL_SIZE);
+
+        this.sprite = game.add.sprite(squareCenter.x, squareCenter.y, this.humanProperties.getSpriteKey(), 12, groups[GROUP_INTERFACE]);
         this.sprite.anchor.set(0.5, 0.5);
         this.sprite.inputEnabled = true;
         this.sprite.input.pixelPerfectOver = true;
@@ -86,23 +93,26 @@ class ApplicantButton {
         this.sprite.input.useHandCursor = true;
         this.sprite.events.onInputDown.add(this.click, this, 0);
 
-        this.name = game.add.text(left + OBJECT_SELLER_CELL_SIZE + 3, TOP_GAP + index * OBJECT_SELLER_CELL_SIZE, this.humanProperties.getName(), TEXT_STYLE, groups[GROUP_INTERFACE]);
+        this.name = game.add.text(left + OBJECT_SELLER_CELL_SIZE + 3, top, this.humanProperties.getName(), TEXT_STYLE, groups[GROUP_INTERFACE]);
     }
 
     hide() {
         this.sprite.position.x += INTERFACE_WIDTH;
         this.name.position.x += INTERFACE_WIDTH;
+        this.square.position.x += INTERFACE_WIDTH + 10;
     }
 
     show() {
         this.sprite.position.x -= INTERFACE_WIDTH;
         this.name.position.x -= INTERFACE_WIDTH;
+        this.square.position.x -= INTERFACE_WIDTH + 10;
     }
 
     private click() {
         this.sprite.destroy(true);
         this.name.destroy(true);
         this.humanEmployer.employ(this);
+        this.square.destroy(true);
     }
 
     getHumanProperties(): HumanProperties {

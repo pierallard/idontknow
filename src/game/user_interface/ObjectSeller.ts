@@ -7,7 +7,7 @@ import {ObjectPhantom} from "../objects/ObjectPhantom";
 import {GROUP_INTERFACE} from "../game_state/Play";
 import {TEXT_STYLE} from "../TextStyle";
 
-export const OBJECT_SELLER_CELL_SIZE = 42;
+export const OBJECT_SELLER_CELL_SIZE = 41;
 const CIRCLE_GAP = 7;
 
 export class ObjectSeller {
@@ -68,6 +68,7 @@ class SellerButton {
     private fakeCell: Phaser.Sprite;
     private sprites: Phaser.Sprite[];
     private circle: Phaser.Graphics;
+    private square: Phaser.Graphics;
 
     constructor(objectInfo: ObjectInfo, worldKnowledge: WorldKnowledge) {
         this.objectInfo = objectInfo;
@@ -77,19 +78,24 @@ class SellerButton {
 
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}, index: number) {
         const left = CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH;
-        const spriteSource = new PIXI.Point(
+        const top = TOP_GAP + index * OBJECT_SELLER_CELL_SIZE;
+        const spriteOrigin = new PIXI.Point(
             left + OBJECT_SELLER_CELL_SIZE / 2,
-            TOP_GAP + (index + 1) * OBJECT_SELLER_CELL_SIZE
+            top + OBJECT_SELLER_CELL_SIZE
         );
 
-        this.fakeCell = game.add.sprite(spriteSource.x, spriteSource.y, 'casedefault');
+        this.square = game.add.graphics(left, TOP_GAP + index * OBJECT_SELLER_CELL_SIZE, groups[GROUP_INTERFACE]);
+        this.square.lineStyle(1, 0xffffff);
+        this.square.drawRect(0, 0, OBJECT_SELLER_CELL_SIZE, OBJECT_SELLER_CELL_SIZE);
+
+        this.fakeCell = game.add.sprite(spriteOrigin.x, spriteOrigin.y, 'casedefault');
         this.fakeCell.anchor.set(0.5, 1);
         groups[GROUP_INTERFACE].add(this.fakeCell);
 
         this.objectInfo.getSpriteInfos().forEach((spriteInfo) => {
             const seller = game.add.sprite(
-                spriteInfo.getRealPositionFromOrigin(spriteSource, false).x,
-                spriteInfo.getRealPositionFromOrigin(spriteSource, false).y,
+                spriteInfo.getRealPositionFromOrigin(spriteOrigin, false).x,
+                spriteInfo.getRealPositionFromOrigin(spriteOrigin, false).y,
                 spriteInfo.getSpriteName()
             );
             seller.anchor.set(spriteInfo.getAnchor(seller).x, spriteInfo.getAnchor(seller).y);
@@ -102,12 +108,12 @@ class SellerButton {
             groups[GROUP_INTERFACE].add(seller);
         });
 
-        this.circle = game.add.graphics(left, index * OBJECT_SELLER_CELL_SIZE + TOP_GAP + CIRCLE_GAP, groups[GROUP_INTERFACE]);
+        this.circle = game.add.graphics(left, top + CIRCLE_GAP, groups[GROUP_INTERFACE]);
         this.circle.beginFill(0xff0000);
-        this.circle.drawCircle(OBJECT_SELLER_CELL_SIZE, 0, 10);
+        this.circle.drawCircle(OBJECT_SELLER_CELL_SIZE, 0, 9);
         groups[GROUP_INTERFACE].add(this.circle);
 
-        this.counter = game.add.text(left + OBJECT_SELLER_CELL_SIZE - 2, index * OBJECT_SELLER_CELL_SIZE + TOP_GAP + CIRCLE_GAP - 6, '0', TEXT_STYLE, groups[GROUP_INTERFACE]);
+        this.counter = game.add.text(left + OBJECT_SELLER_CELL_SIZE - 1.5, index * OBJECT_SELLER_CELL_SIZE + TOP_GAP + CIRCLE_GAP - 5, '0', TEXT_STYLE, groups[GROUP_INTERFACE]);
         groups[GROUP_INTERFACE].add(this.counter);
         this.updateCount(0);
     }
@@ -142,6 +148,7 @@ class SellerButton {
         this.sprites.forEach((sprite) => {
             sprite.position.x += INTERFACE_WIDTH;
         });
+        this.square.position.x += INTERFACE_WIDTH + 10;
     }
 
     show() {
@@ -151,5 +158,6 @@ class SellerButton {
         this.sprites.forEach((sprite) => {
             sprite.position.x -= INTERFACE_WIDTH;
         });
+        this.square.position.x -= INTERFACE_WIDTH + 10;
     }
 }
