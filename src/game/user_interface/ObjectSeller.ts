@@ -11,29 +11,30 @@ export const OBJECT_SELLER_CELL_SIZE = 41;
 const CIRCLE_GAP = 7;
 
 export class ObjectSeller {
+    private objectProvisionnerButtons: ObjectProvisionnerButton[];
     private sellerButtons: SellerButton[];
     private worldKnowledge: WorldKnowledge;
     private visible: boolean;
 
     constructor(worldKnowledge: WorldKnowledge) {
-        this.sellerButtons = [];
+        this.objectProvisionnerButtons = [];
         this.worldKnowledge = worldKnowledge;
         this.visible = true;
         ObjectInfoRegistry.getSellableObjects().forEach((object) => {
-            this.sellerButtons.push(new SellerButton(object, this.worldKnowledge));
+            this.objectProvisionnerButtons.push(new ObjectProvisionnerButton(object, this.worldKnowledge));
         });
     }
 
     create(game: Phaser.Game, groups: {[index: string]: Phaser.Group }) {
         let i = 0;
-        this.sellerButtons.forEach((sellerButton) => {
+        this.objectProvisionnerButtons.forEach((sellerButton) => {
             sellerButton.create(game, groups, i);
             i++;
         });
     }
 
     update() {
-        this.sellerButtons.forEach((sellerButton) => {
+        this.objectProvisionnerButtons.forEach((sellerButton) => {
             sellerButton.updateCount(this.getCount(sellerButton.getName()))
         })
     }
@@ -44,7 +45,7 @@ export class ObjectSeller {
 
     hide() {
         if (this.visible) {
-            this.sellerButtons.forEach((sellerButton) => {
+            this.objectProvisionnerButtons.forEach((sellerButton) => {
                 sellerButton.hide();
             });
         }
@@ -53,7 +54,7 @@ export class ObjectSeller {
 
     show() {
         if (!this.visible) {
-            this.sellerButtons.forEach((sellerButton) => {
+            this.objectProvisionnerButtons.forEach((sellerButton) => {
                 sellerButton.show();
             });
         }
@@ -62,6 +63,14 @@ export class ObjectSeller {
 }
 
 class SellerButton {
+    private objectInfo: ObjectInfo;
+
+    constructor(objectInfo: ObjectInfo, worldKnowledge: WorldKnowledge) {
+
+    }
+}
+
+class ObjectProvisionnerButton {
     private objectInfo: ObjectInfo;
     private counter: Phaser.Text;
     private worldKnowledge: WorldKnowledge;

@@ -4,6 +4,7 @@ import {DIRECTION} from "../Direction";
 import {Dispenser} from "./Dispenser";
 import {Sofa} from "./Sofa";
 import {Desk} from "./Desk";
+import {Price} from "./Price";
 
 export class ObjectInfoRegistry {
     private static objectInfos: ObjectInfo[] = null;
@@ -30,7 +31,7 @@ export class ObjectInfoRegistry {
                 new SpriteInfo('dispenser', 4, -4, 3, -13)
             ],
             [DIRECTION.BOTTOM],
-            Dispenser.getPrice()
+            new Price(70)
         ));
         this.objectInfos.push(new ObjectInfo(
             'Sofa',
@@ -38,7 +39,7 @@ export class ObjectInfoRegistry {
                 new SpriteInfo('sofa', 0, -8, 3, 0)
             ],
             [DIRECTION.LEFT, DIRECTION.TOP, DIRECTION.RIGHT, DIRECTION.BOTTOM],
-            Sofa.getPrice()
+            new Price(10)
         ));
         this.objectInfos.push(new ObjectInfo(
             'Desk',
@@ -47,7 +48,7 @@ export class ObjectInfoRegistry {
                 new SpriteInfo('desk', 0, 0, 4, 0)
             ],
             [DIRECTION.BOTTOM, DIRECTION.TOP, DIRECTION.LEFT],
-            Desk.getPrice()
+            new Price(20)
         ));
         this.objectInfos.push(new ObjectInfo(
             'Table',

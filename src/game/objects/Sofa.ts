@@ -16,7 +16,7 @@ export class Sofa extends AbstractObject implements InteractiveObjectInterface, 
         return null;
     }
 
-    static getPrice(): Price {
-        return new Price(150);
-    }
+    // static getPrice(): Price {
+    //     return new Price(150);
+    // }
 }
