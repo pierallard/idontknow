@@ -128,6 +128,11 @@ class SellerButton {
         const diff = str.length - previousStr.length;
         this.counter.setText(str);
         this.counter.position.x -= diff * 3;
+        if (count == 0) {
+            this.hide();
+        } else {
+            this.show();
+        }
     }
 
     private createPhantom(
