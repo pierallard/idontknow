@@ -1,7 +1,5 @@
 import {STATE} from "../human_stuff/HumanStateManager";
 
-export const MAX_RETRIES = 3;
-
 export interface HumanState {
     /**
      * Returns the next state of the human.

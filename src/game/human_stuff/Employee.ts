@@ -15,6 +15,10 @@ import {HumanProperties} from "./HumanProperties";
 
 const MAX_WALK_CELL_DURATION = 1500;
 const MIN_WALK_CELL_DURATION = 800;
+
+const MAX_RETRIES = 3;
+const MIN_RETRIES = 0;
+
 const GAP_FROM_BOTTOM = -8;
 const PATH_DEBUG = false;
 
@@ -287,5 +291,9 @@ export class Employee {
 
     stopWalk() {
         this.path = null;
+    }
+
+    getMaxRetries(): number {
+        return Math.ceil(MIN_RETRIES + (MAX_RETRIES - MIN_RETRIES) * this.humanProperties.getPerseverance());
     }
 }

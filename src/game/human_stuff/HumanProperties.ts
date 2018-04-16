@@ -6,13 +6,15 @@ export class HumanProperties {
     private quality: number;
     private type: EMPLOYEE_TYPE;
     private name: string;
+    private perseverance: number;
 
-    constructor(type: EMPLOYEE_TYPE, name: string, salary: number, speed: number, quality: number) {
+    constructor(type: EMPLOYEE_TYPE, name: string, salary: number, speed: number, quality: number, perseverance: number) {
         this.type = type;
         this.name = name;
         this.salary = salary;
         this.speed = speed;
         this.quality = quality;
+        this.perseverance = perseverance;
     }
 
     getSpriteKey(): string {
@@ -37,5 +39,9 @@ export class HumanProperties {
             case EMPLOYEE_TYPE.MARKETING: return 'Marketing';
             case EMPLOYEE_TYPE.SALE: return 'Sale';
         }
+    }
+
+    getPerseverance() {
+        return this.perseverance;
     }
 }

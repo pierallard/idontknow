@@ -23,6 +23,7 @@ export class HumanPropertiesFactory {
             USE_API ? this.generateName() : NAMES[Math.floor(Math.random() * NAMES.length)],
             Math.random(),
             Math.random(),
+            Math.random(),
             Math.random()
         );
     }

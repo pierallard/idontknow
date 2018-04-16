@@ -1,4 +1,4 @@
-import {HumanState, MAX_RETRIES} from "./HumanState";
+import {HumanState} from "./HumanState";
 import {Employee} from "../human_stuff/Employee";
 import {WorldKnowledge} from "../WorldKnowledge";
 import {STATE} from "../human_stuff/HumanStateManager";
@@ -30,7 +30,7 @@ export class CoffeeState implements HumanState {
         if (!this.isHumanOnTheRightCell) {
             if (!this.worldKnowledge.hasObject(this.dispenser) || this.worldKnowledge.isObjectUsed(this.dispenser)) {
                 const nextDispenser = this.worldKnowledge.getClosestFreeDispenser(this.human.getPosition());
-                if (this.tries > MAX_RETRIES || nextDispenser === null) {
+                if (this.tries > this.human.getMaxRetries() || nextDispenser === null) {
                     this.active = false;
                     this.human.stopWalk();
 

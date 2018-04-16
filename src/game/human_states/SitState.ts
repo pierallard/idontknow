@@ -1,4 +1,4 @@
-import {HumanState, MAX_RETRIES} from "./HumanState";
+import {HumanState} from "./HumanState";
 import {Employee} from "../human_stuff/Employee";
 import {WorldKnowledge} from "../WorldKnowledge";
 import {InteractiveObjectInterface} from "../objects/InteractiveObjectInterface";
@@ -30,7 +30,7 @@ export class SitState implements HumanState {
         if (!this.isHumanOnTheRightCell) {
             if (!this.worldKnowledge.hasObject(this.interactiveObject) || this.worldKnowledge.isObjectUsed(this.interactiveObject)) {
                 const nextSofa = this.worldKnowledge.getRandomFreeSittable();
-                if (this.tries > MAX_RETRIES || nextSofa === null) {
+                if (this.tries > this.human.getMaxRetries() || nextSofa === null) {
                     this.active = false;
                     this.human.stopWalk();
 
