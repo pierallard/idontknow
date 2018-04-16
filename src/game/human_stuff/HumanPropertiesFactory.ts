@@ -8,12 +8,18 @@ const NAMES = [
     'Albert'
 ];
 
+export enum EMPLOYEE_TYPE {
+    DEVELOPER,
+    MARKETING,
+    SALE,
+}
+
 const USE_API = false;
 
 export class HumanPropertiesFactory {
     static create() {
         return new HumanProperties(
-            ['human', 'human_red', 'human_pink'][Math.floor(Math.random() * 3)],
+            [EMPLOYEE_TYPE.DEVELOPER, EMPLOYEE_TYPE.MARKETING, EMPLOYEE_TYPE.SALE][Math.floor(Math.random() * 3)],
             USE_API ? this.generateName() : NAMES[Math.floor(Math.random() * NAMES.length)],
             Math.random(),
             Math.random(),

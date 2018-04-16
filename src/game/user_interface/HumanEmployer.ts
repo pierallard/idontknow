@@ -66,6 +66,7 @@ class ApplicantButton {
     private name: Phaser.Text;
     private worldKnowledge: WorldKnowledge;
     private square: Phaser.Graphics;
+    private typeText: Phaser.Text;
 
     constructor(humanEmployer: HumanEmployer, humanProperties: HumanProperties, worldKnowledge: WorldKnowledge) {
         this.humanEmployer = humanEmployer;
@@ -94,25 +95,30 @@ class ApplicantButton {
         this.sprite.events.onInputDown.add(this.click, this, 0);
 
         this.name = game.add.text(left + OBJECT_SELLER_CELL_SIZE + 3, top, this.humanProperties.getName(), TEXT_STYLE, groups[GROUP_INTERFACE]);
+        this.typeText = game.add.text(left + OBJECT_SELLER_CELL_SIZE + 3, top + 8, this.humanProperties.getStrType(), TEXT_STYLE, groups[GROUP_INTERFACE]);
     }
 
     hide() {
         this.sprite.position.x += INTERFACE_WIDTH;
         this.name.position.x += INTERFACE_WIDTH;
+        this.typeText.position.x += INTERFACE_WIDTH;
         this.square.position.x += INTERFACE_WIDTH + 10;
     }
 
     show() {
         this.sprite.position.x -= INTERFACE_WIDTH;
         this.name.position.x -= INTERFACE_WIDTH;
+        this.typeText.position.x -= INTERFACE_WIDTH;
         this.square.position.x -= INTERFACE_WIDTH + 10;
     }
 
     private click() {
         this.sprite.destroy(true);
         this.name.destroy(true);
-        this.humanEmployer.employ(this);
+        this.typeText.destroy(true);
         this.square.destroy(true);
+
+        this.humanEmployer.employ(this);
     }
 
     getHumanProperties(): HumanProperties {

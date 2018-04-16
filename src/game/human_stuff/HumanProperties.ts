@@ -1,12 +1,14 @@
+import {EMPLOYEE_TYPE} from "./HumanPropertiesFactory";
+
 export class HumanProperties {
     private salary: number;
     private speed: number;
     private quality: number;
-    private spriteKey: string;
+    private type: EMPLOYEE_TYPE;
     private name: string;
 
-    constructor(spriteKey: string, name: string, salary: number, speed: number, quality: number) {
-        this.spriteKey = spriteKey;
+    constructor(type: EMPLOYEE_TYPE, name: string, salary: number, speed: number, quality: number) {
+        this.type = type;
         this.name = name;
         this.salary = salary;
         this.speed = speed;
@@ -14,7 +16,11 @@ export class HumanProperties {
     }
 
     getSpriteKey(): string {
-        return this.spriteKey;
+        switch (this.type) {
+            case EMPLOYEE_TYPE.DEVELOPER: return 'human';
+            case EMPLOYEE_TYPE.MARKETING: return 'human_pink';
+            case EMPLOYEE_TYPE.SALE: return 'human_red';
+        }
     }
 
     getName(): string {
@@ -23,5 +29,13 @@ export class HumanProperties {
 
     getSpeed() {
         return this.speed;
+    }
+
+    getStrType() {
+        switch (this.type) {
+            case EMPLOYEE_TYPE.DEVELOPER: return 'Developer';
+            case EMPLOYEE_TYPE.MARKETING: return 'Marketing';
+            case EMPLOYEE_TYPE.SALE: return 'Sale';
+        }
     }
 }
