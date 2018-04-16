@@ -140,6 +140,10 @@ export class WorldKnowledge {
             (humanPosition.x == wallPosition.x + 1 && humanPosition.y == wallPosition.y);
     }
 
+    getMoneyInWallet(): Price {
+        return this.wallet;
+    }
+
     getSelectedHumanSprite() {
         return this.humanRepository.getSelectedHumanSprite();
     }

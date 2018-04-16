@@ -1,8 +1,13 @@
 
 export class Price {
-    private value: Number;
+    private value: number;
 
-    constructor(value: Number) {
+    constructor(value: number) {
         this.value = value;
+    }
+
+    getStringValue(): string
+    {
+        return this.value.toString() + " FLOOZ";
     }
 }

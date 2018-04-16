@@ -137,11 +137,6 @@ class ObjectProvisionnerButton {
         const diff = str.length - previousStr.length;
         this.counter.setText(str);
         this.counter.position.x -= diff * 3;
-        if (count == 0) {
-            this.hide();
-        } else {
-            this.show();
-        }
     }
 
     private createPhantom(
@@ -150,9 +145,11 @@ class ObjectProvisionnerButton {
         game: Phaser.Game,
         groups: {[index: string] : Phaser.Group}
     ) {
-        this.worldKnowledge.getDepot().remove(this.objectInfo.getName());
-        const phantom = new ObjectPhantom(this.objectInfo.getName(), game, this.worldKnowledge);
-        phantom.create(game, groups);
+        if (this.worldKnowledge.getDepot().getCount(this.objectInfo.getName()) > 0) {
+            this.worldKnowledge.getDepot().remove(this.objectInfo.getName());
+            const phantom = new ObjectPhantom(this.objectInfo.getName(), game, this.worldKnowledge);
+            phantom.create(game, groups);
+        }
     }
 
     hide() {
