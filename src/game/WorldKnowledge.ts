@@ -15,6 +15,7 @@ import {DeletableObjectInterface} from "./objects/DeletableObjectInterface";
 import {DIRECTION, Direction} from "./Direction";
 import {HumanProperties} from "./human_stuff/HumanProperties";
 import {MoodRegister} from "./human_stuff/MoodRegister";
+import {Table} from "./objects/Table";
 
 export const GRID_WIDTH = 16;
 export const GRID_HEIGHT = 16;
@@ -232,16 +233,16 @@ export class WorldKnowledge {
         return true;
     }
 
-    getRandomFreeSofa(): Sofa {
-        const freeSofas = this.objects.filter((object) => {
-            return object.constructor.name === 'Sofa' && !this.isObjectUsed(<Sofa> object);
+    getRandomFreeSittable(): InteractiveObjectInterface {
+        const freeSittable = this.objects.filter((object) => {
+            return (object.constructor.name === 'Sofa' || object.constructor.name === 'Table') && !this.isObjectUsed(<InteractiveObjectInterface> object);
         });
 
-        if (freeSofas.length === 0) {
+        if (freeSittable.length === 0) {
             return null;
         }
 
-        return <Sofa> freeSofas[Math.floor(Math.random() * freeSofas.length)];
+        return <InteractiveObjectInterface> freeSittable[Math.floor(Math.random() * freeSittable.length)];
     }
 
     isObjectUsed(interactiveObject: InteractiveObjectInterface) {
@@ -353,6 +354,7 @@ export class WorldKnowledge {
             case 'Desk': object = new Desk(position, this, leftOriented); break;
             case 'Sofa': object = new Sofa(position, this, leftOriented); break;
             case 'Dispenser': object = new Dispenser(position, this, leftOriented); break;
+            case 'Table': object = new Table(position, this, leftOriented); break;
             default: throw 'Unknown object ' + name;
         }
         this.objects.push(object);

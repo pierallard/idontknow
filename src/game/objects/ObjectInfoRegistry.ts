@@ -43,6 +43,14 @@ export class ObjectInfoRegistry {
             ],
             [DIRECTION.BOTTOM, DIRECTION.TOP, DIRECTION.LEFT]
         ));
+        this.objectInfos.push(new ObjectInfo(
+            'Table',
+            [
+                new SpriteInfo('chair2', -8, -9, 5, 0),
+                new SpriteInfo('table', 0, 0, 4, 0)
+            ],
+            [DIRECTION.BOTTOM, DIRECTION.TOP, DIRECTION.LEFT]
+        ));
     }
 
     static getSellableObjects(): ObjectInfo[] {

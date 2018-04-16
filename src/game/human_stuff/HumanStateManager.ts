@@ -66,7 +66,7 @@ export class HumanStateManager {
             case STATE.SIT:
                 this.state = new SitState(
                     this.human,
-                    this.worldKnowledge.getRandomFreeSofa(),
+                    this.worldKnowledge.getRandomFreeSittable(),
                     this.worldKnowledge
                 );
                 break;
@@ -110,7 +110,7 @@ export class HumanStateManager {
             states.push({state: STATE.TALK, probability: this.getProbability(STATE.TALK)});
         }
 
-        if (this.worldKnowledge.getRandomFreeSofa() !== null) {
+        if (this.worldKnowledge.getRandomFreeSittable() !== null) {
             states.push({state: STATE.SIT, probability: this.getProbability(STATE.SIT)});
         }
         if (this.worldKnowledge.getClosestFreeDesk(this.human.getPosition()) !== null) {
@@ -152,10 +152,10 @@ export class HumanStateManager {
         let result = 1;
         switch(state) {
             case STATE.SMOKE: result = 5; break;
-            case STATE.FREEZE: result = 1; break;
+            case STATE.FREEZE: result = 3; break;
             case STATE.MOVE_RANDOM: result = 2; break;
             case STATE.TALK: result = 8; break;
-            case STATE.SIT: result = 2; break;
+            case STATE.SIT: result = 4; break;
             case STATE.COFFEE: result = 6; break;
             case STATE.TYPE: result = (5 + 1 + 2 + 8 + 2 + 6) * 2; break;
         }

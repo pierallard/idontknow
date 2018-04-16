@@ -29,7 +29,7 @@ export class SitState implements HumanState {
     getNextState(): HumanState {
         if (!this.isHumanOnTheRightCell) {
             if (!this.worldKnowledge.hasObject(this.interactiveObject) || this.worldKnowledge.isObjectUsed(this.interactiveObject)) {
-                const nextSofa = this.worldKnowledge.getRandomFreeSofa();
+                const nextSofa = this.worldKnowledge.getRandomFreeSittable();
                 if (this.tries > MAX_RETRIES || nextSofa === null) {
                     this.active = false;
                     this.human.stopWalk();
@@ -42,9 +42,9 @@ export class SitState implements HumanState {
         }
         if (!this.isHumanOnTheRightCell && this.isNeighborPosition()) {
             this.isHumanOnTheRightCell = true;
-            this.human.interactWith(this.interactiveObject);
+            this.human.interactWith(this.interactiveObject, this.interactiveObject.forceOrientation());
             this.events.push(this.game.time.events.add(this.human.getWalkDuration() + 100, () => {
-                this.human.loadAnimation(ANIMATION.SIT_DOWN);
+                this.human.loadAnimation(ANIMATION.SIT_DOWN, this.interactiveObject.forceOrientation());
                 this.human.updateMoodFromState();
                 this.events.push(this.game.time.events.add(Phaser.Math.random(3, 10) * Phaser.Timer.SECOND + HumanAnimationManager.getAnimationTime(ANIMATION.SIT_DOWN), () => {
                     this.human.loadAnimation(ANIMATION.STAND_UP);
