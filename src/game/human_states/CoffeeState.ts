@@ -64,7 +64,7 @@ export class CoffeeState implements HumanState {
         this.active = true;
         this.game = game;
 
-        if (!this.human.moveToClosest(this.dispenser.getPosition(), this.dispenser.getEntries())) {
+        if (!this.human.moveToClosest(this.dispenser.getPositions()[0], this.dispenser.getEntries())) {
             this.active = false;
             this.stop(game);
             return false;
@@ -75,7 +75,7 @@ export class CoffeeState implements HumanState {
 
     private isNeighborPosition() {
         return !this.human.isMoving() &&
-            PositionTransformer.isNeighbor(this.human.getPosition(), this.dispenser.getPosition());
+            PositionTransformer.isNeighbor(this.human.getPosition(), this.dispenser.getPositions()[0]);
     }
 
     stop(game: Phaser.Game): void {

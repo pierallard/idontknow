@@ -192,12 +192,12 @@ export class Employee {
     }
 
     interactWith(interactiveObject: InteractiveObjectInterface, isLeft: boolean = null) {
-        const direction = Direction.getNeighborDirection(this.cell, interactiveObject.getPosition());
+        const direction = Direction.getNeighborDirection(this.cell, interactiveObject.getPositions()[0]);
         const side = (isLeft !== null) ? isLeft : Employee.isHumanLeft(direction);
         // Employee has to gap 5px from the sofa to be sit properly, and 1px from the bottom.
         this.anchorPixels.x = interactiveObject.getPositionGap().x + (side ? -5 : 5);
         this.anchorPixels.y = interactiveObject.getPositionGap().y - 1;
-        this.cell = interactiveObject.getPosition();
+        this.cell = interactiveObject.getPositions()[0];
         this.animateMove(direction);
     }
 

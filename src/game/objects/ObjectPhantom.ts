@@ -108,8 +108,8 @@ export class ObjectPhantom implements ObjectInterface {
         this.directionsSprite.updatePolygons();
     }
 
-    getPosition(): PIXI.Point {
-        return this.position;
+    getPositions(): PIXI.Point[] {
+        return [this.position];
     }
 
     getEntries() {
@@ -126,7 +126,7 @@ export class ObjectPhantom implements ObjectInterface {
 
     private put(game: Phaser.Game) {
         game.input.activePointer.leftButton.onDown.remove(this.putEvent);
-        this.worldKnowledge.add(this.objectInfo.getName(), this.getPosition(), this.leftOriented);
+        this.worldKnowledge.add(this.objectInfo.getName(), this.getPositions()[0], this.leftOriented);
         this.destroy();
     }
 
@@ -142,8 +142,14 @@ export class ObjectPhantom implements ObjectInterface {
         return this.worldKnowledge.isEntryAccessibleForObject(this, direction);
     }
 
-    isCellFree() {
-        return this.worldKnowledge.isFree(this.getPosition());
+    isCellFree(): boolean {
+        for (let i = 0; i < this.getPositions().length; i++) {
+            if (!this.worldKnowledge.isFree(this.getPositions()[i])) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
 

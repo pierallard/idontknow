@@ -67,7 +67,7 @@ export class TypeState implements HumanState {
     start(game: Phaser.Game): boolean {
         this.active = true;
         this.game = game;
-        if (!this.human.moveToClosest(this.interactiveObject.getPosition(), this.interactiveObject.getEntries())) {
+        if (!this.human.moveToClosest(this.interactiveObject.getPositions()[0], this.interactiveObject.getEntries())) {
             this.active = false;
 
             return false;
@@ -78,7 +78,7 @@ export class TypeState implements HumanState {
 
     private isNeighborPosition() {
         return !this.human.isMoving() &&
-            PositionTransformer.isNeighbor(this.human.getPosition(), this.interactiveObject.getPosition());
+            PositionTransformer.isNeighbor(this.human.getPosition(), this.interactiveObject.getPositions()[0]);
     }
 
     stop(game: Phaser.Game): void {

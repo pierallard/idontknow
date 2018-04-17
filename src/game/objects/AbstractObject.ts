@@ -49,8 +49,8 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
         return ObjectInfoRegistry.getObjectInfo(this.constructor.name).getEntryPoints(this.leftOriented);
     }
 
-    getPosition(): PIXI.Point {
-        return this.position;
+    getPositions(): PIXI.Point[] {
+        return [this.position];
     }
 
     getSprites(): Phaser.Sprite[] {

@@ -30,4 +30,11 @@ export class PositionTransformer {
     static isNeighbor(position1: PIXI.Point, position2: PIXI.Point): boolean {
         return this.dist(position1, position2) === 1;
     }
+
+    static getCentroid(points: PIXI.Point[]): PIXI.Point {
+        return new PIXI.Point(
+            points.reduce((sum, point) => { return sum + point.x; }, 0) / points.length,
+            points.reduce((sum, point) => { return sum + point.y; }, 0) / points.length
+        );
+    }
 }

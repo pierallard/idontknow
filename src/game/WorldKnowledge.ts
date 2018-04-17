@@ -154,9 +154,11 @@ export class WorldKnowledge {
         });
     }
 
-    resetStates(position: PIXI.Point) {
+    resetStates(positions: PIXI.Point[]) {
         this.humanRepository.humans.forEach((human) => {
-            human.resetStateIfCellEmpty(position);
+            positions.forEach((position) => {
+                human.resetStateIfCellEmpty(position);
+            });
         });
     }
 
@@ -231,8 +233,12 @@ export class WorldKnowledge {
         }
 
         for (let j = 0; j < this.objects.length; j++) {
-            if (this.objects[j].getPosition().x === point.x && this.objects[j].getPosition().y === point.y && this.objects[j] !== object) {
-                return false;
+            for (let k = 0; k < this.objects[j].getPositions().length; k++) {
+                if (this.objects[j].getPositions()[k].x === point.x &&
+                    this.objects[j].getPositions()[k].y === point.y &&
+                    this.objects[j] !== object) {
+                    return false;
+                }
             }
         }
 
@@ -258,8 +264,10 @@ export class WorldKnowledge {
     isObjectUsed(interactiveObject: InteractiveObjectInterface) {
         for (let i = 0; i < this.humanRepository.humans.length; i++) {
             const human = this.humanRepository.humans[i];
-            if (interactiveObject.getPosition().x === human.getPosition().x && interactiveObject.getPosition().y === human.getPosition().y) {
-                return true;
+            for (let k = 0; k < interactiveObject.getPositions().length; k++) {
+                if (interactiveObject.getPositions()[k].x === human.getPosition().x && interactiveObject.getPositions()[k].y === human.getPosition().y) {
+                    return true;
+                }
             }
         }
 
@@ -276,7 +284,8 @@ export class WorldKnowledge {
         }
 
         return <Desk> freeDesks.sort((desk1, desk2) => {
-            return PositionTransformer.dist(position, desk1.getPosition()) - PositionTransformer.dist(position, desk2.getPosition());
+            return PositionTransformer.dist(position, PositionTransformer.getCentroid(desk1.getPositions()))
+                - PositionTransformer.dist(position, PositionTransformer.getCentroid(desk2.getPositions()));
         })[0];
     }
 
@@ -290,7 +299,8 @@ export class WorldKnowledge {
         }
 
         return <Dispenser> freeDispensers.sort((dispenser1, dispenser2) => {
-            return PositionTransformer.dist(position, dispenser1.getPosition()) - PositionTransformer.dist(position, dispenser2.getPosition());
+            return PositionTransformer.dist(position, PositionTransformer.getCentroid(dispenser1.getPositions()))
+                - PositionTransformer.dist(position, PositionTransformer.getCentroid(dispenser2.getPositions()));
         })[0];
     }
 
@@ -304,7 +314,7 @@ export class WorldKnowledge {
     }
 
     moveToDepot(object: DeletableObjectInterface) {
-        this.resetStates(object.getPosition());
+        this.resetStates(object.getPositions());
         const index = this.objects.indexOf(object, 0);
         if (index > -1) {
             this.objects.splice(index, 1);
@@ -325,8 +335,10 @@ export class WorldKnowledge {
 
     canPutHere(phantom: ObjectInterface) {
         // Check if there is nothing in the cell
-        if (!this.isFree(phantom.getPosition())) {
-            return false;
+        for (let i = 0; i < phantom.getPositions().length; i++) {
+            if (!this.isFree(phantom.getPositions()[i])) {
+                return false;
+            }
         }
 
         // Check if the human can enter the interactive object by at least one of the entries
@@ -343,8 +355,8 @@ export class WorldKnowledge {
         this.objects.forEach((object) => {
             let isEntryPossible = false;
             object.getEntries().forEach((entry) => {
-                const out = Direction.getGap(object.getPosition(), entry);
-                if (this.isFree(out) && !(out.x === phantom.getPosition().x && out.y === phantom.getPosition().y)) {
+                const out = Direction.getGap(object.getPositions()[0], entry);
+                if (this.isFree(out) && !(out.x === phantom.getPositions()[0].x && out.y === phantom.getPositions()[0].y)) {
                     isEntryPossible = true;
                 }
             });
@@ -360,7 +372,7 @@ export class WorldKnowledge {
     }
 
     isEntryAccessibleForObject(phantom: ObjectInterface, entry: DIRECTION) {
-        return this.isFree(Direction.getGap(phantom.getPosition(), entry));
+        return this.isFree(Direction.getGap(phantom.getPositions()[0], entry));
     }
 
     add(name: string, position: PIXI.Point, leftOriented: boolean) {

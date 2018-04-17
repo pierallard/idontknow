@@ -65,7 +65,7 @@ export class SitState implements HumanState {
         this.active = true;
         this.game = game;
 
-        if (!this.human.moveToClosest(this.interactiveObject.getPosition(), this.interactiveObject.getEntries())) {
+        if (!this.human.moveToClosest(this.interactiveObject.getPositions()[0], this.interactiveObject.getEntries())) {
             this.active = false;
             this.stop(game);
             return false;
@@ -76,7 +76,7 @@ export class SitState implements HumanState {
 
     private isNeighborPosition() {
         return !this.human.isMoving() &&
-            PositionTransformer.isNeighbor(this.human.getPosition(), this.interactiveObject.getPosition());
+            PositionTransformer.isNeighbor(this.human.getPosition(), this.interactiveObject.getPositions()[0]);
     }
 
     stop(game: Phaser.Game): void {
