@@ -13,6 +13,7 @@ import {MoodSprite} from "./MoodSprite";
 import {GROUP_OBJECTS_AND_HUMANS, GROUP_INFOS} from "../game_state/Play";
 import {HumanProperties} from "./HumanProperties";
 import {EMPLOYEE_TYPE} from "./HumanPropertiesFactory";
+import {ObjectReferer} from "../objects/ObjectReferer";
 
 const MAX_WALK_CELL_DURATION = 1500;
 const MIN_WALK_CELL_DURATION = 800;
@@ -191,13 +192,13 @@ export class Employee {
         return this.moving;
     }
 
-    interactWith(interactiveObject: InteractiveObjectInterface, isLeft: boolean = null) {
-        const direction = Direction.getNeighborDirection(this.cell, interactiveObject.getPositions()[0]);
+    interactWith(objectReferer: ObjectReferer, isLeft: boolean = null) {
+        const direction = Direction.getNeighborDirection(this.cell, objectReferer.getPosition());
         const side = (isLeft !== null) ? isLeft : Employee.isHumanLeft(direction);
         // Employee has to gap 5px from the sofa to be sit properly, and 1px from the bottom.
-        this.anchorPixels.x = interactiveObject.getPositionGap().x + (side ? -5 : 5);
-        this.anchorPixels.y = interactiveObject.getPositionGap().y - 1;
-        this.cell = interactiveObject.getPositions()[0];
+        this.anchorPixels.x = objectReferer.getPositionGap().x + (side ? -5 : 5);
+        this.anchorPixels.y = objectReferer.getPositionGap().y - 1;
+        this.cell = objectReferer.getPosition();
         this.animateMove(direction);
     }
 

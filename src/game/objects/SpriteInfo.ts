@@ -1,4 +1,5 @@
 import {PositionTransformer} from "../PositionTransformer";
+import {Direction, DIRECTION} from "../Direction";
 
 export class SpriteInfo {
     private name: string;
@@ -6,9 +7,18 @@ export class SpriteInfo {
     private bottom: number;
     private anchorBottom: number;
     private gapLeft: number;
+    private entryPoints: DIRECTION[];
 
-    constructor(name: string, left: number, bottom: number, anchorBottom: number, gapLeft: number) {
+    constructor(
+        name: string,
+        entryPoints: DIRECTION[],
+        left: number,
+        bottom: number,
+        anchorBottom: number,
+        gapLeft: number
+    ) {
         this.name = name;
+        this.entryPoints = entryPoints;
         this.left = left;
         this.bottom = bottom;
         this.anchorBottom = anchorBottom;
@@ -46,5 +56,20 @@ export class SpriteInfo {
             0.5,
             1.0 - this.anchorBottom / sprite.height
         );
+    }
+
+    getEntryPoints(leftOriented: boolean): DIRECTION[] {
+        if (!leftOriented) {
+            return this.entryPoints;
+        } else {
+            return this.entryPoints.map((entryPoint) => {
+                return Direction.getHorizontalMirror(entryPoint);
+            });
+        }
+    }
+
+    getPositionGapFromOrigin(): PIXI.Point {
+        // TODO
+        return new PIXI.Point(0, 0);
     }
 }

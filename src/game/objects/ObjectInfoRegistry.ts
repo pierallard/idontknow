@@ -28,35 +28,31 @@ export class ObjectInfoRegistry {
         this.objectInfos.push(new ObjectInfo(
             'Dispenser',
             [
-                new SpriteInfo('dispenser', 4, -4, 3, -13)
+                new SpriteInfo('dispenser', [DIRECTION.BOTTOM], 4, -4, 3, -13)
             ],
-            [DIRECTION.BOTTOM],
             new Price(70)
         ));
         this.objectInfos.push(new ObjectInfo(
             'Sofa',
             [
-                new SpriteInfo('sofa', 0, -8, 3, 0)
+                new SpriteInfo('sofa', [DIRECTION.LEFT, DIRECTION.TOP, DIRECTION.RIGHT, DIRECTION.BOTTOM], 0, -8, 3, 0)
             ],
-            [DIRECTION.LEFT, DIRECTION.TOP, DIRECTION.RIGHT, DIRECTION.BOTTOM],
             new Price(10)
         ));
         this.objectInfos.push(new ObjectInfo(
             'Desk',
             [
-                new SpriteInfo('chair', -10, -8, 5, 0),
-                new SpriteInfo('desk', 0, 0, 4, 0)
+                new SpriteInfo('chair', [DIRECTION.BOTTOM, DIRECTION.TOP, DIRECTION.LEFT], -10, -8, 5, 0),
+                new SpriteInfo('desk', [],0, 0, 4, 0)
             ],
-            [DIRECTION.BOTTOM, DIRECTION.TOP, DIRECTION.LEFT],
             new Price(20)
         ));
         this.objectInfos.push(new ObjectInfo(
             'Table',
             [
-                new SpriteInfo('chair2', -8, -9, 5, 0),
-                new SpriteInfo('table', 0, 0, 4, 0)
+                new SpriteInfo('chair2', [DIRECTION.BOTTOM, DIRECTION.TOP, DIRECTION.LEFT], -8, -9, 5, 0),
+                new SpriteInfo('table', [], 0, 0, 4, 0)
             ],
-            [DIRECTION.BOTTOM, DIRECTION.TOP, DIRECTION.LEFT],
             new Price(12)
         ));
     }

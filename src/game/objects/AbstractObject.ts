@@ -40,13 +40,17 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
         });
     }
 
-    getPositionGap(): PIXI.Point {
-        const sittableObjectInfos = ObjectInfoRegistry.getObjectInfo(this.constructor.name).getSpriteInfos()[0];
+    getPositionGap(subObjectNumber: number): PIXI.Point {
+        const sittableObjectInfos =
+            ObjectInfoRegistry
+                .getObjectInfo(this.constructor.name)
+                .getSpriteInfo(subObjectNumber);
+
         return sittableObjectInfos.getSittablePosition(this.leftOriented);
     }
 
-    getEntries(): DIRECTION[] {
-        return ObjectInfoRegistry.getObjectInfo(this.constructor.name).getEntryPoints(this.leftOriented);
+    getEntries(objectNumber: number): DIRECTION[] {
+        return ObjectInfoRegistry.getObjectInfo(this.constructor.name).getEntryPoints(this.leftOriented, objectNumber);
     }
 
     getPositions(): PIXI.Point[] {
@@ -66,5 +70,19 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
 
     forceOrientation(): boolean {
         return this.leftOriented;
+    }
+
+    getPositionSubObject(subObjectNumber: number): PIXI.Point {
+        const infos = ObjectInfoRegistry.getObjectInfo(this.constructor.name);
+
+        return new PIXI.Point(
+            this.position.x + infos.getPositionGapOfSubObject(subObjectNumber).x,
+            this.position.y + infos.getPositionGapOfSubObject(subObjectNumber).y
+        );
+    }
+
+    isUsed(subObjectNumber: number): boolean {
+        // TODO
+        return false;
     }
 }

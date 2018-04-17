@@ -66,21 +66,21 @@ export class HumanStateManager {
             case STATE.SIT:
                 this.state = new SitState(
                     this.human,
-                    this.worldKnowledge.getRandomFreeSittable(),
+                    this.worldKnowledge.getRandomFreeSittableReferer(),
                     this.worldKnowledge
                 );
                 break;
             case STATE.TYPE:
                 this.state = new TypeState(
                     this.human,
-                    this.worldKnowledge.getClosestFreeDesk(this.human.getPosition()),
+                    this.worldKnowledge.getClosestFreeDeskReferer(this.human.getPosition()),
                     this.worldKnowledge
                 );
                 break;
             case STATE.COFFEE:
                 this.state = new CoffeeState(
                     this.human,
-                    this.worldKnowledge.getClosestFreeDispenser(this.human.getPosition()),
+                    this.worldKnowledge.getClosestFreeDispenserReferer(this.human.getPosition()),
                     this.worldKnowledge
                 );
                 break;
@@ -110,14 +110,14 @@ export class HumanStateManager {
             states.push({state: STATE.TALK, probability: this.getProbability(STATE.TALK)});
         }
 
-        if (this.worldKnowledge.getRandomFreeSittable() !== null) {
+        if (this.worldKnowledge.getRandomFreeSittableReferer() !== null) {
             states.push({state: STATE.SIT, probability: this.getProbability(STATE.SIT)});
         }
-        if (this.worldKnowledge.getClosestFreeDesk(this.human.getPosition()) !== null) {
+        if (this.worldKnowledge.getClosestFreeDeskReferer(this.human.getPosition()) !== null) {
             states.push({state: STATE.TYPE, probability: this.getProbability(STATE.TYPE)});
         }
 
-        if (this.worldKnowledge.getClosestFreeDispenser(this.human.getPosition()) !== null) {
+        if (this.worldKnowledge.getClosestFreeDispenserReferer(this.human.getPosition()) !== null) {
             states.push({state: STATE.COFFEE, probability: this.getProbability(STATE.COFFEE)});
         }
 

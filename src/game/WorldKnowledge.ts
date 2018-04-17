@@ -16,6 +16,7 @@ import {DIRECTION, Direction} from "./Direction";
 import {HumanProperties} from "./human_stuff/HumanProperties";
 import {MoodRegister} from "./human_stuff/MoodRegister";
 import {Table} from "./objects/Table";
+import {ObjectReferer} from "./objects/ObjectReferer";
 import {LevelManager} from "./LevelManager";
 import {EMPLOYEE_TYPE} from "./human_stuff/HumanPropertiesFactory";
 import {Price} from "./objects/Price";
@@ -249,7 +250,7 @@ export class WorldKnowledge {
         return true;
     }
 
-    getRandomFreeSittable(): InteractiveObjectInterface {
+    getRandomFreeSittableReferer(): ObjectReferer {
         const freeSittable = this.objects.filter((object) => {
             return (object.constructor.name === 'Sofa' || object.constructor.name === 'Table') && !this.isObjectUsed(<InteractiveObjectInterface> object);
         });
@@ -258,7 +259,7 @@ export class WorldKnowledge {
             return null;
         }
 
-        return <InteractiveObjectInterface> freeSittable[Math.floor(Math.random() * freeSittable.length)];
+        return new ObjectReferer(<InteractiveObjectInterface> freeSittable[Math.floor(Math.random() * freeSittable.length)], 0);
     }
 
     isObjectUsed(interactiveObject: InteractiveObjectInterface) {
@@ -274,7 +275,7 @@ export class WorldKnowledge {
         return false;
     }
 
-    getClosestFreeDesk(position: PIXI.Point): Desk {
+    getClosestFreeDeskReferer(position: PIXI.Point): ObjectReferer {
         const freeDesks = this.objects.filter((object) => {
             return object.constructor.name === 'Desk' && !this.isObjectUsed(<Desk> object);
         });
@@ -283,13 +284,13 @@ export class WorldKnowledge {
             return null;
         }
 
-        return <Desk> freeDesks.sort((desk1, desk2) => {
+        return new ObjectReferer(<Desk> freeDesks.sort((desk1, desk2) => {
             return PositionTransformer.dist(position, PositionTransformer.getCentroid(desk1.getPositions()))
                 - PositionTransformer.dist(position, PositionTransformer.getCentroid(desk2.getPositions()));
-        })[0];
+        })[0], 0);
     }
 
-    getClosestFreeDispenser(position: PIXI.Point): Dispenser {
+    getClosestFreeDispenserReferer(position: PIXI.Point): ObjectReferer {
         const freeDispensers = this.objects.filter((object) => {
             return object.constructor.name === 'Dispenser' && !this.isObjectUsed(<Dispenser> object);
         });
@@ -298,10 +299,10 @@ export class WorldKnowledge {
             return null;
         }
 
-        return <Dispenser> freeDispensers.sort((dispenser1, dispenser2) => {
+        return new ObjectReferer(<Dispenser> freeDispensers.sort((dispenser1, dispenser2) => {
             return PositionTransformer.dist(position, PositionTransformer.getCentroid(dispenser1.getPositions()))
                 - PositionTransformer.dist(position, PositionTransformer.getCentroid(dispenser2.getPositions()));
-        })[0];
+        })[0], 0);
     }
 
     private static getDist(sources: PIXI.Point[], point: PIXI.Point): number {
@@ -343,6 +344,8 @@ export class WorldKnowledge {
 
         // Check if the human can enter the interactive object by at least one of the entries
         let isEntryPossible = false;
+        // TODO Put this back
+        /*
         phantom.getEntries().forEach((entry) => {
             isEntryPossible = isEntryPossible || this.isEntryAccessibleForObject(phantom, entry);
         });
@@ -366,7 +369,7 @@ export class WorldKnowledge {
         });
         if (!doNotBlockOthers) {
             return false;
-        }
+        }*/
 
         return true;
     }

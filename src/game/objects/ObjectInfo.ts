@@ -1,17 +1,19 @@
 import {SpriteInfo} from "./SpriteInfo";
-import {DIRECTION, Direction} from "../Direction";
+import {DIRECTION} from "../Direction";
 import {Price} from "./Price";
 
 export class ObjectInfo {
     private name: string;
     private sprites: SpriteInfo[];
-    private entryPoints: DIRECTION[];
     private price: Price;
 
-    constructor(name: string, spriteInfos: SpriteInfo[], entryPoints: DIRECTION[], price: Price) {
+    constructor(
+        name: string,
+        spriteInfos: SpriteInfo[],
+        price: Price
+    ) {
         this.name = name;
         this.sprites = spriteInfos;
-        this.entryPoints = entryPoints;
         this.price = price;
     }
 
@@ -23,14 +25,12 @@ export class ObjectInfo {
         return this.sprites;
     }
 
-    getEntryPoints(leftOriented: boolean): DIRECTION[] {
-        if (!leftOriented) {
-            return this.entryPoints;
-        } else {
-            return this.entryPoints.map((entryPoint) => {
-                return Direction.getHorizontalMirror(entryPoint);
-            });
-        }
+    getSpriteInfo(objectOrder: number): SpriteInfo {
+        return this.sprites[objectOrder];
+    }
+
+    getEntryPoints(leftOriented: boolean, objectNumber: number): DIRECTION[] {
+        return this.sprites[objectNumber].getEntryPoints(leftOriented);
     }
 
     isSellable(remainingMoney: Price): boolean {
@@ -39,5 +39,9 @@ export class ObjectInfo {
 
     getPrice(): Price {
         return this.price;
+    }
+
+    getPositionGapOfSubObject(subObjectNumber: number): PIXI.Point {
+        return this.sprites[subObjectNumber].getPositionGapFromOrigin();
     }
 }

@@ -10,12 +10,19 @@ export interface InteractiveObjectInterface extends ObjectInterface {
      *
      * @returns {PIXI.Point}
      */
-    getPositionGap(): PIXI.Point;
-    getEntries(): DIRECTION[];
+    // getPositionGap(): PIXI.Point;
+
+    getEntries(objectNumber: number): DIRECTION[];
 
     /**
      * Returns true if the human has to be right-sided, false if the human has to be left-sided, null if percentage.
      * @returns {boolean}
      */
     forceOrientation(): boolean;
+
+    isUsed(subObjectNumber: number): boolean;
+
+    getPositionGap(subObjectNumber: number): PIXI.Point;
+
+    getPositionSubObject(subObjectNumber: number): PIXI.Point;
 }

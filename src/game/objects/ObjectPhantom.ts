@@ -112,8 +112,8 @@ export class ObjectPhantom implements ObjectInterface {
         return [this.position];
     }
 
-    getEntries() {
-        return this.objectInfo.getEntryPoints(this.leftOriented);
+    getEntries(objectNumber: number): DIRECTION[] {
+        return this.objectInfo.getEntryPoints(this.leftOriented, objectNumber);
     }
 
     private updateForbiddenSprite() {
@@ -170,6 +170,7 @@ class DirectionsSprite {
     updatePolygons() {
         this.graphics.clear();
 
+        /* TODO Put this back *//*
         Direction.neighborDirections().forEach((direction) => {
             if (this.phantom.getInfo().getEntryPoints(this.phantom.getLeftOriented()).indexOf(direction) <= -1) {
                 this.graphics.beginFill(0x494947); // Grey
@@ -208,7 +209,7 @@ class DirectionsSprite {
                     );
             }
         });
-
+        */
         this.graphics.beginFill(this.phantom.isCellFree() ? 0x00de2d : 0xff004d);
         this.graphics.drawPolygon(
             new PIXI.Point(- CELL_WIDTH / 2, 0),
