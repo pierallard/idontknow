@@ -7,23 +7,20 @@ import {PositionTransformer} from "../PositionTransformer";
 import {ANIMATION, HumanAnimationManager} from "../human_stuff/HumanAnimationManager";
 import {RageState} from "./RageState";
 import {ObjectReferer} from "../objects/ObjectReferer";
+import {AbstractState} from "./AbstractState";
 
-export class CoffeeState implements HumanState {
-    private human: Employee;
-    private active: boolean;
+export class CoffeeState extends AbstractState {
     private objectReferer: ObjectReferer;
-    private game: Phaser.Game;
     private isHumanOnTheRightCell: boolean;
     private worldKnowledge: WorldKnowledge;
-    private events: Phaser.TimerEvent[];
     private tries: number;
 
     constructor(human: Employee, objectReferer: ObjectReferer, worldKnowledge: WorldKnowledge, tries: number = 0) {
-        this.human = human;
+        super(human);
+
         this.objectReferer = objectReferer;
         this.isHumanOnTheRightCell = false;
         this.worldKnowledge = worldKnowledge;
-        this.events = [];
         this.tries = tries;
     }
 
@@ -58,12 +55,11 @@ export class CoffeeState implements HumanState {
             }));
         }
 
-        return this.active ? this : null;
+        return super.getNextState();
     }
 
     start(game: Phaser.Game): boolean {
-        this.active = true;
-        this.game = game;
+        super.start(game);
 
         if (!this.human.moveToClosest(this.objectReferer.getPosition(), this.objectReferer.getEntries())) {
             this.active = false;
@@ -77,13 +73,6 @@ export class CoffeeState implements HumanState {
     private isNeighborPosition() {
         return !this.human.isMoving() &&
             PositionTransformer.isNeighbor(this.human.getPosition(), this.objectReferer.getPosition());
-    }
-
-    stop(game: Phaser.Game): void {
-        this.events.forEach((event) => {
-            game.time.events.remove(event);
-        });
-        this.active = false;
     }
 
     getState(): STATE {

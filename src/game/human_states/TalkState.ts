@@ -5,30 +5,25 @@ import {ANIMATION, HumanAnimationManager} from "../human_stuff/HumanAnimationMan
 import {Meeting} from "./Meeting";
 import {Direction} from "../Direction";
 import {STATE} from "../human_stuff/HumanStateManager";
+import {AbstractState} from "./AbstractState";
 
-export class TalkState implements HumanState {
-    private human: Employee;
-    private active: boolean;
+export class TalkState extends AbstractState {
     private anotherHuman: Employee;
-    private game: Phaser.Game;
     private worldKnowledge: WorldKnowledge;
     private meetingStarted: boolean;
-    private events: Phaser.TimerEvent[];
     private meeting: Meeting;
 
     constructor(
         human: Employee,
         anotherHuman: Employee,
-        game: Phaser.Game,
+        game: Phaser.Game, // TODO Remove it
         worldKnowledge: WorldKnowledge,
         meeting: Meeting = null
     ) {
-        this.human = human;
+        super(human);
         this.anotherHuman = anotherHuman;
-        this.game = game;
         this.worldKnowledge = worldKnowledge;
         this.meetingStarted = false;
-        this.events = [];
         this.meeting = meeting;
     }
 
@@ -39,7 +34,7 @@ export class TalkState implements HumanState {
             } else {
                 if (this.meeting.isReady()) {
                     this.meetingStarted = true;
-                    this.game.time.events.add(this.meeting.getTime() + Math.random() * Phaser.Timer.SECOND, this.end, this);
+                    this.game.time.events.add(this.meeting.getTime() + Math.random() * Phaser.Timer.SECOND, this.stop, this); // TODO this will fail
                     this.human.updateMoodFromState();
 
                     let animation = ANIMATION.TALK;
@@ -57,10 +52,10 @@ export class TalkState implements HumanState {
             }
         }
 
-        return this.active ? this : null;
+        return super.getNextState();
     }
 
-    switchAnimation(animation: ANIMATION) {
+    private switchAnimation(animation: ANIMATION) {
         const direction = Direction.getNeighborDirection(
             this.human.getPosition(),
             this.meeting.getAnotherHuman(this.human).getPosition()
@@ -80,7 +75,7 @@ export class TalkState implements HumanState {
     }
 
     start(game: Phaser.Game): boolean {
-        this.active = true;
+        super.start(game);
 
         if (this.meeting === null) {
             this.meeting = new Meeting(
@@ -90,28 +85,16 @@ export class TalkState implements HumanState {
             );
 
             if (!this.anotherHuman.goMeeting(this.meeting)) {
-                this.end();
+                this.stop(game);
                 return false;
             }
         }
         if (!this.human.moveTo(this.meeting.getCell(this.human))) {
-            this.end();
+            this.stop(game);
             return false;
         }
 
         return true;
-    }
-
-    end(): void {
-        this.human.hideTalkBubble();
-        this.events.forEach((event) => {
-            this.game.time.events.remove(event);
-        });
-        this.active = false;
-    }
-
-    stop(game: Phaser.Game): void {
-        this.end();
     }
 
     getState(): STATE {
