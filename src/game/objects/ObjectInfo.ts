@@ -44,4 +44,20 @@ export class ObjectInfo {
     getPositionGapOfSubObject(subObjectNumber: number): PIXI.Point {
         return this.sprites[subObjectNumber].getPositionGapFromOrigin();
     }
+
+    getCellGaps(): PIXI.Point[] {
+        let result = [];
+        this.sprites.forEach((sprite) => {
+            const newGap = sprite.getPositionGapFromOrigin();
+            let found = false;
+            result.forEach((previousGap) => {
+                found = found || (previousGap.x === newGap.y && previousGap.y === newGap.y);
+            });
+            if (!found) {
+                result.push(newGap);
+            }
+        });
+
+        return result;
+    }
 }

@@ -1,4 +1,4 @@
-import {PositionTransformer} from "../PositionTransformer";
+import {CELL_HEIGHT, CELL_WIDTH, PositionTransformer} from "../PositionTransformer";
 import {Direction, DIRECTION} from "../Direction";
 
 export class SpriteInfo {
@@ -50,8 +50,8 @@ export class SpriteInfo {
 
     getRealPositionFromOrigin(spriteSource: PIXI.Point, leftOriented: boolean) {
         return new PIXI.Point(
-            spriteSource.x + (leftOriented ? - this.left : this.left),
-            spriteSource.y + this.bottom - this.anchorBottom
+            spriteSource.x + (leftOriented ? -1 : 1) * (this.left - (this.cellGap.x - this.cellGap.y) * CELL_WIDTH / 2),
+            spriteSource.y + this.bottom - this.anchorBottom - (this.cellGap.x + this.cellGap.y) * CELL_HEIGHT / 2
         )
     }
 

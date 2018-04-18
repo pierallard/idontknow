@@ -170,58 +170,60 @@ class DirectionsSprite {
     updatePolygons() {
         this.graphics.clear();
 
-        /* TODO Put this back *//*
-        Direction.neighborDirections().forEach((direction) => {
-            if (this.phantom.getInfo().getEntryPoints(this.phantom.getLeftOriented()).indexOf(direction) <= -1) {
-                this.graphics.beginFill(0x494947); // Grey
-            } else if (this.phantom.isEntryAccessible(direction)) {
-                this.graphics.beginFill(0x00de2d); // Green
-            } else {
-                this.graphics.beginFill(0xff004d); // Red
-            }
-            switch (direction) {
-                case DIRECTION.BOTTOM:
-                    this.graphics.drawPolygon(
-                        new PIXI.Point(-GAP, CELL_HEIGHT / 2),
-                        new PIXI.Point(-CELL_WIDTH / 2, GAP),
-                        new PIXI.Point(-CELL_WIDTH / 2 * ARROW_SIZE, CELL_HEIGHT / 2 * ARROW_SIZE),
-                    );
-                    break;
-                case DIRECTION.LEFT:
-                    this.graphics.drawPolygon(
-                        new PIXI.Point(-CELL_WIDTH / 2, -GAP),
-                        new PIXI.Point(-GAP, -CELL_HEIGHT / 2),
-                        new PIXI.Point(-CELL_WIDTH / 2 * ARROW_SIZE, -CELL_HEIGHT / 2 * ARROW_SIZE),
-                    );
-                    break;
-                case DIRECTION.TOP:
-                    this.graphics.drawPolygon(
-                        new PIXI.Point(CELL_WIDTH / 2, -GAP),
-                        new PIXI.Point(GAP, -CELL_HEIGHT / 2),
-                        new PIXI.Point(CELL_WIDTH / 2 * ARROW_SIZE, -CELL_HEIGHT / 2 * ARROW_SIZE),
-                    );
-                    break;
-                case DIRECTION.RIGHT:
-                    this.graphics.drawPolygon(
-                        new PIXI.Point(GAP, CELL_HEIGHT / 2),
-                        new PIXI.Point(CELL_WIDTH / 2, GAP),
-                        new PIXI.Point(CELL_WIDTH / 2 * ARROW_SIZE, CELL_HEIGHT / 2 * ARROW_SIZE),
-                    );
-            }
+        this.phantom.getInfo().getSpriteInfos().forEach((spriteInfo) => {
+            spriteInfo.getEntryPoints(this.phantom.getLeftOriented()).forEach((direction) => {
+                if (this.phantom.isEntryAccessible(direction)) {
+                    this.graphics.beginFill(0x00de2d); // Green
+                } else {
+                    this.graphics.beginFill(0xff004d); // Red
+                }
+                switch (direction) {
+                    case DIRECTION.BOTTOM:
+                        this.graphics.drawPolygon(
+                            new PIXI.Point(-GAP, CELL_HEIGHT / 2 - CELL_HEIGHT / 2),
+                            new PIXI.Point(-CELL_WIDTH / 2, GAP - CELL_HEIGHT / 2),
+                            new PIXI.Point(-CELL_WIDTH / 2 * ARROW_SIZE, CELL_HEIGHT / 2 * ARROW_SIZE - CELL_HEIGHT / 2),
+                        );
+                        break;
+                    case DIRECTION.LEFT:
+                        this.graphics.drawPolygon(
+                            new PIXI.Point(-CELL_WIDTH / 2, -GAP - CELL_HEIGHT / 2),
+                            new PIXI.Point(-GAP, -CELL_HEIGHT / 2 - CELL_HEIGHT / 2),
+                            new PIXI.Point(-CELL_WIDTH / 2 * ARROW_SIZE, -CELL_HEIGHT / 2 * ARROW_SIZE - CELL_HEIGHT / 2),
+                        );
+                        break;
+                    case DIRECTION.TOP:
+                        this.graphics.drawPolygon(
+                            new PIXI.Point(CELL_WIDTH / 2, -GAP - CELL_HEIGHT / 2),
+                            new PIXI.Point(GAP, -CELL_HEIGHT / 2 - CELL_HEIGHT / 2),
+                            new PIXI.Point(CELL_WIDTH / 2 * ARROW_SIZE, -CELL_HEIGHT / 2 * ARROW_SIZE - CELL_HEIGHT / 2),
+                        );
+                        break;
+                    case DIRECTION.RIGHT:
+                        this.graphics.drawPolygon(
+                            new PIXI.Point(GAP, CELL_HEIGHT / 2 - CELL_HEIGHT / 2),
+                            new PIXI.Point(CELL_WIDTH / 2, GAP - CELL_HEIGHT / 2),
+                            new PIXI.Point(CELL_WIDTH / 2 * ARROW_SIZE, CELL_HEIGHT / 2 * ARROW_SIZE - CELL_HEIGHT / 2),
+                        );
+                }
+            });
         });
-        */
+
         this.graphics.beginFill(this.phantom.isCellFree() ? 0x00de2d : 0xff004d);
-        this.graphics.drawPolygon(
-            new PIXI.Point(- CELL_WIDTH / 2, 0),
-            new PIXI.Point(0, CELL_HEIGHT / 2),
-            new PIXI.Point(CELL_WIDTH / 2, 0),
-            new PIXI.Point(0, - CELL_HEIGHT / 2)
-        );
+
+        this.phantom.getInfo().getCellGaps().forEach((cellGap) => {
+            this.graphics.drawPolygon(
+                new PIXI.Point(- CELL_WIDTH / 2 - (cellGap.x - cellGap.y) * CELL_WIDTH / 2, 0 - CELL_HEIGHT / 2 - (cellGap.x + cellGap.y) * CELL_HEIGHT / 2),
+                new PIXI.Point(0 - (cellGap.x - cellGap.y) * CELL_WIDTH / 2, CELL_HEIGHT / 2 - CELL_HEIGHT / 2 - (cellGap.x + cellGap.y) * CELL_HEIGHT / 2),
+                new PIXI.Point(CELL_WIDTH / 2 - (cellGap.x - cellGap.y) * CELL_WIDTH / 2, 0 - CELL_HEIGHT / 2 - (cellGap.x + cellGap.y) * CELL_HEIGHT / 2),
+                new PIXI.Point(0 - (cellGap.x - cellGap.y) * CELL_WIDTH / 2, - CELL_HEIGHT / 2 - CELL_HEIGHT / 2 - (cellGap.x + cellGap.y) * CELL_HEIGHT / 2)
+            );
+        })
     }
 
     setPosition(position: PIXI.Point) {
         this.graphics.x = PositionTransformer.getRealPosition(position).x;
-        this.graphics.y = PositionTransformer.getRealPosition(position).y - CELL_HEIGHT / 2;
+        this.graphics.y = PositionTransformer.getRealPosition(position).y;
         this.updatePolygons();
     }
 
