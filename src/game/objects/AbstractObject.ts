@@ -72,7 +72,7 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
         return this.leftOriented;
     }
 
-    getPositionSubObject(subObjectNumber: number): PIXI.Point {
+    getCellPositionSubObject(subObjectNumber: number): PIXI.Point {
         const infos = ObjectInfoRegistry.getObjectInfo(this.constructor.name);
 
         return new PIXI.Point(

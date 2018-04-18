@@ -27,6 +27,6 @@ export class ObjectReferer {
     }
 
     getPosition(): PIXI.Point {
-        return this.obj.getPositionSubObject(this.subObjectNumber);
+        return this.obj.getCellPositionSubObject(this.subObjectNumber);
     }
 }

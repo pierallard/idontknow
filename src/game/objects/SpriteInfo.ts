@@ -8,6 +8,7 @@ export class SpriteInfo {
     private anchorBottom: number;
     private gapLeft: number;
     private entryPoints: DIRECTION[];
+    private cellGap: PIXI.Point;
 
     constructor(
         name: string,
@@ -15,7 +16,9 @@ export class SpriteInfo {
         left: number,
         bottom: number,
         anchorBottom: number,
-        gapLeft: number
+        gapLeft: number,
+        cellGapX: number,
+        cellGapY: number
     ) {
         this.name = name;
         this.entryPoints = entryPoints;
@@ -23,6 +26,7 @@ export class SpriteInfo {
         this.bottom = bottom;
         this.anchorBottom = anchorBottom;
         this.gapLeft = gapLeft;
+        this.cellGap = new PIXI.Point(cellGapX, cellGapY);
     }
 
     getSpriteName(): string {
@@ -69,7 +73,6 @@ export class SpriteInfo {
     }
 
     getPositionGapFromOrigin(): PIXI.Point {
-        // TODO
-        return new PIXI.Point(0, 0);
+        return this.cellGap;
     }
 }
