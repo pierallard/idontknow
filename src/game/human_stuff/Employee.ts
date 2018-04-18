@@ -12,6 +12,7 @@ import {HumanMoodManager, MOOD} from "./HumanMoodManager";
 import {MoodSprite} from "./MoodSprite";
 import {GROUP_OBJECTS_AND_HUMANS, GROUP_INFOS} from "../game_state/Play";
 import {HumanProperties} from "./HumanProperties";
+import {EMPLOYEE_TYPE} from "./HumanPropertiesFactory";
 
 const MAX_WALK_CELL_DURATION = 1500;
 const MIN_WALK_CELL_DURATION = 800;
@@ -295,5 +296,9 @@ export class Employee {
 
     getMaxRetries(): number {
         return Math.ceil(MIN_RETRIES + (MAX_RETRIES - MIN_RETRIES) * this.humanProperties.getPerseverance());
+    }
+
+    getType(): EMPLOYEE_TYPE {
+        return this.humanProperties.getType()
     }
 }

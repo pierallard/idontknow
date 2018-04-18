@@ -44,4 +44,8 @@ export class HumanProperties {
     getPerseverance() {
         return this.perseverance;
     }
+
+    getType(): EMPLOYEE_TYPE {
+        return this.type;
+    }
 }

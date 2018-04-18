@@ -16,6 +16,8 @@ import {DIRECTION, Direction} from "./Direction";
 import {HumanProperties} from "./human_stuff/HumanProperties";
 import {MoodRegister} from "./human_stuff/MoodRegister";
 import {Table} from "./objects/Table";
+import {LevelManager} from "./LevelManager";
+import {EMPLOYEE_TYPE} from "./human_stuff/HumanPropertiesFactory";
 
 export const GRID_WIDTH = 16;
 export const GRID_HEIGHT = 16;
@@ -30,6 +32,7 @@ export class WorldKnowledge {
     private game: Phaser.Game;
     private groups: {[index: string] : Phaser.Group};
     private moodRegister: MoodRegister;
+    private levelManager: LevelManager;
 
     constructor() {
         this.cells = [];
@@ -39,8 +42,8 @@ export class WorldKnowledge {
                 this.cells.push(new Cell(new PIXI.Point(x, y)));
             }
         }
-
         this.wallRepository = new WallRepository();
+        this.levelManager = new LevelManager();
         this.depot = new Depot();
 
         if (DEBUG_WORLD) {
@@ -374,5 +377,13 @@ export class WorldKnowledge {
 
     hasObject(interactiveObject: InteractiveObjectInterface) {
         return this.objects.indexOf(interactiveObject) > -1;
+    }
+
+    getLevelProgress(type: EMPLOYEE_TYPE): number {
+        return this.levelManager.getLevelProgress(type);
+    }
+
+    addProgress(type: EMPLOYEE_TYPE, value: number) {
+        this.levelManager.addLevelProgress(type, value);
     }
 }

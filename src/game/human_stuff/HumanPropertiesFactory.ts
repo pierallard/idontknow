@@ -9,7 +9,7 @@ const NAMES = [
 ];
 
 export enum EMPLOYEE_TYPE {
-    DEVELOPER,
+    DEVELOPER = 0,
     MARKETING,
     SALE,
 }

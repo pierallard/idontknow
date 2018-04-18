@@ -5,9 +5,11 @@ import {WorldKnowledge} from "../WorldKnowledge";
 import {TEXT_STYLE} from "../TextStyle";
 import {HumanEmployer} from "./HumanEmployer";
 import {InfoPanel} from "./InfoPanel";
+import {LevelDisplayer} from "./LevelDisplayer";
 
 export const INTERFACE_WIDTH = 150.5;
-export const TOP_GAP = 15.5;
+export const TOP_GAP_2 = 15.5;
+export const TOP_GAP = TOP_GAP_2 + 15;
 enum PANEL {
     INFO,
     USR,
@@ -21,11 +23,13 @@ export class UserInterface {
     private infoPanel: InfoPanel;
     private buttons: Phaser.Text[];
     private selectedPanel: PANEL;
+    private levelDisplayer: LevelDisplayer;
 
     constructor(worldKnowledge: WorldKnowledge) {
         this.objectSeller = new ObjectSeller(worldKnowledge);
         this.humanEmployer = new HumanEmployer(worldKnowledge);
         this.infoPanel = new InfoPanel(worldKnowledge);
+        this.levelDisplayer = new LevelDisplayer(worldKnowledge);
         this.buttons = [];
         this.selectedPanel = PANEL.OBJ;
     }
@@ -40,12 +44,13 @@ export class UserInterface {
         this.objectSeller.create(game, groups);
         this.humanEmployer.create(game, groups);
         this.infoPanel.create(game, groups);
+        this.levelDisplayer.create(game, groups);
 
         const buttonWidth = INTERFACE_WIDTH / 3;
 
         let i = 0;
         [['info', PANEL.INFO], ['usr', PANEL.USR], ['obj', PANEL.OBJ]].forEach((panelInfo) => {
-            const button = game.add.text(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + i * buttonWidth, 0, <string> panelInfo[0], TEXT_STYLE, interfaceGroup);
+            const button = game.add.text(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + i * buttonWidth, TOP_GAP_2, <string> panelInfo[0], TEXT_STYLE, interfaceGroup);
             button.inputEnabled = true;
             button.input.useHandCursor = true;
             button.events.onInputDown.add(() => {
@@ -61,6 +66,7 @@ export class UserInterface {
     update() {
         this.objectSeller.update();
         this.infoPanel.update();
+        this.levelDisplayer.update();
     }
 
     private selectPanel(panel: PANEL) {
