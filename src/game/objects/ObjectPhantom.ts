@@ -40,7 +40,7 @@ export class ObjectPhantom implements ObjectInterface {
         }, this);
 
         this.putEvent = () => {
-            if (this.worldKnowledge.canPutHere(this)) {
+            if (this.worldKnowledge.canPutHere(this.objectInfo, this.position, this.leftOriented)) {
                 this.put(game);
             }
         };
@@ -109,7 +109,9 @@ export class ObjectPhantom implements ObjectInterface {
     }
 
     getPositions(): PIXI.Point[] {
-        return [this.position];
+        return this.objectInfo.getCellGaps(this.leftOriented).map((cellGap) => {
+            return new PIXI.Point(this.position.x + cellGap.x, this.position.y + cellGap.y)
+        });
     }
 
     getEntries(objectNumber: number): DIRECTION[] {
@@ -121,12 +123,13 @@ export class ObjectPhantom implements ObjectInterface {
             return phantomSprite.getSprite();
         }));
         this.forbiddenSprite.position.set(center.x, center.y);
-        this.forbiddenSprite.alpha = this.worldKnowledge.canPutHere(this) ? 0 : 1;
+        this.forbiddenSprite.alpha = this.worldKnowledge.canPutHere(this.objectInfo, this.position, this.leftOriented) ? 0 : 1;
     }
 
     private put(game: Phaser.Game) {
+        game.input.moveCallbacks = [];
         game.input.activePointer.leftButton.onDown.remove(this.putEvent);
-        this.worldKnowledge.add(this.objectInfo.getName(), this.getPositions()[0], this.leftOriented);
+        this.worldKnowledge.add(this.objectInfo.getName(), this.getOrigin(), this.leftOriented);
         this.destroy();
     }
 
@@ -138,8 +141,8 @@ export class ObjectPhantom implements ObjectInterface {
         return this.leftOriented
     }
 
-    isEntryAccessible(direction: DIRECTION) {
-        return this.worldKnowledge.isEntryAccessibleForObject(this, direction);
+    isEntryAccessible(cellGap: PIXI.Point, direction: DIRECTION) {
+        return this.worldKnowledge.isEntryAccessibleForObject(this.position, cellGap, direction);
     }
 
     isCellFree(): boolean {
@@ -150,6 +153,10 @@ export class ObjectPhantom implements ObjectInterface {
         }
 
         return true;
+    }
+
+    getOrigin(): PIXI.Point {
+        return this.position;
     }
 }
 
@@ -172,12 +179,12 @@ class DirectionsSprite {
 
         this.phantom.getInfo().getSpriteInfos().forEach((spriteInfo) => {
             spriteInfo.getEntryPoints(this.phantom.getLeftOriented()).forEach((direction) => {
-                if (this.phantom.isEntryAccessible(direction)) {
+                const cellGap = spriteInfo.getPositionGapFromOrigin(this.phantom.getLeftOriented());
+                if (this.phantom.isEntryAccessible(cellGap, direction)) {
                     this.graphics.beginFill(0x00de2d); // Green
                 } else {
                     this.graphics.beginFill(0xff004d); // Red
                 }
-                const cellGap = spriteInfo.getPositionGapFromOrigin();
                 switch (direction) {
                     case DIRECTION.BOTTOM:
                         this.graphics.drawPolygon(
@@ -211,8 +218,7 @@ class DirectionsSprite {
         });
 
         this.graphics.beginFill(this.phantom.isCellFree() ? 0x00de2d : 0xff004d);
-
-        this.phantom.getInfo().getCellGaps().forEach((cellGap) => {
+        this.phantom.getInfo().getCellGaps(this.phantom.getLeftOriented()).forEach((cellGap) => {
             this.graphics.drawPolygon(
                 PositionTransformer.addGap(new PIXI.Point(- CELL_WIDTH / 2, 0), cellGap),
                 PositionTransformer.addGap(new PIXI.Point(0, CELL_HEIGHT / 2), cellGap),

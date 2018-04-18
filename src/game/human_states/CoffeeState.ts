@@ -30,7 +30,7 @@ export class CoffeeState implements HumanState {
     getNextState(): HumanState {
         if (!this.isHumanOnTheRightCell) {
             if (!this.worldKnowledge.hasObject(this.objectReferer.getObject()) || this.objectReferer.isUsed()) {
-                const nextDispenserReferer = this.worldKnowledge.getClosestFreeDispenserReferer(this.human.getPosition());
+                const nextDispenserReferer = this.worldKnowledge.getClosestReferer(['Dispenser'], this.human.getPosition());
                 if (this.tries > this.human.getMaxRetries() || nextDispenserReferer === null) {
                     this.active = false;
                     this.human.stopWalk();
@@ -50,7 +50,7 @@ export class CoffeeState implements HumanState {
                 this.human.loadAnimation(ANIMATION.DRINK);
                 this.human.updateMoodFromState();
                 this.events.push(this.game.time.events.add(Math.floor(Phaser.Math.random(2, 4)) * HumanAnimationManager.getAnimationTime(ANIMATION.DRINK), () => {
-                    this.human.goToFreeCell(this.objectReferer.getEntries());
+                    this.human.goToFreeCell(this.objectReferer);
                     this.events.push(this.game.time.events.add(this.human.getWalkDuration() + 100, () => {
                         this.active = false;
                     }, this));

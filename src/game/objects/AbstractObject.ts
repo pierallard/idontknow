@@ -3,17 +3,20 @@ import {ObjectInfoRegistry} from "./ObjectInfoRegistry";
 import {DIRECTION} from "../Direction";
 import {WorldKnowledge} from "../WorldKnowledge";
 import {InteractiveObjectInterface} from "./InteractiveObjectInterface";
+import {ObjectReferer} from "./ObjectReferer";
 
 export abstract class AbstractObject implements InteractiveObjectInterface {
     protected sprites: Phaser.Sprite[];
     protected position: PIXI.Point;
     protected leftOriented: boolean;
     private worldKnowledge: WorldKnowledge;
+    private usedIdentifiers: number[];
 
     constructor(point: PIXI.Point, worldKnowledge: WorldKnowledge, leftOriented: boolean) {
         this.position = point;
         this.leftOriented = leftOriented;
         this.worldKnowledge = worldKnowledge;
+        this.usedIdentifiers = [];
     }
 
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}) {
@@ -54,7 +57,12 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
     }
 
     getPositions(): PIXI.Point[] {
-        return [this.position];
+        return ObjectInfoRegistry.getObjectInfo(this.constructor.name).getCellGaps(this.leftOriented).map((gap) => {
+            return new PIXI.Point(
+                this.position.x + gap.x,
+                this.position.y + gap.y
+            );
+        });
     }
 
     getSprites(): Phaser.Sprite[] {
@@ -76,13 +84,41 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
         const infos = ObjectInfoRegistry.getObjectInfo(this.constructor.name);
 
         return new PIXI.Point(
-            this.position.x + infos.getPositionGapOfSubObject(subObjectNumber).x,
-            this.position.y + infos.getPositionGapOfSubObject(subObjectNumber).y
+            this.position.x + infos.getPositionGapOfSubObject(this.leftOriented, subObjectNumber).x,
+            this.position.y + infos.getPositionGapOfSubObject(this.leftOriented, subObjectNumber).y
         );
     }
 
     isUsed(subObjectNumber: number): boolean {
-        // TODO
-        return false;
+        return this.usedIdentifiers.indexOf(subObjectNumber) > -1;
+    }
+
+    getOrigin(): PIXI.Point {
+        return this.position;
+    }
+
+    setUsed(subObjectNumber: number): void {
+        this.usedIdentifiers.push(subObjectNumber);
+    }
+
+    setUnused(subObjectNumber: number): void {
+        const index = this.usedIdentifiers.indexOf(subObjectNumber);
+        if (index > -1) {
+            this.usedIdentifiers.splice(index, 1);
+        }
+    }
+
+    getUnusedReferers(): ObjectReferer[] {
+        let result = [];
+        const infos = ObjectInfoRegistry.getObjectInfo(this.constructor.name);
+        for (let i = 0; i < infos.getSpriteInfos().length; i++) {
+            if (infos.getSpriteInfos()[i].getEntryPoints(this.leftOriented).length > 0) {
+                if (!this.isUsed(i)) {
+                    result.push(new ObjectReferer(this, i));
+                }
+            }
+        }
+
+        return result;
     }
 }

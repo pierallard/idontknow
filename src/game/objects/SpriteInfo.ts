@@ -72,7 +72,19 @@ export class SpriteInfo {
         }
     }
 
-    getPositionGapFromOrigin(): PIXI.Point {
-        return this.cellGap;
+    /**
+     * Returns the gap from the origin cell. It takes the mirror effect in account. For examples:
+     * [1, 0] => [0, 1]
+     * [0, 1] => [1, 0]
+     * [1, 1] => [1, 1]
+     * @param {boolean} leftOriented
+     * @returns {PIXI.Point}
+     */
+    getPositionGapFromOrigin(leftOriented: boolean): PIXI.Point {
+        if (!leftOriented) {
+            return this.cellGap;
+        } else {
+            return new PIXI.Point(this.cellGap.y, this.cellGap.x)
+        }
     }
 }

@@ -173,7 +173,7 @@ class ObjectProvisionnerButton {
         this.square.lineStyle(1, 0xffffff);
         this.square.drawRect(0, 0, OBJECT_SELLER_CELL_SIZE, OBJECT_SELLER_CELL_SIZE);
 
-        this.objectInfo.getCellGaps().forEach((cellGap) => {
+        this.objectInfo.getCellGaps(false).forEach((cellGap) => {
             const fakeCell = game.add.sprite(spriteOrigin.x - (cellGap.x - cellGap.y) * CELL_WIDTH / 2, spriteOrigin.y - (cellGap.x + cellGap.y) * CELL_HEIGHT / 2, 'casedefault');
             fakeCell.anchor.set(0.5, 1);
             groups[GROUP_INTERFACE].add(fakeCell);

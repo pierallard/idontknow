@@ -1,7 +1,6 @@
 import {HumanState} from "./HumanState";
 import {Employee} from "../human_stuff/Employee";
 import {WorldKnowledge} from "../WorldKnowledge";
-import {InteractiveObjectInterface} from "../objects/InteractiveObjectInterface";
 import {ANIMATION, HumanAnimationManager} from "../human_stuff/HumanAnimationManager";
 import {STATE} from "../human_stuff/HumanStateManager";
 import {PositionTransformer} from "../PositionTransformer";
@@ -30,7 +29,7 @@ export class SitState implements HumanState {
     getNextState(): HumanState {
         if (!this.isHumanOnTheRightCell) {
             if (!this.worldKnowledge.hasObject(this.objectReferer.getObject()) || this.objectReferer.isUsed()) {
-                const nextSofaReferer = this.worldKnowledge.getRandomFreeSittableReferer();
+                const nextSofaReferer = this.worldKnowledge.getClosestReferer(['Sofa', 'Table'], this.human.getPosition());
                 if (this.tries > this.human.getMaxRetries() || nextSofaReferer === null) {
                     this.active = false;
                     this.human.stopWalk();
@@ -50,7 +49,7 @@ export class SitState implements HumanState {
                 this.events.push(this.game.time.events.add(Phaser.Math.random(3, 10) * Phaser.Timer.SECOND + HumanAnimationManager.getAnimationTime(ANIMATION.SIT_DOWN), () => {
                     this.human.loadAnimation(ANIMATION.STAND_UP);
                     this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.STAND_UP) + 100, () => {
-                        this.human.goToFreeCell(this.objectReferer.getEntries());
+                        this.human.goToFreeCell(this.objectReferer);
                         this.events.push(this.game.time.events.add(this.human.getWalkDuration() + 100, () => {
                             this.active = false;
                         }, this));

@@ -20,6 +20,8 @@ import {ObjectReferer} from "./objects/ObjectReferer";
 import {LevelManager} from "./LevelManager";
 import {EMPLOYEE_TYPE} from "./human_stuff/HumanPropertiesFactory";
 import {Price} from "./objects/Price";
+import {ObjectInfo} from "./objects/ObjectInfo";
+import {ObjectInfoRegistry} from "./objects/ObjectInfoRegistry";
 
 export const GRID_WIDTH = 16;
 export const GRID_HEIGHT = 16;
@@ -28,7 +30,7 @@ export const DEBUG_WORLD = false;
 export class WorldKnowledge {
     private humanRepository: HumanRepository;
     private cells: Cell[];
-    private objects: ObjectInterface[];
+    private objects: InteractiveObjectInterface[];
     private wallRepository: WallRepository;
     private depot: Depot;
     private game: Phaser.Game;
@@ -250,59 +252,25 @@ export class WorldKnowledge {
         return true;
     }
 
-    getRandomFreeSittableReferer(): ObjectReferer {
-        const freeSittable = this.objects.filter((object) => {
-            return (object.constructor.name === 'Sofa' || object.constructor.name === 'Table') && !this.isObjectUsed(<InteractiveObjectInterface> object);
-        });
-
-        if (freeSittable.length === 0) {
-            return null;
-        }
-
-        return new ObjectReferer(<InteractiveObjectInterface> freeSittable[Math.floor(Math.random() * freeSittable.length)], 0);
-    }
-
-    isObjectUsed(interactiveObject: InteractiveObjectInterface) {
-        for (let i = 0; i < this.humanRepository.humans.length; i++) {
-            const human = this.humanRepository.humans[i];
-            for (let k = 0; k < interactiveObject.getPositions().length; k++) {
-                if (interactiveObject.getPositions()[k].x === human.getPosition().x && interactiveObject.getPositions()[k].y === human.getPosition().y) {
-                    return true;
-                }
+    getClosestReferer(types: string[], position: PIXI.Point = null) {
+        let freeReferers: ObjectReferer[] = [];
+        this.objects.forEach((object) => {
+            if (types.indexOf(object.constructor.name) > -1) {
+                freeReferers = freeReferers .concat(object.getUnusedReferers());
             }
-        }
-
-        return false;
-    }
-
-    getClosestFreeDeskReferer(position: PIXI.Point): ObjectReferer {
-        const freeDesks = this.objects.filter((object) => {
-            return object.constructor.name === 'Desk' && !this.isObjectUsed(<Desk> object);
         });
-
-        if (freeDesks.length === 0) {
+        if (freeReferers.length === 0) {
             return null;
         }
 
-        return new ObjectReferer(<Desk> freeDesks.sort((desk1, desk2) => {
-            return PositionTransformer.dist(position, PositionTransformer.getCentroid(desk1.getPositions()))
-                - PositionTransformer.dist(position, PositionTransformer.getCentroid(desk2.getPositions()));
-        })[0], 0);
-    }
-
-    getClosestFreeDispenserReferer(position: PIXI.Point): ObjectReferer {
-        const freeDispensers = this.objects.filter((object) => {
-            return object.constructor.name === 'Dispenser' && !this.isObjectUsed(<Dispenser> object);
-        });
-
-        if (freeDispensers.length === 0) {
-            return null;
+        if (position === null) {
+            return freeReferers[Math.floor(Math.random() * freeReferers .length)];
         }
 
-        return new ObjectReferer(<Dispenser> freeDispensers.sort((dispenser1, dispenser2) => {
-            return PositionTransformer.dist(position, PositionTransformer.getCentroid(dispenser1.getPositions()))
-                - PositionTransformer.dist(position, PositionTransformer.getCentroid(dispenser2.getPositions()));
-        })[0], 0);
+        return freeReferers.sort((referer1, referer2) => {
+            return PositionTransformer.dist(position, PositionTransformer.getCentroid(referer1.getObject().getPositions()))
+                - PositionTransformer.dist(position, PositionTransformer.getCentroid(referer2.getObject().getPositions()));
+        })[0];
     }
 
     private static getDist(sources: PIXI.Point[], point: PIXI.Point): number {
@@ -334,52 +302,81 @@ export class WorldKnowledge {
         this.wallet.substract(price);
     }
 
-    canPutHere(phantom: ObjectInterface) {
-        // Check if there is nothing in the cell
-        for (let i = 0; i < phantom.getPositions().length; i++) {
-            if (!this.isFree(phantom.getPositions()[i])) {
+    canPutHere(objectInfo: ObjectInfo, origin: PIXI.Point, leftOriented: boolean) {
+        return this.areAllTheCellsFree(objectInfo, origin, leftOriented) &&
+            this.areAllSpritesEnterable(objectInfo, origin, leftOriented) &&
+            this.isNewObjectNotBlockingExistingOne(objectInfo, origin, leftOriented);
+    };
+
+    private areAllTheCellsFree(objectInfo: ObjectInfo, origin: PIXI.Point, leftOriented: boolean) {
+        for (let i = 0; i < objectInfo.getSpriteInfos().length; i++) {
+            const spriteInfo = objectInfo.getSpriteInfo(i);
+            const gap = spriteInfo.getPositionGapFromOrigin(leftOriented);
+            if (!this.isFree(new PIXI.Point(origin.x + gap.x, origin.y + gap.y))) {
                 return false;
             }
         }
 
-        // Check if the human can enter the interactive object by at least one of the entries
-        let isEntryPossible = false;
-        // TODO Put this back
-        /*
-        phantom.getEntries().forEach((entry) => {
-            isEntryPossible = isEntryPossible || this.isEntryAccessibleForObject(phantom, entry);
-        });
-        if (isEntryPossible === false) {
-            return false;
-        }
+        return true;
+    }
 
-        // Check that if we put an object here, every other objects have at least one possible entry.
-        let doNotBlockOthers = true;
-        this.objects.forEach((object) => {
-            let isEntryPossible = false;
-            object.getEntries().forEach((entry) => {
-                const out = Direction.getGap(object.getPositions()[0], entry);
-                if (this.isFree(out) && !(out.x === phantom.getPositions()[0].x && out.y === phantom.getPositions()[0].y)) {
-                    isEntryPossible = true;
+    private areAllSpritesEnterable(objectInfo: ObjectInfo, origin: PIXI.Point, leftOriented: boolean) {
+        for (let i = 0; i < objectInfo.getSpriteInfos().length; i++) {
+            const spriteInfo = objectInfo.getSpriteInfo(i);
+            if (spriteInfo.getEntryPoints(leftOriented).length > 0) {
+                let isEntryPossible = false;
+                spriteInfo.getEntryPoints(leftOriented).forEach((entry) => {
+                    const gap = spriteInfo.getPositionGapFromOrigin(leftOriented);
+                    isEntryPossible = isEntryPossible || this.isEntryAccessibleForObject(origin, gap, entry)
+                });
+                if (isEntryPossible === false) {
+                    return false;
                 }
-            });
-            if (!isEntryPossible) {
-                doNotBlockOthers = false;
             }
-        });
-        if (!doNotBlockOthers) {
-            return false;
-        }*/
+        }
 
         return true;
     }
 
-    isEntryAccessibleForObject(phantom: ObjectInterface, entry: DIRECTION) {
-        return this.isFree(Direction.getGap(phantom.getPositions()[0], entry));
+    private isNewObjectNotBlockingExistingOne(objectInfo: ObjectInfo, origin: PIXI.Point, leftOriented: boolean) {
+        const newObjectCells = objectInfo.getCellGaps(leftOriented).map((gap) => {
+            return new PIXI.Point(origin.x + gap.x, origin.y + gap.y);
+        });
+        this.objects.forEach((object) => {
+            const otherObjectInfo = ObjectInfoRegistry.getObjectInfo(object.constructor.name);
+            let isEntryPossible = false;
+            otherObjectInfo.getEntryCells(object.getOrigin(), leftOriented).forEach((cell) => {
+                if (this.isFree(cell)) {
+                    let isCellBlocking = false;
+                    newObjectCells.forEach((newObjectCell) => {
+                        if (cell.x === newObjectCell.x && cell.y === newObjectCell.y) {
+                            isCellBlocking = true;
+                        }
+                    });
+                    if (!isCellBlocking) {
+                        isEntryPossible = true
+                    }
+                }
+            });
+            if (!isEntryPossible) {
+                return false;
+            }
+        });
+
+        return true;
+    }
+
+    isEntryAccessibleForObject(origin: PIXI.Point, gap: PIXI.Point, entry: DIRECTION) {
+        const gappedPosition = new PIXI.Point(
+            origin.x + gap.x,
+            origin.y + gap.y,
+        );
+
+        return this.isFree(Direction.getNeighbor(gappedPosition, entry));
     }
 
     add(name: string, position: PIXI.Point, leftOriented: boolean) {
-        let object: ObjectInterface = null;
+        let object: InteractiveObjectInterface = null;
         switch (name) {
             case 'Desk': object = new Desk(position, this, leftOriented); break;
             case 'Sofa': object = new Sofa(position, this, leftOriented); break;

@@ -29,7 +29,7 @@ export class TypeState implements HumanState {
     getNextState(): HumanState {
         if (!this.isHumanOnTheRightCell) {
             if (!this.worldKnowledge.hasObject(this.objectReferer.getObject()) || this.objectReferer.isUsed()) {
-                const nextDeskReferer = this.worldKnowledge.getClosestFreeDeskReferer(this.human.getPosition());
+                const nextDeskReferer = this.worldKnowledge.getClosestReferer(['Desk'], this.human.getPosition());
                 if (this.tries > this.human.getMaxRetries() || nextDeskReferer === null) {
                     this.active = false;
                     this.human.stopWalk();
@@ -51,7 +51,7 @@ export class TypeState implements HumanState {
                     this.events.push(this.game.time.events.add(Phaser.Math.random(15, 60) * Phaser.Timer.SECOND, () => {
                         this.human.loadAnimation(ANIMATION.STAND_UP);
                         this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.STAND_UP) + 100, () => {
-                            this.human.goToFreeCell(this.objectReferer.getEntries());
+                            this.human.goToFreeCell(this.objectReferer);
                             this.events.push(this.game.time.events.add(this.human.getWalkDuration() + 100, () => {
                                 this.active = false;
                             }, this));

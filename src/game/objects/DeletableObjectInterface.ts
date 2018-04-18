@@ -1,6 +1,6 @@
-import {ObjectInterface} from "./ObjectInterface";
+import {InteractiveObjectInterface} from "./InteractiveObjectInterface";
 
-export interface DeletableObjectInterface extends ObjectInterface {
+export interface DeletableObjectInterface extends InteractiveObjectInterface {
     getSprites(): Phaser.Sprite[];
     remove(): void;
 }

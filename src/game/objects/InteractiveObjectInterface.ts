@@ -1,6 +1,6 @@
 import {DIRECTION} from "../Direction";
 import {ObjectInterface} from "./ObjectInterface";
-import {Price} from "./Price";
+import {ObjectReferer} from "./ObjectReferer";
 
 export interface InteractiveObjectInterface extends ObjectInterface {
     getEntries(objectNumber: number): DIRECTION[];
@@ -23,4 +23,10 @@ export interface InteractiveObjectInterface extends ObjectInterface {
     getPositionGap(subObjectNumber: number): PIXI.Point;
 
     getCellPositionSubObject(subObjectNumber: number): PIXI.Point;
+
+    setUsed(subObjectNumber: number): void;
+
+    setUnused(subObjectNumber: number): void;
+
+    getUnusedReferers(): ObjectReferer[];
 }

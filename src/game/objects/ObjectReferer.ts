@@ -29,4 +29,12 @@ export class ObjectReferer {
     getPosition(): PIXI.Point {
         return this.obj.getCellPositionSubObject(this.subObjectNumber);
     }
+
+    setUsed() {
+        this.obj.setUsed(this.subObjectNumber);
+    }
+
+    setUnused() {
+        this.obj.setUnused(this.subObjectNumber);
+    }
 }
