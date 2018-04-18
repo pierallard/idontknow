@@ -47,7 +47,7 @@ export class WorldKnowledge {
         this.wallRepository = new WallRepository();
         this.levelManager = new LevelManager();
         this.depot = new Depot();
-        this.wallet = new Price(10000);
+        this.wallet = new Price(130);
 
         if (DEBUG_WORLD) {
             this.wallRepository.addWall(new PIXI.Point(5, 5));
@@ -316,6 +316,11 @@ export class WorldKnowledge {
 
     getDepot(): Depot {
         return this.depot;
+    }
+
+    buy(objectName: string, price: Price) {
+        this.depot.add(objectName);
+        this.wallet.substract(price);
     }
 
     canPutHere(phantom: ObjectInterface) {

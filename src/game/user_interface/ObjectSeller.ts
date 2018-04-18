@@ -6,6 +6,7 @@ import {ObjectInfoRegistry} from "../objects/ObjectInfoRegistry";
 import {ObjectPhantom} from "../objects/ObjectPhantom";
 import {GROUP_INTERFACE} from "../game_state/Play";
 import {TEXT_STYLE} from "../TextStyle";
+import game = PIXI.game;
 
 export const OBJECT_SELLER_CELL_SIZE = 41;
 const CIRCLE_GAP = 7;
@@ -17,25 +18,38 @@ export class ObjectSeller {
     private visible: boolean;
 
     constructor(worldKnowledge: WorldKnowledge) {
-        this.objectProvisionnerButtons = [];
         this.worldKnowledge = worldKnowledge;
         this.visible = true;
-        ObjectInfoRegistry.getSellableObjects().forEach((object) => {
-            this.objectProvisionnerButtons.push(new ObjectProvisionnerButton(object, this.worldKnowledge));
-        });
+
+        this.objectProvisionnerButtons = ObjectInfoRegistry
+            .getSellableObjects()
+            .map((object) => new ObjectProvisionnerButton(object, this.worldKnowledge));
+
+        this.sellerButtons = ObjectInfoRegistry
+            .getSellableObjects()
+            .map((object) => new SellerButton(object, this.worldKnowledge));
     }
 
     create(game: Phaser.Game, groups: {[index: string]: Phaser.Group }) {
         let i = 0;
-        this.objectProvisionnerButtons.forEach((sellerButton) => {
-            sellerButton.create(game, groups, i);
+        this.objectProvisionnerButtons.forEach((objectProvisionnerButton) => {
+            objectProvisionnerButton.create(game, groups, i);
             i++;
         });
+        i = 0;
+        this.sellerButtons.forEach((sellerButton) => {
+            sellerButton.create(game, groups, i);
+            i++;
+        })
     }
 
     update() {
-        this.objectProvisionnerButtons.forEach((sellerButton) => {
-            sellerButton.updateCount(this.getCount(sellerButton.getName()))
+        this.objectProvisionnerButtons.forEach((objectProvisionnerButton) => {
+            objectProvisionnerButton.updateCount(this.getCount(objectProvisionnerButton.getName()))
+        });
+
+        this.sellerButtons.forEach((sellerButton) => {
+            sellerButton.updateAvailable();
         })
     }
 
@@ -45,18 +59,24 @@ export class ObjectSeller {
 
     hide() {
         if (this.visible) {
-            this.objectProvisionnerButtons.forEach((sellerButton) => {
-                sellerButton.hide();
+            this.objectProvisionnerButtons.forEach((objectProvisionnerButton) => {
+                objectProvisionnerButton.hide();
             });
+            this.sellerButtons.forEach((sellerButton) => {
+                sellerButton.hide();
+            })
         }
         this.visible = false;
     }
 
     show() {
         if (!this.visible) {
-            this.objectProvisionnerButtons.forEach((sellerButton) => {
-                sellerButton.show();
+            this.objectProvisionnerButtons.forEach((objectProvisionnerButton) => {
+                objectProvisionnerButton.show();
             });
+            this.sellerButtons.forEach((sellerButton) => {
+                sellerButton.show();
+            })
         }
         this.visible = true;
     }
@@ -64,9 +84,64 @@ export class ObjectSeller {
 
 class SellerButton {
     private objectInfo: ObjectInfo;
+    private price: Phaser.Text;
+    private worldKnowledge: WorldKnowledge;
+    private circle: Phaser.Graphics;
 
     constructor(objectInfo: ObjectInfo, worldKnowledge: WorldKnowledge) {
+        this.objectInfo = objectInfo;
+        this.worldKnowledge = worldKnowledge;
+    }
 
+    create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}, index: number) {
+        const left = CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH;
+        const top = TOP_GAP + index * (OBJECT_SELLER_CELL_SIZE / 2);
+
+        const textTop = index * OBJECT_SELLER_CELL_SIZE + 12 + TOP_GAP + CIRCLE_GAP;
+        this.price = game.add.text(
+            left + OBJECT_SELLER_CELL_SIZE + 10,
+            textTop,
+            this.objectInfo.getPrice().getStringValue(),
+            TEXT_STYLE,
+            groups[GROUP_INTERFACE]
+        );
+        groups[GROUP_INTERFACE].add(this.price);
+
+        this.circle = game.add.graphics(
+            this.price.x + this.price.width + 12,
+            textTop,
+            groups[GROUP_INTERFACE]
+        );
+
+        this.circle.beginFill( 0x7a7a7a);
+        this.circle.drawEllipse(0, 0, 15, 5);
+        this.circle.inputEnabled = true;
+        this.circle.input.useHandCursor = true;
+        this.circle.events.onInputDown.add(this.buy, this, 0);
+
+        groups[GROUP_INTERFACE].add(this.circle);
+    }
+
+    updateAvailable() {
+        if (this.objectInfo.isSellable(this.worldKnowledge.getMoneyInWallet())) {
+            this.circle.inputEnabled = true;
+            this.circle.input.useHandCursor = true;
+        } else {
+            this.circle.inputEnabled = false;
+            this.circle.input.useHandCursor = false;
+        }
+    }
+
+    buy() {
+        this.worldKnowledge.buy(this.objectInfo.getName(), this.objectInfo.getPrice());
+    }
+
+    hide() {
+        this.price.position.x += INTERFACE_WIDTH;
+    }
+
+    show() {
+        this.price.position.x -= INTERFACE_WIDTH;
     }
 }
 

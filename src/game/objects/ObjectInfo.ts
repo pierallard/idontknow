@@ -34,6 +34,10 @@ export class ObjectInfo {
     }
 
     isSellable(remainingMoney: Price): boolean {
-        return remainingMoney >= this.price;
+        return remainingMoney.isGreaterThan(this.price);
+    }
+
+    getPrice(): Price {
+        return this.price;
     }
 }

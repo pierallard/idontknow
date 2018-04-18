@@ -10,4 +10,12 @@ export class Price {
     {
         return this.value.toString() + " FLOOZ";
     }
+
+    isGreaterThan(value:Price): boolean {
+        return this.value >= value.value;
+    }
+
+    substract(value: Price): void {
+        this.value -= value.value;
+    }
 }

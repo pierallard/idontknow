@@ -56,7 +56,8 @@ export class ObjectInfoRegistry {
                 new SpriteInfo('chair2', -8, -9, 5, 0),
                 new SpriteInfo('table', 0, 0, 4, 0)
             ],
-            [DIRECTION.BOTTOM, DIRECTION.TOP, DIRECTION.LEFT]
+            [DIRECTION.BOTTOM, DIRECTION.TOP, DIRECTION.LEFT],
+            new Price(12)
         ));
     }
 
