@@ -1,5 +1,6 @@
 import {DIRECTION} from "../Direction";
 import {ObjectInterface} from "./ObjectInterface";
+import {Price} from "./Price";
 
 export interface InteractiveObjectInterface extends ObjectInterface {
     /**

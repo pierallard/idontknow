@@ -18,6 +18,7 @@ import {MoodRegister} from "./human_stuff/MoodRegister";
 import {Table} from "./objects/Table";
 import {LevelManager} from "./LevelManager";
 import {EMPLOYEE_TYPE} from "./human_stuff/HumanPropertiesFactory";
+import {Price} from "./objects/Price";
 
 export const GRID_WIDTH = 16;
 export const GRID_HEIGHT = 16;
@@ -33,6 +34,7 @@ export class WorldKnowledge {
     private groups: {[index: string] : Phaser.Group};
     private moodRegister: MoodRegister;
     private levelManager: LevelManager;
+    private wallet: Price;
 
     constructor() {
         this.cells = [];
@@ -45,6 +47,7 @@ export class WorldKnowledge {
         this.wallRepository = new WallRepository();
         this.levelManager = new LevelManager();
         this.depot = new Depot();
+        this.wallet = new Price(130);
 
         if (DEBUG_WORLD) {
             this.wallRepository.addWall(new PIXI.Point(5, 5));
@@ -135,6 +138,10 @@ export class WorldKnowledge {
         return (humanPosition.x == wallPosition.x + 1 && humanPosition.y == wallPosition.y + 1) ||
             (humanPosition.x == wallPosition.x && humanPosition.y == wallPosition.y + 1) ||
             (humanPosition.x == wallPosition.x + 1 && humanPosition.y == wallPosition.y);
+    }
+
+    getMoneyInWallet(): Price {
+        return this.wallet;
     }
 
     getSelectedHumanSprite() {
@@ -309,6 +316,11 @@ export class WorldKnowledge {
 
     getDepot(): Depot {
         return this.depot;
+    }
+
+    buy(objectName: string, price: Price) {
+        this.depot.add(objectName);
+        this.wallet.substract(price);
     }
 
     canPutHere(phantom: ObjectInterface) {
