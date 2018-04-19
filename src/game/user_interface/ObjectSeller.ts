@@ -138,10 +138,12 @@ class SellerButton {
 
     hide() {
         this.price.position.x += INTERFACE_WIDTH;
+        this.circle.position.x += INTERFACE_WIDTH;
     }
 
     show() {
         this.price.position.x -= INTERFACE_WIDTH;
+        this.circle.position.x -= INTERFACE_WIDTH;
     }
 }
 
