@@ -16,7 +16,7 @@ export class Direction {
         ];
     }
 
-    static getGap(point: PIXI.Point, direction: DIRECTION): PIXI.Point {
+    static getNeighbor(point: PIXI.Point, direction: DIRECTION): PIXI.Point {
         switch (direction) {
             case DIRECTION.TOP: return new PIXI.Point(point.x, point.y + 1);
             case DIRECTION.BOTTOM: return new PIXI.Point(point.x, point.y - 1);
@@ -48,13 +48,23 @@ export class Direction {
         return direction === DIRECTION.TOP || direction === DIRECTION.LEFT;
     }
 
-    static getHorizontalMirror(direction: any) {
+    static getHorizontalMirror(direction: DIRECTION) {
         switch (direction) {
             case DIRECTION.TOP: return DIRECTION.LEFT;
             case DIRECTION.BOTTOM: return DIRECTION.RIGHT;
             case DIRECTION.LEFT: return DIRECTION.TOP;
             case DIRECTION.RIGHT: return DIRECTION.BOTTOM;
             case DIRECTION.CURRENT: return DIRECTION.CURRENT;
+        }
+    }
+
+    static getDirectionStr(direction: DIRECTION): string {
+        switch (direction) {
+            case DIRECTION.TOP: return 'T';
+            case DIRECTION.BOTTOM: return 'B';
+            case DIRECTION.LEFT: return 'L';
+            case DIRECTION.RIGHT: return 'R';
+            case DIRECTION.CURRENT: return 'C';
         }
     }
 }

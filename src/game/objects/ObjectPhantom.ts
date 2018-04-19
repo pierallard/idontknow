@@ -4,7 +4,7 @@ import {CELL_HEIGHT, CELL_WIDTH, PositionTransformer} from "../PositionTransform
 import {ObjectDeleter} from "./ObjectDeleter";
 import {WorldKnowledge} from "../WorldKnowledge";
 import {ObjectInfo} from "./ObjectInfo";
-import {Direction, DIRECTION} from "../Direction";
+import {DIRECTION} from "../Direction";
 import {ObjectInterface} from "./ObjectInterface";
 import {GROUP_INFOS} from "../game_state/Play";
 
@@ -40,7 +40,7 @@ export class ObjectPhantom implements ObjectInterface {
         }, this);
 
         this.putEvent = () => {
-            if (this.worldKnowledge.canPutHere(this)) {
+            if (this.worldKnowledge.canPutHere(this.objectInfo, this.position, this.leftOriented)) {
                 this.put(game);
             }
         };
@@ -108,12 +108,14 @@ export class ObjectPhantom implements ObjectInterface {
         this.directionsSprite.updatePolygons();
     }
 
-    getPosition(): PIXI.Point {
-        return this.position;
+    getPositions(): PIXI.Point[] {
+        return this.objectInfo.getCellGaps(this.leftOriented).map((cellGap) => {
+            return new PIXI.Point(this.position.x + cellGap.x, this.position.y + cellGap.y)
+        });
     }
 
-    getEntries() {
-        return this.objectInfo.getEntryPoints(this.leftOriented);
+    getEntries(objectNumber: number): DIRECTION[] {
+        return this.objectInfo.getEntryPoints(this.leftOriented, objectNumber);
     }
 
     private updateForbiddenSprite() {
@@ -121,12 +123,13 @@ export class ObjectPhantom implements ObjectInterface {
             return phantomSprite.getSprite();
         }));
         this.forbiddenSprite.position.set(center.x, center.y);
-        this.forbiddenSprite.alpha = this.worldKnowledge.canPutHere(this) ? 0 : 1;
+        this.forbiddenSprite.alpha = this.worldKnowledge.canPutHere(this.objectInfo, this.position, this.leftOriented) ? 0 : 1;
     }
 
     private put(game: Phaser.Game) {
+        game.input.moveCallbacks = [];
         game.input.activePointer.leftButton.onDown.remove(this.putEvent);
-        this.worldKnowledge.add(this.objectInfo.getName(), this.getPosition(), this.leftOriented);
+        this.worldKnowledge.add(this.objectInfo.getName(), this.getOrigin(), this.leftOriented);
         this.destroy();
     }
 
@@ -138,12 +141,22 @@ export class ObjectPhantom implements ObjectInterface {
         return this.leftOriented
     }
 
-    isEntryAccessible(direction: DIRECTION) {
-        return this.worldKnowledge.isEntryAccessibleForObject(this, direction);
+    isEntryAccessible(cellGap: PIXI.Point, direction: DIRECTION) {
+        return this.worldKnowledge.isEntryAccessibleForObject(this.position, cellGap, direction);
     }
 
-    isCellFree() {
-        return this.worldKnowledge.isFree(this.getPosition());
+    isCellFree(): boolean {
+        for (let i = 0; i < this.getPositions().length; i++) {
+            if (!this.worldKnowledge.isFree(this.getPositions()[i])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    getOrigin(): PIXI.Point {
+        return this.position;
     }
 }
 
@@ -164,52 +177,55 @@ class DirectionsSprite {
     updatePolygons() {
         this.graphics.clear();
 
-        Direction.neighborDirections().forEach((direction) => {
-            if (this.phantom.getInfo().getEntryPoints(this.phantom.getLeftOriented()).indexOf(direction) <= -1) {
-                this.graphics.beginFill(0x494947); // Grey
-            } else if (this.phantom.isEntryAccessible(direction)) {
-                this.graphics.beginFill(0x00de2d); // Green
-            } else {
-                this.graphics.beginFill(0xff004d); // Red
-            }
-            switch (direction) {
-                case DIRECTION.BOTTOM:
-                    this.graphics.drawPolygon(
-                        new PIXI.Point(-GAP, CELL_HEIGHT / 2),
-                        new PIXI.Point(-CELL_WIDTH / 2, GAP),
-                        new PIXI.Point(-CELL_WIDTH / 2 * ARROW_SIZE, CELL_HEIGHT / 2 * ARROW_SIZE),
-                    );
-                    break;
-                case DIRECTION.LEFT:
-                    this.graphics.drawPolygon(
-                        new PIXI.Point(-CELL_WIDTH / 2, -GAP),
-                        new PIXI.Point(-GAP, -CELL_HEIGHT / 2),
-                        new PIXI.Point(-CELL_WIDTH / 2 * ARROW_SIZE, -CELL_HEIGHT / 2 * ARROW_SIZE),
-                    );
-                    break;
-                case DIRECTION.TOP:
-                    this.graphics.drawPolygon(
-                        new PIXI.Point(CELL_WIDTH / 2, -GAP),
-                        new PIXI.Point(GAP, -CELL_HEIGHT / 2),
-                        new PIXI.Point(CELL_WIDTH / 2 * ARROW_SIZE, -CELL_HEIGHT / 2 * ARROW_SIZE),
-                    );
-                    break;
-                case DIRECTION.RIGHT:
-                    this.graphics.drawPolygon(
-                        new PIXI.Point(GAP, CELL_HEIGHT / 2),
-                        new PIXI.Point(CELL_WIDTH / 2, GAP),
-                        new PIXI.Point(CELL_WIDTH / 2 * ARROW_SIZE, CELL_HEIGHT / 2 * ARROW_SIZE),
-                    );
-            }
+        this.phantom.getInfo().getSpriteInfos().forEach((spriteInfo) => {
+            spriteInfo.getEntryPoints(this.phantom.getLeftOriented()).forEach((direction) => {
+                const cellGap = spriteInfo.getPositionGapFromOrigin(this.phantom.getLeftOriented());
+                if (this.phantom.isEntryAccessible(cellGap, direction)) {
+                    this.graphics.beginFill(0x00de2d); // Green
+                } else {
+                    this.graphics.beginFill(0xff004d); // Red
+                }
+                switch (direction) {
+                    case DIRECTION.BOTTOM:
+                        this.graphics.drawPolygon(
+                            PositionTransformer.addGap(new PIXI.Point(-GAP, CELL_HEIGHT / 2), cellGap),
+                            PositionTransformer.addGap(new PIXI.Point(-CELL_WIDTH / 2, GAP), cellGap),
+                            PositionTransformer.addGap(new PIXI.Point(-CELL_WIDTH / 2 * ARROW_SIZE, CELL_HEIGHT / 2 * ARROW_SIZE), cellGap),
+                        );
+                        break;
+                    case DIRECTION.LEFT:
+                        this.graphics.drawPolygon(
+                            PositionTransformer.addGap(new PIXI.Point(-CELL_WIDTH / 2, -GAP), cellGap),
+                            PositionTransformer.addGap(new PIXI.Point(-GAP, -CELL_HEIGHT / 2), cellGap),
+                            PositionTransformer.addGap(new PIXI.Point(-CELL_WIDTH / 2 * ARROW_SIZE, -CELL_HEIGHT / 2 * ARROW_SIZE), cellGap),
+                        );
+                        break;
+                    case DIRECTION.TOP:
+                        this.graphics.drawPolygon(
+                            PositionTransformer.addGap(new PIXI.Point(CELL_WIDTH / 2, -GAP), cellGap),
+                            PositionTransformer.addGap(new PIXI.Point(GAP, -CELL_HEIGHT / 2), cellGap),
+                            PositionTransformer.addGap(new PIXI.Point(CELL_WIDTH / 2 * ARROW_SIZE, -CELL_HEIGHT / 2 * ARROW_SIZE), cellGap),
+                        );
+                        break;
+                    case DIRECTION.RIGHT:
+                        this.graphics.drawPolygon(
+                            PositionTransformer.addGap(new PIXI.Point(GAP, CELL_HEIGHT / 2), cellGap),
+                            PositionTransformer.addGap(new PIXI.Point(CELL_WIDTH / 2, GAP), cellGap),
+                            PositionTransformer.addGap(new PIXI.Point(CELL_WIDTH / 2 * ARROW_SIZE, CELL_HEIGHT / 2 * ARROW_SIZE), cellGap),
+                        );
+                }
+            });
         });
 
         this.graphics.beginFill(this.phantom.isCellFree() ? 0x00de2d : 0xff004d);
-        this.graphics.drawPolygon(
-            new PIXI.Point(- CELL_WIDTH / 2, 0),
-            new PIXI.Point(0, CELL_HEIGHT / 2),
-            new PIXI.Point(CELL_WIDTH / 2, 0),
-            new PIXI.Point(0, - CELL_HEIGHT / 2)
-        );
+        this.phantom.getInfo().getCellGaps(this.phantom.getLeftOriented()).forEach((cellGap) => {
+            this.graphics.drawPolygon(
+                PositionTransformer.addGap(new PIXI.Point(- CELL_WIDTH / 2, 0), cellGap),
+                PositionTransformer.addGap(new PIXI.Point(0, CELL_HEIGHT / 2), cellGap),
+                PositionTransformer.addGap(new PIXI.Point(CELL_WIDTH / 2, 0), cellGap),
+                PositionTransformer.addGap(new PIXI.Point(0, - CELL_HEIGHT / 2), cellGap)
+            );
+        });
     }
 
     setPosition(position: PIXI.Point) {

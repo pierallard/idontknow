@@ -5,10 +5,7 @@ export const CELL_HEIGHT = 20;
 
 export class PositionTransformer {
     static getRealPosition(point: PIXI.Point): PIXI.Point {
-        return new PIXI.Point(
-            WORLD_WIDTH / 2 - (point.x - point.y) * CELL_WIDTH / 2,
-            WORLD_HEIGHT - (point.x + point.y) * CELL_HEIGHT / 2
-        );
+        return this.addGap(new PIXI.Point(WORLD_WIDTH / 2, WORLD_HEIGHT), point);
     }
 
     static getCellPosition(point: PIXI.Point): PIXI.Point {
@@ -29,5 +26,19 @@ export class PositionTransformer {
 
     static isNeighbor(position1: PIXI.Point, position2: PIXI.Point): boolean {
         return this.dist(position1, position2) === 1;
+    }
+
+    static getCentroid(points: PIXI.Point[]): PIXI.Point {
+        return new PIXI.Point(
+            points.reduce((sum, point) => { return sum + point.x; }, 0) / points.length,
+            points.reduce((sum, point) => { return sum + point.y; }, 0) / points.length
+        );
+    }
+
+    static addGap(realPosition: PIXI.Point, cellGap: PIXI.Point) {
+        return new PIXI.Point(
+            realPosition.x - (cellGap.x - cellGap.y) * CELL_WIDTH / 2,
+            realPosition.y - (cellGap.x + cellGap.y) * CELL_HEIGHT / 2
+        );
     }
 }

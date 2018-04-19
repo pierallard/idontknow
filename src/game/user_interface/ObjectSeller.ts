@@ -6,7 +6,7 @@ import {ObjectInfoRegistry} from "../objects/ObjectInfoRegistry";
 import {ObjectPhantom} from "../objects/ObjectPhantom";
 import {GROUP_INTERFACE} from "../game_state/Play";
 import {TEXT_STYLE} from "../TextStyle";
-import game = PIXI.game;
+import {CELL_HEIGHT, CELL_WIDTH} from "../PositionTransformer";
 
 export const OBJECT_SELLER_CELL_SIZE = 41;
 const CIRCLE_GAP = 7;
@@ -149,7 +149,7 @@ class ObjectProvisionnerButton {
     private objectInfo: ObjectInfo;
     private counter: Phaser.Text;
     private worldKnowledge: WorldKnowledge;
-    private fakeCell: Phaser.Sprite;
+    private fakeCells: Phaser.Sprite[];
     private sprites: Phaser.Sprite[];
     private circle: Phaser.Graphics;
     private square: Phaser.Graphics;
@@ -158,6 +158,7 @@ class ObjectProvisionnerButton {
         this.objectInfo = objectInfo;
         this.worldKnowledge = worldKnowledge;
         this.sprites = [];
+        this.fakeCells = [];
     }
 
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}, index: number) {
@@ -172,9 +173,12 @@ class ObjectProvisionnerButton {
         this.square.lineStyle(1, 0xffffff);
         this.square.drawRect(0, 0, OBJECT_SELLER_CELL_SIZE, OBJECT_SELLER_CELL_SIZE);
 
-        this.fakeCell = game.add.sprite(spriteOrigin.x, spriteOrigin.y, 'casedefault');
-        this.fakeCell.anchor.set(0.5, 1);
-        groups[GROUP_INTERFACE].add(this.fakeCell);
+        this.objectInfo.getCellGaps(false).forEach((cellGap) => {
+            const fakeCell = game.add.sprite(spriteOrigin.x - (cellGap.x - cellGap.y) * CELL_WIDTH / 2, spriteOrigin.y - (cellGap.x + cellGap.y) * CELL_HEIGHT / 2, 'casedefault');
+            fakeCell.anchor.set(0.5, 1);
+            groups[GROUP_INTERFACE].add(fakeCell);
+            this.fakeCells.push(fakeCell);
+        });
 
         this.objectInfo.getSpriteInfos().forEach((spriteInfo) => {
             const seller = game.add.sprite(
@@ -229,7 +233,9 @@ class ObjectProvisionnerButton {
 
     hide() {
         this.counter.position.x += INTERFACE_WIDTH;
-        this.fakeCell.position.x += INTERFACE_WIDTH;
+        this.fakeCells.forEach((fakeCell) => {
+            fakeCell.position.x += INTERFACE_WIDTH;
+        });
         this.circle.position.x += INTERFACE_WIDTH;
         this.sprites.forEach((sprite) => {
             sprite.position.x += INTERFACE_WIDTH;
@@ -239,7 +245,9 @@ class ObjectProvisionnerButton {
 
     show() {
         this.counter.position.x -= INTERFACE_WIDTH;
-        this.fakeCell.position.x -= INTERFACE_WIDTH;
+        this.fakeCells.forEach((fakeCell) => {
+            fakeCell.position.x -= INTERFACE_WIDTH;
+        });
         this.circle.position.x -= INTERFACE_WIDTH;
         this.sprites.forEach((sprite) => {
             sprite.position.x -= INTERFACE_WIDTH;

@@ -29,7 +29,7 @@ export class ClosestPathFinder {
         for (let i = 0; i < directions.length; i++) {
             const direction = directions[i];
             try {
-                const gappedCell = Direction.getGap(goalCell, direction);
+                const gappedCell = Direction.getNeighbor(goalCell, direction);
                 if (originCell.x === gappedCell.x && originCell.y === gappedCell.y) {
                     results[direction] = [];
                     if (Object.keys(results).length >= directions.length) {
