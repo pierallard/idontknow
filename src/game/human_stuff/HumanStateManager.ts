@@ -11,6 +11,9 @@ import {TalkState} from "../human_states/TalkState";
 import {Meeting} from "../human_states/Meeting";
 import {CoffeeState} from "../human_states/CoffeeState";
 import {HumanMoodManager, MOOD} from "./HumanMoodManager";
+import {TableMeeting} from "../human_states/TableMeeting";
+import {SitTalkState} from "../human_states/SitTalkState";
+import {Table} from "../objects/Table";
 
 export enum STATE {
     SMOKE,
@@ -21,6 +24,7 @@ export enum STATE {
     TALK,
     COFFEE,
     RAGE,
+    SIT_TALK,
 }
 
 export class HumanStateManager {
@@ -66,7 +70,7 @@ export class HumanStateManager {
             case STATE.SIT:
                 this.state = new SitState(
                     this.human,
-                    this.worldKnowledge.getClosestReferer(['Sofa', 'Table'], this.human.getPosition()),
+                    this.worldKnowledge.getClosestReferer(['Sofa'], this.human.getPosition()),
                     this.worldKnowledge
                 );
                 break;
@@ -85,7 +89,19 @@ export class HumanStateManager {
                 );
                 break;
             case STATE.TALK:
-                this.state = new TalkState(this.human, this.worldKnowledge.getAnotherFreeHuman(this.human), game, this.worldKnowledge);
+                this.state = new TalkState(
+                    this.human,
+                    this.worldKnowledge.getAnotherFreeHuman(this.human),
+                    this.worldKnowledge
+                );
+                break;
+            case STATE.SIT_TALK:
+                this.state = new SitTalkState(
+                    this.human,
+                    <Table> this.worldKnowledge.getClosestReferer(['Table']).getObject(),
+                    this.worldKnowledge.getAnotherFreeHumans(this.human, 3),
+                    this.worldKnowledge
+                );
                 break;
             case STATE.FREEZE:
             default:
@@ -110,7 +126,7 @@ export class HumanStateManager {
             states.push({state: STATE.TALK, probability: this.getProbability(STATE.TALK)});
         }
 
-        if (this.worldKnowledge.getClosestReferer(['Sofa', 'Table']) !== null) {
+        if (this.worldKnowledge.getClosestReferer(['Sofa']) !== null) {
             states.push({state: STATE.SIT, probability: this.getProbability(STATE.SIT)});
         }
         if (this.worldKnowledge.getClosestReferer(['Desk']) !== null) {
@@ -119,6 +135,13 @@ export class HumanStateManager {
 
         if (this.worldKnowledge.getClosestReferer(['Dispenser']) !== null) {
             states.push({state: STATE.COFFEE, probability: this.getProbability(STATE.COFFEE)});
+        }
+
+        if (
+            this.worldKnowledge.getClosestReferer(['Table']) !== null &&
+                this.worldKnowledge.getAnotherFreeHumans(this.human, 3).length === 3
+        ) {
+            states.push({state: STATE.SIT_TALK, probability: this.getProbability(STATE.SIT_TALK)});
         }
 
         let debug = '';
@@ -157,7 +180,8 @@ export class HumanStateManager {
             case STATE.TALK: result = 8; break;
             case STATE.SIT: result = 4; break;
             case STATE.COFFEE: result = 6; break;
-            case STATE.TYPE: result = (5 + 1 + 2 + 8 + 2 + 6) * 2; break;
+            case STATE.SIT_TALK: result = 600000; break;
+            case STATE.TYPE: result = (5 + 1 + 2 + 8 + 2 + 6 + 6) * 2; break;
         }
 
         if (state === this.state.getState()) {
@@ -189,13 +213,20 @@ export class HumanStateManager {
     }
 
     reset(game: Phaser.Game) {
-        this.state.stop(game);
+        this.state.stop();
         this.updateState(game);
     }
 
     goMeeting(game: Phaser.Game, meeting: Meeting): boolean {
-        this.state.stop(game);
-        this.state = new TalkState(this.human, null, game, this.worldKnowledge, meeting);
+        this.state.stop();
+        this.state = new TalkState(this.human, null, this.worldKnowledge, meeting);
+
+        return this.state.start(game);
+    }
+
+    goSitMeeting(game: Phaser.Game, meeting: TableMeeting): boolean {
+        this.state.stop();
+        this.state = new SitTalkState(this.human, meeting.getTable(), meeting.getAnotherHumans(this.human), this.worldKnowledge, meeting);
 
         return this.state.start(game);
     }

@@ -26,9 +26,9 @@ export abstract class AbstractState implements HumanState {
         return true;
     }
 
-    stop(game: Phaser.Game): void {
+    stop(): void {
         this.events.forEach((event) => {
-            game.time.events.remove(event);
+            this.game.time.events.remove(event);
         });
         this.active = false;
     }

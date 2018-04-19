@@ -13,6 +13,7 @@ import {GROUP_OBJECTS_AND_HUMANS, GROUP_INFOS} from "../game_state/Play";
 import {HumanProperties} from "./HumanProperties";
 import {EMPLOYEE_TYPE} from "./HumanPropertiesFactory";
 import {ObjectReferer} from "../objects/ObjectReferer";
+import {TableMeeting} from "../human_states/TableMeeting";
 
 const MAX_WALK_CELL_DURATION = 1500;
 const MIN_WALK_CELL_DURATION = 800;
@@ -113,6 +114,10 @@ export class Employee {
 
     goMeeting(meeting: Meeting): boolean {
         return this.stateManager.goMeeting(this.game, meeting);
+    }
+
+    goSitMeeting(meeting: TableMeeting) {
+        return this.stateManager.goSitMeeting(this.game, meeting);
     }
 
     moveTo(cell: PIXI.Point): boolean {

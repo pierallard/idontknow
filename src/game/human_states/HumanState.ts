@@ -12,6 +12,6 @@ export interface HumanState {
      */
     getNextState(): HumanState;
     start(game: Phaser.Game): boolean;
-    stop(game: Phaser.Game): void;
+    stop(): void;
     getState(): STATE;
 }

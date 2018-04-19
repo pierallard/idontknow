@@ -50,10 +50,14 @@ export class ObjectInfoRegistry {
         this.objectInfos.push(new ObjectInfo(
             'Table',
             [
-                new SpriteInfo('chair2', [DIRECTION.TOP, DIRECTION.LEFT], -8, -9, 5, 0, 0, 1),
-                new SpriteInfo('table', [], 0, 0, 4, 0, 0, 1),
-                new SpriteInfo('chair2', [DIRECTION.BOTTOM, DIRECTION.LEFT], -8, -9, 5, 0, 0, 0),
-                new SpriteInfo('table', [], 0, 0, 4, 0, 0, 0),
+                new SpriteInfo('chair2', [DIRECTION.TOP, DIRECTION.LEFT], -8, -9, 5, 0, 1, 1),
+                new SpriteInfo('table', [], 0, 0, 4, 0, 1, 1),
+                new SpriteInfo('chair2', [DIRECTION.BOTTOM, DIRECTION.LEFT], -8, -9, 5, 0, 1, 0),
+                new SpriteInfo('table', [], 0, 0, 4, 0, 1, 0),
+                new SpriteInfo('table_reverse', [], 0, 0, 4, 0, 0, 1),
+                new SpriteInfo('chair2_reverse', [DIRECTION.TOP, DIRECTION.RIGHT], 6, -5, 5, 0, 0, 1),
+                new SpriteInfo('table_reverse', [], 0, 0, 4, 0, 0, 0),
+                new SpriteInfo('chair2_reverse', [DIRECTION.BOTTOM, DIRECTION.RIGHT], 6, -5, 5, 0, 0, 0),
             ],
             new Price(12)
         ));

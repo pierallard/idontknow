@@ -25,7 +25,7 @@ export abstract class MoveThenActAbstractState extends AbstractState {
 
         if (!this.human.moveToClosest(this.objectReferer.getPosition(), this.objectReferer.getEntries())) {
             this.active = false;
-            this.stop(game);
+            this.stop();
             return false;
         }
 

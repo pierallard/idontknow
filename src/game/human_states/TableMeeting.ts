@@ -1,42 +1,45 @@
 import {Employee} from "../human_stuff/Employee";
-import {WorldKnowledge} from "../WorldKnowledge";
+import {ObjectReferer} from "../objects/ObjectReferer";
+import {Table} from "../objects/Table";
 import {STATE} from "../human_stuff/HumanStateManager";
 
-export class Meeting {
+export class TableMeeting {
     private time: number;
-    private places: {human:Employee, position: PIXI.Point}[];
+    private places: {human:Employee, position: ObjectReferer}[];
+    private table: Table;
 
-    constructor(humans: Employee[], time: number, worldKnowledge: WorldKnowledge) {
-        const cells = worldKnowledge.getMeetingCells(humans.map((human) => {
-            return human.getPosition();
-        }));
-        if (cells === null) {
-            throw 'No meeting point found!';
-        }
+    constructor(humans: Employee[], time: number, table: Table) {
         this.time = time;
         this.places = [];
-        for (let i = 0; i < cells.length; i++) {
+        this.table = table;
+        let unusedReferers = table.getUnusedReferers();
+        if (unusedReferers.length < humans.length) {
+            debugger;
+        }
+        for (let i = 0; i < unusedReferers.length; i++) {
             this.places.push({
                 human: humans[i],
-                position: cells[i]
+                position: unusedReferers[i]
             });
         }
+        console.log('Places count : ' + this.places.length);
     }
 
-    getCell(human: Employee): PIXI.Point {
+    getCell(human: Employee): ObjectReferer {
         for (let i = 0; i < this.places.length; i++) {
             if (human === this.places[i].human) {
                 return this.places[i].position;
             }
         }
 
-        return null;
+        debugger;
+        throw 'No cell found for this human!';
     }
 
     isReady() {
         for (let i = 0; i < this.places.length; i++) {
             const human = this.places[i].human;
-            const position = this.places[i].position;
+            const position = this.places[i].position.getPosition();
             if (human.isMoving() || human.getPosition().x !== position.x || human.getPosition().y !== position.y) {
                 return false;
             }
@@ -48,7 +51,7 @@ export class Meeting {
         return this.time;
     }
 
-    getAnotherHuman(human: Employee): Employee {
+    getAnotherHumans(human: Employee): Employee[] {
         let anotherHumans = [];
         this.places.forEach((place) => {
             if (place.human !== human) {
@@ -56,17 +59,21 @@ export class Meeting {
             }
         });
 
-        return anotherHumans[Math.floor(Math.random() * anotherHumans.length)];
+        return anotherHumans;
     }
 
     areAllHumanStillInMeeting() {
         for (let i = 0; i < this.places.length; i++) {
             const human = this.places[i].human;
-            if (human.getState() !== STATE.TALK) {
+            if (human.getState() !== STATE.SIT_TALK) {
                 return false;
             }
         }
 
         return true;
+    }
+
+    getTable(): Table {
+        return this.table;
     }
 }

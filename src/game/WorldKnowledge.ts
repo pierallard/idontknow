@@ -166,15 +166,34 @@ export class WorldKnowledge {
     }
 
     getAnotherFreeHuman(human: Employee): Employee {
-        const availableHumans = this.humanRepository.humans.filter((anotherHuman: Employee) => {
+        const freeHuman = this.getAnotherFreeHumans(human, 1);
+        if (freeHuman.length == 0) {
+            return null;
+        }
+
+        return freeHuman[0];
+    }
+
+    getAnotherFreeHumans(human: Employee, max: number): Employee[] {
+        let availableHumans = this.humanRepository.humans.filter((anotherHuman: Employee) => {
             return anotherHuman !== human && anotherHuman.isFree()
         });
 
         if (availableHumans.length === 0) {
-            return null;
+            return [];
         }
 
-        return availableHumans[Math.floor(Math.random() * availableHumans.length)];
+        availableHumans = availableHumans.sort(() => {
+            return Math.random() - 0.5;
+        });
+
+        let result = [];
+        for (let i = 0; i < max; i++) {
+            if (availableHumans[i] !== undefined) {
+                result.push(availableHumans[i]);
+            }
+        }
+        return result;
     }
 
     getRandomCell(): PIXI.Point {
