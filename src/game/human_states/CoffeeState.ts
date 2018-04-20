@@ -7,7 +7,7 @@ import {HumanState} from "./HumanState";
 
 export class CoffeeState extends MoveThenActAbstractState {
     protected retry(): HumanState {
-        const nextDispenserReferer = this.worldKnowledge.getClosestReferer(['Dispenser'], this.human.getPosition());
+        const nextDispenserReferer = this.worldKnowledge.getClosestReferer(['Dispenser'], 1, this.human.getPosition());
         if (this.tries > this.human.getMaxRetries() || nextDispenserReferer === null) {
             this.active = false;
             this.human.stopWalk();

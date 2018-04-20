@@ -70,21 +70,21 @@ export class HumanStateManager {
             case STATE.SIT:
                 this.state = new SitState(
                     this.human,
-                    this.worldKnowledge.getClosestReferer(['Sofa'], this.human.getPosition()),
+                    this.worldKnowledge.getClosestReferer(['Sofa'], 1, this.human.getPosition()),
                     this.worldKnowledge
                 );
                 break;
             case STATE.TYPE:
                 this.state = new TypeState(
                     this.human,
-                    this.worldKnowledge.getClosestReferer(['Desk'], this.human.getPosition()),
+                    this.worldKnowledge.getClosestReferer(['Desk'], 1, this.human.getPosition()),
                     this.worldKnowledge
                 );
                 break;
             case STATE.COFFEE:
                 this.state = new CoffeeState(
                     this.human,
-                    this.worldKnowledge.getClosestReferer(['Dispenser'], this.human.getPosition()),
+                    this.worldKnowledge.getClosestReferer(['Dispenser'], 1, this.human.getPosition()),
                     this.worldKnowledge
                 );
                 break;
@@ -98,7 +98,7 @@ export class HumanStateManager {
             case STATE.SIT_TALK:
                 this.state = new SitTalkState(
                     this.human,
-                    <Table> this.worldKnowledge.getClosestReferer(['Table']).getObject(),
+                    <Table> this.worldKnowledge.getClosestReferer(['Table'], 4, this.human.getPosition()).getObject(),
                     this.worldKnowledge.getAnotherFreeHumans(this.human, 3),
                     this.worldKnowledge
                 );
@@ -123,7 +123,7 @@ export class HumanStateManager {
         states.push({state: STATE.MOVE_RANDOM, probability: this.getProbability(STATE.MOVE_RANDOM)});
 
         if (this.worldKnowledge.getAnotherFreeHuman(this.human) !== null) {
-            states.push({state: STATE.TALK, probability: this.getProbability(STATE.TALK)});
+            // states.push({state: STATE.TALK, probability: this.getProbability(STATE.TALK)});
         }
 
         if (this.worldKnowledge.getClosestReferer(['Sofa']) !== null) {
@@ -138,7 +138,7 @@ export class HumanStateManager {
         }
 
         if (
-            this.worldKnowledge.getClosestReferer(['Table']) !== null &&
+            this.worldKnowledge.getClosestReferer(['Table'], 4) !== null &&
                 this.worldKnowledge.getAnotherFreeHumans(this.human, 3).length === 3
         ) {
             states.push({state: STATE.SIT_TALK, probability: this.getProbability(STATE.SIT_TALK)});

@@ -98,6 +98,10 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
     }
 
     setUsed(subObjectNumber: number): void {
+        if (this.usedIdentifiers.indexOf(subObjectNumber) > -1) {
+            debugger;
+            throw "This subobject is already taken!"
+        }
         this.usedIdentifiers.push(subObjectNumber);
     }
 

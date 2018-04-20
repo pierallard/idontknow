@@ -2,8 +2,6 @@ import {Employee} from "../human_stuff/Employee";
 import {HumanState} from "./HumanState";
 import {WorldKnowledge} from "../WorldKnowledge";
 import {ANIMATION, HumanAnimationManager} from "../human_stuff/HumanAnimationManager";
-import {Meeting} from "./Meeting";
-import {Direction} from "../Direction";
 import {STATE} from "../human_stuff/HumanStateManager";
 import {AbstractState} from "./AbstractState";
 import {TableMeeting} from "./TableMeeting";

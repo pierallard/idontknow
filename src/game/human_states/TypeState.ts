@@ -6,7 +6,7 @@ import {HumanState} from "./HumanState";
 
 export class TypeState extends MoveThenActAbstractState {
     protected retry(): HumanState {
-        const nextDeskReferer = this.worldKnowledge.getClosestReferer(['Desk'], this.human.getPosition());
+        const nextDeskReferer = this.worldKnowledge.getClosestReferer(['Desk'], 1, this.human.getPosition());
         if (this.tries > this.human.getMaxRetries() || nextDeskReferer === null) {
             this.active = false;
             this.human.stopWalk();
