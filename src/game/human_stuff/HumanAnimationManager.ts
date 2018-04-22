@@ -11,6 +11,7 @@ export enum ANIMATION {
     TALK,
     DRINK,
     RAGE,
+    FREEZE_SIT,
 }
 
 export class HumanAnimationManager {
@@ -56,6 +57,7 @@ export class HumanAnimationManager {
     private static getAnimationFrames(animation: ANIMATION, topOriented: boolean = null) {
         switch (animation) {
             case ANIMATION.FREEZE: return topOriented ? [18, 19, 20] : [12, 13, 14];
+            case ANIMATION.FREEZE_SIT: return topOriented ? [21, 22, 23] : [15, 16, 17];
             case ANIMATION.WALK: return topOriented ? [6, 7, 8, 9, 10, 11] : [0, 1, 2, 3, 4, 5];
             case ANIMATION.SIT_DOWN: return topOriented ? [18, 78, 79, 80, 81] : [12, 36, 37, 38, 39];
             case ANIMATION.STAND_UP: return topOriented ? [81, 80, 79, 78, 18] : [39, 38, 37, 36, 12];
@@ -88,6 +90,7 @@ export class HumanAnimationManager {
 
     private static getAnimations(): ANIMATION[] {
         return [
+            ANIMATION.FREEZE_SIT,
             ANIMATION.FREEZE,
             ANIMATION.WALK,
             ANIMATION.SMOKE,
@@ -106,7 +109,8 @@ export class HumanAnimationManager {
             ANIMATION.FREEZE,
             ANIMATION.TALK,
             ANIMATION.SIT_DOWN,
-            ANIMATION.STAND_UP
+            ANIMATION.STAND_UP,
+            ANIMATION.FREEZE_SIT,
         ].indexOf(animation) > -1;
     }
 
@@ -119,12 +123,14 @@ export class HumanAnimationManager {
             ANIMATION.SMOKE,
             ANIMATION.TYPE,
             ANIMATION.DRINK,
+            ANIMATION.FREEZE_SIT,
         ].indexOf(animation) > -1;
     }
 
     static getAnimationStr(animation: ANIMATION): string {
         switch (animation) {
             case ANIMATION.FREEZE: return 'FZ';
+            case ANIMATION.FREEZE_SIT: return 'FS';
             case ANIMATION.WALK: return 'WK';
             case ANIMATION.SIT_DOWN: return 'SD';
             case ANIMATION.STAND_UP: return 'SU';

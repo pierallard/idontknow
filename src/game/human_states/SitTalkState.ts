@@ -45,6 +45,9 @@ export class SitTalkState extends AbstractState {
                     this.meeting.getTable().forceOrientation(this.meeting.getCell(this.human).getIdentifier()),
                     this.table.forceTopOrientation(this.meeting.getCell(this.human).getIdentifier())
                 );
+                this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.SIT_DOWN) + 100, () => {
+                    this.human.loadAnimation(ANIMATION.FREEZE_SIT);
+                }, this));
                 this.isHumanSit = true;
             }));
         }
@@ -140,6 +143,6 @@ export class SitTalkState extends AbstractState {
     }
 
     private static otherAnimation(animation: ANIMATION) {
-        return animation === ANIMATION.TALK ? ANIMATION.FREEZE : ANIMATION.TALK;
+        return animation === ANIMATION.TALK ? ANIMATION.FREEZE_SIT : ANIMATION.TALK;
     }
 }
