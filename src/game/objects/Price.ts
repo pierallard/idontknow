@@ -8,7 +8,7 @@ export class Price {
 
     getStringValue(): string
     {
-        return this.value.toString() + " FLOOZ";
+        return Math.ceil(this.value).toString() + " FLOOZ";
     }
 
     isGreaterThan(value:Price): boolean {
@@ -21,5 +21,9 @@ export class Price {
 
     add(value: Price) {
         this.value += value.value;
+    }
+
+    getValue(): number {
+        return this.value;
     }
 }

@@ -4,16 +4,15 @@ import {Direction, DIRECTION} from "../Direction";
 export class ClosestPathFinder {
     private finders: Object;
     private worldKnowledge: WorldKnowledge;
+    private reseted: boolean;
 
     constructor(game: Phaser.Game, worldKnowledge: WorldKnowledge) {
         this.finders = {};
         this.worldKnowledge = worldKnowledge;
-        const grid = worldKnowledge.getGrid();
-        const acceptables = worldKnowledge.getAcceptables();
         Direction.neighborDirections().concat([DIRECTION.CURRENT]).forEach((direction: DIRECTION) => {
             this.finders[direction] = game.plugins.add(Phaser.Plugin.PathFinderPlugin);
-            this.finders[direction].setGrid(grid, acceptables);
         });
+        this.reseted = true;
     }
 
     getNeighborPath(originCell: PIXI.Point, goalCell: PIXI.Point, entries: DIRECTION[] = [DIRECTION.BOTTOM, DIRECTION.RIGHT, DIRECTION.TOP, DIRECTION.LEFT]): PIXI.Point[] {
@@ -25,6 +24,7 @@ export class ClosestPathFinder {
     }
 
     private getPathInner(originCell: PIXI.Point, goalCell: PIXI.Point, directions: DIRECTION[]): PIXI.Point[] {
+        this.initialize();
         let results = {};
         for (let i = 0; i < directions.length; i++) {
             const direction = directions[i];
@@ -95,10 +95,17 @@ export class ClosestPathFinder {
     }
 
     reset() {
-        const grid = this.worldKnowledge.getGrid();
-        const acceptables = this.worldKnowledge.getAcceptables();
-        Object.keys(this.finders).forEach((key) => {
-            this.finders[key].setGrid(grid, acceptables);
-        });
+        this.reseted = true;
+    }
+
+    private initialize() {
+        if (this.reseted === true) {
+            const grid = this.worldKnowledge.getGrid();
+            const acceptables = this.worldKnowledge.getAcceptables();
+            Direction.neighborDirections().concat([DIRECTION.CURRENT]).forEach((direction: DIRECTION) => {
+                this.finders[direction].setGrid(grid, acceptables);
+            });
+            this.reseted = false;
+        }
     }
 }
