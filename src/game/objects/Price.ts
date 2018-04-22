@@ -18,4 +18,8 @@ export class Price {
     substract(value: Price): void {
         this.value -= value.value;
     }
+
+    add(value: Price) {
+        this.value += value.value;
+    }
 }

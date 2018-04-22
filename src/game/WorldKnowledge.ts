@@ -432,4 +432,8 @@ export class WorldKnowledge {
     addProgress(type: EMPLOYEE_TYPE, value: number) {
         this.levelManager.addLevelProgress(type, value);
     }
+
+    addMoneyInWallet(price: Price) {
+        this.wallet.add(price);
+    }
 }

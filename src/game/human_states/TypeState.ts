@@ -3,6 +3,7 @@ import {STATE} from "../human_stuff/HumanStateManager";
 import {RageState} from "./RageState";
 import {MoveThenActAbstractState} from "./MoveThenActAbstractState";
 import {HumanState} from "./HumanState";
+import {Price} from "../objects/Price";
 
 export class TypeState extends MoveThenActAbstractState {
     protected retry(): HumanState {
@@ -22,6 +23,7 @@ export class TypeState extends MoveThenActAbstractState {
         this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.SIT_DOWN), () => {
             this.human.loadAnimation(ANIMATION.TYPE);
             this.worldKnowledge.addProgress(this.human.getType(), 1);
+            this.worldKnowledge.addMoneyInWallet(new Price(100));
             this.events.push(this.game.time.events.add(Phaser.Math.random(15, 60) * Phaser.Timer.SECOND, () => {
                 this.human.loadAnimation(ANIMATION.STAND_UP);
                 this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.STAND_UP) + 100, () => {
