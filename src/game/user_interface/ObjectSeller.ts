@@ -49,7 +49,7 @@ export class ObjectSeller {
         });
 
         this.sellerButtons.forEach((sellerButton) => {
-            sellerButton.updateAvailable();
+            sellerButton.updateSprites();
         })
     }
 
@@ -86,11 +86,13 @@ class SellerButton {
     private objectInfo: ObjectInfo;
     private price: Phaser.Text;
     private worldKnowledge: WorldKnowledge;
-    private circle: Phaser.Graphics;
+    private button: Phaser.Sprite;
+    private isDown: boolean;
 
     constructor(objectInfo: ObjectInfo, worldKnowledge: WorldKnowledge) {
         this.objectInfo = objectInfo;
         this.worldKnowledge = worldKnowledge;
+        this.isDown = false;
     }
 
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}, index: number) {
@@ -107,43 +109,53 @@ class SellerButton {
         );
         groups[GROUP_INTERFACE].add(this.price);
 
-        this.circle = game.add.graphics(
+        this.button = game.add.sprite(
             this.price.x + this.price.width + 12,
             textTop,
+            'buy_button',
+            0,
             groups[GROUP_INTERFACE]
         );
 
-        this.circle.beginFill( 0x7a7a7a);
-        this.circle.drawEllipse(0, 0, 15, 5);
-        this.circle.inputEnabled = true;
-        this.circle.input.useHandCursor = true;
-        this.circle.events.onInputDown.add(this.buy, this, 0);
+        this.button.inputEnabled = true;
+        this.button.input.useHandCursor = true;
+        this.button.events.onInputDown.add(this.buy, this, 0);
+        this.button.events.onInputUp.add(this.up, this, 0);
 
-        groups[GROUP_INTERFACE].add(this.circle);
+        groups[GROUP_INTERFACE].add(this.button);
     }
 
-    updateAvailable() {
-        if (this.objectInfo.isSellable(this.worldKnowledge.getMoneyInWallet())) {
-            this.circle.inputEnabled = true;
-            this.circle.input.useHandCursor = true;
+    updateSprites() {
+        if (this.isDown) {
+            this.button.loadTexture(this.button.key, 1);
         } else {
-            this.circle.inputEnabled = false;
-            this.circle.input.useHandCursor = false;
+            if (this.objectInfo.isSellable(this.worldKnowledge.getMoneyInWallet())) {
+                this.button.loadTexture(this.button.key, 0);
+            } else {
+                this.button.loadTexture(this.button.key, 2);
+            }
         }
     }
 
     buy() {
-        this.worldKnowledge.buy(this.objectInfo.getName(), this.objectInfo.getPrice());
+        if (this.objectInfo.isSellable(this.worldKnowledge.getMoneyInWallet())) {
+            this.isDown = true;
+            this.worldKnowledge.buy(this.objectInfo.getName(), this.objectInfo.getPrice());
+        }
+    }
+
+    up() {
+        this.isDown = false;
     }
 
     hide() {
         this.price.position.x += INTERFACE_WIDTH;
-        this.circle.position.x += INTERFACE_WIDTH;
+        this.button.position.x += INTERFACE_WIDTH;
     }
 
     show() {
         this.price.position.x -= INTERFACE_WIDTH;
-        this.circle.position.x -= INTERFACE_WIDTH;
+        this.button.position.x -= INTERFACE_WIDTH;
     }
 }
 
