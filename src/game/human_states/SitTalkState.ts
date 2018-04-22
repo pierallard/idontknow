@@ -36,39 +36,46 @@ export class SitTalkState extends AbstractState {
     }
 
     getNextState(): HumanState {
-        if (!this.isHumanOnTheRightCell && this.isNeighborPosition()) {
-            this.isHumanOnTheRightCell = true;
-            this.human.interactWith(this.meeting.getCell(this.human), this.meeting.getTable().forceOrientation(this.meeting.getCell(this.human).getIdentifier()));
-            this.events.push(this.game.time.events.add(this.human.getWalkDuration() + 100, () => {
-                this.human.loadAnimation(
-                    ANIMATION.SIT_DOWN,
-                    this.meeting.getTable().forceOrientation(this.meeting.getCell(this.human).getIdentifier()),
-                    this.table.forceTopOrientation(this.meeting.getCell(this.human).getIdentifier())
-                );
-                this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.SIT_DOWN) + 100, () => {
-                    this.human.loadAnimation(ANIMATION.FREEZE_SIT);
-                }, this));
-                this.isHumanSit = true;
-            }));
-        }
-
-        if (!this.isHumanOnTheRightCell && !this.meetingStarted && this.meeting.aPlaceWasTakenBySomeoneElse()) {
+        if (!this.worldKnowledge.hasObject(this.table)) {
             this.active = false;
             this.human.stopWalk();
 
             return new RageState(this.human);
-        }
-
-        if (this.isHumanSit && !this.meetingStarted && this.meeting.isReady()) {
-            this.meetingStarted = true;
-            this.game.time.events.add(this.meeting.getTime() + Math.random() * Phaser.Timer.SECOND, this.endMeeting, this); // TODO this will fail
-            this.human.updateMoodFromState();
-
-            let animation = ANIMATION.TALK;
-            if (Math.random() > 0.5) {
-                animation = SitTalkState.otherAnimation(animation);
+        } else {
+            if (!this.isHumanOnTheRightCell && this.isNeighborPosition()) {
+                this.isHumanOnTheRightCell = true;
+                this.human.interactWith(this.meeting.getCell(this.human), this.meeting.getTable().forceOrientation(this.meeting.getCell(this.human).getIdentifier()));
+                this.events.push(this.game.time.events.add(this.human.getWalkDuration() + 100, () => {
+                    this.human.loadAnimation(
+                        ANIMATION.SIT_DOWN,
+                        this.meeting.getTable().forceOrientation(this.meeting.getCell(this.human).getIdentifier()),
+                        this.table.forceTopOrientation(this.meeting.getCell(this.human).getIdentifier())
+                    );
+                    this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.SIT_DOWN) + 100, () => {
+                        this.human.loadAnimation(ANIMATION.FREEZE_SIT);
+                    }, this));
+                    this.isHumanSit = true;
+                }));
             }
-            this.switchAnimation(animation);
+
+            if (!this.isHumanOnTheRightCell && !this.meetingStarted && this.meeting.aPlaceWasTakenBySomeoneElse()) {
+                this.active = false;
+                this.human.stopWalk();
+
+                return new RageState(this.human);
+            }
+
+            if (this.isHumanSit && !this.meetingStarted && this.meeting.isReady()) {
+                this.meetingStarted = true;
+                this.game.time.events.add(this.meeting.getTime() + Math.random() * Phaser.Timer.SECOND, this.endMeeting, this); // TODO this will fail
+                this.human.updateMoodFromState();
+
+                let animation = ANIMATION.TALK;
+                if (Math.random() > 0.5) {
+                    animation = SitTalkState.otherAnimation(animation);
+                }
+                this.switchAnimation(animation);
+            }
         }
 
         return super.getNextState();

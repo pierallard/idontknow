@@ -8,7 +8,7 @@ import {InfoPanel} from "./InfoPanel";
 import {LevelDisplayer} from "./LevelDisplayer";
 
 export const INTERFACE_WIDTH = 150.5;
-export const TOP_GAP_2 = 15.5;
+export const TOP_GAP_2 = 15.5 + 12;
 export const TOP_GAP = TOP_GAP_2 + 15;
 enum PANEL {
     INFO,
@@ -24,8 +24,11 @@ export class UserInterface {
     private buttons: Phaser.Text[];
     private selectedPanel: PANEL;
     private levelDisplayer: LevelDisplayer;
+    private moneyCounter: Phaser.Text;
+    private worldKnowledge: WorldKnowledge;
 
     constructor(worldKnowledge: WorldKnowledge) {
+        this.worldKnowledge = worldKnowledge;
         this.objectSeller = new ObjectSeller(worldKnowledge);
         this.humanEmployer = new HumanEmployer(worldKnowledge);
         this.infoPanel = new InfoPanel(worldKnowledge);
@@ -44,13 +47,28 @@ export class UserInterface {
         this.objectSeller.create(game, groups);
         this.humanEmployer.create(game, groups);
         this.infoPanel.create(game, groups);
+
         this.levelDisplayer.create(game, groups);
 
         const buttonWidth = INTERFACE_WIDTH / 3;
 
+        this.moneyCounter = game.add.text(
+            CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + 2,
+            0,
+            this.worldKnowledge.getMoneyInWallet().getStringValue(),
+            TEXT_STYLE,
+            groups[GROUP_INTERFACE]
+        );
+
         let i = 0;
         [['info', PANEL.INFO], ['usr', PANEL.USR], ['obj', PANEL.OBJ]].forEach((panelInfo) => {
-            const button = game.add.text(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + i * buttonWidth, TOP_GAP_2, <string> panelInfo[0], TEXT_STYLE, interfaceGroup);
+            const button = game.add.text(
+                CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + i * buttonWidth,
+                TOP_GAP_2,
+                <string> panelInfo[0],
+                TEXT_STYLE,
+                interfaceGroup
+            );
             button.inputEnabled = true;
             button.input.useHandCursor = true;
             button.events.onInputDown.add(() => {
@@ -67,6 +85,7 @@ export class UserInterface {
         this.objectSeller.update();
         this.infoPanel.update();
         this.levelDisplayer.update();
+        this.moneyCounter.setText(this.worldKnowledge.getMoneyInWallet().getStringValue());
     }
 
     private selectPanel(panel: PANEL) {
