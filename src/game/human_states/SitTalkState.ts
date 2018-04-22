@@ -7,6 +7,7 @@ import {AbstractState} from "./AbstractState";
 import {TableMeeting} from "./TableMeeting";
 import {Table} from "../objects/Table";
 import {PositionTransformer} from "../PositionTransformer";
+import {RageState} from "./RageState";
 
 export class SitTalkState extends AbstractState {
     private anotherHumans: Employee[];
@@ -39,28 +40,28 @@ export class SitTalkState extends AbstractState {
             this.isHumanOnTheRightCell = true;
             this.human.interactWith(this.meeting.getCell(this.human), this.meeting.getTable().forceOrientation());
             this.events.push(this.game.time.events.add(this.human.getWalkDuration() + 100, () => {
-                console.log('Sit !');
                 this.human.loadAnimation(ANIMATION.SIT_DOWN, this.meeting.getTable().forceOrientation());
                 this.isHumanSit = true;
             }));
         }
 
-        if (this.isHumanSit && !this.meetingStarted) {
-            if (!this.meeting.areAllHumanStillInMeeting()) {
-                this.active = false;
-            } else {
-                if (this.meeting.isReady()) {
-                    this.meetingStarted = true;
-                    this.game.time.events.add(this.meeting.getTime() + Math.random() * Phaser.Timer.SECOND, this.stop, this); // TODO this will fail
-                    this.human.updateMoodFromState();
+        if (!this.isHumanOnTheRightCell && !this.meetingStarted && this.meeting.aPlaceWasTakenBySomeoneElse()) {
+            this.active = false;
+            this.human.stopWalk();
 
-                    let animation = ANIMATION.TALK;
-                    if (Math.random() > 0.5) {
-                        animation = SitTalkState.otherAnimation(animation);
-                    }
-                    this.switchAnimation(animation);
-                }
+            return new RageState(this.human);
+        }
+
+        if (this.isHumanSit && !this.meetingStarted && this.meeting.isReady()) {
+            this.meetingStarted = true;
+            this.game.time.events.add(this.meeting.getTime() + Math.random() * Phaser.Timer.SECOND, this.endMeeting, this); // TODO this will fail
+            this.human.updateMoodFromState();
+
+            let animation = ANIMATION.TALK;
+            if (Math.random() > 0.5) {
+                animation = SitTalkState.otherAnimation(animation);
             }
+            this.switchAnimation(animation);
         }
 
         return super.getNextState();
@@ -74,7 +75,7 @@ export class SitTalkState extends AbstractState {
         }
         this.human.loadAnimation(animation);
         this.events.push(this.game.time.events.add(
-            Phaser.Math.random(3, 6) * HumanAnimationManager.getAnimationTime(animation),
+            Phaser.Math.random(3, 6) * ((animation !== ANIMATION.TALK) ? 3 : 1) * HumanAnimationManager.getAnimationTime(animation),
             this.switchAnimation,
             this,
             SitTalkState.otherAnimation(animation)
@@ -93,7 +94,7 @@ export class SitTalkState extends AbstractState {
 
             let shouldStop = false;
             this.anotherHumans.forEach((human) => {
-                if (!this.human.goSitMeeting(this.meeting)) {
+                if (!human.goSitMeeting(this.meeting)) {
                     shouldStop = true;
                 }
             });
@@ -111,13 +112,22 @@ export class SitTalkState extends AbstractState {
         return true;
     }
 
-    stop() {
+    endMeeting() {
+        this.events.forEach((event) => {
+            this.game.time.events.remove(event);
+        });
         this.human.hideTalkBubble();
-        super.stop();
+        this.human.loadAnimation(ANIMATION.STAND_UP, this.meeting.getTable().forceOrientation());
+        this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.STAND_UP) + 100, () => {
+            this.human.goToFreeCell(this.meeting.getCell(this.human));
+            this.events.push(this.game.time.events.add(this.human.getWalkDuration() + 100, () => {
+                this.stop();
+            }));
+        }));
     }
 
     getState(): STATE {
-        return STATE.TALK;
+        return STATE.SIT_TALK;
     }
 
     private isNeighborPosition() {

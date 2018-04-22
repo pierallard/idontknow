@@ -123,7 +123,7 @@ export class HumanStateManager {
         states.push({state: STATE.MOVE_RANDOM, probability: this.getProbability(STATE.MOVE_RANDOM)});
 
         if (this.worldKnowledge.getAnotherFreeHuman(this.human) !== null) {
-            // states.push({state: STATE.TALK, probability: this.getProbability(STATE.TALK)});
+            states.push({state: STATE.TALK, probability: this.getProbability(STATE.TALK)});
         }
 
         if (this.worldKnowledge.getClosestReferer(['Sofa']) !== null) {

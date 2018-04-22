@@ -1,7 +1,6 @@
 import {Employee} from "../human_stuff/Employee";
 import {ObjectReferer} from "../objects/ObjectReferer";
 import {Table} from "../objects/Table";
-import {STATE} from "../human_stuff/HumanStateManager";
 
 export class TableMeeting {
     private time: number;
@@ -22,7 +21,6 @@ export class TableMeeting {
                 position: unusedReferers[i]
             });
         }
-        console.log('Places count : ' + this.places.length);
     }
 
     getCell(human: Employee): ObjectReferer {
@@ -62,18 +60,19 @@ export class TableMeeting {
         return anotherHumans;
     }
 
-    areAllHumanStillInMeeting() {
+    getTable(): Table {
+        return this.table;
+    }
+
+    aPlaceWasTakenBySomeoneElse() {
         for (let i = 0; i < this.places.length; i++) {
-            const human = this.places[i].human;
-            if (human.getState() !== STATE.SIT_TALK) {
-                return false;
+            const currentHuman = this.table.getHumanAt(this.places[i].position.getIdentifier());
+            if (currentHuman && currentHuman !== this.places[i].human) {
+                console.log('Place ' + i + ' was taken ! Cancel meeting!');
+                return true;
             }
         }
 
-        return true;
-    }
-
-    getTable(): Table {
-        return this.table;
+        return false;
     }
 }

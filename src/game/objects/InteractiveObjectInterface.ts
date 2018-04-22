@@ -1,6 +1,7 @@
 import {DIRECTION} from "../Direction";
 import {ObjectInterface} from "./ObjectInterface";
 import {ObjectReferer} from "./ObjectReferer";
+import {Employee} from "../human_stuff/Employee";
 
 export interface InteractiveObjectInterface extends ObjectInterface {
     getEntries(objectNumber: number): DIRECTION[];
@@ -24,7 +25,7 @@ export interface InteractiveObjectInterface extends ObjectInterface {
 
     getCellPositionSubObject(subObjectNumber: number): PIXI.Point;
 
-    setUsed(subObjectNumber: number): void;
+    setUsed(subObjectNumber: number, human: Employee): void;
 
     setUnused(subObjectNumber: number): void;
 

@@ -203,7 +203,7 @@ export class Employee {
         this.anchorPixels.x = objectReferer.getPositionGap().x + (side ? -5 : 5);
         this.anchorPixels.y = objectReferer.getPositionGap().y - 1;
         this.cell = objectReferer.getPosition();
-        objectReferer.setUsed();
+        objectReferer.setUsed(this);
         this.animateMove(direction);
     }
 
@@ -218,11 +218,9 @@ export class Employee {
     goToFreeCell(objectReferer: ObjectReferer) {
         objectReferer.setUnused();
         const cells = [];
-        // console.log('Free cell ?');
         objectReferer.getEntries().forEach((direction) => {
             const tryCell = Direction.getNeighbor(this.cell, direction);
             if (this.worldKnowledge.isFree(tryCell)) {
-                // console.log(Direction.getDirectionStr(direction));
                 cells.push(tryCell);
             }
         });
@@ -307,5 +305,9 @@ export class Employee {
 
     getType(): EMPLOYEE_TYPE {
         return this.humanProperties.getType()
+    }
+
+    getName() {
+        return this.humanProperties.getName();
     }
 }
