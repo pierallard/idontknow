@@ -38,9 +38,13 @@ export class SitTalkState extends AbstractState {
     getNextState(): HumanState {
         if (!this.isHumanOnTheRightCell && this.isNeighborPosition()) {
             this.isHumanOnTheRightCell = true;
-            this.human.interactWith(this.meeting.getCell(this.human), this.meeting.getTable().forceOrientation());
+            this.human.interactWith(this.meeting.getCell(this.human), this.meeting.getTable().forceOrientation(this.meeting.getCell(this.human).getIdentifier()));
             this.events.push(this.game.time.events.add(this.human.getWalkDuration() + 100, () => {
-                this.human.loadAnimation(ANIMATION.SIT_DOWN, this.meeting.getTable().forceOrientation());
+                this.human.loadAnimation(
+                    ANIMATION.SIT_DOWN,
+                    this.meeting.getTable().forceOrientation(this.meeting.getCell(this.human).getIdentifier()),
+                    this.table.forceTopOrientation(this.meeting.getCell(this.human).getIdentifier())
+                );
                 this.isHumanSit = true;
             }));
         }
@@ -117,7 +121,7 @@ export class SitTalkState extends AbstractState {
             this.game.time.events.remove(event);
         });
         this.human.hideTalkBubble();
-        this.human.loadAnimation(ANIMATION.STAND_UP, this.meeting.getTable().forceOrientation());
+        this.human.loadAnimation(ANIMATION.STAND_UP, this.meeting.getTable().forceOrientation(this.meeting.getCell(this.human).getIdentifier()));
         this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.STAND_UP) + 100, () => {
             this.human.goToFreeCell(this.meeting.getCell(this.human));
             this.events.push(this.game.time.events.add(this.human.getWalkDuration() + 100, () => {

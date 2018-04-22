@@ -18,7 +18,7 @@ export class SitState extends MoveThenActAbstractState {
     }
 
     protected act() {
-        this.human.loadAnimation(ANIMATION.SIT_DOWN, this.objectReferer.getObject().forceOrientation());
+        this.human.loadAnimation(ANIMATION.SIT_DOWN, this.objectReferer.getObject().forceOrientation(this.objectReferer.getIdentifier()));
         this.human.updateMoodFromState();
         this.events.push(this.game.time.events.add(Phaser.Math.random(3, 10) * Phaser.Timer.SECOND + HumanAnimationManager.getAnimationTime(ANIMATION.SIT_DOWN), () => {
             this.human.loadAnimation(ANIMATION.STAND_UP);

@@ -7,10 +7,15 @@ export interface InteractiveObjectInterface extends ObjectInterface {
     getEntries(objectNumber: number): DIRECTION[];
 
     /**
-     * Returns true if the human has to be right-sided, false if the human has to be left-sided, null if percentage.
+     * Returns true if the human has to be right-sided, false if the human has to be left-sided, null if don't care.
      * @returns {boolean}
      */
-    forceOrientation(): boolean;
+    forceOrientation(subObjectNumber: number): boolean;
+
+    /**
+     * Returns true if the human has to be top-sided, false if the human has to be bottom-sided, null if don't care.
+     */
+    forceTopOrientation(subObjectNumber: number): boolean;
 
     isUsed(subObjectNumber: number): boolean;
 

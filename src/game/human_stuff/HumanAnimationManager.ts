@@ -57,8 +57,8 @@ export class HumanAnimationManager {
         switch (animation) {
             case ANIMATION.FREEZE: return topOriented ? [18, 19, 20] : [12, 13, 14];
             case ANIMATION.WALK: return topOriented ? [6, 7, 8, 9, 10, 11] : [0, 1, 2, 3, 4, 5];
-            case ANIMATION.SIT_DOWN: return [12, 36, 37, 38, 39];
-            case ANIMATION.STAND_UP: return [39, 38, 37, 36, 12];
+            case ANIMATION.SIT_DOWN: return topOriented ? [18, 78, 79, 80, 81] : [12, 36, 37, 38, 39];
+            case ANIMATION.STAND_UP: return topOriented ? [81, 80, 79, 78, 18] : [39, 38, 37, 36, 12];
             case ANIMATION.TYPE: return [42, 43, 44, 45];
             case ANIMATION.TALK: return topOriented ? [54, 55, 56, 57, 58, 59] : [48, 49, 50, 51, 52, 53];
             case ANIMATION.RAGE:
@@ -101,7 +101,13 @@ export class HumanAnimationManager {
     }
 
     private static hasTopOrientedVariation(animation: ANIMATION) {
-        return [ANIMATION.WALK, ANIMATION.FREEZE, ANIMATION.TALK].indexOf(animation) > -1;
+        return [
+            ANIMATION.WALK,
+            ANIMATION.FREEZE,
+            ANIMATION.TALK,
+            ANIMATION.SIT_DOWN,
+            ANIMATION.STAND_UP
+        ].indexOf(animation) > -1;
     }
 
 

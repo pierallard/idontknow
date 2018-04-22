@@ -9,6 +9,8 @@ export class SpriteInfo {
     private gapLeft: number;
     private entryPoints: DIRECTION[];
     private cellGap: PIXI.Point;
+    private topOriented: boolean;
+    private leftOriented: boolean;
 
     constructor(
         name: string,
@@ -18,7 +20,9 @@ export class SpriteInfo {
         anchorBottom: number,
         gapLeft: number,
         cellGapX: number,
-        cellGapY: number
+        cellGapY: number,
+        leftOriented: boolean,
+        topOriented: boolean
     ) {
         this.name = name;
         this.entryPoints = entryPoints;
@@ -27,6 +31,8 @@ export class SpriteInfo {
         this.anchorBottom = anchorBottom;
         this.gapLeft = gapLeft;
         this.cellGap = new PIXI.Point(cellGapX, cellGapY);
+        this.leftOriented = leftOriented;
+        this.topOriented = topOriented;
     }
 
     getSpriteName(): string {
@@ -86,5 +92,20 @@ export class SpriteInfo {
         } else {
             return new PIXI.Point(this.cellGap.y, this.cellGap.x)
         }
+    }
+
+    getTopOrientation(): boolean {
+        return this.topOriented;
+    }
+
+    /**
+     * Returns false if the user looks to the right when he interacts with the object.
+     * Returns true if the user looks to the left when he interacts with the object.
+     *
+     * @param {boolean} leftOriented
+     * @returns {boolean}
+     */
+    getOrientation(leftOriented: boolean): boolean {
+        return leftOriented ? !this.leftOriented : this.leftOriented;
     }
 }

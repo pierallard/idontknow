@@ -3,7 +3,6 @@ import {AbstractObject} from "./AbstractObject";
 import {ObjectDeleter} from "./ObjectDeleter";
 import {GROUP_INFOS} from "../game_state/Play";
 import {DeletableObjectInterface} from "./DeletableObjectInterface";
-import {Price} from "./Price";
 
 export class Sofa extends AbstractObject implements InteractiveObjectInterface, DeletableObjectInterface {
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}) {
@@ -12,11 +11,7 @@ export class Sofa extends AbstractObject implements InteractiveObjectInterface, 
         ObjectDeleter.makeDeletable(this, game, groups[GROUP_INFOS]);
     }
 
-    forceOrientation(): boolean {
+    forceOrientation(subObjectNumber: number): boolean {
         return null;
     }
-
-    // static getPrice(): Price {
-    //     return new Price(150);
-    // }
 }

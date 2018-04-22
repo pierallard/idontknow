@@ -77,8 +77,16 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
         });
     }
 
-    forceOrientation(): boolean {
-        return this.leftOriented;
+    forceOrientation(subObjectNumber: number): boolean {
+        const infos = ObjectInfoRegistry.getObjectInfo(this.constructor.name);
+
+        return infos.getSpriteInfo(subObjectNumber).getOrientation(this.leftOriented);
+    }
+
+    forceTopOrientation(subObjectNumber: number): boolean {
+        const infos = ObjectInfoRegistry.getObjectInfo(this.constructor.name);
+
+        return infos.getSpriteInfo(subObjectNumber).getTopOrientation();
     }
 
     getCellPositionSubObject(subObjectNumber: number): PIXI.Point {

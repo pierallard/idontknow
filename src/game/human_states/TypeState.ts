@@ -18,7 +18,7 @@ export class TypeState extends MoveThenActAbstractState {
     }
 
     protected act(): void {
-        this.human.loadAnimation(ANIMATION.SIT_DOWN, this.objectReferer.getObject().forceOrientation());
+        this.human.loadAnimation(ANIMATION.SIT_DOWN, this.objectReferer.getObject().forceOrientation(this.objectReferer.getIdentifier()));
         this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.SIT_DOWN), () => {
             this.human.loadAnimation(ANIMATION.TYPE);
             this.worldKnowledge.addProgress(this.human.getType(), 1);
