@@ -166,15 +166,34 @@ export class WorldKnowledge {
     }
 
     getAnotherFreeHuman(human: Employee): Employee {
-        const availableHumans = this.humanRepository.humans.filter((anotherHuman: Employee) => {
+        const freeHuman = this.getAnotherFreeHumans(human, 1);
+        if (freeHuman.length == 0) {
+            return null;
+        }
+
+        return freeHuman[0];
+    }
+
+    getAnotherFreeHumans(human: Employee, max: number): Employee[] {
+        let availableHumans = this.humanRepository.humans.filter((anotherHuman: Employee) => {
             return anotherHuman !== human && anotherHuman.isFree()
         });
 
         if (availableHumans.length === 0) {
-            return null;
+            return [];
         }
 
-        return availableHumans[Math.floor(Math.random() * availableHumans.length)];
+        availableHumans = availableHumans.sort(() => {
+            return Math.random() - 0.5;
+        });
+
+        let result = [];
+        for (let i = 0; i < max; i++) {
+            if (availableHumans[i] !== undefined) {
+                result.push(availableHumans[i]);
+            }
+        }
+        return result;
     }
 
     getRandomCell(): PIXI.Point {
@@ -252,11 +271,14 @@ export class WorldKnowledge {
         return true;
     }
 
-    getClosestReferer(types: string[], position: PIXI.Point = null) {
+    getClosestReferer(types: string[], referersCountPerObject: number = 1, position: PIXI.Point = null) {
         let freeReferers: ObjectReferer[] = [];
         this.objects.forEach((object) => {
             if (types.indexOf(object.constructor.name) > -1) {
-                freeReferers = freeReferers .concat(object.getUnusedReferers());
+                const unusedReferers = object.getUnusedReferers();
+                if (unusedReferers.length >= referersCountPerObject) {
+                    freeReferers = freeReferers.concat(unusedReferers);
+                }
             }
         });
         if (freeReferers.length === 0) {
@@ -268,8 +290,8 @@ export class WorldKnowledge {
         }
 
         return freeReferers.sort((referer1, referer2) => {
-            return PositionTransformer.dist(position, PositionTransformer.getCentroid(referer1.getObject().getPositions()))
-                - PositionTransformer.dist(position, PositionTransformer.getCentroid(referer2.getObject().getPositions()));
+            return PositionTransformer.dist(position, PositionTransformer.getCentroid([referer1.getPosition()]))
+                - PositionTransformer.dist(position, PositionTransformer.getCentroid([referer2.getPosition()]));
         })[0];
     }
 

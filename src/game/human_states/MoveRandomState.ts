@@ -26,7 +26,7 @@ export class MoveRandomState extends AbstractState {
         super.start(game);
 
         if (!this.human.moveTo(this.goal)) {
-            this.stop(game);
+            this.stop();
             return false;
         }
 

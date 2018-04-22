@@ -115,4 +115,20 @@ export class HumanAnimationManager {
             ANIMATION.DRINK,
         ].indexOf(animation) > -1;
     }
+
+    static getAnimationStr(animation: ANIMATION): string {
+        switch (animation) {
+            case ANIMATION.FREEZE: return 'FZ';
+            case ANIMATION.WALK: return 'WK';
+            case ANIMATION.SIT_DOWN: return 'SD';
+            case ANIMATION.STAND_UP: return 'SU';
+            case ANIMATION.TYPE: return 'TP';
+            case ANIMATION.TALK: return 'TK';
+            case ANIMATION.RAGE: return 'RG';
+            case ANIMATION.DRINK: return 'DK';
+            case ANIMATION.SMOKE: return 'SK';
+            default:
+                throw 'UNKNOWN ANIMATION ' + animation;
+        }
+    }
 }

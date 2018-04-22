@@ -4,13 +4,14 @@ import {DIRECTION} from "../Direction";
 import {WorldKnowledge} from "../WorldKnowledge";
 import {InteractiveObjectInterface} from "./InteractiveObjectInterface";
 import {ObjectReferer} from "./ObjectReferer";
+import {Employee} from "../human_stuff/Employee";
 
 export abstract class AbstractObject implements InteractiveObjectInterface {
     protected sprites: Phaser.Sprite[];
     protected position: PIXI.Point;
     protected leftOriented: boolean;
     private worldKnowledge: WorldKnowledge;
-    private usedIdentifiers: number[];
+    private usedIdentifiers: Employee[];
 
     constructor(point: PIXI.Point, worldKnowledge: WorldKnowledge, leftOriented: boolean) {
         this.position = point;
@@ -90,22 +91,27 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
     }
 
     isUsed(subObjectNumber: number): boolean {
-        return this.usedIdentifiers.indexOf(subObjectNumber) > -1;
+        return this.getHumanAt(subObjectNumber) !== null;
+    }
+
+    getHumanAt(subObjectNumber: number): Employee {
+        return this.usedIdentifiers[subObjectNumber] ? this.usedIdentifiers[subObjectNumber] : null;
     }
 
     getOrigin(): PIXI.Point {
         return this.position;
     }
 
-    setUsed(subObjectNumber: number): void {
-        this.usedIdentifiers.push(subObjectNumber);
+    setUsed(subObjectNumber: number, human: Employee): void {
+        if (this.getHumanAt(subObjectNumber)) {
+            debugger;
+            throw "This subobject is already taken!"
+        }
+        this.usedIdentifiers[subObjectNumber] = human;
     }
 
     setUnused(subObjectNumber: number): void {
-        const index = this.usedIdentifiers.indexOf(subObjectNumber);
-        if (index > -1) {
-            this.usedIdentifiers.splice(index, 1);
-        }
+        this.usedIdentifiers[subObjectNumber] = null;
     }
 
     getUnusedReferers(): ObjectReferer[] {

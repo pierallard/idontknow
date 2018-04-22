@@ -1,5 +1,6 @@
 import {InteractiveObjectInterface} from "./InteractiveObjectInterface";
 import {DIRECTION} from "../Direction";
+import {Employee} from "../human_stuff/Employee";
 
 export class ObjectReferer {
     private obj: InteractiveObjectInterface;
@@ -30,11 +31,15 @@ export class ObjectReferer {
         return this.obj.getCellPositionSubObject(this.subObjectNumber);
     }
 
-    setUsed() {
-        this.obj.setUsed(this.subObjectNumber);
+    setUsed(human: Employee) {
+        this.obj.setUsed(this.subObjectNumber, human);
     }
 
     setUnused() {
         this.obj.setUnused(this.subObjectNumber);
+    }
+
+    getIdentifier(): number {
+        return this.subObjectNumber;
     }
 }

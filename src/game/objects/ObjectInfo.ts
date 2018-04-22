@@ -51,7 +51,7 @@ export class ObjectInfo {
             const newGap = spriteInfo.getPositionGapFromOrigin(leftOriented);
             let found = false;
             result.forEach((previousGap) => {
-                found = found || (previousGap.x === newGap.y && previousGap.y === newGap.y);
+                found = found || (previousGap.x === newGap.x && previousGap.y === newGap.y);
             });
             if (!found) {
                 result.push(newGap);

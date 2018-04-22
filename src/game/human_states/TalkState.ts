@@ -16,7 +16,6 @@ export class TalkState extends AbstractState {
     constructor(
         human: Employee,
         anotherHuman: Employee,
-        game: Phaser.Game, // TODO Remove it
         worldKnowledge: WorldKnowledge,
         meeting: Meeting = null
     ) {
@@ -85,16 +84,21 @@ export class TalkState extends AbstractState {
             );
 
             if (!this.anotherHuman.goMeeting(this.meeting)) {
-                this.stop(game);
+                this.stop();
                 return false;
             }
         }
         if (!this.human.moveTo(this.meeting.getCell(this.human))) {
-            this.stop(game);
+            this.stop();
             return false;
         }
 
         return true;
+    }
+
+    stop() {
+        this.human.hideTalkBubble();
+        super.stop();
     }
 
     getState(): STATE {

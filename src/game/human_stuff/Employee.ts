@@ -13,6 +13,7 @@ import {GROUP_OBJECTS_AND_HUMANS, GROUP_INFOS} from "../game_state/Play";
 import {HumanProperties} from "./HumanProperties";
 import {EMPLOYEE_TYPE} from "./HumanPropertiesFactory";
 import {ObjectReferer} from "../objects/ObjectReferer";
+import {TableMeeting} from "../human_states/TableMeeting";
 
 const MAX_WALK_CELL_DURATION = 1500;
 const MIN_WALK_CELL_DURATION = 800;
@@ -115,6 +116,10 @@ export class Employee {
         return this.stateManager.goMeeting(this.game, meeting);
     }
 
+    goSitMeeting(meeting: TableMeeting) {
+        return this.stateManager.goSitMeeting(this.game, meeting);
+    }
+
     moveTo(cell: PIXI.Point): boolean {
         const path = this.closestPathFinder.getPath(this.cell, cell);
         if (path === null) {
@@ -198,7 +203,7 @@ export class Employee {
         this.anchorPixels.x = objectReferer.getPositionGap().x + (side ? -5 : 5);
         this.anchorPixels.y = objectReferer.getPositionGap().y - 1;
         this.cell = objectReferer.getPosition();
-        objectReferer.setUsed();
+        objectReferer.setUsed(this);
         this.animateMove(direction);
     }
 
@@ -213,11 +218,9 @@ export class Employee {
     goToFreeCell(objectReferer: ObjectReferer) {
         objectReferer.setUnused();
         const cells = [];
-        // console.log('Free cell ?');
         objectReferer.getEntries().forEach((direction) => {
             const tryCell = Direction.getNeighbor(this.cell, direction);
             if (this.worldKnowledge.isFree(tryCell)) {
-                // console.log(Direction.getDirectionStr(direction));
                 cells.push(tryCell);
             }
         });
@@ -302,5 +305,9 @@ export class Employee {
 
     getType(): EMPLOYEE_TYPE {
         return this.humanProperties.getType()
+    }
+
+    getName() {
+        return this.humanProperties.getName();
     }
 }
