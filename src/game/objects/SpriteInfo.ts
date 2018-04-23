@@ -54,10 +54,10 @@ export class SpriteInfo {
         );
     }
 
-    getRealPositionFromOrigin(spriteSource: PIXI.Point, leftOriented: boolean) {
+    getRealPositionFromOrigin(spriteSource: PIXI.Point, leftOriented: boolean, scale: number = 1) {
         return new PIXI.Point(
-            spriteSource.x + (leftOriented ? -1 : 1) * (this.left - (this.cellGap.x - this.cellGap.y) * CELL_WIDTH / 2),
-            spriteSource.y + this.bottom - this.anchorBottom - (this.cellGap.x + this.cellGap.y) * CELL_HEIGHT / 2
+            spriteSource.x + (leftOriented ? -1 : 1) * (this.left - (this.cellGap.x - this.cellGap.y) * CELL_WIDTH / 2) * scale,
+            spriteSource.y + this.bottom - this.anchorBottom - ((this.cellGap.x + this.cellGap.y) * CELL_HEIGHT / 2) * scale
         )
     }
 

@@ -183,12 +183,25 @@ class ObjectProvisionnerButton {
             top + OBJECT_SELLER_CELL_SIZE
         );
 
+        let width = 1;
+        let height = 1;
+        this.objectInfo.getCellGaps(false).forEach((gap) => {
+            width = Math.max(width, 1 + gap.x);
+            height = Math.max(height, 1 + gap.y);
+        });
+        const scale = 2 / (width + height);
+
         this.square = game.add.graphics(left, TOP_GAP + index * OBJECT_SELLER_CELL_SIZE, groups[GROUP_INTERFACE]);
         this.square.lineStyle(1, 0xffffff);
         this.square.drawRect(0, 0, OBJECT_SELLER_CELL_SIZE, OBJECT_SELLER_CELL_SIZE);
 
         this.objectInfo.getCellGaps(false).forEach((cellGap) => {
-            const fakeCell = game.add.sprite(spriteOrigin.x - (cellGap.x - cellGap.y) * CELL_WIDTH / 2, spriteOrigin.y - (cellGap.x + cellGap.y) * CELL_HEIGHT / 2, 'casedefault');
+            const fakeCell = game.add.sprite(
+                spriteOrigin.x - (cellGap.x - cellGap.y) * (CELL_WIDTH / 2) * scale,
+                spriteOrigin.y - (cellGap.x + cellGap.y) * (CELL_HEIGHT / 2) * scale,
+                'casedefault'
+            );
+            fakeCell.scale.set(scale, scale);
             fakeCell.anchor.set(0.5, 1);
             groups[GROUP_INTERFACE].add(fakeCell);
             this.fakeCells.push(fakeCell);
@@ -196,10 +209,11 @@ class ObjectProvisionnerButton {
 
         this.objectInfo.getSpriteInfos().forEach((spriteInfo) => {
             const seller = game.add.sprite(
-                spriteInfo.getRealPositionFromOrigin(spriteOrigin, false).x,
-                spriteInfo.getRealPositionFromOrigin(spriteOrigin, false).y,
+                spriteInfo.getRealPositionFromOrigin(spriteOrigin, false, scale).x,
+                spriteInfo.getRealPositionFromOrigin(spriteOrigin, false, scale).y,
                 spriteInfo.getSpriteName()
             );
+            seller.scale.set(scale, scale);
             seller.anchor.set(spriteInfo.getAnchor(seller).x, spriteInfo.getAnchor(seller).y);
             seller.inputEnabled = true;
             seller.input.pixelPerfectOver = true;
