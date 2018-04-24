@@ -6,6 +6,8 @@ import {TEXT_STYLE} from "../TextStyle";
 import {HumanEmployer} from "./HumanEmployer";
 import {InfoPanel} from "./InfoPanel";
 import {LevelDisplayer} from "./LevelDisplayer";
+import {Employee} from "../human_stuff/Employee";
+import {UserInfoPanel} from "./UserInfoPanel";
 import {COLOR} from "../Pico8Colors";
 
 export const INTERFACE_WIDTH = 150.5;
@@ -16,6 +18,7 @@ enum PANEL {
     INFO,
     USR,
     OBJ,
+    USER_INFO,
 }
 
 export class UserInterface {
@@ -28,12 +31,14 @@ export class UserInterface {
     private levelDisplayer: LevelDisplayer;
     private moneyCounter: Phaser.Text;
     private worldKnowledge: WorldKnowledge;
+    private userInfoPanel: UserInfoPanel;
 
     constructor(worldKnowledge: WorldKnowledge) {
         this.worldKnowledge = worldKnowledge;
         this.objectSeller = new ObjectSeller(worldKnowledge);
         this.humanEmployer = new HumanEmployer(worldKnowledge);
         this.infoPanel = new InfoPanel(worldKnowledge);
+        this.userInfoPanel = new UserInfoPanel(worldKnowledge);
         this.levelDisplayer = new LevelDisplayer(worldKnowledge);
         this.buttons = [];
         this.selectedPanel = PANEL.OBJ;
@@ -49,6 +54,7 @@ export class UserInterface {
         this.objectSeller.create(game, groups);
         this.humanEmployer.create(game, groups);
         this.infoPanel.create(game, groups);
+        this.userInfoPanel.create(game, groups);
 
         this.levelDisplayer.create(game, groups);
 
@@ -87,6 +93,7 @@ export class UserInterface {
         this.objectSeller.update();
         this.infoPanel.update();
         this.levelDisplayer.update();
+        this.userInfoPanel.update();
         this.moneyCounter.setText(this.worldKnowledge.getMoneyInWallet().getStringValue());
     }
 
@@ -96,14 +103,27 @@ export class UserInterface {
             this.objectSeller.hide();
             this.humanEmployer.hide();
             this.infoPanel.show();
+            this.userInfoPanel.hide();
         } else if (this.selectedPanel === PANEL.USR) {
             this.objectSeller.hide();
             this.humanEmployer.show();
             this.infoPanel.hide();
-        } else {
+            this.userInfoPanel.hide();
+        } else if (this.selectedPanel === PANEL.OBJ) {
             this.objectSeller.show();
             this.humanEmployer.hide();
             this.infoPanel.hide();
+            this.userInfoPanel.hide();
+        } else if (this.selectedPanel === PANEL.USER_INFO) {
+            this.objectSeller.hide();
+            this.humanEmployer.hide();
+            this.infoPanel.hide();
+            this.userInfoPanel.show();
         }
+    }
+
+    setSelectedHuman(param: Employee) {
+        this.selectPanel(PANEL.USER_INFO);
+        this.userInfoPanel.showEmployeeInfoPanelForYohan(param);
     }
 }

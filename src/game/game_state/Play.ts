@@ -7,7 +7,7 @@ export const GROUP_FLOOR = 'floor';
 export const GROUP_OBJECTS_AND_HUMANS = 'objects_and_humans';
 export const GROUP_INFOS = 'infos';
 export const GROUP_INTERFACE = 'interface';
-export const CAMERA_GAP = 1.5;
+export const CAMERA_GAP = 2;
 
 export default class Play extends Phaser.State {
     private worldKnowledge: WorldKnowledge;
@@ -18,12 +18,11 @@ export default class Play extends Phaser.State {
     private leftKey: Phaser.Key;
     private rightKey: Phaser.Key;
 
-    private camembert: Camembert;
-
     constructor() {
         super();
         this.worldKnowledge = new WorldKnowledge();
         this.userInterface = new UserInterface(this.worldKnowledge);
+        this.worldKnowledge.setUserInterface(this.userInterface);
     }
 
     public create() {
@@ -46,17 +45,12 @@ export default class Play extends Phaser.State {
         this.downKey = this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
         this.leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
         this.rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-
-        this.camembert = new Camembert();
-        this.camembert.create(this.game, this.groups);
     }
 
     update(game: Phaser.Game) {
         this.groups[GROUP_OBJECTS_AND_HUMANS].sort('y', Phaser.Group.SORT_ASCENDING);
         this.worldKnowledge.update();
         this.userInterface.update();
-
-        this.camembert.update();
 
         if (this.upKey.isDown) {
             this.game.camera.setPosition(this.game.camera.position.x, this.game.camera.position.y - CAMERA_GAP);
@@ -70,10 +64,10 @@ export default class Play extends Phaser.State {
         else if (this.rightKey.isDown) {
             this.game.camera.setPosition(this.game.camera.position.x + CAMERA_GAP, this.game.camera.position.y);
         }
-
+        /*
         const selected = this.worldKnowledge.getSelectedHumanSprite();
         if (null !== selected) {
             this.game.camera.follow(selected, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
-        }
+        }*/
     }
 }

@@ -4,6 +4,7 @@ import {RageState} from "./RageState";
 import {MoveThenActAbstractState} from "./MoveThenActAbstractState";
 import {HumanState} from "./HumanState";
 import {Price} from "../objects/Price";
+import {RAGE_IMAGE} from "../human_stuff/ThoughtBubble";
 
 export class TypeState extends MoveThenActAbstractState {
     protected retry(): HumanState {
@@ -12,7 +13,7 @@ export class TypeState extends MoveThenActAbstractState {
             this.active = false;
             this.human.stopWalk();
 
-            return new RageState(this.human);
+            return new RageState(this.human, RAGE_IMAGE.LAPTOP);
         } else {
             return new TypeState(this.human, nextDeskReferer, this.worldKnowledge, this.tries + 1);
         }

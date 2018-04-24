@@ -8,6 +8,7 @@ import {TableMeeting} from "./TableMeeting";
 import {Table} from "../objects/Table";
 import {PositionTransformer} from "../PositionTransformer";
 import {RageState} from "./RageState";
+import {RAGE_IMAGE} from "../human_stuff/ThoughtBubble";
 
 export class SitTalkState extends AbstractState {
     private anotherHumans: Employee[];
@@ -40,7 +41,7 @@ export class SitTalkState extends AbstractState {
             this.active = false;
             this.human.stopWalk();
 
-            return new RageState(this.human);
+            return new RageState(this.human, RAGE_IMAGE.TABLE);
         } else {
             if (!this.isHumanOnTheRightCell && this.isNeighborPosition()) {
                 this.isHumanOnTheRightCell = true;
@@ -62,7 +63,7 @@ export class SitTalkState extends AbstractState {
                 this.active = false;
                 this.human.stopWalk();
 
-                return new RageState(this.human);
+                return new RageState(this.human, RAGE_IMAGE.TABLE);
             }
 
             if (this.isHumanSit && !this.meetingStarted && this.meeting.isReady()) {

@@ -3,6 +3,7 @@ import {STATE} from "../human_stuff/HumanStateManager";
 import {RageState} from "./RageState";
 import {MoveThenActAbstractState} from "./MoveThenActAbstractState";
 import {HumanState} from "./HumanState";
+import {RAGE_IMAGE} from "../human_stuff/ThoughtBubble";
 
 export class SitState extends MoveThenActAbstractState {
     protected retry(): HumanState {
@@ -11,7 +12,7 @@ export class SitState extends MoveThenActAbstractState {
             this.active = false;
             this.human.stopWalk();
 
-            return new RageState(this.human);
+            return new RageState(this.human, RAGE_IMAGE.SLEEP);
         } else {
             return new SitState(this.human, nextSofaReferer, this.worldKnowledge, this.tries + 1);
         }

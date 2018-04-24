@@ -4,6 +4,7 @@ import {ANIMATION, HumanAnimationManager} from "../human_stuff/HumanAnimationMan
 import {RageState} from "./RageState";
 import {MoveThenActAbstractState} from "./MoveThenActAbstractState";
 import {HumanState} from "./HumanState";
+import {RAGE_IMAGE} from "../human_stuff/ThoughtBubble";
 
 export class CoffeeState extends MoveThenActAbstractState {
     protected retry(): HumanState {
@@ -12,7 +13,7 @@ export class CoffeeState extends MoveThenActAbstractState {
             this.active = false;
             this.human.stopWalk();
 
-            return new RageState(this.human);
+            return new RageState(this.human, RAGE_IMAGE.COFFEE);
         }
         else {
             return new CoffeeState(this.human, nextDispenserReferer, this.worldKnowledge, this.tries + 1);

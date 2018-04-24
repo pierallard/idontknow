@@ -14,6 +14,7 @@ import {HumanProperties} from "./HumanProperties";
 import {EMPLOYEE_TYPE} from "./HumanPropertiesFactory";
 import {ObjectReferer} from "../objects/ObjectReferer";
 import {TableMeeting} from "../human_states/TableMeeting";
+import {RAGE_IMAGE, ThoughtBubble} from "./ThoughtBubble";
 import {COLOR} from "../Pico8Colors";
 
 const MAX_WALK_CELL_DURATION = 1500;
@@ -38,6 +39,7 @@ export class Employee {
     private stateManager: HumanStateManager;
     private pathGraphics: Phaser.Graphics;
     private talkBubble: TalkBubble;
+    private thoughtBubble: ThoughtBubble;
     private moodManager: HumanMoodManager;
     private moodSprite: MoodSprite;
     private humanProperties: HumanProperties;
@@ -50,6 +52,7 @@ export class Employee {
         this.anchorPixels = new PIXI.Point(0, GAP_FROM_BOTTOM);
         this.animationManager = new HumanAnimationManager();
         this.talkBubble = new TalkBubble();
+        this.thoughtBubble = new ThoughtBubble();
         this.moodManager = new HumanMoodManager();
         this.moodSprite = new MoodSprite();
         this.humanProperties = humanProperties;
@@ -70,13 +73,16 @@ export class Employee {
         this.animationManager.create(this.sprite);
         this.sprite.anchor.set(0.5, 1.0);
 
-        ObjectSelector.makeSelectable([this.sprite]);
+        ObjectSelector.makeSelectable([this.sprite], () => {
+            this.worldKnowledge.setSelectedHuman(this);
+        });
         groups[GROUP_OBJECTS_AND_HUMANS].add(this.sprite);
 
         this.animationManager.loadAnimation(ANIMATION.FREEZE, true, false);
         this.closestPathFinder = new ClosestPathFinder(game, worldKnowledge);
         this.stateManager.create(game, worldKnowledge, this.animationManager);
         this.talkBubble.create(this.sprite, this.game, groups[GROUP_OBJECTS_AND_HUMANS]);
+        this.thoughtBubble.create(this.sprite, this.game, groups[GROUP_OBJECTS_AND_HUMANS]);
         this.moodSprite.create(this.sprite, this.game, groups[GROUP_INFOS]);
 
         if (PATH_DEBUG) {
@@ -87,6 +93,7 @@ export class Employee {
 
     update() {
         this.talkBubble.update();
+        this.thoughtBubble.update();
         this.stateManager.updateState(this.game);
         this.moodManager.update();
         this.moodSprite.update(this.moodManager.getGeneralMood(), [
@@ -310,5 +317,17 @@ export class Employee {
 
     getName() {
         return this.humanProperties.getName();
+    }
+
+    showThoughtBubble(rageImage: RAGE_IMAGE) {
+        this.thoughtBubble.showRage(rageImage);
+    }
+
+    hideThoughtBubble() {
+        this.thoughtBubble.hide();
+    }
+
+    getNextProbabilities(): {probability: number, state: STATE}[] {
+        return this.stateManager.getNextProbabilities();
     }
 }

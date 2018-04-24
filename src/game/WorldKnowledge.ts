@@ -23,6 +23,7 @@ import {Price} from "./objects/Price";
 import {ObjectInfo} from "./objects/ObjectInfo";
 import {ObjectInfoRegistry} from "./objects/ObjectInfoRegistry";
 import {SmoothValue} from "./SmoothValue";
+import {UserInterface} from "./user_interface/UserInterface";
 
 export const GRID_WIDTH = 16;
 export const GRID_HEIGHT = 16;
@@ -39,6 +40,7 @@ export class WorldKnowledge {
     private moodRegister: MoodRegister;
     private levelManager: LevelManager;
     private wallet: SmoothValue;
+    private userInterface: UserInterface;
 
     constructor() {
         this.cells = [];
@@ -437,5 +439,13 @@ export class WorldKnowledge {
 
     addMoneyInWallet(price: Price) {
         this.wallet.add(price.getValue());
+    }
+
+    setSelectedHuman(param: Employee) {
+        this.userInterface.setSelectedHuman(param);
+    }
+
+    setUserInterface(userInterface: UserInterface) {
+        this.userInterface = userInterface;
     }
 }

@@ -2,6 +2,8 @@ import {WorldKnowledge} from "../WorldKnowledge";
 import {INTERFACE_WIDTH, TOP_GAP} from "./UserInterface";
 import {CAMERA_WIDTH_PIXELS} from "../../app";
 import {GROUP_INTERFACE} from "../game_state/Play";
+import {Employee} from "../human_stuff/Employee";
+import {TEXT_STYLE} from "../TextStyle";
 import {COLOR} from "../Pico8Colors";
 
 const HEIGHT = 80;
