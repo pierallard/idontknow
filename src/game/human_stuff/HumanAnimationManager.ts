@@ -12,6 +12,7 @@ export enum ANIMATION {
     DRINK,
     RAGE,
     FREEZE_SIT,
+    SIT_TALK,
 }
 
 export class HumanAnimationManager {
@@ -63,6 +64,7 @@ export class HumanAnimationManager {
             case ANIMATION.STAND_UP: return topOriented ? [81, 80, 79, 78, 18] : [39, 38, 37, 36, 12];
             case ANIMATION.TYPE: return [42, 43, 44, 45];
             case ANIMATION.TALK: return topOriented ? [54, 55, 56, 57, 58, 59] : [48, 49, 50, 51, 52, 53];
+            case ANIMATION.SIT_TALK: return topOriented ? [90, 91, 92, 93, 94, 95] : [84, 85, 86, 87, 88, 89];
             case ANIMATION.RAGE:
                 let rage_frames = [66, 67, 68, 69];
                 for (let i = 0; i < 4; i++) {
@@ -100,6 +102,7 @@ export class HumanAnimationManager {
             ANIMATION.TALK,
             ANIMATION.DRINK,
             ANIMATION.RAGE,
+            ANIMATION.SIT_TALK,
         ];
     }
 
@@ -111,6 +114,7 @@ export class HumanAnimationManager {
             ANIMATION.SIT_DOWN,
             ANIMATION.STAND_UP,
             ANIMATION.FREEZE_SIT,
+            ANIMATION.SIT_TALK,
         ].indexOf(animation) > -1;
     }
 
@@ -124,6 +128,7 @@ export class HumanAnimationManager {
             ANIMATION.TYPE,
             ANIMATION.DRINK,
             ANIMATION.FREEZE_SIT,
+            ANIMATION.SIT_TALK,
         ].indexOf(animation) > -1;
     }
 
@@ -139,6 +144,7 @@ export class HumanAnimationManager {
             case ANIMATION.RAGE: return 'RG';
             case ANIMATION.DRINK: return 'DK';
             case ANIMATION.SMOKE: return 'SK';
+            case ANIMATION.SIT_TALK: return 'ST';
             default:
                 throw 'UNKNOWN ANIMATION ' + animation;
         }

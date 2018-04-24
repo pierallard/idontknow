@@ -70,7 +70,7 @@ export class SitTalkState extends AbstractState {
                 this.game.time.events.add(this.meeting.getTime() + Math.random() * Phaser.Timer.SECOND, this.endMeeting, this); // TODO this will fail
                 this.human.updateMoodFromState();
 
-                let animation = ANIMATION.TALK;
+                let animation = ANIMATION.SIT_TALK;
                 if (Math.random() > 0.5) {
                     animation = SitTalkState.otherAnimation(animation);
                 }
@@ -82,14 +82,14 @@ export class SitTalkState extends AbstractState {
     }
 
     private switchAnimation(animation: ANIMATION) {
-        if (animation === ANIMATION.TALK) {
+        if (animation === ANIMATION.SIT_TALK) {
             this.human.showTalkBubble();
         } else {
             this.human.hideTalkBubble();
         }
         this.human.loadAnimation(animation);
         this.events.push(this.game.time.events.add(
-            Phaser.Math.random(3, 6) * ((animation !== ANIMATION.TALK) ? 3 : 1) * HumanAnimationManager.getAnimationTime(animation),
+            Phaser.Math.random(3, 6) * ((animation !== ANIMATION.SIT_TALK) ? 3 : 1) * HumanAnimationManager.getAnimationTime(animation),
             this.switchAnimation,
             this,
             SitTalkState.otherAnimation(animation)
@@ -150,6 +150,6 @@ export class SitTalkState extends AbstractState {
     }
 
     private static otherAnimation(animation: ANIMATION) {
-        return animation === ANIMATION.TALK ? ANIMATION.FREEZE_SIT : ANIMATION.TALK;
+        return animation === ANIMATION.SIT_TALK ? ANIMATION.FREEZE_SIT : ANIMATION.SIT_TALK;
     }
 }
