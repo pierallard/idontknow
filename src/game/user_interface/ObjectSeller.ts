@@ -7,6 +7,7 @@ import {ObjectPhantom} from "../objects/ObjectPhantom";
 import {GROUP_INTERFACE} from "../game_state/Play";
 import {TEXT_STYLE} from "../TextStyle";
 import {CELL_HEIGHT, CELL_WIDTH} from "../PositionTransformer";
+import {COLOR} from "../Pico8Colors";
 
 export const OBJECT_SELLER_CELL_SIZE = 41;
 const CIRCLE_GAP = 7;
@@ -192,7 +193,7 @@ class ObjectProvisionnerButton {
         const scale = 2 / (width + height);
 
         this.square = game.add.graphics(left, TOP_GAP + index * OBJECT_SELLER_CELL_SIZE, groups[GROUP_INTERFACE]);
-        this.square.lineStyle(1, 0xffffff);
+        this.square.lineStyle(1, COLOR.WHITE);
         this.square.drawRect(0, 0, OBJECT_SELLER_CELL_SIZE, OBJECT_SELLER_CELL_SIZE);
 
         this.objectInfo.getCellGaps(false).forEach((cellGap) => {
@@ -225,7 +226,7 @@ class ObjectProvisionnerButton {
         });
 
         this.circle = game.add.graphics(left, top + CIRCLE_GAP, groups[GROUP_INTERFACE]);
-        this.circle.beginFill(0xff0000);
+        this.circle.beginFill(COLOR.RED);
         this.circle.drawCircle(OBJECT_SELLER_CELL_SIZE, 0, 9);
         groups[GROUP_INTERFACE].add(this.circle);
 

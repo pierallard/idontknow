@@ -1,4 +1,5 @@
 import {DeletableObjectInterface} from "./DeletableObjectInterface";
+import {COLOR} from "../Pico8Colors";
 
 const POINTS = 20;
 const RADIUS = 6;
@@ -107,7 +108,7 @@ class PartialCircle extends Phaser.Graphics {
 
     private redraw() {
         this.clear();
-        this.lineStyle(3, 0xff004d);
+        this.lineStyle(3, COLOR.RED);
         this.moveTo(0, -RADIUS);
         for (let i = 0; i < POINTS * this.percentage; i++) {
             const angle = Math.PI * 2 / POINTS * (i + 1) + Math.PI;

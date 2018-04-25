@@ -1,6 +1,7 @@
 import {WorldKnowledge} from "../WorldKnowledge";
 import {CAMERA_HEIGHT_PIXELS, CAMERA_WIDTH_PIXELS, WORLD_HEIGHT, WORLD_WIDTH} from "../../app";
 import {INTERFACE_WIDTH, UserInterface} from "../user_interface/UserInterface";
+import {Camembert} from "../Camembert";
 
 export const GROUP_FLOOR = 'floor';
 export const GROUP_OBJECTS_AND_HUMANS = 'objects_and_humans';
@@ -16,6 +17,8 @@ export default class Play extends Phaser.State {
     private downKey: Phaser.Key;
     private leftKey: Phaser.Key;
     private rightKey: Phaser.Key;
+
+    private camembert: Camembert;
 
     constructor() {
         super();
@@ -43,12 +46,17 @@ export default class Play extends Phaser.State {
         this.downKey = this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
         this.leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
         this.rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+
+        this.camembert = new Camembert();
+        this.camembert.create(this.game, this.groups);
     }
 
     update(game: Phaser.Game) {
         this.groups[GROUP_OBJECTS_AND_HUMANS].sort('y', Phaser.Group.SORT_ASCENDING);
         this.worldKnowledge.update();
         this.userInterface.update();
+
+        this.camembert.update();
 
         if (this.upKey.isDown) {
             this.game.camera.setPosition(this.game.camera.position.x, this.game.camera.position.y - CAMERA_GAP);

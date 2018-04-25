@@ -6,6 +6,7 @@ import {CAMERA_WIDTH_PIXELS} from "../../app";
 import {OBJECT_SELLER_CELL_SIZE} from "./ObjectSeller";
 import {GROUP_INTERFACE} from "../game_state/Play";
 import {TEXT_STYLE} from "../TextStyle";
+import {COLOR} from "../Pico8Colors";
 
 export class HumanEmployer {
     private worldKnowledge: WorldKnowledge;
@@ -83,7 +84,7 @@ class ApplicantButton {
         );
 
         this.square = game.add.graphics(left, TOP_GAP + index * OBJECT_SELLER_CELL_SIZE, groups[GROUP_INTERFACE]);
-        this.square.lineStyle(1, 0xffffff);
+        this.square.lineStyle(1, COLOR.WHITE);
         this.square.drawRect(0, 0, OBJECT_SELLER_CELL_SIZE, OBJECT_SELLER_CELL_SIZE);
 
         this.sprite = game.add.sprite(squareCenter.x, squareCenter.y, this.humanProperties.getSpriteKey(), 12, groups[GROUP_INTERFACE]);

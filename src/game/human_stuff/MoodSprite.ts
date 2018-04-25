@@ -1,3 +1,5 @@
+import {COLOR} from "../Pico8Colors";
+
 const GAP_X = -7;
 const GAP_Y = 1;
 
@@ -26,11 +28,11 @@ export class MoodSprite {
         for (let i = 0; i < moods.length; i++) {
             this.sprite.moveTo(0, i * 2);
             if (moods[i] < 0.1) {
-                this.sprite.lineStyle(2, 0xff004d);
+                this.sprite.lineStyle(2, COLOR.RED);
             } else if (moods[i] < 0.5) {
-                this.sprite.lineStyle(2, 0xfca203);
+                this.sprite.lineStyle(2, COLOR.ORANGE);
             } else {
-                this.sprite.lineStyle(2, 0x00de2d);
+                this.sprite.lineStyle(2, COLOR.LIGHT_GREEN);
             }
             this.sprite.lineTo(moods[i] * 15 + 1,   i * 2);
         }

@@ -6,10 +6,12 @@ import {TEXT_STYLE} from "../TextStyle";
 import {HumanEmployer} from "./HumanEmployer";
 import {InfoPanel} from "./InfoPanel";
 import {LevelDisplayer} from "./LevelDisplayer";
+import {COLOR} from "../Pico8Colors";
 
 export const INTERFACE_WIDTH = 150.5;
 export const TOP_GAP_2 = 15.5 + 12;
 export const TOP_GAP = TOP_GAP_2 + 15;
+
 enum PANEL {
     INFO,
     USR,
@@ -40,7 +42,7 @@ export class UserInterface {
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}) {
         const interfaceGroup = groups[GROUP_INTERFACE];
         this.backgroundGraphics = game.add.graphics(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH, 0, interfaceGroup);
-        this.backgroundGraphics.beginFill(0x272a60);
+        this.backgroundGraphics.beginFill(COLOR.DARK_BLUE);
         this.backgroundGraphics.drawRect(-0.5, 0, INTERFACE_WIDTH, CAMERA_HEIGHT_PIXELS);
         interfaceGroup.add(this.backgroundGraphics);
 

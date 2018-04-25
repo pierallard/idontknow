@@ -7,6 +7,7 @@ import {ObjectInfo} from "./ObjectInfo";
 import {DIRECTION} from "../Direction";
 import {ObjectInterface} from "./ObjectInterface";
 import {GROUP_INFOS} from "../game_state/Play";
+import {COLOR} from "../Pico8Colors";
 
 const ARROW_SIZE = 0.9;
 const GAP = 4;
@@ -181,9 +182,9 @@ class DirectionsSprite {
             spriteInfo.getEntryPoints(this.phantom.getLeftOriented()).forEach((direction) => {
                 const cellGap = spriteInfo.getPositionGapFromOrigin(this.phantom.getLeftOriented());
                 if (this.phantom.isEntryAccessible(cellGap, direction)) {
-                    this.graphics.beginFill(0x00de2d); // Green
+                    this.graphics.beginFill(COLOR.LIGHT_GREEN); // Green
                 } else {
-                    this.graphics.beginFill(0xff004d); // Red
+                    this.graphics.beginFill(COLOR.RED); // Red
                 }
                 switch (direction) {
                     case DIRECTION.BOTTOM:
@@ -217,7 +218,7 @@ class DirectionsSprite {
             });
         });
 
-        this.graphics.beginFill(this.phantom.isCellFree() ? 0x00de2d : 0xff004d);
+        this.graphics.beginFill(this.phantom.isCellFree() ? COLOR.LIGHT_GREEN : COLOR.RED);
         this.phantom.getInfo().getCellGaps(this.phantom.getLeftOriented()).forEach((cellGap) => {
             this.graphics.drawPolygon(
                 PositionTransformer.addGap(new PIXI.Point(- CELL_WIDTH / 2, 0), cellGap),

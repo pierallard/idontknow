@@ -14,6 +14,7 @@ import {HumanProperties} from "./HumanProperties";
 import {EMPLOYEE_TYPE} from "./HumanPropertiesFactory";
 import {ObjectReferer} from "../objects/ObjectReferer";
 import {TableMeeting} from "../human_states/TableMeeting";
+import {COLOR} from "../Pico8Colors";
 
 const MAX_WALK_CELL_DURATION = 1500;
 const MIN_WALK_CELL_DURATION = 800;
@@ -96,7 +97,7 @@ export class Employee {
 
         if (PATH_DEBUG) {
             this.pathGraphics.clear();
-            this.pathGraphics.lineStyle(2, 0x00ff00);
+            this.pathGraphics.lineStyle(2, COLOR.LIGHT_GREEN);
             if (this.path !== null && this.path.length > 0) {
                 this.pathGraphics.moveTo(
                     this.sprite.position.x,

@@ -3,6 +3,7 @@ import {GROUP_INTERFACE} from "../game_state/Play";
 import {INTERFACE_WIDTH} from "./UserInterface";
 import {CAMERA_WIDTH_PIXELS} from "../../app";
 import {EMPLOYEE_TYPE} from "../human_stuff/HumanPropertiesFactory";
+import {COLOR} from "../Pico8Colors";
 
 const BAR_HEIGHT = 10;
 const GAP = 3;
@@ -27,10 +28,10 @@ export class LevelDisplayer {
 
         [EMPLOYEE_TYPE.DEVELOPER, EMPLOYEE_TYPE.SALE, EMPLOYEE_TYPE.MARKETING].forEach((type, i) => {
             this.graphics.lineStyle(0);
-            this.graphics.beginFill(0xff0000);
+            this.graphics.beginFill(COLOR.RED);
             this.graphics.drawRect(GAP + i * (width + GAP), 0.5, width * this.worldKnowledge.getLevelProgress(type), BAR_HEIGHT);
             this.graphics.endFill();
-            this.graphics.lineStyle(1, 0xffffff);
+            this.graphics.lineStyle(1, COLOR.WHITE);
             this.graphics.drawRect(GAP + i * (width + GAP), 0.5, width, BAR_HEIGHT);
         });
     }
