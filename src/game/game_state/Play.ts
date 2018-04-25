@@ -1,7 +1,7 @@
 import {WorldKnowledge} from "../WorldKnowledge";
 import {CAMERA_HEIGHT_PIXELS, CAMERA_WIDTH_PIXELS, WORLD_HEIGHT, WORLD_WIDTH} from "../../app";
 import {INTERFACE_WIDTH, UserInterface} from "../user_interface/UserInterface";
-import {Camembert} from "../Camembert";
+import {Camembert} from "../user_interface/Camembert";
 
 export const GROUP_FLOOR = 'floor';
 export const GROUP_OBJECTS_AND_HUMANS = 'objects_and_humans';
@@ -45,6 +45,8 @@ export default class Play extends Phaser.State {
         this.downKey = this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
         this.leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
         this.rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+
+        // const text = this.game.add.bitmapText(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + 60, 2, 'retro_computer','Bitmap Fonts!',7, this.groups[GROUP_INTERFACE]);
     }
 
     update(game: Phaser.Game) {

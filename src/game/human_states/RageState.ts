@@ -28,4 +28,8 @@ export class RageState extends AbstractState {
     getState(): STATE {
         return STATE.RAGE;
     }
+
+    getRageImage(): RAGE_IMAGE {
+        return this.rageImage;
+    }
 }

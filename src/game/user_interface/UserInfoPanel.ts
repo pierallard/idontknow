@@ -5,10 +5,15 @@ import {GROUP_INTERFACE} from "../game_state/Play";
 import {Employee} from "../human_stuff/Employee";
 import {TEXT_STYLE} from "../TextStyle";
 import {MOOD} from "../human_stuff/HumanMoodManager";
-import {Camembert} from "../Camembert";
+import {Camembert} from "./Camembert";
+import {HumanStateManager, STATE} from "../human_stuff/HumanStateManager";
+import {Gauge} from "./Gauge";
+import {COLOR} from "../Pico8Colors";
 
 const HEIGHT = 80;
 const GRAPH_GAP = 2;
+const GAP_BETWEEN_LINES = 10;
+const GAUGE_GAP = 100;
 
 export class UserInfoPanel {
     private worldKnowledge: WorldKnowledge;
@@ -17,38 +22,47 @@ export class UserInfoPanel {
     private moodRelaxationText: Phaser.Text;
     private moodHungerText: Phaser.Text;
     private moodSocialText: Phaser.Text;
+    private moodRelaxationGauge: Gauge;
+    private moodHungerGauge: Gauge;
+    private moodSocialGauge: Gauge;
     private human: Employee;
     private camembert: Camembert;
+    private currentState: Phaser.Text;
 
     constructor(worldKnowledge: WorldKnowledge) {
         this.worldKnowledge = worldKnowledge;
         this.visible = true;
         this.camembert = new Camembert();
+        const gaugeWidth = INTERFACE_WIDTH - GAUGE_GAP - GRAPH_GAP;
+        this.moodRelaxationGauge = new Gauge(new PIXI.Point(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GAUGE_GAP, TOP_GAP + GAP_BETWEEN_LINES - 3.5), gaugeWidth, COLOR.WHITE, 8);
+        this.moodHungerGauge = new Gauge(new PIXI.Point(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GAUGE_GAP, TOP_GAP + 2 * GAP_BETWEEN_LINES - 3.5), gaugeWidth, COLOR.WHITE, 8);
+        this.moodSocialGauge = new Gauge(new PIXI.Point(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GAUGE_GAP, TOP_GAP + 3 * GAP_BETWEEN_LINES - 3.5), gaugeWidth, COLOR.WHITE, 8);
     }
 
     create(game: Phaser.Game, groups: { [index: string]: Phaser.Group }) {
         const left = CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GRAPH_GAP;
-        const top = TOP_GAP;
-        const gap = 10;
-        this.employeeName = game.add.text(left, top, '', TEXT_STYLE);
-        this.moodRelaxationText = game.add.text(left, top + gap, 'Relax', TEXT_STYLE);
-        this.moodHungerText = game.add.text(left, top + 2 * gap, 'Hunger', TEXT_STYLE);
-        this.moodSocialText = game.add.text(left, top + 3 * gap, 'Social', TEXT_STYLE);
-
+        this.employeeName = game.add.text(left, TOP_GAP, '', TEXT_STYLE);
+        this.moodRelaxationText = game.add.text(left, TOP_GAP + GAP_BETWEEN_LINES, 'Relax', TEXT_STYLE);
+        this.moodHungerText = game.add.text(left, TOP_GAP + 2 * GAP_BETWEEN_LINES, 'Hunger', TEXT_STYLE);
+        this.moodSocialText = game.add.text(left, TOP_GAP + 3 * GAP_BETWEEN_LINES, 'Social', TEXT_STYLE);
+        this.currentState = game.add.text(left, TOP_GAP + 4 * GAP_BETWEEN_LINES, '', TEXT_STYLE);
         this.camembert.create(game, groups);
+        this.moodRelaxationGauge.create(game, groups);
+        this.moodHungerGauge.create(game, groups);
+        this.moodSocialGauge.create(game, groups);
     }
 
     update() {
         if (this.human) {
-            this.moodRelaxationText.setText('Relax  ' + UserInfoPanel.getPercentageStr(this.human.getMood(MOOD.RELAXATION)));
-            this.moodHungerText.setText('Hunger ' + UserInfoPanel.getPercentageStr(this.human.getMood(MOOD.HUNGER)));
-            this.moodSocialText.setText('Social ' + UserInfoPanel.getPercentageStr(this.human.getMood(MOOD.SOCIAL)));
+            this.moodRelaxationGauge.setValue(this.human.getMood(MOOD.RELAXATION));
+            this.moodHungerGauge.setValue(this.human.getMood(MOOD.HUNGER));
+            this.moodSocialGauge.setValue(this.human.getMood(MOOD.SOCIAL));
+            this.moodRelaxationGauge.update();
+            this.moodHungerGauge.update();
+            this.moodSocialGauge.update();
             this.camembert.update();
+            this.currentState.setText('State: ' + HumanStateManager.getStr(this.human.getState()));
         }
-    }
-
-    private static getPercentageStr(percentage: number): string {
-        return Math.round(percentage * 100) + '%';
     }
 
     show() {
@@ -58,6 +72,10 @@ export class UserInfoPanel {
             this.moodRelaxationText.position.x -= INTERFACE_WIDTH;
             this.moodHungerText.position.x -= INTERFACE_WIDTH;
             this.moodSocialText.position.x -= INTERFACE_WIDTH;
+            this.currentState.position.x -= INTERFACE_WIDTH;
+            this.moodRelaxationGauge.show();
+            this.moodHungerGauge.show();
+            this.moodSocialGauge.show();
         }
         this.visible = true;
     }
@@ -69,6 +87,10 @@ export class UserInfoPanel {
             this.moodRelaxationText.position.x += INTERFACE_WIDTH;
             this.moodHungerText.position.x += INTERFACE_WIDTH;
             this.moodSocialText.position.x += INTERFACE_WIDTH;
+            this.currentState.position.x += INTERFACE_WIDTH;
+            this.moodRelaxationGauge.hide();
+            this.moodHungerGauge.hide();
+            this.moodSocialGauge.hide();
         }
         this.visible = false;
     }

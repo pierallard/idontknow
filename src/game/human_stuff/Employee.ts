@@ -75,6 +75,8 @@ export class Employee {
 
         ObjectSelector.makeSelectable([this.sprite], () => {
             this.worldKnowledge.setSelectedHuman(this);
+        }, () => {
+            this.worldKnowledge.unselectHuman();
         });
         groups[GROUP_OBJECTS_AND_HUMANS].add(this.sprite);
 
@@ -329,5 +331,11 @@ export class Employee {
 
     getNextProbabilities(): {probability: number, state: STATE}[] {
         return this.stateManager.getNextProbabilities();
+    }
+
+    unselect() {
+        if (this.isSelected()) {
+            ObjectSelector.click(this.sprite, null, [this.sprite]);
+        }
     }
 }

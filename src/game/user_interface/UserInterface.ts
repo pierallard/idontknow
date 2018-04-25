@@ -14,7 +14,7 @@ export const INTERFACE_WIDTH = 150.5;
 export const TOP_GAP_2 = 15.5 + 12;
 export const TOP_GAP = TOP_GAP_2 + 15;
 
-enum PANEL {
+export enum PANEL {
     INFO,
     USR,
     OBJ,
@@ -97,23 +97,29 @@ export class UserInterface {
         this.moneyCounter.setText(this.worldKnowledge.getMoneyInWallet().getStringValue());
     }
 
-    private selectPanel(panel: PANEL) {
+    selectPanel(panel: PANEL) {
+        if (this.selectedPanel === panel) {
+            return;
+        }
         this.selectedPanel = panel;
         if (this.selectedPanel === PANEL.INFO) {
             this.objectSeller.hide();
             this.humanEmployer.hide();
             this.infoPanel.show();
             this.userInfoPanel.hide();
+            this.worldKnowledge.unselectHuman(false);
         } else if (this.selectedPanel === PANEL.USR) {
             this.objectSeller.hide();
             this.humanEmployer.show();
             this.infoPanel.hide();
             this.userInfoPanel.hide();
+            this.worldKnowledge.unselectHuman(false);
         } else if (this.selectedPanel === PANEL.OBJ) {
             this.objectSeller.show();
             this.humanEmployer.hide();
             this.infoPanel.hide();
             this.userInfoPanel.hide();
+            this.worldKnowledge.unselectHuman(false);
         } else if (this.selectedPanel === PANEL.USER_INFO) {
             this.objectSeller.hide();
             this.humanEmployer.hide();

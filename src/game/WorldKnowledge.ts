@@ -23,7 +23,8 @@ import {Price} from "./objects/Price";
 import {ObjectInfo} from "./objects/ObjectInfo";
 import {ObjectInfoRegistry} from "./objects/ObjectInfoRegistry";
 import {SmoothValue} from "./SmoothValue";
-import {UserInterface} from "./user_interface/UserInterface";
+import {PANEL, UserInterface} from "./user_interface/UserInterface";
+import {ObjectSelector} from "./objects/ObjectSelector";
 
 export const GRID_WIDTH = 16;
 export const GRID_HEIGHT = 16;
@@ -441,11 +442,25 @@ export class WorldKnowledge {
         this.wallet.add(price.getValue());
     }
 
-    setSelectedHuman(param: Employee) {
-        this.userInterface.setSelectedHuman(param);
+    setSelectedHuman(employee: Employee) {
+        this.userInterface.setSelectedHuman(employee);
+        this.humanRepository.humans.forEach((human) => {
+            if (human !== employee) {
+                human.unselect();
+            }
+        });
     }
 
     setUserInterface(userInterface: UserInterface) {
         this.userInterface = userInterface;
+    }
+
+    unselectHuman(switchPanel: boolean = true) {
+        if (switchPanel) {
+            this.userInterface.selectPanel(PANEL.INFO);
+        }
+        this.humanRepository.humans.forEach((human) => {
+            human.unselect();
+        })
     }
 }

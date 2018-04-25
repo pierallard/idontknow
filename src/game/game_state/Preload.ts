@@ -51,5 +51,6 @@ export default class Preload extends Phaser.State {
     }
 
     private loadFonts() {
+        this.game.load.bitmapFont('retro_computer', 'assets/font/font.png', 'assets/font/font.ftn');
     }
 }

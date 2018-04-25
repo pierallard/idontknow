@@ -1,5 +1,5 @@
 export enum COLOR {
-    DARK = 0x000200,
+    BLACK = 0x000200,
     WHITE = 0xFFF0E5,
     DARK_GREY = 0x494947,
     LIGHT_GREY = 0xC6C2C6,

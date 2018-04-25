@@ -14,6 +14,10 @@ import {HumanMoodManager, MOOD} from "./HumanMoodManager";
 import {TableMeeting} from "../human_states/TableMeeting";
 import {SitTalkState} from "../human_states/SitTalkState";
 import {Table} from "../objects/Table";
+import {RageState} from "../human_states/RageState";
+import {RAGE_IMAGE} from "./ThoughtBubble";
+
+const LIMIT = 0.8;
 
 export enum STATE {
     SMOKE,
@@ -188,19 +192,36 @@ export class HumanStateManager {
             case STATE.TALK: result = 8; break;
             case STATE.SIT: result = 4; break;
             case STATE.COFFEE: result = 6; break;
-            case STATE.SIT_TALK: result = 600000; break;
-            case STATE.TYPE: result = (5 + 1 + 2 + 8 + 2 + 6 + 6) * 2; break;
+            case STATE.SIT_TALK: result = 6; break;
+            case STATE.TYPE: result = (5 + 1 + 2 + 8 + 2 + 6 + 6); break;
         }
 
         if (state === this.state.getState()) {
             result = result / 2;
         }
+        if (this.state instanceof RageState) {
+            const rageState = <RageState> this.state;
+            if (rageState.getRageImage() === RAGE_IMAGE.COFFEE && state === STATE.COFFEE) {
+                result = result / 3;
+            }
+            if (rageState.getRageImage() === RAGE_IMAGE.LAPTOP && state === STATE.TYPE) {
+                result = result / 3;
+            }
+            if (rageState.getRageImage() === RAGE_IMAGE.SLEEP && state === STATE.SIT) {
+                result = result / 3;
+            }
+            if (rageState.getRageImage() === RAGE_IMAGE.TABLE && state === STATE.SIT_TALK) {
+                result = result / 3;
+            }
+        }
 
         HumanMoodManager.getMoods().forEach((mood: MOOD) => {
-            if (this.human.getMood(mood) < 0.5) {
+            if (this.human.getMood(mood) < LIMIT) {
                 if (HumanStateManager.getMoodGains(state)[mood] > 0) {
-                    result = result * HumanStateManager.getMoodGains(state)[mood] * 8;
-                    result = result * (1 - this.human.getMood(mood)) * 3;
+                    let ratio = 1 - this.human.getMood(mood) / LIMIT;
+                    ratio = ratio * HumanStateManager.getMoodGains(state)[mood] * 8;
+                    result = result * (1 + ratio);
+                    console.log('new ratio: ' + ratio);
                 }
             }
         });
@@ -211,7 +232,7 @@ export class HumanStateManager {
     static getMoodGains(state: STATE): object {
         let result = {};
         switch(state) {
-            case STATE.SMOKE: result[MOOD.RELAXATION] = 0.4; break;
+            case STATE.SMOKE: result[MOOD.RELAXATION] = 0.1; break;
             case STATE.TALK: result[MOOD.SOCIAL] = 0.5; break;
             case STATE.SIT: result[MOOD.RELAXATION] = 0.2; break;
             case STATE.COFFEE: result[MOOD.HUNGER] = 0.5; break;

@@ -1,36 +1,42 @@
-import {GROUP_INTERFACE} from "./game_state/Play";
-import {COLOR} from "./Pico8Colors";
-import {INTERFACE_WIDTH} from "./user_interface/UserInterface";
-import {TEXT_STYLE} from "./TextStyle";
-import {CAMERA_WIDTH_PIXELS} from "../app";
-import {Employee} from "./human_stuff/Employee";
-import {HumanStateManager, STATE} from "./human_stuff/HumanStateManager";
+import {GROUP_INTERFACE} from "../game_state/Play";
+import {COLOR} from "../Pico8Colors";
+import {INTERFACE_WIDTH} from "./UserInterface";
+import {CAMERA_WIDTH_PIXELS} from "../../app";
+import {Employee} from "../human_stuff/Employee";
+import {HumanStateManager, STATE} from "../human_stuff/HumanStateManager";
+import {Tooltip} from "./Tooltip";
+import {SmoothValue} from "../SmoothValue";
 
 const PARTS = 36;
 
 export class Camembert {
     private graphics: Phaser.Graphics;
-    private tooltip: Phaser.Text;
+    private tooltip: Tooltip;
     private game: Phaser.Game;
     private tooltipShowed: boolean;
     private human: Employee;
     private data: CamembertPart[];
+    private shouldRefreshData: boolean;
+    private shouldRefreshCamembert: boolean;
 
     constructor() {
         this.data = [];
         this.tooltipShowed = false;
+        this.tooltip = new Tooltip();
+        this.shouldRefreshData = true;
+        this.shouldRefreshCamembert = true;
     }
 
     create(game:Phaser.Game, groups: {[index: string] : Phaser.Group}) {
         this.game = game;
-        this.graphics = game.add.graphics(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH / 2, 150, groups[GROUP_INTERFACE]);
+        this.graphics = game.add.graphics(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH / 2, 180, groups[GROUP_INTERFACE]);
         this.drawCamembert();
         this.graphics.inputEnabled = true;
         this.graphics.events.onInputOver.add(this.showTooltip, this, 0, game);
         this.graphics.events.onInputOut.add(this.hideTooltip, this, 0, game);
 
         groups[GROUP_INTERFACE].add(this.graphics);
-        this.tooltip = game.add.text(0, 0, '', TEXT_STYLE);
+        this.tooltip.create(game, groups);
         this.hideTooltip();
     }
 
@@ -40,14 +46,16 @@ export class Camembert {
 
     update() {
         if (this.human) {
-            this.refreshData();
-            this.drawCamembert();
+            if (this.shouldRefreshData) {
+                this.refreshData();
+            }
+            if (this.shouldRefreshCamembert) {
+                this.drawCamembert();
+            }
         }
         if (this.tooltipShowed) {
+            this.tooltip.update();
             const position = this.game.input.mousePointer.position;
-
-            this.tooltip.x = position.x;
-            this.tooltip.y = position.y;
 
             const positionThroughtCenter = new PIXI.Point(
                 position.x - this.graphics.x,
@@ -59,18 +67,20 @@ export class Camembert {
             }
 
             const currentCamembert = this.getSelectedCamembertPart(angle);
-            this.tooltip.text = currentCamembert.getString();
+            if (currentCamembert) {
+                this.tooltip.setText(currentCamembert.getString());
+            }
         }
     }
 
     private showTooltip() {
         this.tooltipShowed = true;
-        this.tooltip.alpha = 1;
+        this.tooltip.show();
     }
 
     private hideTooltip() {
         this.tooltipShowed = false;
-        this.tooltip.alpha = 0;
+        this.tooltip.hide();
     }
 
     private drawCamembert() {
@@ -90,17 +100,44 @@ export class Camembert {
             this.graphics.drawPolygon(points);
             this.graphics.endFill();
         }
+
+        this.shouldRefreshCamembert = false;
+        this.game.time.events.add(Phaser.Timer.SECOND * 0.1, () => {
+            this.shouldRefreshCamembert = true;
+        }, this);
     }
 
     private refreshData() {
-        this.data = [];
+        let foundIdentifiers = [];
         this.human.getNextProbabilities().forEach((state) => {
-            this.data.push(new CamembertPart(
-                state.probability,
-                Camembert.getColor(state.state),
-                HumanStateManager.getStr(state.state)
-            ));
-        })
+            let found = false;
+            for (let i = 0; i < this.data.length; i++) {
+                const camembertPart = this.data[i];
+                if (camembertPart.getState() === state.state) {
+                    camembertPart.setValue(state.probability);
+                    found = true;
+                    foundIdentifiers.push(i);
+                }
+            }
+            if (!found) {
+                this.data.push(new CamembertPart(
+                    state.state,
+                    state.probability,
+                    Camembert.getColor(state.state),
+                    HumanStateManager.getStr(state.state)
+                ));
+            }
+        });
+        for (let i = 0; i < this.data.length; i++) {
+            if (foundIdentifiers.indexOf(i) <= -1) {
+                this.data[i].setValue(0);
+            }
+        }
+
+        this.shouldRefreshData = false;
+        this.game.time.events.add(Phaser.Timer.SECOND * 1.1, () => {
+            this.shouldRefreshData = true;
+        }, this);
     }
 
     private static getColor(state: STATE): COLOR {
@@ -148,23 +185,25 @@ export class Camembert {
 }
 
 class CamembertPart {
-    private value: number;
+    private state: STATE;
+    private value: SmoothValue;
     private color: COLOR;
     private text: string;
 
-    constructor(value: number, color: COLOR, text: string) {
-        this.value = value;
+    constructor(state: STATE, value: number, color: COLOR, text: string) {
+        this.state = state;
+        this.value = new SmoothValue(value);
         this.color = color;
         this.text= text;
     }
 
     getValue(): number {
-        return this.value;
+        return this.value.getValue();
     }
 
     getPoints(currentAngle: number, sumValues: number, RADIUS: number): PIXI.Point[] {
         const angleOfAPart = Math.PI * 2 / PARTS;
-        const littleGap = 10 * Math.PI * 2 / 360;
+        const littleGap = 1 * Math.PI * 2 / 360;
         const valueAngle = this.getAngle(sumValues);
         let points = [
             new PIXI.Point(Math.sin(currentAngle) * RADIUS, - Math.cos(currentAngle) * RADIUS)
@@ -187,14 +226,22 @@ class CamembertPart {
     }
 
     getAngle(sumValues: number): number {
-        return this.value / sumValues * Math.PI * 2;
+        return this.value.getValue() / sumValues * Math.PI * 2;
     }
 
     getColor(): COLOR {
         return this.color;
     }
 
-    getString() {
+    getString(): string {
         return this.text;
+    }
+
+    getState(): STATE {
+        return this.state
+    }
+
+    setValue(probability: number) {
+        this.value.setValue(probability);
     }
 }

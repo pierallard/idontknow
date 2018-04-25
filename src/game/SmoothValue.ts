@@ -3,6 +3,7 @@ const TIME_GAP = Phaser.Timer.SECOND / 10;
 export class SmoothValue {
     private value: number;
     private maxValue: number;
+    private minValue: number;
 
     constructor(value: number) {
         this.value = value;
@@ -21,10 +22,14 @@ export class SmoothValue {
             const numberOfSteps = milliseconds / TIME_GAP;
             const valuePerStep = value / numberOfSteps;
 
+            this.value += valuePerStep;
+
             if (this.maxValue) {
-                this.value = Math.min(this.value + valuePerStep, this.maxValue);
-            } else {
-                this.value += valuePerStep;
+                this.value = Math.min(this.value, this.maxValue);
+            }
+
+            if (this.minValue) {
+                this.value = Math.max(this.value, this.minValue);
             }
 
             this.add(value - valuePerStep, milliseconds - TIME_GAP);
@@ -35,7 +40,15 @@ export class SmoothValue {
         this.maxValue = number;
     }
 
+    setMinValue(number: number) {
+        this.minValue = number;
+    }
+
     setValue(number: number) {
+        this.add(number - this.value);
+    }
+
+    setInstantValue(number: number) {
         this.value = number;
     }
 }
