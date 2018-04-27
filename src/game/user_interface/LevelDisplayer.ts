@@ -24,13 +24,13 @@ export class LevelDisplayer implements Tooltipable {
         this.gauges[EMPLOYEE_TYPE.MARKETING] = new Gauge(width, COLOR.ROSE);
 
         this.tooltips[EMPLOYEE_TYPE.DEVELOPER] = new Tooltip(() => {
-            return 'dev';
+            return Math.round(this.worldKnowledge.getLevelProgress(EMPLOYEE_TYPE.DEVELOPER) * 1000) + ' lines coded';
         });
         this.tooltips[EMPLOYEE_TYPE.SALE] = new Tooltip(() => {
-            return 'sales';
+            return Math.round(this.worldKnowledge.getLevelProgress(EMPLOYEE_TYPE.SALE) * 10) + ' licence sell'
         });
         this.tooltips[EMPLOYEE_TYPE.MARKETING] = new Tooltip(() => {
-            return 'marketing';
+            return Math.round(this.worldKnowledge.getLevelProgress(EMPLOYEE_TYPE.MARKETING) * 10) + ' campaigns done';
         });
     }
 
