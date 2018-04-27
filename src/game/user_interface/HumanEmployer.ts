@@ -7,6 +7,7 @@ import {OBJECT_SELLER_CELL_SIZE} from "./ObjectSeller";
 import {GROUP_INTERFACE} from "../game_state/Play";
 import {TEXT_STYLE} from "../TextStyle";
 import {COLOR} from "../Pico8Colors";
+import {DEFAULT_BAR_HEIGHT, Gauge} from "./Gauge";
 
 export class HumanEmployer {
     private worldKnowledge: WorldKnowledge;
@@ -34,6 +35,12 @@ export class HumanEmployer {
         });
     }
 
+    update() {
+        this.applicantButtons.forEach((applicantButton) => {
+            applicantButton.update();
+        });
+    }
+
     hide() {
         if (this.visible) {
             this.applicantButtons.forEach((applicantButton) => {
@@ -53,10 +60,17 @@ export class HumanEmployer {
     }
 
     employ(applicant: ApplicantButton) {
+        this.cancel(applicant);
+        this.worldKnowledge.addEmployee(applicant.getHumanProperties());
+    }
+
+    cancel(applicant: ApplicantButton) {
         const index = this.applicantButtons.indexOf(applicant);
         this.applicantButtons[index] = new ApplicantButton(this, HumanPropertiesFactory.create(), this.worldKnowledge);
         this.applicantButtons[index].create(this.game, this.groups, index);
-        this.worldKnowledge.addEmployee(applicant.getHumanProperties());
+        if (!this.visible) {
+            this.applicantButtons[index].hide();
+        }
     }
 }
 
@@ -68,11 +82,17 @@ class ApplicantButton {
     private worldKnowledge: WorldKnowledge;
     private square: Phaser.Graphics;
     private typeText: Phaser.Text;
+    private availabilityTime: number;
+    private remainingTime: number;
+    private remainingGauge: Gauge;
 
     constructor(humanEmployer: HumanEmployer, humanProperties: HumanProperties, worldKnowledge: WorldKnowledge) {
         this.humanEmployer = humanEmployer;
         this.humanProperties = humanProperties;
         this.worldKnowledge = worldKnowledge;
+        this.availabilityTime = (60 + Math.random() * 60) * Phaser.Timer.SECOND;
+        this.remainingTime = this.availabilityTime;
+        this.remainingGauge = new Gauge(OBJECT_SELLER_CELL_SIZE, COLOR.YELLOW, 5);
     }
 
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}, index: number) {
@@ -97,6 +117,12 @@ class ApplicantButton {
 
         this.name = game.add.text(left + OBJECT_SELLER_CELL_SIZE + 3, top, this.humanProperties.getName(), TEXT_STYLE, groups[GROUP_INTERFACE]);
         this.typeText = game.add.text(left + OBJECT_SELLER_CELL_SIZE + 3, top + 8, this.humanProperties.getStrType(), TEXT_STYLE, groups[GROUP_INTERFACE]);
+
+        this.remainingGauge.create(game, groups, new PIXI.Point(left, top + OBJECT_SELLER_CELL_SIZE - 5 - 0.5));
+        this.remainingGauge.setValue(1);
+        game.add.tween(this).to({
+            remainingTime: 0
+        }, this.availabilityTime, 'Linear', true);
     }
 
     hide() {
@@ -104,6 +130,7 @@ class ApplicantButton {
         this.name.position.x += INTERFACE_WIDTH;
         this.typeText.position.x += INTERFACE_WIDTH;
         this.square.position.x += INTERFACE_WIDTH + 10;
+        this.remainingGauge.hide();
     }
 
     show() {
@@ -111,18 +138,33 @@ class ApplicantButton {
         this.name.position.x -= INTERFACE_WIDTH;
         this.typeText.position.x -= INTERFACE_WIDTH;
         this.square.position.x -= INTERFACE_WIDTH + 10;
+        this.remainingGauge.show();
     }
 
     private click() {
-        this.sprite.destroy(true);
-        this.name.destroy(true);
-        this.typeText.destroy(true);
-        this.square.destroy(true);
-
+        this.destroy();
         this.humanEmployer.employ(this);
     }
 
     getHumanProperties(): HumanProperties {
         return this.humanProperties;
+    }
+
+    update() {
+        if (this.remainingTime <= 0) {
+            this.destroy();
+            this.humanEmployer.cancel(this);
+            return;
+        }
+        this.remainingGauge.setValue(this.remainingTime / this.availabilityTime);
+        this.remainingGauge.update();
+    }
+
+    private destroy() {
+        this.sprite.destroy(true);
+        this.name.destroy(true);
+        this.typeText.destroy(true);
+        this.square.destroy(true);
+        this.remainingGauge.destroy(true);
     }
 }

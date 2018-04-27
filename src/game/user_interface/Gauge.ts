@@ -1,28 +1,26 @@
 import {GROUP_INTERFACE} from "../game_state/Play";
 import {COLOR} from "../Pico8Colors";
 
-const BAR_HEIGHT = 10;
+export const DEFAULT_BAR_HEIGHT = 10;
 
 export class Gauge {
     private value: number;
-    private position: PIXI.Point;
     private width: number;
     private graphics: Phaser.Graphics;
     private color: COLOR;
     private visible: boolean;
     private height: number;
 
-    constructor(position: PIXI.Point, width: number, color: COLOR, height: number = null) {
+    constructor(width: number, color: COLOR, height: number = null) {
         this.value = 0;
-        this.position = position;
         this.width = Math.round(width);
         this.color = color;
         this.visible = true;
-        this.height = height ? height : BAR_HEIGHT;
+        this.height = height ? height : DEFAULT_BAR_HEIGHT;
     }
 
-    create(game: Phaser.Game, groups: { [index: string]: Phaser.Group }) {
-        this.graphics = game.add.graphics(this.position.x, this.position.y, groups[GROUP_INTERFACE]);
+    create(game: Phaser.Game, groups: { [index: string]: Phaser.Group }, position: PIXI.Point) {
+        this.graphics = game.add.graphics(position.x, position.y, groups[GROUP_INTERFACE]);
         this.update();
     }
 
@@ -51,5 +49,9 @@ export class Gauge {
     hide() {
         this.visible = false;
         this.update();
+    }
+
+    destroy(destroyChildren: boolean) {
+        this.graphics.destroy(destroyChildren);
     }
 }

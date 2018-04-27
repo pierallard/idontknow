@@ -94,6 +94,7 @@ export class UserInterface {
         this.infoPanel.update();
         this.levelDisplayer.update();
         this.userInfoPanel.update();
+        this.humanEmployer.update();
         this.moneyCounter.setText(this.worldKnowledge.getMoneyInWallet().getStringValue());
     }
 

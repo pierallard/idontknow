@@ -34,9 +34,9 @@ export class UserInfoPanel {
         this.visible = true;
         this.camembert = new Camembert();
         const gaugeWidth = INTERFACE_WIDTH - GAUGE_GAP - GRAPH_GAP;
-        this.moodRelaxationGauge = new Gauge(new PIXI.Point(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GAUGE_GAP, TOP_GAP + GAP_BETWEEN_LINES - 3.5), gaugeWidth, COLOR.WHITE, 8);
-        this.moodHungerGauge = new Gauge(new PIXI.Point(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GAUGE_GAP, TOP_GAP + 2 * GAP_BETWEEN_LINES - 3.5), gaugeWidth, COLOR.WHITE, 8);
-        this.moodSocialGauge = new Gauge(new PIXI.Point(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GAUGE_GAP, TOP_GAP + 3 * GAP_BETWEEN_LINES - 3.5), gaugeWidth, COLOR.WHITE, 8);
+        this.moodRelaxationGauge = new Gauge(gaugeWidth, COLOR.WHITE, 8);
+        this.moodHungerGauge = new Gauge(gaugeWidth, COLOR.WHITE, 8);
+        this.moodSocialGauge = new Gauge(gaugeWidth, COLOR.WHITE, 8);
     }
 
     create(game: Phaser.Game, groups: { [index: string]: Phaser.Group }) {
@@ -47,9 +47,9 @@ export class UserInfoPanel {
         this.moodSocialText = game.add.text(left, TOP_GAP + 3 * GAP_BETWEEN_LINES, 'Social', TEXT_STYLE);
         this.currentState = game.add.text(left, TOP_GAP + 4 * GAP_BETWEEN_LINES, '', TEXT_STYLE);
         this.camembert.create(game, groups);
-        this.moodRelaxationGauge.create(game, groups);
-        this.moodHungerGauge.create(game, groups);
-        this.moodSocialGauge.create(game, groups);
+        this.moodRelaxationGauge.create(game, groups, new PIXI.Point(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GAUGE_GAP, TOP_GAP + GAP_BETWEEN_LINES - 3.5));
+        this.moodHungerGauge.create(game, groups, new PIXI.Point(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GAUGE_GAP, TOP_GAP + 2 * GAP_BETWEEN_LINES - 3.5));
+        this.moodSocialGauge.create(game, groups, new PIXI.Point(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GAUGE_GAP, TOP_GAP + 3 * GAP_BETWEEN_LINES - 3.5));
     }
 
     update() {

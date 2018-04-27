@@ -16,15 +16,16 @@ export class LevelDisplayer {
         this.worldKnowledge = worldKnowledge;
         this.gauges = {};
         const width = Math.floor((INTERFACE_WIDTH - 4 * GAP) / 3);
-        this.gauges[EMPLOYEE_TYPE.DEVELOPER] = new Gauge(new PIXI.Point(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GAP, TOP), width, COLOR.LIGHT_GREEN);
-        this.gauges[EMPLOYEE_TYPE.SALE] = new Gauge(new PIXI.Point(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GAP + width + GAP, TOP), width, COLOR.RED);
-        this.gauges[EMPLOYEE_TYPE.MARKETING] = new Gauge(new PIXI.Point(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GAP + width + GAP + width + GAP, TOP), width, COLOR.ROSE);
+        this.gauges[EMPLOYEE_TYPE.DEVELOPER] = new Gauge(width, COLOR.LIGHT_GREEN);
+        this.gauges[EMPLOYEE_TYPE.SALE] = new Gauge(width, COLOR.RED);
+        this.gauges[EMPLOYEE_TYPE.MARKETING] = new Gauge(width, COLOR.ROSE);
     }
 
     create(game: Phaser.Game, groups: { [index: string]: Phaser.Group }) {
-        this.gauges[EMPLOYEE_TYPE.DEVELOPER].create(game, groups);
-        this.gauges[EMPLOYEE_TYPE.SALE].create(game, groups);
-        this.gauges[EMPLOYEE_TYPE.MARKETING].create(game, groups);
+        const width = Math.floor((INTERFACE_WIDTH - 4 * GAP) / 3);
+        this.gauges[EMPLOYEE_TYPE.DEVELOPER].create(game, groups, new PIXI.Point(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GAP, TOP));
+        this.gauges[EMPLOYEE_TYPE.SALE].create(game, groups, new PIXI.Point(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GAP + width + GAP, TOP));
+        this.gauges[EMPLOYEE_TYPE.MARKETING].create(game, groups, new PIXI.Point(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GAP + width + GAP + width + GAP, TOP));
     }
 
     update() {
