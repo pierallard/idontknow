@@ -221,7 +221,6 @@ export class HumanStateManager {
                     let ratio = 1 - this.human.getMood(mood) / LIMIT;
                     ratio = ratio * HumanStateManager.getMoodGains(state)[mood] * 8;
                     result = result * (1 + ratio);
-                    console.log('new ratio: ' + ratio);
                 }
             }
         });

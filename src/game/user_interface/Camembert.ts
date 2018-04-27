@@ -4,16 +4,15 @@ import {INTERFACE_WIDTH} from "./UserInterface";
 import {CAMERA_WIDTH_PIXELS} from "../../app";
 import {Employee} from "../human_stuff/Employee";
 import {HumanStateManager, STATE} from "../human_stuff/HumanStateManager";
-import {Tooltip} from "./Tooltip";
+import {Tooltip, Tooltipable} from "./Tooltip";
 import {SmoothValue} from "../SmoothValue";
 
 const PARTS = 36;
 
-export class Camembert {
+export class Camembert implements Tooltipable {
     private graphics: Phaser.Graphics;
     private tooltip: Tooltip;
     private game: Phaser.Game;
-    private tooltipShowed: boolean;
     private human: Employee;
     private data: CamembertPart[];
     private shouldRefreshData: boolean;
@@ -21,8 +20,25 @@ export class Camembert {
 
     constructor() {
         this.data = [];
-        this.tooltipShowed = false;
-        this.tooltip = new Tooltip();
+        this.tooltip = new Tooltip(() => {
+            const position = this.game.input.mousePointer.position;
+
+            const positionThroughtCenter = new PIXI.Point(
+                position.x - this.graphics.x,
+                position.y - this.graphics.y
+            );
+            let angle = Math.atan2(positionThroughtCenter.x, - positionThroughtCenter.y);
+            if (angle < 0) {
+                angle += 2 * Math.PI;
+            }
+
+            const currentCamembert = this.getSelectedCamembertPart(angle);
+            if (currentCamembert) {
+                return currentCamembert.getString();
+            }
+
+            return '';
+        });
         this.shouldRefreshData = true;
         this.shouldRefreshCamembert = true;
     }
@@ -31,13 +47,10 @@ export class Camembert {
         this.game = game;
         this.graphics = game.add.graphics(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH / 2, 180, groups[GROUP_INTERFACE]);
         this.drawCamembert();
-        this.graphics.inputEnabled = true;
-        this.graphics.events.onInputOver.add(this.showTooltip, this, 0, game);
-        this.graphics.events.onInputOut.add(this.hideTooltip, this, 0, game);
+        this.tooltip.setInput(this, this.graphics);
 
         groups[GROUP_INTERFACE].add(this.graphics);
         this.tooltip.create(game, groups);
-        this.hideTooltip();
     }
 
     setHuman(human: Employee) {
@@ -53,34 +66,7 @@ export class Camembert {
                 this.drawCamembert();
             }
         }
-        if (this.tooltipShowed) {
-            this.tooltip.update();
-            const position = this.game.input.mousePointer.position;
-
-            const positionThroughtCenter = new PIXI.Point(
-                position.x - this.graphics.x,
-                position.y - this.graphics.y
-            );
-            let angle = Math.atan2(positionThroughtCenter.x, - positionThroughtCenter.y);
-            if (angle < 0) {
-                angle += 2 * Math.PI;
-            }
-
-            const currentCamembert = this.getSelectedCamembertPart(angle);
-            if (currentCamembert) {
-                this.tooltip.setText(currentCamembert.getString());
-            }
-        }
-    }
-
-    private showTooltip() {
-        this.tooltipShowed = true;
-        this.tooltip.show();
-    }
-
-    private hideTooltip() {
-        this.tooltipShowed = false;
-        this.tooltip.hide();
+        this.tooltip.update();
     }
 
     private drawCamembert() {

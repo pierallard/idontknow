@@ -90,7 +90,7 @@ class ApplicantButton {
         this.humanEmployer = humanEmployer;
         this.humanProperties = humanProperties;
         this.worldKnowledge = worldKnowledge;
-        this.availabilityTime = (60 + Math.random() * 60) * Phaser.Timer.SECOND;
+        this.availabilityTime = (45 + Math.random() * 45) * Phaser.Timer.SECOND;
         this.remainingTime = this.availabilityTime;
         this.remainingGauge = new Gauge(OBJECT_SELLER_CELL_SIZE, COLOR.YELLOW, 5);
     }

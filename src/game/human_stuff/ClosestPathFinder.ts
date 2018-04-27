@@ -2,7 +2,7 @@ import {WorldKnowledge} from "../WorldKnowledge";
 import {Direction, DIRECTION} from "../Direction";
 
 export class ClosestPathFinder {
-    private finders: Object;
+    private finders: {[index: number]: Phaser.Plugin.PathFinderPlugin};
     private worldKnowledge: WorldKnowledge;
     private reseted: boolean;
 

@@ -41,11 +41,11 @@ export class UserInfoPanel {
 
     create(game: Phaser.Game, groups: { [index: string]: Phaser.Group }) {
         const left = CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GRAPH_GAP;
-        this.employeeName = game.add.text(left, TOP_GAP, '', TEXT_STYLE);
-        this.moodRelaxationText = game.add.text(left, TOP_GAP + GAP_BETWEEN_LINES, 'Relax', TEXT_STYLE);
-        this.moodHungerText = game.add.text(left, TOP_GAP + 2 * GAP_BETWEEN_LINES, 'Hunger', TEXT_STYLE);
-        this.moodSocialText = game.add.text(left, TOP_GAP + 3 * GAP_BETWEEN_LINES, 'Social', TEXT_STYLE);
-        this.currentState = game.add.text(left, TOP_GAP + 4 * GAP_BETWEEN_LINES, '', TEXT_STYLE);
+        this.employeeName = game.add.text(left, TOP_GAP, '', TEXT_STYLE, groups[GROUP_INTERFACE]);
+        this.moodRelaxationText = game.add.text(left, TOP_GAP + GAP_BETWEEN_LINES, 'Relax', TEXT_STYLE, groups[GROUP_INTERFACE]);
+        this.moodHungerText = game.add.text(left, TOP_GAP + 2 * GAP_BETWEEN_LINES, 'Hunger', TEXT_STYLE, groups[GROUP_INTERFACE]);
+        this.moodSocialText = game.add.text(left, TOP_GAP + 3 * GAP_BETWEEN_LINES, 'Social', TEXT_STYLE, groups[GROUP_INTERFACE]);
+        this.currentState = game.add.text(left, TOP_GAP + 4 * GAP_BETWEEN_LINES, '', TEXT_STYLE, groups[GROUP_INTERFACE]);
         this.camembert.create(game, groups);
         this.moodRelaxationGauge.create(game, groups, new PIXI.Point(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GAUGE_GAP, TOP_GAP + GAP_BETWEEN_LINES - 3.5));
         this.moodHungerGauge.create(game, groups, new PIXI.Point(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GAUGE_GAP, TOP_GAP + 2 * GAP_BETWEEN_LINES - 3.5));

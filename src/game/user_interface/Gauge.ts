@@ -33,6 +33,8 @@ export class Gauge {
         this.graphics.clear();
         if (this.visible) {
             this.graphics.lineStyle(0);
+            this.graphics.beginFill(COLOR.BLACK);
+            this.graphics.drawRect(0, 0.5, this.width, this.height);
             this.graphics.beginFill(this.color);
             this.graphics.drawRect(0, 0.5, Math.floor(this.width * this.value) + 0.5, this.height);
             this.graphics.endFill();
@@ -53,5 +55,9 @@ export class Gauge {
 
     destroy(destroyChildren: boolean) {
         this.graphics.destroy(destroyChildren);
+    }
+
+    getGraphics(): Phaser.Graphics {
+        return this.graphics;
     }
 }

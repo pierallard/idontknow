@@ -12,7 +12,7 @@ export enum MOOD {
 }
 
 export class HumanMoodManager {
-    private moods: Object;
+    private moods: {[index: number]: SmoothValue};
     private game: Phaser.Game;
     private hasToBeUpdated: boolean;
 

@@ -1,12 +1,12 @@
 import {WorldKnowledge} from "../WorldKnowledge";
 import {CAMERA_HEIGHT_PIXELS, CAMERA_WIDTH_PIXELS, WORLD_HEIGHT, WORLD_WIDTH} from "../../app";
 import {INTERFACE_WIDTH, UserInterface} from "../user_interface/UserInterface";
-import {Camembert} from "../user_interface/Camembert";
 
 export const GROUP_FLOOR = 'floor';
 export const GROUP_OBJECTS_AND_HUMANS = 'objects_and_humans';
 export const GROUP_INFOS = 'infos';
 export const GROUP_INTERFACE = 'interface';
+export const GROUP_TOOLTIP = 'tooltip';
 export const CAMERA_GAP = 2;
 
 export default class Play extends Phaser.State {
@@ -32,8 +32,10 @@ export default class Play extends Phaser.State {
         this.groups[GROUP_OBJECTS_AND_HUMANS] =  this.game.add.group();
         this.groups[GROUP_INFOS] = this.game.add.group();
         this.groups[GROUP_INTERFACE] = this.game.add.group();
+        this.groups[GROUP_TOOLTIP] = this.game.add.group();
 
         this.groups[GROUP_INTERFACE].fixedToCamera = true;
+        this.groups[GROUP_TOOLTIP].fixedToCamera = true;
 
         this.worldKnowledge.create(this.game, this.groups);
         this.userInterface.create(this.game, this.groups);
