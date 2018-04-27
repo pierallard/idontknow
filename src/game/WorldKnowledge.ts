@@ -434,8 +434,8 @@ export class WorldKnowledge {
         return this.levelManager.getLevelProgress(type);
     }
 
-    addProgress(type: EMPLOYEE_TYPE, value: number) {
-        this.levelManager.addLevelProgress(type, value);
+    addProgress(type: EMPLOYEE_TYPE, value: number, time: number) {
+        this.levelManager.addLevelProgress(type, value, time);
     }
 
     addMoneyInWallet(price: Price) {
@@ -462,5 +462,13 @@ export class WorldKnowledge {
         this.humanRepository.humans.forEach((human) => {
             human.unselect();
         })
+    }
+
+    getLevelValue(type: EMPLOYEE_TYPE): number {
+        return this.levelManager.getLevelValue(type);
+    }
+
+    getLevelGoal(type: EMPLOYEE_TYPE): number {
+        return this.levelManager.getGoal(type);
     }
 }

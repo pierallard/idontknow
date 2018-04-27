@@ -1,13 +1,13 @@
 import {Employee} from "../human_stuff/Employee";
 import {WorldKnowledge} from "../WorldKnowledge";
-import {HumanPropertiesFactory} from "../human_stuff/HumanPropertiesFactory";
+import {EMPLOYEE_TYPE, HumanPropertiesFactory} from "../human_stuff/HumanPropertiesFactory";
 
 export class HumanRepository {
     humans: Employee[];
 
     constructor(worldKnowledge: WorldKnowledge) {
         this.humans = [
-            new Employee(worldKnowledge.getRandomCell(), HumanPropertiesFactory.create())
+            new Employee(worldKnowledge.getRandomCell(), HumanPropertiesFactory.create(EMPLOYEE_TYPE.DEVELOPER))
         ];
     }
 

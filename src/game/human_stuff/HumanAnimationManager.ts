@@ -60,26 +60,26 @@ export class HumanAnimationManager {
             case ANIMATION.FREEZE: return topOriented ? [18, 19, 20] : [12, 13, 14];
             case ANIMATION.FREEZE_SIT: return topOriented ? [21, 22, 23] : [15, 16, 17];
             case ANIMATION.WALK: return topOriented ? [6, 7, 8, 9, 10, 11] : [0, 1, 2, 3, 4, 5];
-            case ANIMATION.SIT_DOWN: return topOriented ? [18, 78, 79, 80, 81] : [12, 36, 37, 38, 39];
-            case ANIMATION.STAND_UP: return topOriented ? [81, 80, 79, 78, 18] : [39, 38, 37, 36, 12];
-            case ANIMATION.TYPE: return [42, 43, 44, 45];
-            case ANIMATION.TALK: return topOriented ? [54, 55, 56, 57, 58, 59] : [48, 49, 50, 51, 52, 53];
-            case ANIMATION.SIT_TALK: return topOriented ? [90, 91, 92, 93, 94, 95] : [84, 85, 86, 87, 88, 89];
+            case ANIMATION.SIT_DOWN: return topOriented ? [18, 68, 69, 70, 71] : [12, 32, 33, 34, 35];
+            case ANIMATION.STAND_UP: return topOriented ? [71, 70, 69, 68, 18] : [35, 34, 33, 32, 12];
+            case ANIMATION.TYPE: return [36, 37, 38, 39];
+            case ANIMATION.TALK: return topOriented ? [46, 47, 48, 49, 50, 51] : [40, 41, 42, 43, 44, 45];
+            case ANIMATION.SIT_TALK: return topOriented ? [78, 79, 80, 81, 82, 83] : [72, 73, 74, 75, 76, 77];
             case ANIMATION.RAGE:
-                let rage_frames = [66, 67, 68, 69];
+                let rage_frames = [57, 58, 59, 60];
                 for (let i = 0; i < 4; i++) {
-                    rage_frames = rage_frames.concat([70, 71, 72, 73, 74, 73]);
+                    rage_frames = rage_frames.concat([61, 62, 63, 64, 65, 64]);
                 }
-                return rage_frames.concat([74, 75, 76]);
+                return rage_frames.concat([65, 66, 67]);
             case ANIMATION.DRINK:
-                return [60, 61, 60, 60, 60, 62, 63, 63, 64, 63, 63, 64, 63, 62, 60, 60, 60, 60, 60, 60, 60];
+                return [52, 53, 52, 52, 52, 54, 55, 55, 56, 55, 55, 56, 55, 54, 52, 52, 52, 52, 52, 52, 52];
             case ANIMATION.SMOKE:
-                let smoke_frames = [24, 25, 26, 27, 30, 31, 32, 33];
+                let smoke_frames = [24, 25, 26, 27, 28, 29, 30, 31];
                 for (let i = 0; i < 6; i++) {
                     // Take smoke length
-                    smoke_frames.push(33)
+                    smoke_frames.push(31)
                 }
-                smoke_frames = smoke_frames.concat([32, 31, 30, 27, 26, 25, 24]);
+                smoke_frames = smoke_frames.concat([30, 29, 28, 27, 26, 25, 24]);
                 for (let i = 0; i < 20; i++) {
                     // Do nothing length
                     smoke_frames.push(24)

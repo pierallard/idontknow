@@ -6,6 +6,8 @@ import {HumanState} from "./HumanState";
 import {Price} from "../objects/Price";
 import {RAGE_IMAGE} from "../human_stuff/ThoughtBubble";
 
+const SECOND_MAX = 60 * Phaser.Timer.SECOND;
+
 export class TypeState extends MoveThenActAbstractState {
     protected retry(): HumanState {
         const nextDeskReferer = this.worldKnowledge.getClosestReferer(['Desk'], 1, this.human.getPosition());
@@ -23,9 +25,10 @@ export class TypeState extends MoveThenActAbstractState {
         this.human.loadAnimation(ANIMATION.SIT_DOWN, this.objectReferer.getObject().forceOrientation(this.objectReferer.getIdentifier()));
         this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.SIT_DOWN), () => {
             this.human.loadAnimation(ANIMATION.TYPE);
-            this.worldKnowledge.addProgress(this.human.getType(), 1);
+            const time = Phaser.Math.random(15 * Phaser.Timer.SECOND, SECOND_MAX);
+            this.worldKnowledge.addProgress(this.human.getType(), time / SECOND_MAX, time);
             this.worldKnowledge.addMoneyInWallet(new Price(100));
-            this.events.push(this.game.time.events.add(Phaser.Math.random(15, 60) * Phaser.Timer.SECOND, () => {
+            this.events.push(this.game.time.events.add(time, () => {
                 this.human.loadAnimation(ANIMATION.STAND_UP);
                 this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.STAND_UP) + 100, () => {
                     this.human.goToFreeCell(this.objectReferer);

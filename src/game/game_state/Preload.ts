@@ -1,3 +1,5 @@
+import {HUMAN_SPRITE_COLORS, HUMAN_SPRITE_VARIATIONS} from "../human_stuff/Employee";
+import {SELECTED} from "../objects/ObjectSelector";
 
 export default class Preload extends Phaser.State {
     public preload () {
@@ -22,12 +24,14 @@ export default class Preload extends Phaser.State {
     }
 
     private loadGameImages() {
-        this.game.load.spritesheet('human', 'assets/human.png', 24, 25);
-        this.game.load.spritesheet('human_selected', 'assets/human_selected.png', 24, 25);
-        this.game.load.spritesheet('human_red', 'assets/human_red.png', 24, 25);
-        this.game.load.spritesheet('human_red_selected', 'assets/human_red_selected.png', 24, 25);
-        this.game.load.spritesheet('human_pink', 'assets/human_pink.png', 24, 25);
-        this.game.load.spritesheet('human_pink_selected', 'assets/human_pink_selected.png', 24, 25);
+        HUMAN_SPRITE_VARIATIONS.forEach((humanSprite) => {
+            HUMAN_SPRITE_COLORS.forEach((humanColor) => {
+                const key = humanSprite + '_' + humanColor;
+                const selectedKey = key + SELECTED;
+                this.game.load.spritesheet(key, 'assets/' + key + '.png', 24, 25);
+                this.game.load.spritesheet(selectedKey, 'assets/' + selectedKey + '.png', 24, 25);
+            })
+        });
         this.game.load.spritesheet('casedefault', 'assets/casedefault.png', 40, 19);
         this.game.load.spritesheet('woodcell', 'assets/woodcell.png', 40, 19);
         this.game.load.spritesheet('chair', 'assets/chair.png', 40, 40);

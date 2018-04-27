@@ -1,4 +1,4 @@
-const SELECTED = '_selected';
+export const SELECTED = '_selected';
 
 export class ObjectSelector {
     static makeSelectable(

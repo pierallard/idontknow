@@ -1,4 +1,5 @@
 import {HumanProperties} from "./HumanProperties";
+import {HUMAN_SPRITE_VARIATIONS} from "./Employee";
 
 const NAMES = [
     'Michel',
@@ -17,9 +18,14 @@ export enum EMPLOYEE_TYPE {
 const USE_API = false;
 
 export class HumanPropertiesFactory {
-    static create() {
+    static create(type: EMPLOYEE_TYPE = null) {
         return new HumanProperties(
-            [EMPLOYEE_TYPE.DEVELOPER, EMPLOYEE_TYPE.MARKETING, EMPLOYEE_TYPE.SALE][Math.floor(Math.random() * 3)],
+            HUMAN_SPRITE_VARIATIONS[Math.floor(Math.random() * HUMAN_SPRITE_VARIATIONS.length)],
+            type !== null ? type : [
+                EMPLOYEE_TYPE.DEVELOPER,
+                EMPLOYEE_TYPE.MARKETING,
+                EMPLOYEE_TYPE.SALE
+            ][Math.floor(Math.random() * 3)],
             USE_API ? this.generateName() : NAMES[Math.floor(Math.random() * NAMES.length)],
             Math.random(),
             Math.random(),

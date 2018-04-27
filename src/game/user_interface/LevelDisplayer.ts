@@ -19,18 +19,19 @@ export class LevelDisplayer implements Tooltipable {
         this.gauges = {};
         this.tooltips = {};
         const width = Math.floor((INTERFACE_WIDTH - 4 * GAP) / 3);
+
         this.gauges[EMPLOYEE_TYPE.DEVELOPER] = new Gauge(width, COLOR.LIGHT_GREEN);
         this.gauges[EMPLOYEE_TYPE.SALE] = new Gauge(width, COLOR.RED);
         this.gauges[EMPLOYEE_TYPE.MARKETING] = new Gauge(width, COLOR.ROSE);
 
         this.tooltips[EMPLOYEE_TYPE.DEVELOPER] = new Tooltip(() => {
-            return Math.round(this.worldKnowledge.getLevelProgress(EMPLOYEE_TYPE.DEVELOPER) * 1000) + ' lines coded';
+            return Math.round(this.worldKnowledge.getLevelValue(EMPLOYEE_TYPE.DEVELOPER)) + '/' + this.worldKnowledge.getLevelGoal(EMPLOYEE_TYPE.DEVELOPER) + ' lines coded';
         });
         this.tooltips[EMPLOYEE_TYPE.SALE] = new Tooltip(() => {
-            return Math.round(this.worldKnowledge.getLevelProgress(EMPLOYEE_TYPE.SALE) * 10) + ' licence sell'
+            return Math.round(this.worldKnowledge.getLevelValue(EMPLOYEE_TYPE.SALE)) + '/' + this.worldKnowledge.getLevelGoal(EMPLOYEE_TYPE.SALE) + ' licence sell'
         });
         this.tooltips[EMPLOYEE_TYPE.MARKETING] = new Tooltip(() => {
-            return Math.round(this.worldKnowledge.getLevelProgress(EMPLOYEE_TYPE.MARKETING) * 10) + ' campaigns done';
+            return Math.round(this.worldKnowledge.getLevelValue(EMPLOYEE_TYPE.MARKETING)) + '/' + this.worldKnowledge.getLevelGoal(EMPLOYEE_TYPE.MARKETING) + ' campaigns done';
         });
     }
 

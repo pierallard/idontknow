@@ -9,14 +9,14 @@ import {SmoothValue} from "../SmoothValue";
 
 const PARTS = 36;
 
-export class Camembert implements Tooltipable {
+export class PieChart implements Tooltipable {
     private graphics: Phaser.Graphics;
     private tooltip: Tooltip;
     private game: Phaser.Game;
     private human: Employee;
-    private data: CamembertPart[];
+    private data: PieChartPart[];
     private shouldRefreshData: boolean;
-    private shouldRefreshCamembert: boolean;
+    private shouldRefreshPieChart: boolean;
 
     constructor() {
         this.data = [];
@@ -32,21 +32,21 @@ export class Camembert implements Tooltipable {
                 angle += 2 * Math.PI;
             }
 
-            const currentCamembert = this.getSelectedCamembertPart(angle);
-            if (currentCamembert) {
-                return currentCamembert.getString();
+            const currentPieChart = this.getSelectedPieChartPart(angle);
+            if (currentPieChart) {
+                return currentPieChart.getString();
             }
 
             return '';
         });
         this.shouldRefreshData = true;
-        this.shouldRefreshCamembert = true;
+        this.shouldRefreshPieChart = true;
     }
 
     create(game:Phaser.Game, groups: {[index: string] : Phaser.Group}) {
         this.game = game;
         this.graphics = game.add.graphics(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH / 2, 180, groups[GROUP_INTERFACE]);
-        this.drawCamembert();
+        this.drawPieChart();
         this.tooltip.setInput(this, this.graphics);
 
         groups[GROUP_INTERFACE].add(this.graphics);
@@ -62,14 +62,14 @@ export class Camembert implements Tooltipable {
             if (this.shouldRefreshData) {
                 this.refreshData();
             }
-            if (this.shouldRefreshCamembert) {
-                this.drawCamembert();
+            if (this.shouldRefreshPieChart) {
+                this.drawPieChart();
             }
         }
         this.tooltip.update();
     }
 
-    private drawCamembert() {
+    private drawPieChart() {
         this.graphics.clear();
 
         const sumValues = this.sumValues();
@@ -77,19 +77,19 @@ export class Camembert implements Tooltipable {
         const RADIUS = (INTERFACE_WIDTH - 30) / 2;
 
         for (let i = 0; i < this.data.length; i++) {
-            const camembertPart = this.data[i];
-            const points = camembertPart.getPoints(currentAngle, sumValues, RADIUS);
+            const pieChartPart = this.data[i];
+            const points = pieChartPart.getPoints(currentAngle, sumValues, RADIUS);
 
-            currentAngle += camembertPart.getAngle(sumValues);
+            currentAngle += pieChartPart.getAngle(sumValues);
 
-            this.graphics.beginFill(camembertPart.getColor());
+            this.graphics.beginFill(pieChartPart.getColor());
             this.graphics.drawPolygon(points);
             this.graphics.endFill();
         }
 
-        this.shouldRefreshCamembert = false;
+        this.shouldRefreshPieChart = false;
         this.game.time.events.add(Phaser.Timer.SECOND * 0.1, () => {
-            this.shouldRefreshCamembert = true;
+            this.shouldRefreshPieChart = true;
         }, this);
     }
 
@@ -98,18 +98,18 @@ export class Camembert implements Tooltipable {
         this.human.getNextProbabilities().forEach((state) => {
             let found = false;
             for (let i = 0; i < this.data.length; i++) {
-                const camembertPart = this.data[i];
-                if (camembertPart.getState() === state.state) {
-                    camembertPart.setValue(state.probability);
+                const pieChartPart = this.data[i];
+                if (pieChartPart.getState() === state.state) {
+                    pieChartPart.setValue(state.probability);
                     found = true;
                     foundIdentifiers.push(i);
                 }
             }
             if (!found) {
-                this.data.push(new CamembertPart(
+                this.data.push(new PieChartPart(
                     state.state,
                     state.probability,
-                    Camembert.getColor(state.state),
+                    PieChart.getColor(state.state),
                     HumanStateManager.getStr(state.state)
                 ));
             }
@@ -140,24 +140,24 @@ export class Camembert implements Tooltipable {
         }
     }
 
-    private getSelectedCamembertPart(angle: number): CamembertPart {
+    private getSelectedPieChartPart(angle: number): PieChartPart {
         let currentAngle = 0;
         const sum = this.sumValues();
         for (let i = 0; i < this.data.length; i++) {
-            const camembertPart = this.data[i];
-            const camembertAngle = camembertPart.getAngle(sum);
-            if (angle >= currentAngle && angle <= (currentAngle + camembertAngle)) {
-                return camembertPart;
+            const pieChartPart = this.data[i];
+            const pieChartAngle = pieChartPart.getAngle(sum);
+            if (angle >= currentAngle && angle <= (currentAngle + pieChartAngle)) {
+                return pieChartPart;
             }
-            currentAngle += camembertAngle;
+            currentAngle += pieChartAngle;
         }
 
         return null;
     }
 
     private sumValues(): number {
-        return this.data.reduce((cur, camembertPart) => {
-            return cur + camembertPart.getValue();
+        return this.data.reduce((cur, pieChartPart) => {
+            return cur + pieChartPart.getValue();
         }, 0);
     }
 
@@ -170,7 +170,7 @@ export class Camembert implements Tooltipable {
     }
 }
 
-class CamembertPart {
+class PieChartPart {
     private state: STATE;
     private value: SmoothValue;
     private color: COLOR;

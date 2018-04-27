@@ -215,6 +215,10 @@ export class HumanStateManager {
             }
         }
 
+        if (state === STATE.TYPE && this.worldKnowledge.getLevelProgress(this.human.getType()) >= 1) {
+            result = result / 10;
+        }
+
         HumanMoodManager.getMoods().forEach((mood: MOOD) => {
             if (this.human.getMood(mood) < LIMIT) {
                 if (HumanStateManager.getMoodGains(state)[mood] > 0) {

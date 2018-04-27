@@ -26,6 +26,9 @@ const MIN_RETRIES = 0;
 const GAP_FROM_BOTTOM = -8;
 const PATH_DEBUG = false;
 
+export const HUMAN_SPRITE_VARIATIONS = ['human1', 'human2'];
+export const HUMAN_SPRITE_COLORS = ['green', 'pink', 'red'];
+
 export class Employee {
     private sprite: Phaser.TileSprite;
     private cell: PIXI.Point;
