@@ -24,16 +24,8 @@ export class ObjectInfo {
         return this.name;
     }
 
-    getBottomOrientedSpriteInfos(): SpriteInfo[] {
-        return this.bottomOrientedSpriteInfos;
-    }
-
-    getTopOrientedSpriteInfos(): SpriteInfo[] {
-        return this.topOrientedSpriteInfos;
-    }
-
     getSpriteInfos(topOriented: boolean) {
-        return topOriented ? this.getTopOrientedSpriteInfos() : this.getBottomOrientedSpriteInfos();
+        return topOriented ? this.topOrientedSpriteInfos : this.bottomOrientedSpriteInfos;
     }
 
     getSpriteInfo(objectOrder: number): SpriteInfo {
