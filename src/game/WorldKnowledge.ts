@@ -471,4 +471,8 @@ export class WorldKnowledge {
     getLevelGoal(type: EMPLOYEE_TYPE): number {
         return this.levelManager.getGoal(type);
     }
+
+    getLevel(): number {
+        return this.levelManager.getLevel();
+    }
 }

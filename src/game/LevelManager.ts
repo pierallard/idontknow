@@ -20,7 +20,7 @@ export class LevelManager {
         this.starts[EMPLOYEE_TYPE.MARKETING] = 0;
         this.starts[EMPLOYEE_TYPE.SALE] = 0;
 
-        this.goals[EMPLOYEE_TYPE.DEVELOPER] = 100;
+        this.goals[EMPLOYEE_TYPE.DEVELOPER] = DEVELOPER_RATIO;
         this.goals[EMPLOYEE_TYPE.MARKETING] = MARKETING_RATIO;
         this.goals[EMPLOYEE_TYPE.SALE] = SALE_RATIO;
 
@@ -64,5 +64,9 @@ export class LevelManager {
             this.goals[EMPLOYEE_TYPE.MARKETING] = this.goals[EMPLOYEE_TYPE.MARKETING] * 2;
             this.goals[EMPLOYEE_TYPE.SALE] = this.goals[EMPLOYEE_TYPE.SALE] * 2;
         }
+    }
+
+    getLevel(): number {
+        return this.level;
     }
 }

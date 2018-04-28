@@ -1,4 +1,4 @@
-# Conquer & Command
+# Office Tycoon
 
 ## Install with Docker-compose
 

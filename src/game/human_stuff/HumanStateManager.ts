@@ -190,10 +190,10 @@ export class HumanStateManager {
             case STATE.FREEZE: result = 3; break;
             case STATE.MOVE_RANDOM: result = 2; break;
             case STATE.TALK: result = 8; break;
-            case STATE.SIT: result = 4; break;
+            case STATE.SIT: result = 5; break;
             case STATE.COFFEE: result = 6; break;
             case STATE.SIT_TALK: result = 6; break;
-            case STATE.TYPE: result = (5 + 1 + 2 + 8 + 2 + 6 + 6); break;
+            case STATE.TYPE: result = (5 + 3 + 2 + 8 + 5 + 6 + 6); break;
         }
 
         if (state === this.state.getState()) {
@@ -223,7 +223,7 @@ export class HumanStateManager {
             if (this.human.getMood(mood) < LIMIT) {
                 if (HumanStateManager.getMoodGains(state)[mood] > 0) {
                     let ratio = 1 - this.human.getMood(mood) / LIMIT;
-                    ratio = ratio * HumanStateManager.getMoodGains(state)[mood] * 8;
+                    ratio = ratio * HumanStateManager.getMoodGains(state)[mood] * 15;
                     result = result * (1 + ratio);
                 }
             }
