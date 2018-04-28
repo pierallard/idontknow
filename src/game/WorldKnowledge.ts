@@ -332,7 +332,7 @@ export class WorldKnowledge {
     canPutHere(objectInfo: ObjectInfo, origin: PIXI.Point, leftOriented: boolean) {
         return this.areAllTheCellsFree(objectInfo, origin, leftOriented) &&
             this.areAllSpritesEnterable(objectInfo, origin, leftOriented) &&
-            this.isNewObjectNotBlockingExistingOne(objectInfo, origin, leftOriented);
+            this.isNewObjectNotBlockingExistingOne(origin);
     };
 
     private areAllTheCellsFree(objectInfo: ObjectInfo, origin: PIXI.Point, leftOriented: boolean) {
@@ -365,30 +365,20 @@ export class WorldKnowledge {
         return true;
     }
 
-    private isNewObjectNotBlockingExistingOne(objectInfo: ObjectInfo, origin: PIXI.Point, leftOriented: boolean) {
-        const newObjectCells = objectInfo.getCellGaps(leftOriented).map((gap) => {
-            return new PIXI.Point(origin.x + gap.x, origin.y + gap.y);
-        });
-        this.objects.forEach((object) => {
-            const otherObjectInfo = ObjectInfoRegistry.getObjectInfo(object.constructor.name);
+    private isNewObjectNotBlockingExistingOne(origin: PIXI.Point) {
+        for (let o = 0; o < this.objects.length; o++) {
+            const object = this.objects[o];
+            const objectInfo = ObjectInfoRegistry.getObjectInfo(object.constructor.name);
+
             let isEntryPossible = false;
-            otherObjectInfo.getEntryCells(object.getOrigin(), leftOriented).forEach((cell) => {
-                if (this.isFree(cell)) {
-                    let isCellBlocking = false;
-                    newObjectCells.forEach((newObjectCell) => {
-                        if (cell.x === newObjectCell.x && cell.y === newObjectCell.y) {
-                            isCellBlocking = true;
-                        }
-                    });
-                    if (!isCellBlocking) {
-                        isEntryPossible = true
-                    }
-                }
-            });
-            if (!isEntryPossible) {
+            const entryCells = objectInfo.getEntryCells(object.getOrigin(), object.getLeftOriented());
+            for (let i = 0; i < entryCells.length; i++) {
+                isEntryPossible = isEntryPossible || (this.isFree(entryCells[i]) && (entryCells[i].x !== origin.x || entryCells[i].y !== origin.y));
+            }
+            if (isEntryPossible === false) {
                 return false;
             }
-        });
+        }
 
         return true;
     }

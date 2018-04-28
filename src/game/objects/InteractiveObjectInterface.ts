@@ -35,4 +35,6 @@ export interface InteractiveObjectInterface extends ObjectInterface {
     setUnused(subObjectNumber: number): void;
 
     getUnusedReferers(): ObjectReferer[];
+
+    getLeftOriented(): boolean;
 }

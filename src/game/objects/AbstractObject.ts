@@ -135,4 +135,8 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
 
         return result;
     }
+
+    getLeftOriented(): boolean {
+        return this.leftOriented;
+    }
 }
