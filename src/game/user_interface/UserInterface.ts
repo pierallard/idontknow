@@ -187,7 +187,6 @@ class InterfaceTab {
     }
 
     highlight(value: boolean) {
-        console.log(value);
         this.buttonSprite.loadTexture('interfacetabs', value ? 1 : 0);
     }
 }

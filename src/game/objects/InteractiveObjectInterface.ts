@@ -37,4 +37,6 @@ export interface InteractiveObjectInterface extends ObjectInterface {
     getUnusedReferers(): ObjectReferer[];
 
     getLeftOriented(): boolean;
+
+    getOrientation(): DIRECTION;
 }

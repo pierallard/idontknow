@@ -336,8 +336,8 @@ export class WorldKnowledge {
     };
 
     private areAllTheCellsFree(objectInfo: ObjectInfo, origin: PIXI.Point, orientation: DIRECTION) {
-        for (let i = 0; i < objectInfo.getSpriteInfos(ObjectOrientation.isTopOriented(orientation)).length; i++) {
-            const spriteInfo = objectInfo.getSpriteInfo(i);
+        for (let i = 0; i < objectInfo.getSpriteInfos(orientation).length; i++) {
+            const spriteInfo = objectInfo.getSpriteInfo(orientation, i);
             const gap = spriteInfo.getPositionGapFromOrigin(ObjectOrientation.isLeftOriented(orientation));
             if (!this.isFree(new PIXI.Point(origin.x + gap.x, origin.y + gap.y))) {
                 return false;
@@ -348,8 +348,8 @@ export class WorldKnowledge {
     }
 
     private areAllSpritesEnterable(objectInfo: ObjectInfo, origin: PIXI.Point, orientation: DIRECTION) {
-        for (let i = 0; i < objectInfo.getSpriteInfos(ObjectOrientation.isTopOriented(orientation)).length; i++) {
-            const spriteInfo = objectInfo.getSpriteInfo(i);
+        for (let i = 0; i < objectInfo.getSpriteInfos(orientation).length; i++) {
+            const spriteInfo = objectInfo.getSpriteInfo(orientation, i);
             if (spriteInfo.getEntryPoints(ObjectOrientation.isLeftOriented(orientation)).length > 0) {
                 let isEntryPossible = false;
                 spriteInfo.getEntryPoints(ObjectOrientation.isLeftOriented(orientation)).forEach((entry) => {
@@ -371,7 +371,7 @@ export class WorldKnowledge {
             const objectInfo = ObjectInfoRegistry.getObjectInfo(object.constructor.name);
 
             let isEntryPossible = false;
-            const entryCells = objectInfo.getEntryCells(object.getOrigin(), object.getLeftOriented());
+            const entryCells = objectInfo.getEntryCells(object.getOrigin(), object.getOrientation());
             for (let i = 0; i < entryCells.length; i++) {
                 isEntryPossible = isEntryPossible || (this.isFree(entryCells[i]) && (entryCells[i].x !== origin.x || entryCells[i].y !== origin.y));
             }

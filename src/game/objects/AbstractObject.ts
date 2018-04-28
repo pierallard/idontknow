@@ -26,7 +26,7 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
 
         this.sprites = [];
 
-        infos.getSpriteInfos(ObjectOrientation.isTopOriented(this.orientation)).forEach((spriteInfo) => {
+        infos.getSpriteInfos(this.orientation).forEach((spriteInfo) => {
             const sprite = game.add.sprite(
                 spriteInfo.getRealPosition(this.position, ObjectOrientation.isLeftOriented(this.orientation)).x,
                 spriteInfo.getRealPosition(this.position, ObjectOrientation.isLeftOriented(this.orientation)).y,
@@ -49,17 +49,17 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
         const sittableObjectInfos =
             ObjectInfoRegistry
                 .getObjectInfo(this.constructor.name)
-                .getSpriteInfo(subObjectNumber);
+                .getSpriteInfo(this.orientation, subObjectNumber);
 
         return sittableObjectInfos.getSittablePosition(ObjectOrientation.isLeftOriented(this.orientation));
     }
 
     getEntries(objectNumber: number): DIRECTION[] {
-        return ObjectInfoRegistry.getObjectInfo(this.constructor.name).getEntryPoints(ObjectOrientation.isLeftOriented(this.orientation), objectNumber);
+        return ObjectInfoRegistry.getObjectInfo(this.constructor.name).getEntryPoints(this.orientation, objectNumber);
     }
 
     getPositions(): PIXI.Point[] {
-        return ObjectInfoRegistry.getObjectInfo(this.constructor.name).getCellGaps(ObjectOrientation.isLeftOriented(this.orientation)).map((gap) => {
+        return ObjectInfoRegistry.getObjectInfo(this.constructor.name).getCellGaps(this.orientation).map((gap) => {
             return new PIXI.Point(
                 this.position.x + gap.x,
                 this.position.y + gap.y
@@ -81,21 +81,21 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
     forceOrientation(subObjectNumber: number): boolean {
         const infos = ObjectInfoRegistry.getObjectInfo(this.constructor.name);
 
-        return infos.getSpriteInfo(subObjectNumber).getOrientation(ObjectOrientation.isLeftOriented(this.orientation));
+        return infos.getSpriteInfo(this.orientation, subObjectNumber).getOrientation(ObjectOrientation.isLeftOriented(this.orientation));
     }
 
     forceTopOrientation(subObjectNumber: number): boolean {
         const infos = ObjectInfoRegistry.getObjectInfo(this.constructor.name);
 
-        return infos.getSpriteInfo(subObjectNumber).getTopOrientation();
+        return infos.getSpriteInfo(this.orientation, subObjectNumber).getTopOrientation();
     }
 
     getCellPositionSubObject(subObjectNumber: number): PIXI.Point {
         const infos = ObjectInfoRegistry.getObjectInfo(this.constructor.name);
 
         return new PIXI.Point(
-            this.position.x + infos.getPositionGapOfSubObject(ObjectOrientation.isLeftOriented(this.orientation), subObjectNumber).x,
-            this.position.y + infos.getPositionGapOfSubObject(ObjectOrientation.isLeftOriented(this.orientation), subObjectNumber).y
+            this.position.x + infos.getPositionGapOfSubObject(this.orientation, subObjectNumber).x,
+            this.position.y + infos.getPositionGapOfSubObject(this.orientation, subObjectNumber).y
         );
     }
 
@@ -126,8 +126,8 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
     getUnusedReferers(): ObjectReferer[] {
         let result = [];
         const infos = ObjectInfoRegistry.getObjectInfo(this.constructor.name);
-        for (let i = 0; i < infos.getSpriteInfos(ObjectOrientation.isTopOriented(this.orientation)).length; i++) {
-            if (infos.getSpriteInfos(ObjectOrientation.isTopOriented(this.orientation))[i].getEntryPoints(ObjectOrientation.isLeftOriented(this.orientation)).length > 0) {
+        for (let i = 0; i < infos.getSpriteInfos(this.orientation).length; i++) {
+            if (infos.getSpriteInfos(this.orientation)[i].getEntryPoints(ObjectOrientation.isLeftOriented(this.orientation)).length > 0) {
                 if (!this.isUsed(i)) {
                     result.push(new ObjectReferer(this, i));
                 }
@@ -137,7 +137,12 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
         return result;
     }
 
+    // TODO Remove
     getLeftOriented(): boolean {
         return ObjectOrientation.isLeftOriented(this.orientation);
+    }
+
+    getOrientation(): DIRECTION {
+        return this.orientation;
     }
 }

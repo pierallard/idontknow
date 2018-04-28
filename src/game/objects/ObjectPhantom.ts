@@ -33,7 +33,7 @@ export class ObjectPhantom implements ObjectInterface {
         this.position = new PIXI.Point(-10, -10);
         this.objectInfo = ObjectInfoRegistry.getObjectInfo(name);
 
-        this.objectInfo.getSpriteInfos(false).forEach((spriteInfo: SpriteInfo) => {
+        this.objectInfo.getSpriteInfos(DIRECTION_LOOP[0]).forEach((spriteInfo: SpriteInfo) => {
             this.phantomSprites.push(new PhantomSprite(spriteInfo));
         });
 
@@ -115,7 +115,7 @@ export class ObjectPhantom implements ObjectInterface {
             });
             this.phantomSprites = [];
 
-            this.objectInfo.getSpriteInfos(ObjectOrientation.isTopOriented(this.orientation)).forEach((spriteInfo: SpriteInfo) => {
+            this.objectInfo.getSpriteInfos(this.orientation).forEach((spriteInfo: SpriteInfo) => {
                 this.phantomSprites.push(new PhantomSprite(spriteInfo));
             });
 
@@ -133,13 +133,13 @@ export class ObjectPhantom implements ObjectInterface {
     }
 
     getPositions(): PIXI.Point[] {
-        return this.objectInfo.getCellGaps(ObjectOrientation.isLeftOriented(this.orientation)).map((cellGap) => {
+        return this.objectInfo.getCellGaps(this.orientation).map((cellGap) => {
             return new PIXI.Point(this.position.x + cellGap.x, this.position.y + cellGap.y)
         });
     }
 
     getEntries(objectNumber: number): DIRECTION[] {
-        return this.objectInfo.getEntryPoints(ObjectOrientation.isLeftOriented(this.orientation), objectNumber);
+        return this.objectInfo.getEntryPoints(this.orientation, objectNumber);
     }
 
     private updateForbiddenSprite() {
@@ -205,7 +205,7 @@ class DirectionsSprite {
     updatePolygons() {
         this.graphics.clear();
 
-        this.phantom.getInfo().getSpriteInfos(ObjectOrientation.isTopOriented(this.phantom.getOrientation())).forEach((spriteInfo) => {
+        this.phantom.getInfo().getSpriteInfos(this.phantom.getOrientation()).forEach((spriteInfo) => {
             spriteInfo.getEntryPoints(this.phantom.getLeftOriented()).forEach((direction) => {
                 const cellGap = spriteInfo.getPositionGapFromOrigin(this.phantom.getLeftOriented());
                 if (this.phantom.isEntryAccessible(cellGap, direction)) {
@@ -246,7 +246,7 @@ class DirectionsSprite {
         });
 
         this.graphics.beginFill(this.phantom.isCellFree() ? COLOR.LIGHT_GREEN : COLOR.RED);
-        this.phantom.getInfo().getCellGaps(this.phantom.getLeftOriented()).forEach((cellGap) => {
+        this.phantom.getInfo().getCellGaps(this.phantom.getOrientation()).forEach((cellGap) => {
             this.graphics.drawPolygon(
                 PositionTransformer.addGap(new PIXI.Point(- CELL_WIDTH / 2, 0), cellGap),
                 PositionTransformer.addGap(new PIXI.Point(0, CELL_HEIGHT / 2), cellGap),
@@ -293,7 +293,6 @@ class PhantomSprite {
     }
 
     updateLeftOriented(leftOriented: boolean) {
-        console.log(leftOriented);
         this.leftOriented = leftOriented;
         this.sprite.scale.set(leftOriented ? -1 : 1, 1);
     }

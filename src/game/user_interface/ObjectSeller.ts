@@ -8,6 +8,7 @@ import {GROUP_INTERFACE} from "../game_state/Play";
 import {TEXT_STYLE} from "../TextStyle";
 import {CELL_HEIGHT, CELL_WIDTH} from "../PositionTransformer";
 import {COLOR} from "../Pico8Colors";
+import {DIRECTION_LOOP} from "../objects/ObjectOrientation";
 
 export const OBJECT_SELLER_CELL_SIZE = 41;
 const CIRCLE_GAP = 7;
@@ -186,7 +187,7 @@ class ObjectProvisionnerButton {
 
         let width = 1;
         let height = 1;
-        this.objectInfo.getCellGaps(false).forEach((gap) => {
+        this.objectInfo.getCellGaps(DIRECTION_LOOP[0]).forEach((gap) => {
             width = Math.max(width, 1 + gap.x);
             height = Math.max(height, 1 + gap.y);
         });
@@ -196,7 +197,7 @@ class ObjectProvisionnerButton {
         this.square.lineStyle(1, COLOR.WHITE);
         this.square.drawRect(0, 0, OBJECT_SELLER_CELL_SIZE, OBJECT_SELLER_CELL_SIZE);
 
-        this.objectInfo.getCellGaps(false).forEach((cellGap) => {
+        this.objectInfo.getCellGaps(DIRECTION_LOOP[0]).forEach((cellGap) => {
             const fakeCell = game.add.sprite(
                 spriteOrigin.x - (cellGap.x - cellGap.y) * (CELL_WIDTH / 2) * scale,
                 spriteOrigin.y - (cellGap.x + cellGap.y) * (CELL_HEIGHT / 2) * scale,
@@ -208,7 +209,7 @@ class ObjectProvisionnerButton {
             this.fakeCells.push(fakeCell);
         });
 
-        this.objectInfo.getSpriteInfos(false).forEach((spriteInfo) => {
+        this.objectInfo.getSpriteInfos(DIRECTION_LOOP[0]).forEach((spriteInfo) => {
             const seller = game.add.sprite(
                 spriteInfo.getRealPositionFromOrigin(spriteOrigin, false, scale).x,
                 spriteInfo.getRealPositionFromOrigin(spriteOrigin, false, scale).y,
