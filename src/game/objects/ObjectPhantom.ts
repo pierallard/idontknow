@@ -8,6 +8,7 @@ import {DIRECTION} from "../Direction";
 import {ObjectInterface} from "./ObjectInterface";
 import {GROUP_INFOS} from "../game_state/Play";
 import {COLOR} from "../Pico8Colors";
+import {DIRECTION_LOOP, ObjectOrientation} from "./ObjectOrientation";
 
 const ARROW_SIZE = 0.9;
 const GAP = 4;
@@ -16,21 +17,23 @@ const SPRITE_OPACITY = 0.7;
 export class ObjectPhantom implements ObjectInterface {
     private position: PIXI.Point;
     private phantomSprites: PhantomSprite[];
-    private leftOriented: boolean;
+    private orientation: DIRECTION;
     private forbiddenSprite: Phaser.Sprite;
     private worldKnowledge: WorldKnowledge;
     private objectInfo: ObjectInfo;
     private putEvent: Function;
     private directionsSprite: DirectionsSprite;
+    private game: Phaser.Game;
+    private group: Phaser.Group;
 
     constructor(name, game: Phaser.Game, worldKnowledge: WorldKnowledge) {
         this.phantomSprites = [];
-        this.leftOriented = false;
+        this.orientation = DIRECTION_LOOP[0];
         this.worldKnowledge = worldKnowledge;
         this.position = new PIXI.Point(-10, -10);
         this.objectInfo = ObjectInfoRegistry.getObjectInfo(name);
 
-        this.objectInfo.getSpriteInfos().forEach((spriteInfo: SpriteInfo) => {
+        this.objectInfo.getBottomOrientedSpriteInfos().forEach((spriteInfo: SpriteInfo) => {
             this.phantomSprites.push(new PhantomSprite(spriteInfo));
         });
 
@@ -41,7 +44,7 @@ export class ObjectPhantom implements ObjectInterface {
         }, this);
 
         this.putEvent = () => {
-            if (this.worldKnowledge.canPutHere(this.objectInfo, this.position, this.leftOriented)) {
+            if (this.worldKnowledge.canPutHere(this.objectInfo, this.position, ObjectOrientation.isLeftOriented(this.orientation))) {
                 this.put(game);
             }
         };
@@ -57,6 +60,9 @@ export class ObjectPhantom implements ObjectInterface {
     }
 
     create(game: Phaser.Game, groups: { [index: string]: Phaser.Group }) {
+        this.game = game;
+        this.group = groups[GROUP_INFOS];
+
         this.directionsSprite.create(game, groups[GROUP_INFOS]);
         this.directionsSprite.setPosition(this.position);
 
@@ -100,9 +106,26 @@ export class ObjectPhantom implements ObjectInterface {
     }
 
     private switchOrientation() {
-        this.leftOriented = !this.leftOriented;
+        const previousTopOriented = ObjectOrientation.isTopOriented(this.orientation);
+        this.orientation = ObjectOrientation.getNextOrientation(this.orientation, this.objectInfo.canBeTopOriented());
+
+        if (previousTopOriented !== ObjectOrientation.isTopOriented(this.orientation)) {
+            this.phantomSprites.forEach((phantomSprite) => {
+                phantomSprite.destroy();
+            });
+            this.phantomSprites = [];
+
+            this.objectInfo.getSpriteInfos(ObjectOrientation.isTopOriented(this.orientation)).forEach((spriteInfo: SpriteInfo) => {
+                this.phantomSprites.push(new PhantomSprite(spriteInfo));
+            });
+
+            this.phantomSprites.forEach((phantomSprite) => {
+                phantomSprite.create(this.game, this.group);
+            })
+        }
+
         this.phantomSprites.forEach((phantomSprite) => {
-            phantomSprite.updateOrientation(this.leftOriented);
+            phantomSprite.updateLeftOriented(ObjectOrientation.isLeftOriented(this.orientation));
             phantomSprite.setPosition(this.position);
         });
         this.updateForbiddenSprite();
@@ -110,13 +133,13 @@ export class ObjectPhantom implements ObjectInterface {
     }
 
     getPositions(): PIXI.Point[] {
-        return this.objectInfo.getCellGaps(this.leftOriented).map((cellGap) => {
+        return this.objectInfo.getCellGaps(ObjectOrientation.isLeftOriented(this.orientation)).map((cellGap) => {
             return new PIXI.Point(this.position.x + cellGap.x, this.position.y + cellGap.y)
         });
     }
 
     getEntries(objectNumber: number): DIRECTION[] {
-        return this.objectInfo.getEntryPoints(this.leftOriented, objectNumber);
+        return this.objectInfo.getEntryPoints(ObjectOrientation.isLeftOriented(this.orientation), objectNumber);
     }
 
     private updateForbiddenSprite() {
@@ -124,13 +147,13 @@ export class ObjectPhantom implements ObjectInterface {
             return phantomSprite.getSprite();
         }));
         this.forbiddenSprite.position.set(center.x, center.y);
-        this.forbiddenSprite.alpha = this.worldKnowledge.canPutHere(this.objectInfo, this.position, this.leftOriented) ? 0 : 1;
+        this.forbiddenSprite.alpha = this.worldKnowledge.canPutHere(this.objectInfo, this.position, ObjectOrientation.isLeftOriented(this.orientation)) ? 0 : 1;
     }
 
     private put(game: Phaser.Game) {
         game.input.moveCallbacks = [];
         game.input.activePointer.leftButton.onDown.remove(this.putEvent);
-        this.worldKnowledge.add(this.objectInfo.getName(), this.getOrigin(), this.leftOriented);
+        this.worldKnowledge.add(this.objectInfo.getName(), this.getOrigin(), ObjectOrientation.isLeftOriented(this.orientation));
         this.destroy();
     }
 
@@ -139,7 +162,7 @@ export class ObjectPhantom implements ObjectInterface {
     }
 
     getLeftOriented(): boolean {
-        return this.leftOriented
+        return ObjectOrientation.isLeftOriented(this.orientation)
     }
 
     isEntryAccessible(cellGap: PIXI.Point, direction: DIRECTION) {
@@ -178,7 +201,7 @@ class DirectionsSprite {
     updatePolygons() {
         this.graphics.clear();
 
-        this.phantom.getInfo().getSpriteInfos().forEach((spriteInfo) => {
+        this.phantom.getInfo().getBottomOrientedSpriteInfos().forEach((spriteInfo) => {
             spriteInfo.getEntryPoints(this.phantom.getLeftOriented()).forEach((direction) => {
                 const cellGap = spriteInfo.getPositionGapFromOrigin(this.phantom.getLeftOriented());
                 if (this.phantom.isEntryAccessible(cellGap, direction)) {
@@ -265,9 +288,10 @@ class PhantomSprite {
         this.sprite.destroy(true);
     }
 
-    updateOrientation(leftOriented: boolean) {
+    updateLeftOriented(leftOriented: boolean) {
+        console.log(leftOriented);
         this.leftOriented = leftOriented;
-        this.sprite.scale.set(this.leftOriented ? -1 : 1, 1);
+        this.sprite.scale.set(leftOriented ? -1 : 1, 1);
     }
 
     getSprite() {

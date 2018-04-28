@@ -4,16 +4,19 @@ import {Price} from "./Price";
 
 export class ObjectInfo {
     private name: string;
-    private spriteInfos: SpriteInfo[];
+    private bottomOrientedSpriteInfos: SpriteInfo[];
+    private topOrientedSpriteInfos: SpriteInfo[];
     private price: Price;
 
     constructor(
         name: string,
-        spriteInfos: SpriteInfo[],
+        bottomOrientedSpriteInfos: SpriteInfo[],
+        topOrientedSpriteInfos: SpriteInfo[],
         price: Price
     ) {
         this.name = name;
-        this.spriteInfos = spriteInfos;
+        this.bottomOrientedSpriteInfos = bottomOrientedSpriteInfos;
+        this.topOrientedSpriteInfos = topOrientedSpriteInfos;
         this.price = price;
     }
 
@@ -21,20 +24,28 @@ export class ObjectInfo {
         return this.name;
     }
 
-    getSpriteInfos(): SpriteInfo[] {
-        return this.spriteInfos;
+    getBottomOrientedSpriteInfos(): SpriteInfo[] {
+        return this.bottomOrientedSpriteInfos;
+    }
+
+    getTopOrientedSpriteInfos(): SpriteInfo[] {
+        return this.topOrientedSpriteInfos;
+    }
+
+    getSpriteInfos(topOriented: boolean) {
+        return topOriented ? this.getTopOrientedSpriteInfos() : this.getBottomOrientedSpriteInfos();
     }
 
     getSpriteInfo(objectOrder: number): SpriteInfo {
-        return this.spriteInfos[objectOrder];
+        return this.bottomOrientedSpriteInfos[objectOrder];
     }
 
     getEntryPoints(leftOriented: boolean, objectNumber: number): DIRECTION[] {
-        return this.spriteInfos[objectNumber].getEntryPoints(leftOriented);
+        return this.bottomOrientedSpriteInfos[objectNumber].getEntryPoints(leftOriented);
     }
 
     getPositionGapOfSubObject(leftOriented: boolean, subObjectNumber: number): PIXI.Point {
-        return this.spriteInfos[subObjectNumber].getPositionGapFromOrigin(leftOriented);
+        return this.bottomOrientedSpriteInfos[subObjectNumber].getPositionGapFromOrigin(leftOriented);
     }
 
     isSellable(remainingMoney: Price): boolean {
@@ -47,7 +58,7 @@ export class ObjectInfo {
 
     getCellGaps(leftOriented: boolean): PIXI.Point[] {
         let result = [];
-        this.spriteInfos.forEach((spriteInfo) => {
+        this.bottomOrientedSpriteInfos.forEach((spriteInfo) => {
             const newGap = spriteInfo.getPositionGapFromOrigin(leftOriented);
             let found = false;
             result.forEach((previousGap) => {
@@ -63,7 +74,7 @@ export class ObjectInfo {
 
     getEntryCells(origin: PIXI.Point, leftOriented: boolean): PIXI.Point[] {
         let result = [];
-        this.spriteInfos.forEach((spriteInfo) => {
+        this.bottomOrientedSpriteInfos.forEach((spriteInfo) => {
             spriteInfo.getEntryPoints(leftOriented).forEach((entryPoint) => {
                 const gap = spriteInfo.getPositionGapFromOrigin(leftOriented);
                 const spriteCell = new PIXI.Point(
@@ -75,5 +86,9 @@ export class ObjectInfo {
         });
 
         return result;
+    }
+
+    canBeTopOriented() {
+        return this.topOrientedSpriteInfos.length > 0;
     }
 }

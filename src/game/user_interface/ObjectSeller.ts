@@ -208,7 +208,7 @@ class ObjectProvisionnerButton {
             this.fakeCells.push(fakeCell);
         });
 
-        this.objectInfo.getSpriteInfos().forEach((spriteInfo) => {
+        this.objectInfo.getBottomOrientedSpriteInfos().forEach((spriteInfo) => {
             const seller = game.add.sprite(
                 spriteInfo.getRealPositionFromOrigin(spriteOrigin, false, scale).x,
                 spriteInfo.getRealPositionFromOrigin(spriteOrigin, false, scale).y,

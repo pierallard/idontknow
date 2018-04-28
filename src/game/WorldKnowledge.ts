@@ -336,7 +336,7 @@ export class WorldKnowledge {
     };
 
     private areAllTheCellsFree(objectInfo: ObjectInfo, origin: PIXI.Point, leftOriented: boolean) {
-        for (let i = 0; i < objectInfo.getSpriteInfos().length; i++) {
+        for (let i = 0; i < objectInfo.getBottomOrientedSpriteInfos().length; i++) {
             const spriteInfo = objectInfo.getSpriteInfo(i);
             const gap = spriteInfo.getPositionGapFromOrigin(leftOriented);
             if (!this.isFree(new PIXI.Point(origin.x + gap.x, origin.y + gap.y))) {
@@ -348,7 +348,7 @@ export class WorldKnowledge {
     }
 
     private areAllSpritesEnterable(objectInfo: ObjectInfo, origin: PIXI.Point, leftOriented: boolean) {
-        for (let i = 0; i < objectInfo.getSpriteInfos().length; i++) {
+        for (let i = 0; i < objectInfo.getBottomOrientedSpriteInfos().length; i++) {
             const spriteInfo = objectInfo.getSpriteInfo(i);
             if (spriteInfo.getEntryPoints(leftOriented).length > 0) {
                 let isEntryPossible = false;

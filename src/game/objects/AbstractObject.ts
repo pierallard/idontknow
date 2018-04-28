@@ -25,7 +25,7 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
 
         this.sprites = [];
 
-        infos.getSpriteInfos().forEach((spriteInfo) => {
+        infos.getBottomOrientedSpriteInfos().forEach((spriteInfo) => {
             const sprite = game.add.sprite(
                 spriteInfo.getRealPosition(this.position, this.leftOriented).x,
                 spriteInfo.getRealPosition(this.position, this.leftOriented).y,
@@ -125,8 +125,8 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
     getUnusedReferers(): ObjectReferer[] {
         let result = [];
         const infos = ObjectInfoRegistry.getObjectInfo(this.constructor.name);
-        for (let i = 0; i < infos.getSpriteInfos().length; i++) {
-            if (infos.getSpriteInfos()[i].getEntryPoints(this.leftOriented).length > 0) {
+        for (let i = 0; i < infos.getBottomOrientedSpriteInfos().length; i++) {
+            if (infos.getBottomOrientedSpriteInfos()[i].getEntryPoints(this.leftOriented).length > 0) {
                 if (!this.isUsed(i)) {
                     result.push(new ObjectReferer(this, i));
                 }
