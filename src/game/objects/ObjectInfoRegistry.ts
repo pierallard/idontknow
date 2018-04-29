@@ -2,8 +2,6 @@ import {ObjectInfo} from "./ObjectInfo";
 import {SpriteInfo} from "./SpriteInfo";
 import {DIRECTION} from "../Direction";
 import {Dispenser} from "./Dispenser";
-import {Sofa} from "./Sofa";
-import {Desk} from "./Desk";
 import {Price} from "./Price";
 
 export class ObjectInfoRegistry {
@@ -48,7 +46,7 @@ export class ObjectInfoRegistry {
                 new SpriteInfo('desk', [],0, 0, 4, 0, 0, 0, false, false)
             ],
             [
-                new SpriteInfo('desk_reverse', [],0, 0, 4, 0, 0, 0, false, true),
+                new SpriteInfo('desk_reverse', [],0, 0, 10, 0, 0, 0, false, true),
                 new SpriteInfo('chair_reverse', [DIRECTION.BOTTOM, DIRECTION.TOP, DIRECTION.RIGHT], -6, -4, 5, 0, 0, 0, false, true),
             ],
             new Price(20)

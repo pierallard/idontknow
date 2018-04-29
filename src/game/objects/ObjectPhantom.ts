@@ -106,10 +106,10 @@ export class ObjectPhantom implements ObjectInterface {
     }
 
     private switchOrientation() {
-        const previousTopOriented = ObjectOrientation.isTopOriented(this.orientation);
+        const previousTopOriented = ObjectOrientation.isVerticalMirror(this.orientation);
         this.orientation = ObjectOrientation.getNextOrientation(this.orientation, this.objectInfo.canBeTopOriented());
 
-        if (previousTopOriented !== ObjectOrientation.isTopOriented(this.orientation)) {
+        if (previousTopOriented !== ObjectOrientation.isVerticalMirror(this.orientation)) {
             this.phantomSprites.forEach((phantomSprite) => {
                 phantomSprite.destroy();
             });
@@ -133,7 +133,7 @@ export class ObjectPhantom implements ObjectInterface {
     }
 
     getPositions(): PIXI.Point[] {
-        return this.objectInfo.getCellGaps(this.orientation).map((cellGap) => {
+        return this.objectInfo.getUniqueCellOffsets(this.orientation).map((cellGap) => {
             return new PIXI.Point(this.position.x + cellGap.x, this.position.y + cellGap.y)
         });
     }
@@ -162,7 +162,7 @@ export class ObjectPhantom implements ObjectInterface {
     }
 
     getLeftOriented(): boolean {
-        return ObjectOrientation.isLeftOriented(this.orientation)
+        return ObjectOrientation.isHorizontalMirror(this.orientation)
     }
 
     isEntryAccessible(cellGap: PIXI.Point, direction: DIRECTION) {
@@ -207,7 +207,7 @@ class DirectionsSprite {
 
         this.phantom.getInfo().getSpriteInfos(this.phantom.getOrientation()).forEach((spriteInfo) => {
             spriteInfo.getEntryPoints(this.phantom.getOrientation()).forEach((direction) => {
-                const cellGap = spriteInfo.getPositionGapFromOrigin(this.phantom.getOrientation());
+                const cellGap = spriteInfo.getCellOffset(this.phantom.getOrientation());
                 if (this.phantom.isEntryAccessible(cellGap, direction)) {
                     this.graphics.beginFill(COLOR.LIGHT_GREEN); // Green
                 } else {
@@ -246,7 +246,7 @@ class DirectionsSprite {
         });
 
         this.graphics.beginFill(this.phantom.isCellFree() ? COLOR.LIGHT_GREEN : COLOR.RED);
-        this.phantom.getInfo().getCellGaps(this.phantom.getOrientation()).forEach((cellGap) => {
+        this.phantom.getInfo().getUniqueCellOffsets(this.phantom.getOrientation()).forEach((cellGap) => {
             this.graphics.drawPolygon(
                 PositionTransformer.addGap(new PIXI.Point(- CELL_WIDTH / 2, 0), cellGap),
                 PositionTransformer.addGap(new PIXI.Point(0, CELL_HEIGHT / 2), cellGap),
@@ -278,7 +278,7 @@ class PhantomSprite {
     }
 
     create(game: Phaser.Game, group: Phaser.Group) {
-        this.sprite = game.add.sprite(0, 0, this.spriteInfo.getSpriteName(), 0, group);
+        this.sprite = game.add.sprite(0, 0, this.spriteInfo.getSpriteKey(), 0, group);
         this.sprite.anchor.set(0.5, 1.0 - this.spriteInfo.getAnchorBottom()/this.sprite.height);
         this.sprite.alpha = SPRITE_OPACITY;
     }
@@ -294,7 +294,7 @@ class PhantomSprite {
 
     updateOrientation(orientation: DIRECTION) {
         this.orientation = orientation;
-        this.sprite.scale.set(ObjectOrientation.isLeftOriented(orientation) ? -1 : 1, 1);
+        this.sprite.scale.set(ObjectOrientation.isHorizontalMirror(orientation) ? -1 : 1, 1);
     }
 
     getSprite() {

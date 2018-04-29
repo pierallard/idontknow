@@ -131,7 +131,7 @@ class SellerButton {
         if (this.isDown) {
             this.button.loadTexture(this.button.key, 1);
         } else {
-            if (this.objectInfo.isSellable(this.worldKnowledge.getMoneyInWallet())) {
+            if (this.objectInfo.isSalable(this.worldKnowledge.getMoneyInWallet())) {
                 this.button.loadTexture(this.button.key, 0);
             } else {
                 this.button.loadTexture(this.button.key, 2);
@@ -140,7 +140,7 @@ class SellerButton {
     }
 
     buy() {
-        if (this.objectInfo.isSellable(this.worldKnowledge.getMoneyInWallet())) {
+        if (this.objectInfo.isSalable(this.worldKnowledge.getMoneyInWallet())) {
             this.isDown = true;
             this.worldKnowledge.buy(this.objectInfo.getName(), this.objectInfo.getPrice());
         }
@@ -187,7 +187,7 @@ class ObjectProvisionnerButton {
 
         let width = 1;
         let height = 1;
-        this.objectInfo.getCellGaps(DIRECTION_LOOP[0]).forEach((gap) => {
+        this.objectInfo.getUniqueCellOffsets(DIRECTION_LOOP[0]).forEach((gap) => {
             width = Math.max(width, 1 + gap.x);
             height = Math.max(height, 1 + gap.y);
         });
@@ -197,7 +197,7 @@ class ObjectProvisionnerButton {
         this.square.lineStyle(1, COLOR.WHITE);
         this.square.drawRect(0, 0, OBJECT_SELLER_CELL_SIZE, OBJECT_SELLER_CELL_SIZE);
 
-        this.objectInfo.getCellGaps(DIRECTION_LOOP[0]).forEach((cellGap) => {
+        this.objectInfo.getUniqueCellOffsets(DIRECTION_LOOP[0]).forEach((cellGap) => {
             const fakeCell = game.add.sprite(
                 spriteOrigin.x - (cellGap.x - cellGap.y) * (CELL_WIDTH / 2) * scale,
                 spriteOrigin.y - (cellGap.x + cellGap.y) * (CELL_HEIGHT / 2) * scale,
@@ -213,7 +213,7 @@ class ObjectProvisionnerButton {
             const seller = game.add.sprite(
                 spriteInfo.getRealPositionFromOrigin(spriteOrigin, DIRECTION_LOOP[0], scale).x,
                 spriteInfo.getRealPositionFromOrigin(spriteOrigin, DIRECTION_LOOP[0], scale).y,
-                spriteInfo.getSpriteName()
+                spriteInfo.getSpriteKey()
             );
             seller.scale.set(scale, scale);
             seller.anchor.set(spriteInfo.getAnchor(seller).x, spriteInfo.getAnchor(seller).y);

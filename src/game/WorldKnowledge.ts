@@ -338,7 +338,7 @@ export class WorldKnowledge {
     private areAllTheCellsFree(objectInfo: ObjectInfo, origin: PIXI.Point, orientation: DIRECTION) {
         for (let i = 0; i < objectInfo.getSpriteInfos(orientation).length; i++) {
             const spriteInfo = objectInfo.getSpriteInfo(orientation, i);
-            const gap = spriteInfo.getPositionGapFromOrigin(orientation);
+            const gap = spriteInfo.getCellOffset(orientation);
             if (!this.isFree(new PIXI.Point(origin.x + gap.x, origin.y + gap.y))) {
                 return false;
             }
@@ -353,7 +353,7 @@ export class WorldKnowledge {
             if (spriteInfo.getEntryPoints(orientation).length > 0) {
                 let isEntryPossible = false;
                 spriteInfo.getEntryPoints(orientation).forEach((entry) => {
-                    const gap = spriteInfo.getPositionGapFromOrigin(orientation);
+                    const gap = spriteInfo.getCellOffset(orientation);
                     isEntryPossible = isEntryPossible || this.isEntryAccessibleForObject(origin, gap, entry)
                 });
                 if (isEntryPossible === false) {
@@ -367,6 +367,9 @@ export class WorldKnowledge {
 
     private isNewObjectNotBlockingExistingOne(origin: PIXI.Point) {
         for (let o = 0; o < this.objects.length; o++) {
+            /* TODO This method is buggy, it does not take account every entry points. I have to parse sprite by sprite
+             * and check it's not blocking for every sprite, instead of looking if there is a unique entry point.
+             */
             const object = this.objects[o];
             const objectInfo = ObjectInfoRegistry.getObjectInfo(object.constructor.name);
 
