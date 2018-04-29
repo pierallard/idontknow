@@ -28,8 +28,8 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
 
         infos.getSpriteInfos(this.orientation).forEach((spriteInfo) => {
             const sprite = game.add.sprite(
-                spriteInfo.getRealPosition(this.position, ObjectOrientation.isLeftOriented(this.orientation)).x,
-                spriteInfo.getRealPosition(this.position, ObjectOrientation.isLeftOriented(this.orientation)).y,
+                spriteInfo.getRealPosition(this.position, this.orientation).x,
+                spriteInfo.getRealPosition(this.position, this.orientation).y,
                 spriteInfo.getSpriteName()
             );
 
@@ -51,7 +51,7 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
                 .getObjectInfo(this.constructor.name)
                 .getSpriteInfo(this.orientation, subObjectNumber);
 
-        return sittableObjectInfos.getSittablePosition(ObjectOrientation.isLeftOriented(this.orientation));
+        return sittableObjectInfos.getSittablePosition(this.orientation);
     }
 
     getEntries(objectNumber: number): DIRECTION[] {
@@ -81,7 +81,7 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
     forceOrientation(subObjectNumber: number): boolean {
         const infos = ObjectInfoRegistry.getObjectInfo(this.constructor.name);
 
-        return infos.getSpriteInfo(this.orientation, subObjectNumber).getOrientation(ObjectOrientation.isLeftOriented(this.orientation));
+        return infos.getSpriteInfo(this.orientation, subObjectNumber).getOrientation(this.orientation);
     }
 
     forceTopOrientation(subObjectNumber: number): boolean {
@@ -127,7 +127,7 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
         let result = [];
         const infos = ObjectInfoRegistry.getObjectInfo(this.constructor.name);
         for (let i = 0; i < infos.getSpriteInfos(this.orientation).length; i++) {
-            if (infos.getSpriteInfos(this.orientation)[i].getEntryPoints(ObjectOrientation.isLeftOriented(this.orientation)).length > 0) {
+            if (infos.getSpriteInfos(this.orientation)[i].getEntryPoints(this.orientation).length > 0) {
                 if (!this.isUsed(i)) {
                     result.push(new ObjectReferer(this, i));
                 }

@@ -125,7 +125,7 @@ export class ObjectPhantom implements ObjectInterface {
         }
 
         this.phantomSprites.forEach((phantomSprite) => {
-            phantomSprite.updateLeftOriented(ObjectOrientation.isLeftOriented(this.orientation));
+            phantomSprite.updateOrientation(this.orientation);
             phantomSprite.setPosition(this.position);
         });
         this.updateForbiddenSprite();
@@ -206,8 +206,8 @@ class DirectionsSprite {
         this.graphics.clear();
 
         this.phantom.getInfo().getSpriteInfos(this.phantom.getOrientation()).forEach((spriteInfo) => {
-            spriteInfo.getEntryPoints(this.phantom.getLeftOriented()).forEach((direction) => {
-                const cellGap = spriteInfo.getPositionGapFromOrigin(this.phantom.getLeftOriented());
+            spriteInfo.getEntryPoints(this.phantom.getOrientation()).forEach((direction) => {
+                const cellGap = spriteInfo.getPositionGapFromOrigin(this.phantom.getOrientation());
                 if (this.phantom.isEntryAccessible(cellGap, direction)) {
                     this.graphics.beginFill(COLOR.LIGHT_GREEN); // Green
                 } else {
@@ -270,11 +270,11 @@ class DirectionsSprite {
 class PhantomSprite {
     private sprite: Phaser.Sprite;
     private spriteInfo: SpriteInfo;
-    private leftOriented: boolean;
+    private orientation: DIRECTION;
 
     constructor(infos: SpriteInfo) {
         this.spriteInfo = infos;
-        this.leftOriented = false;
+        this.orientation = DIRECTION_LOOP[0];
     }
 
     create(game: Phaser.Game, group: Phaser.Group) {
@@ -284,17 +284,17 @@ class PhantomSprite {
     }
 
     setPosition(position: PIXI.Point) {
-        this.sprite.x = this.spriteInfo.getRealPosition(position, this.leftOriented).x;
-        this.sprite.y = this.spriteInfo.getRealPosition(position, this.leftOriented).y;
+        this.sprite.x = this.spriteInfo.getRealPosition(position, this.orientation).x;
+        this.sprite.y = this.spriteInfo.getRealPosition(position, this.orientation).y;
     }
 
     destroy() {
         this.sprite.destroy(true);
     }
 
-    updateLeftOriented(leftOriented: boolean) {
-        this.leftOriented = leftOriented;
-        this.sprite.scale.set(leftOriented ? -1 : 1, 1);
+    updateOrientation(orientation: DIRECTION) {
+        this.orientation = orientation;
+        this.sprite.scale.set(ObjectOrientation.isLeftOriented(orientation) ? -1 : 1, 1);
     }
 
     getSprite() {

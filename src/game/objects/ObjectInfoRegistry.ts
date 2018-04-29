@@ -49,7 +49,7 @@ export class ObjectInfoRegistry {
             ],
             [
                 new SpriteInfo('desk_reverse', [],0, 0, 4, 0, 0, 0, false, true),
-                new SpriteInfo('chair_reverse', [DIRECTION.BOTTOM, DIRECTION.TOP, DIRECTION.RIGHT], 6, -4, 5, 0, 0, 0, false, true),
+                new SpriteInfo('chair_reverse', [DIRECTION.BOTTOM, DIRECTION.TOP, DIRECTION.RIGHT], -6, -4, 5, 0, 0, 0, false, true),
             ],
             new Price(20)
         ));

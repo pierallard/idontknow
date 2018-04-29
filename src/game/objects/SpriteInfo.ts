@@ -1,5 +1,6 @@
 import {CELL_HEIGHT, CELL_WIDTH, PositionTransformer} from "../PositionTransformer";
 import {Direction, DIRECTION} from "../Direction";
+import {ObjectOrientation} from "./ObjectOrientation";
 
 export class SpriteInfo {
     private name: string;
@@ -43,20 +44,20 @@ export class SpriteInfo {
         return this.anchorBottom;
     }
 
-    getRealPosition(position: PIXI.Point, leftOriented: boolean): PIXI.Point {
-        return this.getRealPositionFromOrigin(PositionTransformer.getRealPosition(position), leftOriented);
+    getRealPosition(position: PIXI.Point, orientation: DIRECTION): PIXI.Point {
+        return this.getRealPositionFromOrigin(PositionTransformer.getRealPosition(position), orientation);
     }
 
-    getSittablePosition(leftOriented: boolean): PIXI.Point {
+    getSittablePosition(orientation: DIRECTION): PIXI.Point {
         return new PIXI.Point(
-            leftOriented ? - (this.left + this.gapLeft) : (this.left + this.gapLeft),
+            ObjectOrientation.isLeftOriented(orientation) ? - (this.left + this.gapLeft) : (this.left + this.gapLeft),
             this.bottom - this.anchorBottom + 3
         );
     }
 
-    getRealPositionFromOrigin(spriteSource: PIXI.Point, leftOriented: boolean, scale: number = 1) {
+    getRealPositionFromOrigin(spriteSource: PIXI.Point, orientation: DIRECTION, scale: number = 1) {
         return new PIXI.Point(
-            spriteSource.x + (leftOriented ? -1 : 1) * (this.left - (this.cellGap.x - this.cellGap.y) * CELL_WIDTH / 2) * scale,
+            spriteSource.x + (ObjectOrientation.isLeftOriented(orientation) ? -1 : 1) * (this.left - (this.cellGap.x - this.cellGap.y) * CELL_WIDTH / 2) * scale,
             spriteSource.y + this.bottom - this.anchorBottom - ((this.cellGap.x + this.cellGap.y) * CELL_HEIGHT / 2) * scale
         )
     }
@@ -68,8 +69,8 @@ export class SpriteInfo {
         );
     }
 
-    getEntryPoints(leftOriented: boolean): DIRECTION[] {
-        if (!leftOriented) {
+    getEntryPoints(orientation: DIRECTION): DIRECTION[] {
+        if (!ObjectOrientation.isLeftOriented(orientation)) {
             return this.entryPoints;
         } else {
             return this.entryPoints.map((entryPoint) => {
@@ -83,11 +84,11 @@ export class SpriteInfo {
      * [1, 0] => [0, 1]
      * [0, 1] => [1, 0]
      * [1, 1] => [1, 1]
-     * @param {boolean} leftOriented
+     * @param {DIRECTION} orientation
      * @returns {PIXI.Point}
      */
-    getPositionGapFromOrigin(leftOriented: boolean): PIXI.Point {
-        if (!leftOriented) {
+    getPositionGapFromOrigin(orientation: DIRECTION): PIXI.Point {
+        if (!ObjectOrientation.isLeftOriented(orientation)) {
             return this.cellGap;
         } else {
             return new PIXI.Point(this.cellGap.y, this.cellGap.x)
@@ -102,10 +103,10 @@ export class SpriteInfo {
      * Returns false if the user looks to the right when he interacts with the object.
      * Returns true if the user looks to the left when he interacts with the object.
      *
-     * @param {boolean} leftOriented
+     * @param {DIRECTION} orientation
      * @returns {boolean}
      */
-    getOrientation(leftOriented: boolean): boolean {
-        return leftOriented ? !this.leftOriented : this.leftOriented;
+    getOrientation(orientation: DIRECTION): boolean {
+        return ObjectOrientation.isLeftOriented(orientation) ? !this.leftOriented : this.leftOriented;
     }
 }

@@ -211,8 +211,8 @@ class ObjectProvisionnerButton {
 
         this.objectInfo.getSpriteInfos(DIRECTION_LOOP[0]).forEach((spriteInfo) => {
             const seller = game.add.sprite(
-                spriteInfo.getRealPositionFromOrigin(spriteOrigin, false, scale).x,
-                spriteInfo.getRealPositionFromOrigin(spriteOrigin, false, scale).y,
+                spriteInfo.getRealPositionFromOrigin(spriteOrigin, DIRECTION_LOOP[0], scale).x,
+                spriteInfo.getRealPositionFromOrigin(spriteOrigin, DIRECTION_LOOP[0], scale).y,
                 spriteInfo.getSpriteName()
             );
             seller.scale.set(scale, scale);
