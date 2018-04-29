@@ -28,7 +28,7 @@ export class ObjectInfoRegistry {
         this.objectInfos.push(new ObjectInfo(
             'Dispenser',
             [
-                new SpriteInfo('dispenser', [DIRECTION.BOTTOM], 4, -4, 3, -13, 0, 0, false, false)
+                new SpriteInfo('dispenser', [DIRECTION.RIGHT], -4, -4, 3, 13, 0, 0, false, false)
             ],
             [],
             new Price(70)

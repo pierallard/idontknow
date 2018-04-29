@@ -27,14 +27,18 @@ export class MoodSprite {
         }
         for (let i = 0; i < moods.length; i++) {
             this.sprite.moveTo(0, i * 2);
-            if (moods[i] < 0.1) {
-                this.sprite.lineStyle(2, COLOR.RED);
-            } else if (moods[i] < 0.5) {
-                this.sprite.lineStyle(2, COLOR.ORANGE);
-            } else {
-                this.sprite.lineStyle(2, COLOR.LIGHT_GREEN);
-            }
+            this.sprite.lineStyle(2, MoodSprite.getColor(moods[i]));
             this.sprite.lineTo(moods[i] * 15 + 1,   i * 2);
+        }
+    }
+
+    static getColor(mood: number): COLOR {
+        if (mood < 0.1) {
+            return COLOR.RED;
+        } else if (mood < 0.5) {
+            return COLOR.ORANGE;
+        } else {
+            return COLOR.LIGHT_GREEN;
         }
     }
 }
