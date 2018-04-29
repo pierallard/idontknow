@@ -6,11 +6,11 @@ import {Employee} from "../human_stuff/Employee";
 import {TEXT_STYLE} from "../TextStyle";
 import {MOOD} from "../human_stuff/HumanMoodManager";
 import {PieChart} from "./PieChart";
-import {HumanStateManager, STATE} from "../human_stuff/HumanStateManager";
+import {HumanStateManager} from "../human_stuff/HumanStateManager";
 import {Gauge} from "./Gauge";
 import {COLOR} from "../Pico8Colors";
+import {ColoredGauge} from "./ColoredGauge";
 
-const HEIGHT = 80;
 const GRAPH_GAP = 2;
 const GAP_BETWEEN_LINES = 10;
 const GAUGE_GAP = 100;
@@ -34,9 +34,9 @@ export class UserInfoPanel {
         this.visible = true;
         this.pieChart = new PieChart();
         const gaugeWidth = INTERFACE_WIDTH - GAUGE_GAP - GRAPH_GAP;
-        this.moodRelaxationGauge = new Gauge(gaugeWidth, COLOR.WHITE, 8);
-        this.moodHungerGauge = new Gauge(gaugeWidth, COLOR.WHITE, 8);
-        this.moodSocialGauge = new Gauge(gaugeWidth, COLOR.WHITE, 8);
+        this.moodRelaxationGauge = new ColoredGauge(gaugeWidth, 8);
+        this.moodHungerGauge = new ColoredGauge(gaugeWidth, 8);
+        this.moodSocialGauge = new ColoredGauge(gaugeWidth, 8);
     }
 
     create(game: Phaser.Game, groups: { [index: string]: Phaser.Group }) {

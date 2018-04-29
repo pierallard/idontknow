@@ -240,6 +240,7 @@ export class HumanStateManager {
             case STATE.SIT: result[MOOD.RELAXATION] = 0.2; break;
             case STATE.COFFEE: result[MOOD.HUNGER] = 0.5; break;
             case STATE.SIT_TALK: result[MOOD.SOCIAL] = 0.6; break;
+            case STATE.RAGE: result[MOOD.RELAXATION] = -0.2; break;
         }
 
         return result;

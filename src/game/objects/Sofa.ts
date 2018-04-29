@@ -11,7 +11,7 @@ export class Sofa extends AbstractObject implements InteractiveObjectInterface, 
         ObjectDeleter.makeDeletable(this, game, groups[GROUP_INFOS]);
     }
 
-    forceOrientation(subObjectNumber: number): boolean {
+    forceLeftOrientation(subObjectNumber: number): boolean {
         return null;
     }
 }

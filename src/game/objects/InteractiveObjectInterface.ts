@@ -10,7 +10,7 @@ export interface InteractiveObjectInterface extends ObjectInterface {
      * Returns true if the human has to be right-sided, false if the human has to be left-sided, null if don't care.
      * @returns {boolean}
      */
-    forceOrientation(subObjectNumber: number): boolean;
+    forceLeftOrientation(subObjectNumber: number): boolean;
 
     /**
      * Returns true if the human has to be top-sided, false if the human has to be bottom-sided, null if don't care.
@@ -35,4 +35,8 @@ export interface InteractiveObjectInterface extends ObjectInterface {
     setUnused(subObjectNumber: number): void;
 
     getUnusedReferers(): ObjectReferer[];
+
+    getLeftOriented(): boolean;
+
+    getOrientation(): DIRECTION;
 }

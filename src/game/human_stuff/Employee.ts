@@ -9,13 +9,15 @@ import {Meeting} from "../human_states/Meeting";
 import {TalkBubble} from "./TalkBubble";
 import {HumanMoodManager, MOOD} from "./HumanMoodManager";
 import {MoodSprite} from "./MoodSprite";
-import {GROUP_OBJECTS_AND_HUMANS, GROUP_INFOS} from "../game_state/Play";
+import {GROUP_OBJECTS_AND_HUMANS, GROUP_INFOS, GROUP_INTERFACE} from "../game_state/Play";
 import {HumanProperties} from "./HumanProperties";
 import {EMPLOYEE_TYPE} from "./HumanPropertiesFactory";
 import {ObjectReferer} from "../objects/ObjectReferer";
 import {TableMeeting} from "../human_states/TableMeeting";
 import {RAGE_IMAGE, ThoughtBubble} from "./ThoughtBubble";
 import {COLOR} from "../Pico8Colors";
+import {SPRITE_DEBUG} from "../objects/AbstractObject";
+import {ObjectOrientation} from "../objects/ObjectOrientation";
 
 const MAX_WALK_CELL_DURATION = 1500;
 const MIN_WALK_CELL_DURATION = 800;
@@ -40,7 +42,7 @@ export class Employee {
     private anchorPixels: PIXI.Point;
     private animationManager: HumanAnimationManager;
     private stateManager: HumanStateManager;
-    private pathGraphics: Phaser.Graphics;
+    private debugGraphics: Phaser.Graphics;
     private talkBubble: TalkBubble;
     private thoughtBubble: ThoughtBubble;
     private moodManager: HumanMoodManager;
@@ -90,9 +92,8 @@ export class Employee {
         this.thoughtBubble.create(this.sprite, this.game, groups[GROUP_OBJECTS_AND_HUMANS]);
         this.moodSprite.create(this.sprite, this.game, groups[GROUP_INFOS]);
 
-        if (PATH_DEBUG) {
-            this.pathGraphics = game.add.graphics(0, 0, groups[GROUP_INFOS]);
-            groups[GROUP_INFOS].add(this.pathGraphics);
+        if (PATH_DEBUG || SPRITE_DEBUG) {
+            this.debugGraphics = game.add.graphics(0, 0, groups[GROUP_INTERFACE]);
         }
     }
 
@@ -108,20 +109,30 @@ export class Employee {
         ]);
 
         if (PATH_DEBUG) {
-            this.pathGraphics.clear();
-            this.pathGraphics.lineStyle(2, COLOR.LIGHT_GREEN);
+            this.debugGraphics.clear();
+            this.debugGraphics.lineStyle(2, COLOR.LIGHT_GREEN);
             if (this.path !== null && this.path.length > 0) {
-                this.pathGraphics.moveTo(
+                this.debugGraphics.moveTo(
                     this.sprite.position.x,
                     this.sprite.position.y
                 );
                 this.path.forEach((pathItem) => {
-                    this.pathGraphics.lineTo(
+                    this.debugGraphics.lineTo(
                         PositionTransformer.getRealPosition(pathItem).x,
                         PositionTransformer.getRealPosition(pathItem).y - CELL_HEIGHT / 2
                     );
                 });
             }
+        }
+
+        if (SPRITE_DEBUG) {
+            this.debugGraphics.clear();
+            this.debugGraphics.lineStyle(1, COLOR.LIGHT_BLUE);
+            const realPosition = this.sprite.position;
+            this.debugGraphics.moveTo(realPosition.x - 1.5, realPosition.y + 0.5);
+            this.debugGraphics.lineTo(realPosition.x + 2.5, realPosition.y + 0.5);
+            this.debugGraphics.moveTo(realPosition.x + 0.5, realPosition.y - 1.5);
+            this.debugGraphics.lineTo(realPosition.x + 0.5, realPosition.y + 2.5);
         }
     }
 
@@ -143,7 +154,7 @@ export class Employee {
 
         this.path = path;
         if (!this.moving) {
-            this.popPath(null, null);
+            this.popPath();
         }
         return true;
     }
@@ -158,36 +169,33 @@ export class Employee {
 
         this.path = path;
         if (!this.moving) {
-            this.popPath(null, null);
+            this.popPath();
         }
 
         return true;
     }
 
     private animateMove(direction: DIRECTION) {
-        const isLeft = Employee.isHumanLeft(direction);
-        const isTop = Employee.isHumanTop(direction);
-        this.animationManager.loadAnimation(ANIMATION.WALK, isLeft, isTop);
+        const isLeftLooking = Employee.isHumanLeftLooking(direction);
+        const isTopLooking = Employee.isHumanTopLooking(direction);
+        this.animationManager.loadAnimation(ANIMATION.WALK, isLeftLooking, isTopLooking);
         this.moving = true;
         this.game.add.tween(this.sprite.position).to({
             x: PositionTransformer.getRealPosition(this.cell).x + this.anchorPixels.x,
             y: PositionTransformer.getRealPosition(this.cell).y + this.anchorPixels.y
-        }, this.getWalkDuration(), 'Linear', true)
-            .onComplete.add((_tweenValues: any, _game: any, isLeft: boolean, isTop: boolean) => {
-            this.popPath(isLeft, isTop);
-        }, this, 0, isLeft, isTop);
+        }, this.getWalkDuration(), 'Linear', true).onComplete.add(() => {
+            this.popPath();
+        }, this);
     }
 
     getWalkDuration(): number {
         return MIN_WALK_CELL_DURATION + (MAX_WALK_CELL_DURATION - MIN_WALK_CELL_DURATION) * (1 - this.humanProperties.getSpeed());
     }
 
-    private popPath(isLeft: boolean, isTop: boolean) {
+    private popPath() {
         this.moving = false;
         let humanPositions = [this.cell];
-        if (this.path === null || this.path.length == 0) {
-            // this.animationManager.loadAnimation(ANIMATION.FREEZE, isLeft, isTop);
-        } else {
+        if (this.path !== null && this.path.length > 0) {
             const next = this.path.shift();
             const direction = Direction.getNeighborDirection(this.cell, next);
             if (!this.moving) {
@@ -211,7 +219,7 @@ export class Employee {
 
     interactWith(objectReferer: ObjectReferer, isLeft: boolean = null) {
         const direction = Direction.getNeighborDirection(this.cell, objectReferer.getPosition());
-        const side = (isLeft !== null) ? isLeft : Employee.isHumanLeft(direction);
+        const side = (isLeft !== null) ? isLeft : Employee.isHumanLeftLooking(direction);
         // Employee has to gap 5px from the sofa to be sit properly, and 1px from the bottom.
         this.anchorPixels.x = objectReferer.getPositionGap().x + (side ? -5 : 5);
         this.anchorPixels.y = objectReferer.getPositionGap().y - 1;
@@ -220,12 +228,12 @@ export class Employee {
         this.animateMove(direction);
     }
 
-    private static isHumanLeft(direction: DIRECTION) {
-        return [DIRECTION.LEFT, DIRECTION.BOTTOM].indexOf(direction) > -1;
+    private static isHumanLeftLooking(direction: DIRECTION) {
+        return ObjectOrientation.isHorizontalMirror(direction);
     }
 
-    private static isHumanTop(direction: DIRECTION) {
-        return [DIRECTION.LEFT, DIRECTION.TOP].indexOf(direction) > -1;
+    private static isHumanTopLooking(direction: DIRECTION) {
+        return ObjectOrientation.isVerticalMirror(direction);
     }
 
     goToFreeCell(objectReferer: ObjectReferer) {
@@ -243,12 +251,12 @@ export class Employee {
         }
         this.path = [cells[Math.floor(Math.random() * cells.length)]];
         if (!this.moving) {
-            this.popPath(null, null);
+            this.popPath();
         }
     }
 
-    loadAnimation(animation: ANIMATION, isLeft: boolean = null, isTop: boolean = null) {
-        this.animationManager.loadAnimation(animation, isLeft, isTop);
+    loadAnimation(animation: ANIMATION, isLeftLooking: boolean = null, isTopLooking: boolean = null) {
+        this.animationManager.loadAnimation(animation, isLeftLooking, isTopLooking);
     }
 
     isSelected(): boolean {

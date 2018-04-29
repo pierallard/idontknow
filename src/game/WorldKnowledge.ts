@@ -24,7 +24,7 @@ import {ObjectInfo} from "./objects/ObjectInfo";
 import {ObjectInfoRegistry} from "./objects/ObjectInfoRegistry";
 import {SmoothValue} from "./SmoothValue";
 import {PANEL, UserInterface} from "./user_interface/UserInterface";
-import {ObjectSelector} from "./objects/ObjectSelector";
+import {DIRECTION_LOOP, ObjectOrientation} from "./objects/ObjectOrientation";
 
 export const GRID_WIDTH = 16;
 export const GRID_HEIGHT = 16;
@@ -59,9 +59,9 @@ export class WorldKnowledge {
         if (DEBUG_WORLD) {
             this.wallRepository.addWall(new PIXI.Point(5, 5));
             this.wallRepository.addWall(new PIXI.Point(6, 5));
-            this.objects.push(new Desk(new PIXI.Point(4, 5), this, false));
-            this.objects.push(new Desk(new PIXI.Point(4, 6), this, false));
-            this.objects.push(new Dispenser(new PIXI.Point(5, 4), this, false));
+            this.objects.push(new Desk(new PIXI.Point(4, 5), this, DIRECTION_LOOP[0]));
+            this.objects.push(new Desk(new PIXI.Point(4, 6), this, DIRECTION_LOOP[0]));
+            this.objects.push(new Dispenser(new PIXI.Point(5, 4), this, DIRECTION_LOOP[0]));
         } else {
             for (let x = 0; x < GRID_WIDTH; x++) {
                 this.wallRepository.addWall(new PIXI.Point(x, 0));
@@ -329,16 +329,16 @@ export class WorldKnowledge {
         this.wallet.add(- price.getValue());
     }
 
-    canPutHere(objectInfo: ObjectInfo, origin: PIXI.Point, leftOriented: boolean) {
-        return this.areAllTheCellsFree(objectInfo, origin, leftOriented) &&
-            this.areAllSpritesEnterable(objectInfo, origin, leftOriented) &&
-            this.isNewObjectNotBlockingExistingOne(objectInfo, origin, leftOriented);
+    canPutHere(objectInfo: ObjectInfo, origin: PIXI.Point, orientation: DIRECTION) {
+        return this.areAllTheCellsFree(objectInfo, origin, orientation) &&
+            this.areAllSpritesEnterable(objectInfo, origin, orientation) &&
+            this.isNewObjectNotBlockingExistingOne(origin);
     };
 
-    private areAllTheCellsFree(objectInfo: ObjectInfo, origin: PIXI.Point, leftOriented: boolean) {
-        for (let i = 0; i < objectInfo.getSpriteInfos().length; i++) {
-            const spriteInfo = objectInfo.getSpriteInfo(i);
-            const gap = spriteInfo.getPositionGapFromOrigin(leftOriented);
+    private areAllTheCellsFree(objectInfo: ObjectInfo, origin: PIXI.Point, orientation: DIRECTION) {
+        for (let i = 0; i < objectInfo.getSpriteInfos(orientation).length; i++) {
+            const spriteInfo = objectInfo.getSpriteInfo(orientation, i);
+            const gap = spriteInfo.getCellOffset(orientation);
             if (!this.isFree(new PIXI.Point(origin.x + gap.x, origin.y + gap.y))) {
                 return false;
             }
@@ -347,13 +347,13 @@ export class WorldKnowledge {
         return true;
     }
 
-    private areAllSpritesEnterable(objectInfo: ObjectInfo, origin: PIXI.Point, leftOriented: boolean) {
-        for (let i = 0; i < objectInfo.getSpriteInfos().length; i++) {
-            const spriteInfo = objectInfo.getSpriteInfo(i);
-            if (spriteInfo.getEntryPoints(leftOriented).length > 0) {
+    private areAllSpritesEnterable(objectInfo: ObjectInfo, origin: PIXI.Point, orientation: DIRECTION) {
+        for (let i = 0; i < objectInfo.getSpriteInfos(orientation).length; i++) {
+            const spriteInfo = objectInfo.getSpriteInfo(orientation, i);
+            if (spriteInfo.getEntryPoints(orientation).length > 0) {
                 let isEntryPossible = false;
-                spriteInfo.getEntryPoints(leftOriented).forEach((entry) => {
-                    const gap = spriteInfo.getPositionGapFromOrigin(leftOriented);
+                spriteInfo.getEntryPoints(orientation).forEach((entry) => {
+                    const gap = spriteInfo.getCellOffset(orientation);
                     isEntryPossible = isEntryPossible || this.isEntryAccessibleForObject(origin, gap, entry)
                 });
                 if (isEntryPossible === false) {
@@ -365,30 +365,23 @@ export class WorldKnowledge {
         return true;
     }
 
-    private isNewObjectNotBlockingExistingOne(objectInfo: ObjectInfo, origin: PIXI.Point, leftOriented: boolean) {
-        const newObjectCells = objectInfo.getCellGaps(leftOriented).map((gap) => {
-            return new PIXI.Point(origin.x + gap.x, origin.y + gap.y);
-        });
-        this.objects.forEach((object) => {
-            const otherObjectInfo = ObjectInfoRegistry.getObjectInfo(object.constructor.name);
+    private isNewObjectNotBlockingExistingOne(origin: PIXI.Point) {
+        for (let o = 0; o < this.objects.length; o++) {
+            /* TODO This method is buggy, it does not take account every entry points. I have to parse sprite by sprite
+             * and check it's not blocking for every sprite, instead of looking if there is a unique entry point.
+             */
+            const object = this.objects[o];
+            const objectInfo = ObjectInfoRegistry.getObjectInfo(object.constructor.name);
+
             let isEntryPossible = false;
-            otherObjectInfo.getEntryCells(object.getOrigin(), leftOriented).forEach((cell) => {
-                if (this.isFree(cell)) {
-                    let isCellBlocking = false;
-                    newObjectCells.forEach((newObjectCell) => {
-                        if (cell.x === newObjectCell.x && cell.y === newObjectCell.y) {
-                            isCellBlocking = true;
-                        }
-                    });
-                    if (!isCellBlocking) {
-                        isEntryPossible = true
-                    }
-                }
-            });
-            if (!isEntryPossible) {
+            const entryCells = objectInfo.getEntryCells(object.getOrigin(), object.getOrientation());
+            for (let i = 0; i < entryCells.length; i++) {
+                isEntryPossible = isEntryPossible || (this.isFree(entryCells[i]) && (entryCells[i].x !== origin.x || entryCells[i].y !== origin.y));
+            }
+            if (isEntryPossible === false) {
                 return false;
             }
-        });
+        }
 
         return true;
     }
@@ -402,13 +395,13 @@ export class WorldKnowledge {
         return this.isFree(Direction.getNeighbor(gappedPosition, entry));
     }
 
-    add(name: string, position: PIXI.Point, leftOriented: boolean) {
+    add(name: string, position: PIXI.Point, orientation: DIRECTION) {
         let object: InteractiveObjectInterface = null;
         switch (name) {
-            case 'Desk': object = new Desk(position, this, leftOriented); break;
-            case 'Sofa': object = new Sofa(position, this, leftOriented); break;
-            case 'Dispenser': object = new Dispenser(position, this, leftOriented); break;
-            case 'Table': object = new Table(position, this, leftOriented); break;
+            case 'Desk': object = new Desk(position, this, orientation); break;
+            case 'Sofa': object = new Sofa(position, this, orientation); break;
+            case 'Dispenser': object = new Dispenser(position, this, orientation); break;
+            case 'Table': object = new Table(position, this, orientation); break;
             default: throw 'Unknown object ' + name;
         }
         this.objects.push(object);

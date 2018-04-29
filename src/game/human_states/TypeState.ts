@@ -22,9 +22,9 @@ export class TypeState extends MoveThenActAbstractState {
     }
 
     protected act(): void {
-        this.human.loadAnimation(ANIMATION.SIT_DOWN, this.objectReferer.getObject().forceOrientation(this.objectReferer.getIdentifier()));
+        this.human.loadAnimation(ANIMATION.SIT_DOWN, this.objectReferer.getObject().forceLeftOrientation(this.objectReferer.getIdentifier()));
         this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.SIT_DOWN), () => {
-            this.human.loadAnimation(ANIMATION.TYPE);
+            this.human.loadAnimation(ANIMATION.TYPE, this.objectReferer.forceLeftOrientation(), this.objectReferer.forceTopOrientation());
             const time = Phaser.Math.random(15 * Phaser.Timer.SECOND, SECOND_MAX);
             this.worldKnowledge.addProgress(this.human.getType(), time / SECOND_MAX, time);
             this.worldKnowledge.addMoneyInWallet(new Price(100));

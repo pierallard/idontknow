@@ -2,9 +2,8 @@ import {WorldKnowledge} from "../WorldKnowledge";
 import {INTERFACE_WIDTH, TOP_GAP} from "./UserInterface";
 import {CAMERA_WIDTH_PIXELS} from "../../app";
 import {GROUP_INTERFACE} from "../game_state/Play";
-import {Employee} from "../human_stuff/Employee";
-import {TEXT_STYLE} from "../TextStyle";
 import {COLOR} from "../Pico8Colors";
+import {MoodSprite} from "../human_stuff/MoodSprite";
 
 const HEIGHT = 80;
 const GRAPH_GAP = 2;
@@ -34,9 +33,17 @@ export class InfoPanel {
         this.moods.lineTo(0, HEIGHT);
         this.moods.lineTo(graphWidth, HEIGHT);
 
+        this.moods.lineStyle(1, COLOR.DARK_GREY);
+        for (let i = 0; i < 10; i++) {
+            this.moods.moveTo(1, i * HEIGHT / 10);
+            this.moods.lineTo(graphWidth, i * HEIGHT / 10);
+        }
+
+        this.moods.lineStyle(1, MoodSprite.getColor(lastMoods[0]));
         this.moods.moveTo(graphWidth, HEIGHT - lastMoods[0] * HEIGHT);
-        for (let i = 1; i < lastMoods.length; i++) {
+        for (let i = 1; i < graphWidth; i++) {
             this.moods.lineTo(graphWidth - i, HEIGHT - lastMoods[i] * HEIGHT);
+            this.moods.lineStyle(1, MoodSprite.getColor(lastMoods[i]));
         }
     }
 
