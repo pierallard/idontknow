@@ -154,7 +154,7 @@ export class Employee {
 
         this.path = path;
         if (!this.moving) {
-            this.popPath(null, null);
+            this.popPath();
         }
         return true;
     }
@@ -169,7 +169,7 @@ export class Employee {
 
         this.path = path;
         if (!this.moving) {
-            this.popPath(null, null);
+            this.popPath();
         }
 
         return true;
@@ -183,22 +183,19 @@ export class Employee {
         this.game.add.tween(this.sprite.position).to({
             x: PositionTransformer.getRealPosition(this.cell).x + this.anchorPixels.x,
             y: PositionTransformer.getRealPosition(this.cell).y + this.anchorPixels.y
-        }, this.getWalkDuration(), 'Linear', true)
-            .onComplete.add((_tweenValues: any, _game: any, isLeft: boolean, isTop: boolean) => {
-            this.popPath(isLeft, isTop);
-        }, this, 0, isLeftLooking, isTopLooking);
+        }, this.getWalkDuration(), 'Linear', true).onComplete.add(() => {
+            this.popPath();
+        }, this);
     }
 
     getWalkDuration(): number {
         return MIN_WALK_CELL_DURATION + (MAX_WALK_CELL_DURATION - MIN_WALK_CELL_DURATION) * (1 - this.humanProperties.getSpeed());
     }
 
-    private popPath(isLeft: boolean, isTop: boolean) {
+    private popPath() {
         this.moving = false;
         let humanPositions = [this.cell];
-        if (this.path === null || this.path.length == 0) {
-            // this.animationManager.loadAnimation(ANIMATION.FREEZE, isLeft, isTop);
-        } else {
+        if (this.path !== null && this.path.length > 0) {
             const next = this.path.shift();
             const direction = Direction.getNeighborDirection(this.cell, next);
             if (!this.moving) {
@@ -254,7 +251,7 @@ export class Employee {
         }
         this.path = [cells[Math.floor(Math.random() * cells.length)]];
         if (!this.moving) {
-            this.popPath(null, null);
+            this.popPath();
         }
     }
 
