@@ -4,7 +4,7 @@ import {COLOR} from "../Pico8Colors";
 export const DEFAULT_BAR_HEIGHT = 10;
 
 export class Gauge {
-    private value: number;
+    protected value: number;
     private width: number;
     private graphics: Phaser.Graphics;
     private color: COLOR;
@@ -35,7 +35,7 @@ export class Gauge {
             this.graphics.lineStyle(0);
             this.graphics.beginFill(COLOR.BLACK);
             this.graphics.drawRect(0, 0.5, this.width, this.height);
-            this.graphics.beginFill(this.color);
+            this.graphics.beginFill(this.getColor());
             this.graphics.drawRect(0, 0.5, Math.floor(this.width * this.value) + 0.5, this.height);
             this.graphics.endFill();
             this.graphics.lineStyle(1, COLOR.WHITE);
@@ -59,5 +59,9 @@ export class Gauge {
 
     getGraphics(): Phaser.Graphics {
         return this.graphics;
+    }
+
+    protected getColor(): COLOR {
+        return this.color;
     }
 }

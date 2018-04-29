@@ -8,6 +8,7 @@ import {GROUP_INTERFACE} from "../game_state/Play";
 import {TEXT_STYLE} from "../TextStyle";
 import {COLOR} from "../Pico8Colors";
 import {DEFAULT_BAR_HEIGHT, Gauge} from "./Gauge";
+import {ColoredGauge} from "./ColoredGauge";
 
 export class HumanEmployer {
     private worldKnowledge: WorldKnowledge;
@@ -92,7 +93,7 @@ class ApplicantButton {
         this.worldKnowledge = worldKnowledge;
         this.availabilityTime = (45 + Math.random() * 45) * Phaser.Timer.SECOND;
         this.remainingTime = this.availabilityTime;
-        this.remainingGauge = new Gauge(OBJECT_SELLER_CELL_SIZE, COLOR.YELLOW, 5);
+        this.remainingGauge = new ColoredGauge(OBJECT_SELLER_CELL_SIZE, 5);
     }
 
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}, index: number) {

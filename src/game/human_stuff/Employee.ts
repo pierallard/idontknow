@@ -255,8 +255,8 @@ export class Employee {
         }
     }
 
-    loadAnimation(animation: ANIMATION, isLeft: boolean = null, isTop: boolean = null) {
-        this.animationManager.loadAnimation(animation, isLeft, isTop);
+    loadAnimation(animation: ANIMATION, isLeftLooking: boolean = null, isTopLooking: boolean = null) {
+        this.animationManager.loadAnimation(animation, isLeftLooking, isTopLooking);
     }
 
     isSelected(): boolean {

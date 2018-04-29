@@ -38,16 +38,16 @@ export class HumanAnimationManager {
         return animation + (isTop ? TOP_ORIENTED_ANIMATION : '');
     }
 
-    loadAnimation(animation: ANIMATION, isLeft: boolean = null, isTop: boolean = null) {
+    loadAnimation(animation: ANIMATION, isLeftLooking: boolean = null, isTopLooking: boolean = null) {
         let animationName = animation + '';
         if (HumanAnimationManager.hasTopOrientedVariation(animation)) {
-            animationName = this.getAnimationName(animation, isTop);
+            animationName = this.getAnimationName(animation, isTopLooking);
         }
         if (this.humanTile.animations.name !== animationName) {
             this.humanTile.animations.play(animationName, FRAME_RATE, HumanAnimationManager.isLooped(animation));
         }
-        if (isLeft != null) {
-            this.humanTile.scale.set(isLeft ? 1 : -1, 1);
+        if (isLeftLooking != null) {
+            this.humanTile.scale.set(isLeftLooking ? 1 : -1, 1);
         }
     }
 
@@ -62,7 +62,7 @@ export class HumanAnimationManager {
             case ANIMATION.WALK: return topOriented ? [6, 7, 8, 9, 10, 11] : [0, 1, 2, 3, 4, 5];
             case ANIMATION.SIT_DOWN: return topOriented ? [18, 68, 69, 70, 71] : [12, 32, 33, 34, 35];
             case ANIMATION.STAND_UP: return topOriented ? [71, 70, 69, 68, 18] : [35, 34, 33, 32, 12];
-            case ANIMATION.TYPE: return [36, 37, 38, 39];
+            case ANIMATION.TYPE: return topOriented ? [84, 85, 86, 87] : [36, 37, 38, 39];
             case ANIMATION.TALK: return topOriented ? [46, 47, 48, 49, 50, 51] : [40, 41, 42, 43, 44, 45];
             case ANIMATION.SIT_TALK: return topOriented ? [78, 79, 80, 81, 82, 83] : [72, 73, 74, 75, 76, 77];
             case ANIMATION.RAGE:
@@ -115,6 +115,7 @@ export class HumanAnimationManager {
             ANIMATION.STAND_UP,
             ANIMATION.FREEZE_SIT,
             ANIMATION.SIT_TALK,
+            ANIMATION.TYPE,
         ].indexOf(animation) > -1;
     }
 

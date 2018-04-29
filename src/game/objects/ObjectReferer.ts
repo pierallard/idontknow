@@ -42,4 +42,12 @@ export class ObjectReferer {
     getIdentifier(): number {
         return this.subObjectNumber;
     }
+
+    forceLeftOrientation(): boolean {
+        return this.obj.forceLeftOrientation(this.subObjectNumber)
+    }
+
+    forceTopOrientation(): boolean {
+        return this.obj.forceTopOrientation(this.subObjectNumber)
+    }
 }

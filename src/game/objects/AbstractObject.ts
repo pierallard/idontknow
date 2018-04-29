@@ -98,7 +98,7 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
         }
     }
 
-    forceOrientation(subObjectNumber: number): boolean {
+    forceLeftOrientation(subObjectNumber: number): boolean {
         const infos = ObjectInfoRegistry.getObjectInfo(this.constructor.name);
 
         return infos.getSpriteInfo(this.orientation, subObjectNumber).isHumanLeftLooking(this.orientation);
