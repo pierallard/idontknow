@@ -1,5 +1,5 @@
 import {GROUP_INTERFACE, GROUP_OBJECTS_AND_HUMANS} from "../game_state/Play";
-import {ObjectInfoRegistry} from "./ObjectInfoRegistry";
+import {ObjectDescriptionRegistry} from "./ObjectDescriptionRegistry";
 import {DIRECTION} from "../Direction";
 import {WorldKnowledge} from "../WorldKnowledge";
 import {InteractiveObjectInterface} from "./InteractiveObjectInterface";
@@ -26,7 +26,7 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
     }
 
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}) {
-        const infos = ObjectInfoRegistry.getObjectInfo(this.constructor.name);
+        const infos = ObjectDescriptionRegistry.getObjectDescription(this.constructor.name);
 
         this.sprites = [];
 
@@ -62,21 +62,21 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
         }
     }
 
-    getPositionGap(subObjectNumber: number): PIXI.Point {
-        const sittableObjectInfos =
-            ObjectInfoRegistry
-                .getObjectInfo(this.constructor.name)
-                .getSpriteInfo(this.orientation, subObjectNumber);
+    getPositionGap(interactivePointIdentifier: number): PIXI.Point {
+        const interactivePointDescription =
+            ObjectDescriptionRegistry
+                .getObjectDescription(this.constructor.name)
+                .getInteractivePoints(this.orientation)[interactivePointIdentifier];
 
-        return sittableObjectInfos.getInteractionPosition(this.orientation);
+        return interactivePointDescription.getInteractionPosition(this.orientation);
     }
 
     getEntries(objectNumber: number): DIRECTION[] {
-        return ObjectInfoRegistry.getObjectInfo(this.constructor.name).getEntryPoints(this.orientation, objectNumber);
+        return ObjectDescriptionRegistry.getObjectDescription(this.constructor.name).getInteractivePointEntryPoints(this.orientation, objectNumber);
     }
 
     getPositions(): PIXI.Point[] {
-        return ObjectInfoRegistry.getObjectInfo(this.constructor.name).getUniqueCellOffsets(this.orientation).map((gap) => {
+        return ObjectDescriptionRegistry.getObjectDescription(this.constructor.name).getUniqueCellOffsets(this.orientation).map((gap) => {
             return new PIXI.Point(
                 this.position.x + gap.x,
                 this.position.y + gap.y
@@ -98,68 +98,61 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
         }
     }
 
-    forceLeftOrientation(subObjectNumber: number): boolean {
-        const infos = ObjectInfoRegistry.getObjectInfo(this.constructor.name);
+    forceLeftOrientation(interactivePointIdentifier: number): boolean {
+        const infos = ObjectDescriptionRegistry.getObjectDescription(this.constructor.name);
 
-        return infos.getSpriteInfo(this.orientation, subObjectNumber).isHumanLeftLooking(this.orientation);
+        return infos.getInteractivePoints(this.orientation)[interactivePointIdentifier].isHumanLeftLooking(this.orientation);
     }
 
-    forceTopOrientation(subObjectNumber: number): boolean {
-        const infos = ObjectInfoRegistry.getObjectInfo(this.constructor.name);
+    forceTopOrientation(interactivePointIdentifier: number): boolean {
+        const infos = ObjectDescriptionRegistry.getObjectDescription(this.constructor.name);
 
-        return infos.getSpriteInfo(this.orientation, subObjectNumber).isHumanTopLooking();
+        return infos.getInteractivePoints(this.orientation)[interactivePointIdentifier].isHumanTopLooking();
     }
 
-    getCellPositionSubObject(subObjectNumber: number): PIXI.Point {
-        const infos = ObjectInfoRegistry.getObjectInfo(this.constructor.name);
+    getCellPositionSubObject(interactivePointIdentifier: number): PIXI.Point {
+        const infos = ObjectDescriptionRegistry.getObjectDescription(this.constructor.name);
 
         return new PIXI.Point(
-            this.position.x + infos.getSpriteCellOffset(this.orientation, subObjectNumber).x,
-            this.position.y + infos.getSpriteCellOffset(this.orientation, subObjectNumber).y
+            this.position.x + infos.getInteractivePointCellOffset(this.orientation, interactivePointIdentifier).x,
+            this.position.y + infos.getInteractivePointCellOffset(this.orientation, interactivePointIdentifier).y
         );
     }
 
-    isUsed(subObjectNumber: number): boolean {
-        return this.getHumanAt(subObjectNumber) !== null;
+    isUsed(interactivePointIdentifier: number): boolean {
+        return this.getHumanAt(interactivePointIdentifier) !== null;
     }
 
-    getHumanAt(subObjectNumber: number): Employee {
-        return this.usedIdentifiers[subObjectNumber] ? this.usedIdentifiers[subObjectNumber] : null;
+    getHumanAt(interactivePointIdentifier: number): Employee {
+        return this.usedIdentifiers[interactivePointIdentifier] ? this.usedIdentifiers[interactivePointIdentifier] : null;
     }
 
     getOrigin(): PIXI.Point {
         return this.position;
     }
 
-    setUsed(subObjectNumber: number, human: Employee): void {
-        if (this.getHumanAt(subObjectNumber)) {
+    setUsed(interactivePointIdentifier: number, human: Employee): void {
+        if (this.getHumanAt(interactivePointIdentifier)) {
             debugger;
             throw "This subobject is already taken!"
         }
-        this.usedIdentifiers[subObjectNumber] = human;
+        this.usedIdentifiers[interactivePointIdentifier] = human;
     }
 
-    setUnused(subObjectNumber: number): void {
-        this.usedIdentifiers[subObjectNumber] = null;
+    setUnused(interactivePointIdentifier: number): void {
+        this.usedIdentifiers[interactivePointIdentifier] = null;
     }
 
     getUnusedReferers(): ObjectReferer[] {
         let result = [];
-        const infos = ObjectInfoRegistry.getObjectInfo(this.constructor.name);
-        for (let i = 0; i < infos.getSpriteInfos(this.orientation).length; i++) {
-            if (infos.getSpriteInfos(this.orientation)[i].getEntryPoints(this.orientation).length > 0) {
-                if (!this.isUsed(i)) {
-                    result.push(new ObjectReferer(this, i));
-                }
+        const description = ObjectDescriptionRegistry.getObjectDescription(this.constructor.name);
+        for (let i = 0; i < description.getInteractivePoints(this.orientation).length; i++) {
+            if (!this.isUsed(i)) {
+                result.push(new ObjectReferer(this, i));
             }
         }
 
         return result;
-    }
-
-    // TODO Remove
-    getLeftOriented(): boolean {
-        return ObjectOrientation.isHorizontalMirror(this.orientation);
     }
 
     getOrientation(): DIRECTION {

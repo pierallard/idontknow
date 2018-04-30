@@ -10,14 +10,14 @@ export interface InteractiveObjectInterface extends ObjectInterface {
      * Returns true if the human has to be right-sided, false if the human has to be left-sided, null if don't care.
      * @returns {boolean}
      */
-    forceLeftOrientation(subObjectNumber: number): boolean;
+    forceLeftOrientation(interactivePointIdentifier: number): boolean;
 
     /**
      * Returns true if the human has to be top-sided, false if the human has to be bottom-sided, null if don't care.
      */
-    forceTopOrientation(subObjectNumber: number): boolean;
+    forceTopOrientation(interactivePointIdentifier: number): boolean;
 
-    isUsed(subObjectNumber: number): boolean;
+    isUsed(interactivePointIdentifier: number): boolean;
 
     /**
      * Returns the gap for the human to interact with it.
@@ -26,17 +26,15 @@ export interface InteractiveObjectInterface extends ObjectInterface {
      *
      * @returns {PIXI.Point}
      */
-    getPositionGap(subObjectNumber: number): PIXI.Point;
+    getPositionGap(interactivePointIdentifier: number): PIXI.Point;
 
-    getCellPositionSubObject(subObjectNumber: number): PIXI.Point;
+    getCellPositionSubObject(interactivePointIdentifier: number): PIXI.Point;
 
-    setUsed(subObjectNumber: number, human: Employee): void;
+    setUsed(interactivePointIdentifier: number, human: Employee): void;
 
-    setUnused(subObjectNumber: number): void;
+    setUnused(interactivePointIdentifier: number): void;
 
     getUnusedReferers(): ObjectReferer[];
-
-    getLeftOriented(): boolean;
 
     getOrientation(): DIRECTION;
 }

@@ -1,9 +1,9 @@
-import {ObjectInfoRegistry} from "./ObjectInfoRegistry";
+import {ObjectDescriptionRegistry} from "./ObjectDescriptionRegistry";
 import {SpriteInfo} from "./SpriteInfo";
 import {CELL_HEIGHT, CELL_WIDTH, PositionTransformer} from "../PositionTransformer";
 import {ObjectDeleter} from "./ObjectDeleter";
 import {WorldKnowledge} from "../WorldKnowledge";
-import {ObjectInfo} from "./ObjectInfo";
+import {ObjectDescription} from "./ObjectDescription";
 import {DIRECTION} from "../Direction";
 import {ObjectInterface} from "./ObjectInterface";
 import {GROUP_INFOS} from "../game_state/Play";
@@ -20,7 +20,7 @@ export class ObjectPhantom implements ObjectInterface {
     private orientation: DIRECTION;
     private forbiddenSprite: Phaser.Sprite;
     private worldKnowledge: WorldKnowledge;
-    private objectInfo: ObjectInfo;
+    private objectDescription: ObjectDescription;
     private putEvent: Function;
     private directionsSprite: DirectionsSprite;
     private game: Phaser.Game;
@@ -31,9 +31,9 @@ export class ObjectPhantom implements ObjectInterface {
         this.orientation = DIRECTION_LOOP[0];
         this.worldKnowledge = worldKnowledge;
         this.position = new PIXI.Point(-10, -10);
-        this.objectInfo = ObjectInfoRegistry.getObjectInfo(name);
+        this.objectDescription = ObjectDescriptionRegistry.getObjectDescription(name);
 
-        this.objectInfo.getSpriteInfos(DIRECTION_LOOP[0]).forEach((spriteInfo: SpriteInfo) => {
+        this.objectDescription.getSpriteInfos(DIRECTION_LOOP[0]).forEach((spriteInfo: SpriteInfo) => {
             this.phantomSprites.push(new PhantomSprite(spriteInfo));
         });
 
@@ -44,7 +44,7 @@ export class ObjectPhantom implements ObjectInterface {
         }, this);
 
         this.putEvent = () => {
-            if (this.worldKnowledge.canPutHere(this.objectInfo, this.position, this.orientation)) {
+            if (this.worldKnowledge.canPutHere(this.objectDescription, this.position, this.orientation)) {
                 this.put(game);
             }
         };
@@ -79,7 +79,7 @@ export class ObjectPhantom implements ObjectInterface {
     private cancel(game: Phaser.Game) {
         this.destroy();
 
-        this.worldKnowledge.getDepot().add(this.objectInfo.getName());
+        this.worldKnowledge.getDepot().add(this.objectDescription.getName());
         game.input.activePointer.leftButton.onDown.remove(this.putEvent);
     }
 
@@ -107,7 +107,7 @@ export class ObjectPhantom implements ObjectInterface {
 
     private switchOrientation() {
         const previousTopOriented = ObjectOrientation.isVerticalMirror(this.orientation);
-        this.orientation = ObjectOrientation.getNextOrientation(this.orientation, this.objectInfo.canBeTopOriented());
+        this.orientation = ObjectOrientation.getNextOrientation(this.orientation, this.objectDescription.canBeTopOriented());
 
         if (previousTopOriented !== ObjectOrientation.isVerticalMirror(this.orientation)) {
             this.phantomSprites.forEach((phantomSprite) => {
@@ -115,7 +115,7 @@ export class ObjectPhantom implements ObjectInterface {
             });
             this.phantomSprites = [];
 
-            this.objectInfo.getSpriteInfos(this.orientation).forEach((spriteInfo: SpriteInfo) => {
+            this.objectDescription.getSpriteInfos(this.orientation).forEach((spriteInfo: SpriteInfo) => {
                 this.phantomSprites.push(new PhantomSprite(spriteInfo));
             });
 
@@ -133,13 +133,13 @@ export class ObjectPhantom implements ObjectInterface {
     }
 
     getPositions(): PIXI.Point[] {
-        return this.objectInfo.getUniqueCellOffsets(this.orientation).map((cellGap) => {
+        return this.objectDescription.getUniqueCellOffsets(this.orientation).map((cellGap) => {
             return new PIXI.Point(this.position.x + cellGap.x, this.position.y + cellGap.y)
         });
     }
 
     getEntries(objectNumber: number): DIRECTION[] {
-        return this.objectInfo.getEntryPoints(this.orientation, objectNumber);
+        return this.objectDescription.getInteractivePointEntryPoints(this.orientation, objectNumber);
     }
 
     private updateForbiddenSprite() {
@@ -147,18 +147,18 @@ export class ObjectPhantom implements ObjectInterface {
             return phantomSprite.getSprite();
         }));
         this.forbiddenSprite.position.set(center.x, center.y);
-        this.forbiddenSprite.alpha = this.worldKnowledge.canPutHere(this.objectInfo, this.position, this.orientation) ? 0 : 1;
+        this.forbiddenSprite.alpha = this.worldKnowledge.canPutHere(this.objectDescription, this.position, this.orientation) ? 0 : 1;
     }
 
     private put(game: Phaser.Game) {
         game.input.moveCallbacks = [];
         game.input.activePointer.leftButton.onDown.remove(this.putEvent);
-        this.worldKnowledge.add(this.objectInfo.getName(), this.getOrigin(), this.orientation);
+        this.worldKnowledge.add(this.objectDescription.getName(), this.getOrigin(), this.orientation);
         this.destroy();
     }
 
-    getInfo(): ObjectInfo {
-        return this.objectInfo;
+    getObjectDescription(): ObjectDescription {
+        return this.objectDescription;
     }
 
     getLeftOriented(): boolean {
@@ -205,9 +205,9 @@ class DirectionsSprite {
     updatePolygons() {
         this.graphics.clear();
 
-        this.phantom.getInfo().getSpriteInfos(this.phantom.getOrientation()).forEach((spriteInfo) => {
-            spriteInfo.getEntryPoints(this.phantom.getOrientation()).forEach((direction) => {
-                const cellGap = spriteInfo.getCellOffset(this.phantom.getOrientation());
+        this.phantom.getObjectDescription().getInteractivePoints(this.phantom.getOrientation()).forEach((interactivePoint) => {
+            interactivePoint.getEntryPoints(this.phantom.getOrientation()).forEach((direction) => {
+                const cellGap = interactivePoint.getCellOffset(this.phantom.getOrientation());
                 if (this.phantom.isEntryAccessible(cellGap, direction)) {
                     this.graphics.beginFill(COLOR.LIGHT_GREEN); // Green
                 } else {
@@ -246,7 +246,7 @@ class DirectionsSprite {
         });
 
         this.graphics.beginFill(this.phantom.isCellFree() ? COLOR.LIGHT_GREEN : COLOR.RED);
-        this.phantom.getInfo().getUniqueCellOffsets(this.phantom.getOrientation()).forEach((cellGap) => {
+        this.phantom.getObjectDescription().getUniqueCellOffsets(this.phantom.getOrientation()).forEach((cellGap) => {
             this.graphics.drawPolygon(
                 PositionTransformer.addGap(new PIXI.Point(- CELL_WIDTH / 2, 0), cellGap),
                 PositionTransformer.addGap(new PIXI.Point(0, CELL_HEIGHT / 2), cellGap),

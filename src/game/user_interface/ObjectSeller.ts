@@ -1,8 +1,8 @@
 import {INTERFACE_WIDTH, TOP_GAP} from "./UserInterface";
 import {CAMERA_WIDTH_PIXELS} from "../../app";
 import {WorldKnowledge} from "../WorldKnowledge";
-import {ObjectInfo} from "../objects/ObjectInfo";
-import {ObjectInfoRegistry} from "../objects/ObjectInfoRegistry";
+import {ObjectDescription} from "../objects/ObjectDescription";
+import {ObjectDescriptionRegistry} from "../objects/ObjectDescriptionRegistry";
 import {ObjectPhantom} from "../objects/ObjectPhantom";
 import {GROUP_INTERFACE} from "../game_state/Play";
 import {TEXT_STYLE} from "../TextStyle";
@@ -23,12 +23,12 @@ export class ObjectSeller {
         this.worldKnowledge = worldKnowledge;
         this.visible = true;
 
-        this.objectProvisionnerButtons = ObjectInfoRegistry
-            .getSellableObjects()
+        this.objectProvisionnerButtons = ObjectDescriptionRegistry
+            .getSalableObjects()
             .map((object) => new ObjectProvisionnerButton(object, this.worldKnowledge));
 
-        this.sellerButtons = ObjectInfoRegistry
-            .getSellableObjects()
+        this.sellerButtons = ObjectDescriptionRegistry
+            .getSalableObjects()
             .map((object) => new SellerButton(object, this.worldKnowledge));
     }
 
@@ -85,13 +85,13 @@ export class ObjectSeller {
 }
 
 class SellerButton {
-    private objectInfo: ObjectInfo;
+    private objectInfo: ObjectDescription;
     private price: Phaser.Text;
     private worldKnowledge: WorldKnowledge;
     private button: Phaser.Sprite;
     private isDown: boolean;
 
-    constructor(objectInfo: ObjectInfo, worldKnowledge: WorldKnowledge) {
+    constructor(objectInfo: ObjectDescription, worldKnowledge: WorldKnowledge) {
         this.objectInfo = objectInfo;
         this.worldKnowledge = worldKnowledge;
         this.isDown = false;
@@ -162,7 +162,7 @@ class SellerButton {
 }
 
 class ObjectProvisionnerButton {
-    private objectInfo: ObjectInfo;
+    private objectInfo: ObjectDescription;
     private counter: Phaser.Text;
     private worldKnowledge: WorldKnowledge;
     private fakeCells: Phaser.Sprite[];
@@ -170,7 +170,7 @@ class ObjectProvisionnerButton {
     private circle: Phaser.Graphics;
     private square: Phaser.Graphics;
 
-    constructor(objectInfo: ObjectInfo, worldKnowledge: WorldKnowledge) {
+    constructor(objectInfo: ObjectDescription, worldKnowledge: WorldKnowledge) {
         this.objectInfo = objectInfo;
         this.worldKnowledge = worldKnowledge;
         this.sprites = [];

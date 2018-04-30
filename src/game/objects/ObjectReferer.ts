@@ -4,11 +4,11 @@ import {Employee} from "../human_stuff/Employee";
 
 export class ObjectReferer {
     private obj: InteractiveObjectInterface;
-    private subObjectNumber: number;
+    private interactivePointIdentifier: number;
 
-    constructor(object: InteractiveObjectInterface, subObjectNumber: number) {
+    constructor(object: InteractiveObjectInterface, interactivePointIdentifier: number) {
         this.obj = object;
-        this.subObjectNumber = subObjectNumber;
+        this.interactivePointIdentifier = interactivePointIdentifier;
     }
 
     getObject(): InteractiveObjectInterface {
@@ -16,38 +16,38 @@ export class ObjectReferer {
     }
 
     isUsed(): boolean {
-        return this.obj.isUsed(this.subObjectNumber);
+        return this.obj.isUsed(this.interactivePointIdentifier);
     }
 
     getPositionGap(): PIXI.Point {
-        return this.obj.getPositionGap(this.subObjectNumber);
+        return this.obj.getPositionGap(this.interactivePointIdentifier);
     }
 
     getEntries(): DIRECTION[] {
-        return this.obj.getEntries(this.subObjectNumber);
+        return this.obj.getEntries(this.interactivePointIdentifier);
     }
 
     getPosition(): PIXI.Point {
-        return this.obj.getCellPositionSubObject(this.subObjectNumber);
+        return this.obj.getCellPositionSubObject(this.interactivePointIdentifier);
     }
 
     setUsed(human: Employee) {
-        this.obj.setUsed(this.subObjectNumber, human);
+        this.obj.setUsed(this.interactivePointIdentifier, human);
     }
 
     setUnused() {
-        this.obj.setUnused(this.subObjectNumber);
+        this.obj.setUnused(this.interactivePointIdentifier);
     }
 
     getIdentifier(): number {
-        return this.subObjectNumber;
+        return this.interactivePointIdentifier;
     }
 
     forceLeftOrientation(): boolean {
-        return this.obj.forceLeftOrientation(this.subObjectNumber)
+        return this.obj.forceLeftOrientation(this.interactivePointIdentifier)
     }
 
     forceTopOrientation(): boolean {
-        return this.obj.forceTopOrientation(this.subObjectNumber)
+        return this.obj.forceTopOrientation(this.interactivePointIdentifier)
     }
 }

@@ -20,11 +20,12 @@ import {ObjectReferer} from "./objects/ObjectReferer";
 import {LevelManager} from "./LevelManager";
 import {EMPLOYEE_TYPE} from "./human_stuff/HumanPropertiesFactory";
 import {Price} from "./objects/Price";
-import {ObjectInfo} from "./objects/ObjectInfo";
-import {ObjectInfoRegistry} from "./objects/ObjectInfoRegistry";
+import {ObjectDescription} from "./objects/ObjectDescription";
+import {ObjectDescriptionRegistry} from "./objects/ObjectDescriptionRegistry";
 import {SmoothValue} from "./SmoothValue";
 import {PANEL, UserInterface} from "./user_interface/UserInterface";
 import {DIRECTION_LOOP, ObjectOrientation} from "./objects/ObjectOrientation";
+import {Couch} from "./objects/Couch";
 
 export const GRID_WIDTH = 16;
 export const GRID_HEIGHT = 16;
@@ -329,13 +330,13 @@ export class WorldKnowledge {
         this.wallet.add(- price.getValue());
     }
 
-    canPutHere(objectInfo: ObjectInfo, origin: PIXI.Point, orientation: DIRECTION) {
+    canPutHere(objectInfo: ObjectDescription, origin: PIXI.Point, orientation: DIRECTION) {
         return this.areAllTheCellsFree(objectInfo, origin, orientation) &&
             this.areAllSpritesEnterable(objectInfo, origin, orientation) &&
             this.isNewObjectNotBlockingExistingOne(origin);
     };
 
-    private areAllTheCellsFree(objectInfo: ObjectInfo, origin: PIXI.Point, orientation: DIRECTION) {
+    private areAllTheCellsFree(objectInfo: ObjectDescription, origin: PIXI.Point, orientation: DIRECTION) {
         for (let i = 0; i < objectInfo.getSpriteInfos(orientation).length; i++) {
             const spriteInfo = objectInfo.getSpriteInfo(orientation, i);
             const gap = spriteInfo.getCellOffset(orientation);
@@ -347,18 +348,16 @@ export class WorldKnowledge {
         return true;
     }
 
-    private areAllSpritesEnterable(objectInfo: ObjectInfo, origin: PIXI.Point, orientation: DIRECTION) {
-        for (let i = 0; i < objectInfo.getSpriteInfos(orientation).length; i++) {
-            const spriteInfo = objectInfo.getSpriteInfo(orientation, i);
-            if (spriteInfo.getEntryPoints(orientation).length > 0) {
-                let isEntryPossible = false;
-                spriteInfo.getEntryPoints(orientation).forEach((entry) => {
-                    const gap = spriteInfo.getCellOffset(orientation);
-                    isEntryPossible = isEntryPossible || this.isEntryAccessibleForObject(origin, gap, entry)
-                });
-                if (isEntryPossible === false) {
-                    return false;
-                }
+    private areAllSpritesEnterable(objectInfo: ObjectDescription, origin: PIXI.Point, orientation: DIRECTION) {
+        for (let i = 0; i < objectInfo.getInteractivePoints(orientation).length; i++) {
+            const interactivePoint = objectInfo.getInteractivePoints(orientation)[i];
+            let isEntryPossible = false;
+            interactivePoint.getEntryPoints(orientation).forEach((entry) => {
+                const gap = interactivePoint.getCellOffset(orientation);
+                isEntryPossible = isEntryPossible || this.isEntryAccessibleForObject(origin, gap, entry)
+            });
+            if (isEntryPossible === false) {
+                return false;
             }
         }
 
@@ -371,7 +370,7 @@ export class WorldKnowledge {
              * and check it's not blocking for every sprite, instead of looking if there is a unique entry point.
              */
             const object = this.objects[o];
-            const objectInfo = ObjectInfoRegistry.getObjectInfo(object.constructor.name);
+            const objectInfo = ObjectDescriptionRegistry.getObjectDescription(object.constructor.name);
 
             let isEntryPossible = false;
             const entryCells = objectInfo.getEntryCells(object.getOrigin(), object.getOrientation());
@@ -402,6 +401,7 @@ export class WorldKnowledge {
             case 'Sofa': object = new Sofa(position, this, orientation); break;
             case 'Dispenser': object = new Dispenser(position, this, orientation); break;
             case 'Table': object = new Table(position, this, orientation); break;
+            case 'Couch': object = new Couch(position, this, orientation); break;
             default: throw 'Unknown object ' + name;
         }
         this.objects.push(object);

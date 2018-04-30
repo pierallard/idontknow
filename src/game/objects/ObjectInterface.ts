@@ -1,5 +1,4 @@
 import {DIRECTION} from "../Direction";
-import {Price} from "./Price";
 
 export interface ObjectInterface {
     getPositions(): PIXI.Point[];

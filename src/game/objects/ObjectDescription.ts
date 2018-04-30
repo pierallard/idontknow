@@ -2,22 +2,29 @@ import {SpriteInfo} from "./SpriteInfo";
 import {Direction, DIRECTION} from "../Direction";
 import {Price} from "./Price";
 import {ObjectOrientation} from "./ObjectOrientation";
+import {InteractivePoint} from "./InteractivePoint";
 
-export class ObjectInfo {
+export class ObjectDescription {
     private name: string;
     private bottomOrientedSpriteInfos: SpriteInfo[];
     private topOrientedSpriteInfos: SpriteInfo[];
+    private bottomInteractivePoints: InteractivePoint[];
+    private topInteractivePoints: InteractivePoint[];
     private price: Price;
 
     constructor(
         name: string,
         bottomOrientedSpriteInfos: SpriteInfo[],
         topOrientedSpriteInfos: SpriteInfo[],
+        bottomInteractivePoints: InteractivePoint[],
+        topInteractivePoints: InteractivePoint[],
         price: Price
     ) {
         this.name = name;
         this.bottomOrientedSpriteInfos = bottomOrientedSpriteInfos;
         this.topOrientedSpriteInfos = topOrientedSpriteInfos;
+        this.bottomInteractivePoints = bottomInteractivePoints;
+        this.topInteractivePoints = topInteractivePoints;
         this.price = price;
     }
 
@@ -25,7 +32,7 @@ export class ObjectInfo {
         return this.name;
     }
 
-    getSpriteInfos(orientation: DIRECTION) {
+    getSpriteInfos(orientation: DIRECTION): SpriteInfo[] {
         return ObjectOrientation.isVerticalMirror(orientation)
             ? this.topOrientedSpriteInfos
             : this.bottomOrientedSpriteInfos;
@@ -35,12 +42,18 @@ export class ObjectInfo {
         return this.getSpriteInfos(orientation)[objectOrder];
     }
 
-    getEntryPoints(orientation: DIRECTION, objectNumber: number): DIRECTION[] {
-        return this.getSpriteInfo(orientation, objectNumber).getEntryPoints(orientation);
+    getInteractivePoints(orientation: DIRECTION): InteractivePoint[] {
+        return ObjectOrientation.isVerticalMirror(orientation)
+            ? this.topInteractivePoints
+            : this.bottomInteractivePoints;
     }
 
-    getSpriteCellOffset(orientation: DIRECTION, subObjectNumber: number): PIXI.Point {
-        return this.getSpriteInfo(orientation, subObjectNumber).getCellOffset(orientation);
+    getInteractivePointEntryPoints(orientation: DIRECTION, interactivePointIdentifier: number): DIRECTION[] {
+        return this.getInteractivePoints(orientation)[interactivePointIdentifier].getEntryPoints(orientation);
+    }
+
+    getInteractivePointCellOffset(orientation: DIRECTION, interactivePointIdentifier: number): PIXI.Point {
+        return this.getInteractivePoints(orientation)[interactivePointIdentifier].getCellOffset(orientation);
     }
 
     isSalable(remainingMoney: Price): boolean {
@@ -81,9 +94,9 @@ export class ObjectInfo {
      */
     getEntryCells(originCell: PIXI.Point, orientation: DIRECTION): PIXI.Point[] {
         let result = [];
-        this.getSpriteInfos(orientation).forEach((spriteInfo) => {
-            spriteInfo.getEntryPoints(orientation).forEach((entryPoint) => {
-                const gap = spriteInfo.getCellOffset(orientation);
+        this.getInteractivePoints(orientation).forEach((interactivePoint) => {
+            interactivePoint.getEntryPoints(orientation).forEach((entryPoint) => {
+                const gap = interactivePoint.getCellOffset(orientation);
                 const spriteCell = new PIXI.Point(
                     originCell.x + gap.x,
                     originCell.y + gap.y

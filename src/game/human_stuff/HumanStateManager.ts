@@ -74,7 +74,7 @@ export class HumanStateManager {
             case STATE.SIT:
                 this.state = new SitState(
                     this.human,
-                    this.worldKnowledge.getClosestReferer(['Sofa'], 1, this.human.getPosition()),
+                    this.worldKnowledge.getClosestReferer(['Sofa', 'Couch'], 1, this.human.getPosition()),
                     this.worldKnowledge
                 );
                 break;
@@ -168,7 +168,7 @@ export class HumanStateManager {
             states.push({state: STATE.COFFEE, probability: this.getProbability(STATE.COFFEE)});
         }
 
-        if (this.worldKnowledge.getClosestReferer(['Sofa']) !== null) {
+        if (this.worldKnowledge.getClosestReferer(['Sofa', 'Couch']) !== null) {
             states.push({state: STATE.SIT, probability: this.getProbability(STATE.SIT)});
         }
 
