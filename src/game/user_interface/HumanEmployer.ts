@@ -1,5 +1,5 @@
 import {WorldKnowledge} from "../WorldKnowledge";
-import {HumanPropertiesFactory} from "../human_stuff/HumanPropertiesFactory";
+import {EMPLOYEE_TYPE, HumanPropertiesFactory} from "../human_stuff/HumanPropertiesFactory";
 import {HumanProperties} from "../human_stuff/HumanProperties";
 import {INTERFACE_WIDTH, TOP_GAP} from "./UserInterface";
 import {CAMERA_WIDTH_PIXELS} from "../../app";
@@ -7,7 +7,7 @@ import {OBJECT_SELLER_CELL_SIZE} from "./ObjectSeller";
 import {GROUP_INTERFACE} from "../game_state/Play";
 import {TEXT_STYLE} from "../TextStyle";
 import {COLOR} from "../Pico8Colors";
-import {DEFAULT_BAR_HEIGHT, Gauge} from "./Gauge";
+import {Gauge} from "./Gauge";
 import {ColoredGauge} from "./ColoredGauge";
 
 export class HumanEmployer {
@@ -22,7 +22,11 @@ export class HumanEmployer {
         this.applicantButtons = [];
         this.visible = true;
         for (let i = 0; i < 6; i++) {
-            this.applicantButtons.push(new ApplicantButton(this, HumanPropertiesFactory.create(), this.worldKnowledge));
+            this.applicantButtons.push(new ApplicantButton(
+                this,
+                HumanPropertiesFactory.create(this.getEmployeeTypes()),
+                this.worldKnowledge
+            ));
         }
     }
 
@@ -67,11 +71,26 @@ export class HumanEmployer {
 
     cancel(applicant: ApplicantButton) {
         const index = this.applicantButtons.indexOf(applicant);
-        this.applicantButtons[index] = new ApplicantButton(this, HumanPropertiesFactory.create(), this.worldKnowledge);
+        this.applicantButtons[index] = new ApplicantButton(
+            this,
+            HumanPropertiesFactory.create(this.getEmployeeTypes()),
+            this.worldKnowledge
+        );
         this.applicantButtons[index].create(this.game, this.groups, index);
         if (!this.visible) {
             this.applicantButtons[index].hide();
         }
+    }
+
+    private getEmployeeTypes(): EMPLOYEE_TYPE[] {
+        let result: EMPLOYEE_TYPE[] = [EMPLOYEE_TYPE.DEVELOPER];
+        if (this.worldKnowledge.getLevel() > 1) {
+            result.push(EMPLOYEE_TYPE.SALE);
+        }
+        if (this.worldKnowledge.getLevel() > 2) {
+            result.push(EMPLOYEE_TYPE.MARKETING);
+        }
+        return result;
     }
 }
 

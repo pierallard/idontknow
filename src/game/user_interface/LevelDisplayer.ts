@@ -53,6 +53,12 @@ export class LevelDisplayer implements Tooltipable {
 
     update() {
         Object.keys(this.gauges).forEach((employeeType) => {
+            if (this.worldKnowledge.getLevelGoal(<EMPLOYEE_TYPE> parseInt(employeeType)) <= 0) {
+                this.gauges[employeeType].hide();
+            }
+            else {
+                this.gauges[employeeType].show();
+            }
             this.gauges[employeeType].setValue(this.worldKnowledge.getLevelProgress(<EMPLOYEE_TYPE> parseInt(employeeType)));
             this.gauges[employeeType].update();
         });

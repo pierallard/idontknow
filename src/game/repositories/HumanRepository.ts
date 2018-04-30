@@ -7,7 +7,7 @@ export class HumanRepository {
 
     constructor(worldKnowledge: WorldKnowledge) {
         this.humans = [
-            new Employee(worldKnowledge.getRandomCell(), HumanPropertiesFactory.create(EMPLOYEE_TYPE.DEVELOPER))
+            new Employee(worldKnowledge.getRandomCell(), HumanPropertiesFactory.create([EMPLOYEE_TYPE.DEVELOPER]))
         ];
     }
 
@@ -21,15 +21,5 @@ export class HumanRepository {
         this.humans.forEach((human: Employee) => {
             human.update();
         })
-    }
-
-    getSelectedHumanSprite() {
-        for (let i = 0; i < this.humans.length; i++) {
-            if (this.humans[i].isSelected()) {
-                return this.humans[i].getSprite();
-            }
-        }
-
-        return null;
     }
 }

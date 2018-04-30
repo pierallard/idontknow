@@ -18,9 +18,13 @@ import {RAGE_IMAGE, ThoughtBubble} from "./ThoughtBubble";
 import {COLOR} from "../Pico8Colors";
 import {SPRITE_DEBUG} from "../objects/AbstractObject";
 import {ObjectOrientation} from "../objects/ObjectOrientation";
+import {Price} from "../objects/Price";
 
 const MAX_WALK_CELL_DURATION = 1500;
 const MIN_WALK_CELL_DURATION = 800;
+const MAX_WAGE = 50;
+const MIN_WAGE = 10;
+const WAGE_LOOP = 30 * Phaser.Timer.SECOND;
 
 const MAX_RETRIES = 3;
 const MIN_RETRIES = 0;
@@ -95,6 +99,11 @@ export class Employee {
         if (PATH_DEBUG || SPRITE_DEBUG) {
             this.debugGraphics = game.add.graphics(0, 0, groups[GROUP_INTERFACE]);
         }
+
+        this.worldKnowledge.addMoneyInWallet(this.getWage(), WAGE_LOOP);
+        this.game.time.events.loop(WAGE_LOOP, () => {
+            this.worldKnowledge.addMoneyInWallet(this.getWage(), WAGE_LOOP);
+        });
     }
 
     update() {
@@ -348,5 +357,9 @@ export class Employee {
         if (this.isSelected()) {
             ObjectSelector.click(this.sprite, null, [this.sprite]);
         }
+    }
+
+    private getWage(): Price {
+        return new Price(- (MIN_WAGE + this.humanProperties.getWage() * (MAX_WAGE - MIN_WAGE)));
     }
 }

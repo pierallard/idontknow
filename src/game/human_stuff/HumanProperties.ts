@@ -8,8 +8,18 @@ export class HumanProperties {
     private name: string;
     private perseverance: number;
     private spriteVariation: string;
+    private wage: number;
 
-    constructor(spriteVariation: string, type: EMPLOYEE_TYPE, name: string, salary: number, speed: number, quality: number, perseverance: number) {
+    constructor(
+        spriteVariation: string,
+        type: EMPLOYEE_TYPE,
+        name: string,
+        salary: number,
+        speed: number,
+        quality: number,
+        perseverance: number,
+        wage: number
+    ) {
         this.spriteVariation = spriteVariation;
         this.type = type;
         this.name = name;
@@ -17,6 +27,7 @@ export class HumanProperties {
         this.speed = speed;
         this.quality = quality;
         this.perseverance = perseverance;
+        this.wage = wage;
     }
 
     getSpriteKey(): string {
@@ -31,11 +42,11 @@ export class HumanProperties {
         return this.name;
     }
 
-    getSpeed() {
+    getSpeed(): number {
         return this.speed;
     }
 
-    getStrType() {
+    getStrType(): string {
         switch (this.type) {
             case EMPLOYEE_TYPE.DEVELOPER: return 'Developer';
             case EMPLOYEE_TYPE.MARKETING: return 'Marketing';
@@ -43,11 +54,15 @@ export class HumanProperties {
         }
     }
 
-    getPerseverance() {
+    getPerseverance(): number {
         return this.perseverance;
     }
 
     getType(): EMPLOYEE_TYPE {
         return this.type;
+    }
+
+    getWage(): number {
+        return this.wage;
     }
 }

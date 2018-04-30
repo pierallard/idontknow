@@ -24,7 +24,7 @@ import {ObjectDescription} from "./objects/ObjectDescription";
 import {ObjectDescriptionRegistry} from "./objects/ObjectDescriptionRegistry";
 import {SmoothValue} from "./SmoothValue";
 import {PANEL, UserInterface} from "./user_interface/UserInterface";
-import {DIRECTION_LOOP, ObjectOrientation} from "./objects/ObjectOrientation";
+import {DIRECTION_LOOP} from "./objects/ObjectOrientation";
 import {Couch} from "./objects/Couch";
 
 export const GRID_WIDTH = 16;
@@ -55,7 +55,7 @@ export class WorldKnowledge {
         this.wallRepository = new WallRepository();
         this.levelManager = new LevelManager();
         this.depot = new Depot();
-        this.wallet = new SmoothValue(130);
+        this.wallet = new SmoothValue(1000);
 
         if (DEBUG_WORLD) {
             this.wallRepository.addWall(new PIXI.Point(5, 5));
@@ -151,10 +151,6 @@ export class WorldKnowledge {
 
     getMoneyInWallet(): Price {
         return new Price(this.wallet.getValue());
-    }
-
-    getSelectedHumanSprite() {
-        return this.humanRepository.getSelectedHumanSprite();
     }
 
     resetAStar(position: PIXI.Point) {
@@ -431,8 +427,8 @@ export class WorldKnowledge {
         this.levelManager.addLevelProgress(type, value, time);
     }
 
-    addMoneyInWallet(price: Price) {
-        this.wallet.add(price.getValue());
+    addMoneyInWallet(price: Price, milliseconds: number = Phaser.Timer.SECOND) {
+        this.wallet.add(price.getValue(), milliseconds);
     }
 
     setSelectedHuman(employee: Employee) {
