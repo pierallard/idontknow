@@ -193,6 +193,15 @@ class ObjectProvisionnerButton {
         });
         const scale = 2 / (width + height);
 
+        if (height !== width) {
+            // TODO, works not for every case.
+            spriteOrigin.x = left + OBJECT_SELLER_CELL_SIZE / (height + width) * (1);
+            // W = 1 H = 2 => 1/3 1 - 2 = -1
+            // W = 1 H = 1 => 1/2 1 - 1 = 0
+            // W = 2 H = 1 => 2/3 2 - 1 = 1
+            // Change sprite Origin
+        }
+
         this.square = game.add.graphics(left, TOP_GAP + index * OBJECT_SELLER_CELL_SIZE, groups[GROUP_INTERFACE]);
         this.square.lineStyle(1, COLOR.WHITE);
         this.square.drawRect(0, 0, OBJECT_SELLER_CELL_SIZE, OBJECT_SELLER_CELL_SIZE);

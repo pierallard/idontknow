@@ -43,7 +43,7 @@ export class SpriteInfo {
     getRealPositionFromOrigin(realPosition: PIXI.Point, orientation: DIRECTION, scale: number = 1) {
         return new PIXI.Point(
             realPosition.x + (ObjectOrientation.isHorizontalMirror(orientation) ? -1 : 1) * (this.gap.x - (this.cellOffset.x - this.cellOffset.y) * CELL_WIDTH / 2) * scale,
-            realPosition.y + this.gap.y - this.anchorBottom - ((this.cellOffset.x + this.cellOffset.y) * CELL_HEIGHT / 2) * scale
+            realPosition.y + this.gap.y * scale - this.anchorBottom - ((this.cellOffset.x + this.cellOffset.y) * CELL_HEIGHT / 2) * scale
         )
     }
 
