@@ -1,10 +1,12 @@
 import {EMPLOYEE_TYPE} from "./human_stuff/HumanPropertiesFactory";
 import {SmoothValue} from "./SmoothValue";
+import {Price} from "./objects/Price";
 
 const DEVELOPER_RATIO = 1000;
 const MARKETING_RATIO = 5;
 const SALE_RATIO = 10;
 const STARTING_LEVEL = 1;
+const GLOBAL_PROGRESS_EARN = 7.5;
 
 export class LevelManager {
     private level: number;
@@ -36,9 +38,9 @@ export class LevelManager {
     addLevelProgress(type: EMPLOYEE_TYPE, value: number, time: number) {
         let realValue = 0;
         switch (type) {
-            case EMPLOYEE_TYPE.DEVELOPER: realValue = value * DEVELOPER_RATIO / 10; break;
-            case EMPLOYEE_TYPE.MARKETING: realValue = value * MARKETING_RATIO / 10; break;
-            case EMPLOYEE_TYPE.SALE: realValue = value * SALE_RATIO / 10; break;
+            case EMPLOYEE_TYPE.DEVELOPER: realValue = value * DEVELOPER_RATIO / GLOBAL_PROGRESS_EARN; break;
+            case EMPLOYEE_TYPE.MARKETING: realValue = value * MARKETING_RATIO / GLOBAL_PROGRESS_EARN; break;
+            case EMPLOYEE_TYPE.SALE: realValue = value * SALE_RATIO / GLOBAL_PROGRESS_EARN; break;
         }
         this.levels[type].add(realValue, time);
     }
@@ -51,7 +53,11 @@ export class LevelManager {
             this.starts[EMPLOYEE_TYPE.MARKETING] = this.getGoal(EMPLOYEE_TYPE.MARKETING);
             this.starts[EMPLOYEE_TYPE.SALE] = this.getGoal(EMPLOYEE_TYPE.SALE);
             this.level += 1;
+
+            return true;
         }
+
+        return false;
     }
 
     getLevel(): number {
@@ -70,5 +76,13 @@ export class LevelManager {
             case EMPLOYEE_TYPE.SALE: return SALE_RATIO * Math.pow(2, this.level - 2);
             case EMPLOYEE_TYPE.MARKETING: return MARKETING_RATIO * Math.pow(2, this.level - 3);
         }
+    }
+
+    getEarnedMoney(): Price {
+        return new Price(1000 * Math.pow(2, this.level - 1));
+    }
+
+    getSoftwarePrice(): Price {
+        return new Price(this.levels[EMPLOYEE_TYPE.DEVELOPER].getValue() / 2);
     }
 }

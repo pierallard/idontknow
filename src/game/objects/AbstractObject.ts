@@ -8,7 +8,7 @@ import {Employee} from "../human_stuff/Employee";
 import {ObjectOrientation} from "./ObjectOrientation";
 import {COLOR} from "../Pico8Colors";
 
-export const SPRITE_DEBUG = true;
+export const SPRITE_DEBUG = false;
 
 export abstract class AbstractObject implements InteractiveObjectInterface {
     protected sprites: Phaser.Sprite[];

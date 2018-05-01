@@ -3,7 +3,6 @@ import {STATE} from "../human_stuff/HumanStateManager";
 import {RageState} from "./RageState";
 import {MoveThenActAbstractState} from "./MoveThenActAbstractState";
 import {HumanState} from "./HumanState";
-import {Price} from "../objects/Price";
 import {RAGE_IMAGE} from "../human_stuff/ThoughtBubble";
 
 const SECOND_MAX = 60 * Phaser.Timer.SECOND;
@@ -27,7 +26,6 @@ export class TypeState extends MoveThenActAbstractState {
             this.human.loadAnimation(ANIMATION.TYPE, this.objectReferer.forceLeftOrientation(), this.objectReferer.forceTopOrientation());
             const time = Phaser.Math.random(15 * Phaser.Timer.SECOND, SECOND_MAX);
             this.worldKnowledge.addProgress(this.human.getType(), time / SECOND_MAX, time);
-            this.worldKnowledge.addMoneyInWallet(new Price(100));
             this.events.push(this.game.time.events.add(time, () => {
                 this.human.loadAnimation(ANIMATION.STAND_UP);
                 this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.STAND_UP) + 100, () => {

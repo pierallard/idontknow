@@ -50,7 +50,7 @@ export class ObjectDescriptionRegistry {
                 ],
                 [],
                 [
-                    new InteractivePoint([DIRECTION.LEFT, DIRECTION.TOP, DIRECTION.RIGHT, DIRECTION.BOTTOM], new PIXI.Point(0, -7), null, false)
+                    new InteractivePoint([DIRECTION.LEFT, DIRECTION.TOP, DIRECTION.RIGHT, DIRECTION.BOTTOM], new PIXI.Point(0, -7), new PIXI.Point(0, 0), null, false)
                 ],
                 [],
                 new Price(10)

@@ -22,4 +22,10 @@ export class HumanRepository {
             human.update();
         })
     }
+
+    getCount(type: EMPLOYEE_TYPE): number {
+        return this.humans.filter((human) => {
+            return human.getType() === type;
+        }).length;
+    }
 }

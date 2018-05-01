@@ -25,13 +25,13 @@ export class LevelDisplayer implements Tooltipable {
         this.gauges[EMPLOYEE_TYPE.MARKETING] = new Gauge(width, COLOR.ROSE);
 
         this.tooltips[EMPLOYEE_TYPE.DEVELOPER] = new Tooltip(() => {
-            return Math.round(this.worldKnowledge.getLevelValue(EMPLOYEE_TYPE.DEVELOPER)) + '/' + this.worldKnowledge.getLevelGoal(EMPLOYEE_TYPE.DEVELOPER) + ' lines coded';
+            return Math.floor(this.worldKnowledge.getLevelValue(EMPLOYEE_TYPE.DEVELOPER)) + '/' + this.worldKnowledge.getLevelGoal(EMPLOYEE_TYPE.DEVELOPER) + ' lines coded';
         });
         this.tooltips[EMPLOYEE_TYPE.SALE] = new Tooltip(() => {
-            return Math.round(this.worldKnowledge.getLevelValue(EMPLOYEE_TYPE.SALE)) + '/' + this.worldKnowledge.getLevelGoal(EMPLOYEE_TYPE.SALE) + ' licence sell'
+            return Math.floor(this.worldKnowledge.getLevelValue(EMPLOYEE_TYPE.SALE)) + '/' + this.worldKnowledge.getLevelGoal(EMPLOYEE_TYPE.SALE) + ' licence sell'
         });
         this.tooltips[EMPLOYEE_TYPE.MARKETING] = new Tooltip(() => {
-            return Math.round(this.worldKnowledge.getLevelValue(EMPLOYEE_TYPE.MARKETING)) + '/' + this.worldKnowledge.getLevelGoal(EMPLOYEE_TYPE.MARKETING) + ' campaigns done';
+            return Math.floor(this.worldKnowledge.getLevelValue(EMPLOYEE_TYPE.MARKETING)) + '/' + this.worldKnowledge.getLevelGoal(EMPLOYEE_TYPE.MARKETING) + ' campaigns done';
         });
     }
 

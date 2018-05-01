@@ -113,7 +113,9 @@ export class WorldKnowledge {
 
     update() {
         this.humanRepository.update();
-        this.levelManager.update();
+        if (this.levelManager.update()) {
+            this.addMoneyInWallet(this.levelManager.getEarnedMoney())
+        }
     }
 
     humanMoved(positions: PIXI.Point[]) {
@@ -425,6 +427,9 @@ export class WorldKnowledge {
 
     addProgress(type: EMPLOYEE_TYPE, value: number, time: number) {
         this.levelManager.addLevelProgress(type, value, time);
+        if (type === EMPLOYEE_TYPE.SALE) {
+            this.addMoneyInWallet(new Price(value * this.levelManager.getSoftwarePrice().getValue()), time);
+        }
     }
 
     addMoneyInWallet(price: Price, milliseconds: number = Phaser.Timer.SECOND) {
@@ -463,5 +468,13 @@ export class WorldKnowledge {
 
     getLevel(): number {
         return this.levelManager.getLevel();
+    }
+
+    getSoftwarePrice(): Price {
+        return this.levelManager.getSoftwarePrice();
+    }
+
+    getEmployeeCount(type: EMPLOYEE_TYPE): number {
+        return this.humanRepository.getCount(type);
     }
 }

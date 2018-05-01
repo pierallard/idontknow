@@ -17,7 +17,7 @@ export abstract class Bubble {
             this.getSpriteFrame(),
             group
         );
-        this.sprite.anchor.set(1, 37/this.sprite.height);
+        this.sprite.anchor.set(0.99, 37/this.sprite.height);
         group.add(this.sprite);
 
         this.imageSprite = game.add.sprite(
@@ -27,7 +27,7 @@ export abstract class Bubble {
             0,
             group
         );
-        this.imageSprite.anchor.set(1.2, 76/this.sprite.height);
+        this.imageSprite.anchor.set(1.15, 76/this.sprite.height);
         group.add(this.imageSprite);
 
         this.hide();

@@ -8,11 +8,10 @@ import {MOOD} from "../human_stuff/HumanMoodManager";
 import {PieChart} from "./PieChart";
 import {HumanStateManager} from "../human_stuff/HumanStateManager";
 import {Gauge} from "./Gauge";
-import {COLOR} from "../Pico8Colors";
 import {ColoredGauge} from "./ColoredGauge";
 
 const GRAPH_GAP = 2;
-const GAP_BETWEEN_LINES = 10;
+export const GAP_BETWEEN_LINES = 10;
 const GAUGE_GAP = 100;
 
 export class UserInfoPanel {
