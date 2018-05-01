@@ -17,7 +17,7 @@ import {HumanProperties} from "./human_stuff/HumanProperties";
 import {MoodRegister} from "./human_stuff/MoodRegister";
 import {Table} from "./objects/Table";
 import {ObjectReferer} from "./objects/ObjectReferer";
-import {LevelManager} from "./LevelManager";
+import {LevelManager} from "./user_interface/LevelManager";
 import {EMPLOYEE_TYPE} from "./human_stuff/HumanPropertiesFactory";
 import {Price} from "./objects/Price";
 import {ObjectDescription} from "./objects/ObjectDescription";
@@ -26,6 +26,7 @@ import {SmoothValue} from "./SmoothValue";
 import {PANEL, UserInterface} from "./user_interface/UserInterface";
 import {DIRECTION_LOOP} from "./objects/ObjectOrientation";
 import {Couch} from "./objects/Couch";
+import {EmployeeCountRegister} from "./human_stuff/EmployeeCountRegister";
 
 export const GRID_WIDTH = 16;
 export const GRID_HEIGHT = 16;
@@ -40,6 +41,7 @@ export class WorldKnowledge {
     private game: Phaser.Game;
     private groups: {[index: string] : Phaser.Group};
     private moodRegister: MoodRegister;
+    private employeeCountRegister: EmployeeCountRegister;
     private levelManager: LevelManager;
     private wallet: SmoothValue;
     private userInterface: UserInterface;
@@ -90,6 +92,7 @@ export class WorldKnowledge {
 
         this.humanRepository = new HumanRepository(this);
         this.moodRegister = new MoodRegister(this.humanRepository);
+        this.employeeCountRegister = new EmployeeCountRegister(this.humanRepository);
     }
 
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}) {
@@ -109,6 +112,7 @@ export class WorldKnowledge {
         this.wallRepository.create(game, noname);
         this.humanRepository.create(game, groups, this);
         this.moodRegister.create(game);
+        this.employeeCountRegister.create(game);
     }
 
     update() {
@@ -476,5 +480,9 @@ export class WorldKnowledge {
 
     getEmployeeCount(type: EMPLOYEE_TYPE): number {
         return this.humanRepository.getCount(type);
+    }
+
+    getLastEmployeesCount(): number[][] {
+        return this.employeeCountRegister.getLastCounts();
     }
 }

@@ -11,7 +11,7 @@ export class MoodRegister {
     }
 
     create(game: Phaser.Game) {
-        game.time.events.loop(Phaser.Timer.SECOND, this.updateMood, this);
+        game.time.events.loop(Phaser.Timer.SECOND * 2, this.updateMood, this);
     }
 
     updateMood() {

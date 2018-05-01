@@ -14,6 +14,7 @@ const GRAPH_GAP = 2;
 export class InfoPanel {
     private worldKnowledge: WorldKnowledge;
     private moods: Phaser.Graphics;
+    private employees: Phaser.Graphics;
     private visible: boolean;
     private softwarePrice: Phaser.Text;
     private developerCount: Phaser.Text;
@@ -33,30 +34,17 @@ export class InfoPanel {
         this.salesCount = game.add.text(left, TOP_GAP + GAP_BETWEEN_LINES * 2, '', TEXT_STYLE, groups[GROUP_INTERFACE]);
         this.marketingCount = game.add.text(left, TOP_GAP + GAP_BETWEEN_LINES * 3, '', TEXT_STYLE, groups[GROUP_INTERFACE]);
         this.moods = game.add.graphics(left, top, groups[GROUP_INTERFACE]);
+        this.employees = game.add.graphics(left, top + 100, groups[GROUP_INTERFACE]);
     }
 
     update() {
         if (this.visible) {
-            const graphWidth = INTERFACE_WIDTH - 2 * GRAPH_GAP;
             const lastMoods = this.worldKnowledge.getLastMoods();
-            this.moods.clear();
-            this.moods.lineStyle(1, COLOR.WHITE);
-            this.moods.moveTo(0, 0);
-            this.moods.lineTo(0, HEIGHT);
-            this.moods.lineTo(graphWidth, HEIGHT);
+            InfoPanel.drawChart(this.moods, [lastMoods], 1, [null]);
 
-            this.moods.lineStyle(1, COLOR.DARK_GREY);
-            for (let i = 0; i < 10; i++) {
-                this.moods.moveTo(1, i * HEIGHT / 10);
-                this.moods.lineTo(graphWidth, i * HEIGHT / 10);
-            }
+            const lastEmployees = this.worldKnowledge.getLastEmployeesCount();
+            InfoPanel.drawChart(this.employees, lastEmployees, null, [COLOR.LIGHT_GREEN, COLOR.RED, COLOR.ROSE]);
 
-            this.moods.lineStyle(1, MoodSprite.getColor(lastMoods[0]));
-            this.moods.moveTo(graphWidth, HEIGHT - lastMoods[0] * HEIGHT);
-            for (let i = 1; i < graphWidth; i++) {
-                this.moods.lineTo(graphWidth - i, HEIGHT - lastMoods[i] * HEIGHT);
-                this.moods.lineStyle(1, MoodSprite.getColor(lastMoods[i]));
-            }
             this.softwarePrice.setText('Software Price: ' + this.worldKnowledge.getSoftwarePrice().getStringValue());
             this.developerCount.setText('Developers: ' + this.worldKnowledge.getEmployeeCount(EMPLOYEE_TYPE.DEVELOPER));
             this.salesCount.setText('Sales: ' + this.worldKnowledge.getEmployeeCount(EMPLOYEE_TYPE.SALE));
@@ -84,5 +72,53 @@ export class InfoPanel {
             this.marketingCount.position.x += INTERFACE_WIDTH;
         }
         this.visible = false;
+    }
+
+    private static drawChart(graphics: Phaser.Graphics, valuesSet: number[][], max: number = null, colors: COLOR[] = []) {
+        const graphWidth = INTERFACE_WIDTH - 2 * GRAPH_GAP;
+        graphics.clear();
+        graphics.lineStyle(1, COLOR.WHITE);
+        graphics.moveTo(0, 0);
+        graphics.lineTo(0, HEIGHT);
+        graphics.lineTo(graphWidth, HEIGHT);
+
+        graphics.lineStyle(1, COLOR.DARK_GREY);
+        for (let i = 0; i < 10; i++) {
+            graphics.moveTo(1, i * HEIGHT / 10);
+            graphics.lineTo(graphWidth, i * HEIGHT / 10);
+        }
+
+        if (max === null || isNaN(max)) {
+            max = this.getMaxFromValuesSet(valuesSet);
+        }
+
+        for (let v = 0; v < valuesSet.length; v++) {
+            const values = valuesSet[v];
+            if (colors[v]) {
+                graphics.lineStyle(1, colors[v]);
+            } else {
+                graphics.lineStyle(1, MoodSprite.getColor(values[0]));
+            }
+            graphics.moveTo(graphWidth, HEIGHT - values[0] * HEIGHT / max);
+            for (let i = 1; i < graphWidth; i++) {
+                graphics.lineTo(graphWidth - i, HEIGHT - values[i] * HEIGHT / max);
+                if (!colors[v]) {
+                    graphics.lineStyle(1, MoodSprite.getColor(values[i]));
+                }
+            }
+        }
+    }
+
+    private static getMaxFromValuesSet(valuesSet: number[][]) {
+        let result = 0;
+        valuesSet.forEach((values) => {
+            values.forEach((value) => {
+                if (value !== undefined) {
+                    result = Math.max(result, value);
+                }
+            })
+        });
+
+        return result;
     }
 }

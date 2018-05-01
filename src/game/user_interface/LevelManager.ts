@@ -1,6 +1,6 @@
-import {EMPLOYEE_TYPE} from "./human_stuff/HumanPropertiesFactory";
-import {SmoothValue} from "./SmoothValue";
-import {Price} from "./objects/Price";
+import {EMPLOYEE_TYPE} from "../human_stuff/HumanPropertiesFactory";
+import {SmoothValue} from "../SmoothValue";
+import {Price} from "../objects/Price";
 
 const DEVELOPER_RATIO = 1000;
 const MARKETING_RATIO = 5;
