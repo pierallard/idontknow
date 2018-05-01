@@ -9,6 +9,7 @@ import {ObjectInterface} from "./ObjectInterface";
 import {GROUP_INFOS} from "../game_state/Play";
 import {COLOR} from "../Pico8Colors";
 import {DIRECTION_LOOP, ObjectOrientation} from "./ObjectOrientation";
+import {ObjectSeller} from "../user_interface/ObjectSeller";
 
 const ARROW_SIZE = 0.9;
 const GAP = 4;
@@ -24,9 +25,11 @@ export class ObjectPhantom implements ObjectInterface {
     private putEvent: Function;
     private directionsSprite: DirectionsSprite;
     private game: Phaser.Game;
-    private group: Phaser.Group;
+    private groups: { [index: string]: Phaser.Group };
+    private objectSeller: ObjectSeller;
 
-    constructor(name, game: Phaser.Game, worldKnowledge: WorldKnowledge) {
+    constructor(objectSeller: ObjectSeller, name, game: Phaser.Game, worldKnowledge: WorldKnowledge) {
+        this.objectSeller = objectSeller;
         this.phantomSprites = [];
         this.orientation = DIRECTION_LOOP[0];
         this.worldKnowledge = worldKnowledge;
@@ -61,7 +64,7 @@ export class ObjectPhantom implements ObjectInterface {
 
     create(game: Phaser.Game, groups: { [index: string]: Phaser.Group }) {
         this.game = game;
-        this.group = groups[GROUP_INFOS];
+        this.groups = groups;
 
         this.directionsSprite.create(game, groups[GROUP_INFOS]);
         this.directionsSprite.setPosition(this.position);
@@ -74,21 +77,6 @@ export class ObjectPhantom implements ObjectInterface {
         this.forbiddenSprite.anchor.setTo(0.5, 0.5);
 
         groups[GROUP_INFOS].add(this.forbiddenSprite);
-    }
-
-    private cancel(game: Phaser.Game) {
-        this.destroy();
-
-        this.worldKnowledge.getDepot().add(this.objectDescription.getName());
-        game.input.activePointer.leftButton.onDown.remove(this.putEvent);
-    }
-
-    private destroy() {
-        this.phantomSprites.forEach((phantomSprite) => {
-            phantomSprite.destroy();
-        });
-        this.forbiddenSprite.destroy(true);
-        this.directionsSprite.destroy();
     }
 
     private updatePosition(point: PIXI.Point, camera: Phaser.Camera) {
@@ -120,7 +108,7 @@ export class ObjectPhantom implements ObjectInterface {
             });
 
             this.phantomSprites.forEach((phantomSprite) => {
-                phantomSprite.create(this.game, this.group);
+                phantomSprite.create(this.game, this.groups[GROUP_INFOS]);
             })
         }
 
@@ -151,18 +139,38 @@ export class ObjectPhantom implements ObjectInterface {
     }
 
     private put(game: Phaser.Game) {
+        this.worldKnowledge.add(this.objectDescription.getName(), this.getOrigin(), this.orientation);
+        this.destroy(game);
+        if (this.worldKnowledge.getDepot().getCount(this.objectDescription.getName()) > 0) {
+            this.worldKnowledge.getDepot().remove(this.objectDescription.getName());
+            const phantom = new ObjectPhantom(this.objectSeller, this.objectDescription.getName(), game, this.worldKnowledge);
+            phantom.create(game, this.groups);
+            this.objectSeller.setCurrentPhantom(phantom);
+        } else {
+            this.objectSeller.removeCurrentPhantom();
+        }
+    }
+
+    cancel(game: Phaser.Game) {
+        this.worldKnowledge.getDepot().add(this.objectDescription.getName());
+        this.destroy(game);
+        this.objectSeller.removeCurrentPhantom();
+    }
+
+    private destroy(game: Phaser.Game) {
         game.input.moveCallbacks = [];
         game.input.activePointer.leftButton.onDown.remove(this.putEvent);
-        this.worldKnowledge.add(this.objectDescription.getName(), this.getOrigin(), this.orientation);
-        this.destroy();
+        game.input.keyboard.onUpCallback = () => {};
+
+        this.phantomSprites.forEach((phantomSprite) => {
+            phantomSprite.destroy();
+        });
+        this.forbiddenSprite.destroy(true);
+        this.directionsSprite.destroy();
     }
 
     getObjectDescription(): ObjectDescription {
         return this.objectDescription;
-    }
-
-    getLeftOriented(): boolean {
-        return ObjectOrientation.isHorizontalMirror(this.orientation)
     }
 
     isEntryAccessible(cellGap: PIXI.Point, direction: DIRECTION) {
@@ -185,6 +193,10 @@ export class ObjectPhantom implements ObjectInterface {
 
     getOrientation(): DIRECTION {
         return this.orientation;
+    }
+
+    getName(): string {
+        return this.objectDescription.getName();
     }
 }
 

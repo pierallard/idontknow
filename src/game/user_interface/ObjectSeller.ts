@@ -18,6 +18,7 @@ export class ObjectSeller {
     private sellerButtons: SellerButton[];
     private worldKnowledge: WorldKnowledge;
     private visible: boolean;
+    private currentPhantom: ObjectPhantom;
 
     constructor(worldKnowledge: WorldKnowledge) {
         this.worldKnowledge = worldKnowledge;
@@ -25,11 +26,13 @@ export class ObjectSeller {
 
         this.objectProvisionnerButtons = ObjectDescriptionRegistry
             .getSalableObjects()
-            .map((object) => new ObjectProvisionnerButton(object, this.worldKnowledge));
+            .map((object) => new ObjectProvisionnerButton(this, object, this.worldKnowledge));
 
         this.sellerButtons = ObjectDescriptionRegistry
             .getSalableObjects()
             .map((object) => new SellerButton(object, this.worldKnowledge));
+
+        this.currentPhantom = null;
     }
 
     create(game: Phaser.Game, groups: {[index: string]: Phaser.Group }) {
@@ -81,6 +84,18 @@ export class ObjectSeller {
             })
         }
         this.visible = true;
+    }
+
+    setCurrentPhantom(phantom: ObjectPhantom) {
+        this.currentPhantom = phantom;
+    }
+
+    removeCurrentPhantom() {
+        this.currentPhantom = null;
+    }
+
+    getCurrentPhantom(): ObjectPhantom {
+        return this.currentPhantom;
     }
 }
 
@@ -169,8 +184,10 @@ class ObjectProvisionnerButton {
     private sprites: Phaser.Sprite[];
     private circle: Phaser.Graphics;
     private square: Phaser.Graphics;
+    private objectSeller: ObjectSeller;
 
-    constructor(objectInfo: ObjectDescription, worldKnowledge: WorldKnowledge) {
+    constructor(objectSeller: ObjectSeller, objectInfo: ObjectDescription, worldKnowledge: WorldKnowledge) {
+        this.objectSeller = objectSeller;
         this.objectInfo = objectInfo;
         this.worldKnowledge = worldKnowledge;
         this.sprites = [];
@@ -263,10 +280,18 @@ class ObjectProvisionnerButton {
         game: Phaser.Game,
         groups: {[index: string] : Phaser.Group}
     ) {
+        if (this.objectSeller.getCurrentPhantom() && this.objectSeller.getCurrentPhantom().getName() === this.objectInfo.getName()) {
+            this.objectSeller.getCurrentPhantom().cancel(game);
+            return;
+        }
+        if (this.objectSeller.getCurrentPhantom() && this.objectSeller.getCurrentPhantom().getName() !== this.objectInfo.getName()) {
+            this.objectSeller.getCurrentPhantom().cancel(game);
+        }
         if (this.worldKnowledge.getDepot().getCount(this.objectInfo.getName()) > 0) {
             this.worldKnowledge.getDepot().remove(this.objectInfo.getName());
-            const phantom = new ObjectPhantom(this.objectInfo.getName(), game, this.worldKnowledge);
+            const phantom = new ObjectPhantom(this.objectSeller, this.objectInfo.getName(), game, this.worldKnowledge);
             phantom.create(game, groups);
+            this.objectSeller.setCurrentPhantom(phantom);
         }
     }
 
