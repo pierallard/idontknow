@@ -9,6 +9,7 @@ import {TEXT_STYLE} from "../TextStyle";
 import {COLOR} from "../Pico8Colors";
 import {Gauge} from "./Gauge";
 import {ColoredGauge} from "./ColoredGauge";
+import {Tooltip, Tooltipable} from "./Tooltip";
 
 const STARS = 5;
 
@@ -96,7 +97,7 @@ export class HumanEmployer {
     }
 }
 
-class ApplicantButton {
+class ApplicantButton implements Tooltipable {
     private humanEmployer: HumanEmployer;
     private humanProperties: HumanProperties;
     private sprite: Phaser.Sprite;
@@ -108,6 +109,7 @@ class ApplicantButton {
     private remainingTime: number;
     private remainingGauge: Gauge;
     private stars: Phaser.Sprite[];
+    private tooltips: Tooltip[];
 
     constructor(humanEmployer: HumanEmployer, humanProperties: HumanProperties, worldKnowledge: WorldKnowledge) {
         this.humanEmployer = humanEmployer;
@@ -117,6 +119,7 @@ class ApplicantButton {
         this.remainingTime = this.availabilityTime;
         this.remainingGauge = new ColoredGauge(OBJECT_SELLER_CELL_SIZE, 5);
         this.stars = [];
+        this.tooltips = [];
     }
 
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}, index: number) {
@@ -148,10 +151,22 @@ class ApplicantButton {
             remainingTime: 0
         }, this.availabilityTime, 'Linear', true);
 
-        this.drawStars(game, 'coin', this.humanProperties.getWage(), left + OBJECT_SELLER_CELL_SIZE + 2, top + 18, groups[GROUP_INTERFACE]);
-        this.drawStars(game, 'star', this.humanProperties.getQuality(), left + OBJECT_SELLER_CELL_SIZE + 55, top + 18, groups[GROUP_INTERFACE]);
-        this.drawStars(game, 'star', this.humanProperties.getSpeed(), left + OBJECT_SELLER_CELL_SIZE + 2, top + 28, groups[GROUP_INTERFACE]);
-        this.drawStars(game, 'star', this.humanProperties.getPerseverance(), left + OBJECT_SELLER_CELL_SIZE + 55, top + 28, groups[GROUP_INTERFACE]);
+        this.tooltips.push(new Tooltip(() => {
+            return 'Wage: ' + this.humanProperties.getRealWage().getStringValue() + '/day';
+        }).setInput(this, this.drawStars(game, 'coin', this.humanProperties.getWage(), left + OBJECT_SELLER_CELL_SIZE + 2, top + 18, groups[GROUP_INTERFACE]))
+            .create(game, groups));
+        this.tooltips.push(new Tooltip(() => {
+            return 'Exp: ' + Math.round(this.humanProperties.getQuality() * 100) + '%';
+        }).setInput(this, this.drawStars(game, 'star', this.humanProperties.getQuality(), left + OBJECT_SELLER_CELL_SIZE + 55, top + 18, groups[GROUP_INTERFACE]))
+            .create(game, groups));
+        this.tooltips.push(new Tooltip(() => {
+            return 'Speed: ' + Math.round(this.humanProperties.getSpeed() * 100) + '%';
+        }).setInput(this, this.drawStars(game, 'star', this.humanProperties.getSpeed(), left + OBJECT_SELLER_CELL_SIZE + 2, top + 28, groups[GROUP_INTERFACE]))
+            .create(game, groups));
+        this.tooltips.push(new Tooltip(() => {
+            return 'Perseverance: ' + Math.round(this.humanProperties.getPerseverance() * 100) + '%';
+        }).setInput(this, this.drawStars(game, 'star', this.humanProperties.getPerseverance(), left + OBJECT_SELLER_CELL_SIZE + 55, top + 28, groups[GROUP_INTERFACE]))
+            .create(game, groups));
     }
 
     hide() {
@@ -191,6 +206,9 @@ class ApplicantButton {
             this.humanEmployer.cancel(this);
             return;
         }
+        this.tooltips.forEach((tooltip) => {
+            tooltip.update();
+        });
         this.remainingGauge.setValue(this.remainingTime / this.availabilityTime);
         this.remainingGauge.update();
     }
@@ -206,16 +224,22 @@ class ApplicantButton {
         });
     }
 
-    private drawStars(game: Phaser.Game, key: string, value: number, left: number, top: number, group) {
+    private drawStars(game: Phaser.Game, key: string, value: number, left: number, top: number, group): Phaser.Sprite[] {
+        let stars = [];
         const gap = 1/(STARS * 2 - 1);
         for (let i = 0; i < STARS; i++) {
+            let star = null;
             if (value < (i * 2) * gap) {
-                this.stars.push(game.add.sprite(left + i * 8, top, key, 2, group));
+                star = game.add.sprite(left + i * 8, top, key, 2, group);
             } else if (value < (i * 2 + 1) * gap) {
-                this.stars.push(game.add.sprite(left + i * 8, top, key, 1, group));
+                star = game.add.sprite(left + i * 8, top, key, 1, group);
             } else {
-                this.stars.push(game.add.sprite(left + i * 8, top, key, 0, group));
+                star = game.add.sprite(left + i * 8, top, key, 0, group);
             }
+            this.stars.push(star);
+            stars.push(star);
         }
+
+        return stars;
     }
 }

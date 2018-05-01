@@ -22,9 +22,7 @@ import {Price} from "../objects/Price";
 
 const MAX_WALK_CELL_DURATION = 1500;
 const MIN_WALK_CELL_DURATION = 800;
-const MAX_WAGE = 50;
-const MIN_WAGE = 10;
-const WAGE_LOOP = 30 * Phaser.Timer.SECOND;
+const DAY_LENGTH = 60 * Phaser.Timer.SECOND;
 
 const MAX_RETRIES = 3;
 const MIN_RETRIES = 0;
@@ -100,9 +98,9 @@ export class Employee {
             this.debugGraphics = game.add.graphics(0, 0, groups[GROUP_INTERFACE]);
         }
 
-        this.worldKnowledge.addMoneyInWallet(this.getWage(), WAGE_LOOP);
-        this.game.time.events.loop(WAGE_LOOP, () => {
-            this.worldKnowledge.addMoneyInWallet(this.getWage(), WAGE_LOOP);
+        this.worldKnowledge.addMoneyInWallet(this.humanProperties.getRealWage(), 3 * Phaser.Timer.SECOND);
+        this.game.time.events.loop(DAY_LENGTH, () => {
+            this.worldKnowledge.addMoneyInWallet(this.humanProperties.getRealWage(), 3 * Phaser.Timer.SECOND);
         });
     }
 
@@ -357,9 +355,5 @@ export class Employee {
         if (this.isSelected()) {
             ObjectSelector.click(this.sprite, null, [this.sprite]);
         }
-    }
-
-    private getWage(): Price {
-        return new Price(- (MIN_WAGE + this.humanProperties.getWage() * (MAX_WAGE - MIN_WAGE)));
     }
 }

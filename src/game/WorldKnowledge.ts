@@ -57,7 +57,7 @@ export class WorldKnowledge {
         this.wallRepository = new WallRepository();
         this.levelManager = new LevelManager();
         this.depot = new Depot();
-        this.wallet = new SmoothValue(1000);
+        this.wallet = new SmoothValue(1500);
 
         if (DEBUG_WORLD) {
             this.wallRepository.addWall(new PIXI.Point(5, 5));

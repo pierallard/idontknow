@@ -47,7 +47,7 @@ export class PieChart implements Tooltipable {
         this.game = game;
         this.graphics = game.add.graphics(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH / 2, 180, groups[GROUP_INTERFACE]);
         this.drawPieChart();
-        this.tooltip.setInput(this, this.graphics);
+        this.tooltip.setInput(this, [this.graphics]);
 
         groups[GROUP_INTERFACE].add(this.graphics);
         this.tooltip.create(game, groups);

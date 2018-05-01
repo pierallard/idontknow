@@ -18,11 +18,13 @@ export class Tooltip {
         this.getValueFunction = getValueFunction;
     }
 
-    create(game:Phaser.Game, groups: {[index: string] : Phaser.Group}) {
+    create(game:Phaser.Game, groups: {[index: string] : Phaser.Group}): Tooltip {
         this.game = game;
         this.box = game.add.graphics(0, 0, groups[GROUP_TOOLTIP]);
         this.text = game.add.text(0, 0, '', TEXT_STYLE, groups[GROUP_TOOLTIP]);
         this.hide();
+
+        return this;
     }
 
     update() {
@@ -57,11 +59,15 @@ export class Tooltip {
         );
     }
 
-    setInput(tooltipable: Tooltipable, graphics: Phaser.Graphics) {
-        graphics.inputEnabled = true;
-        graphics.events.onInputOver.add(this.show, this, 0);
-        graphics.events.onInputOut.add(this.hide, this, 0);
+    setInput(tooltipable: Tooltipable, graphics: (Phaser.Graphics|Phaser.Sprite)[]): Tooltip {
+        graphics.forEach((graphic) => {
+            graphic.inputEnabled = true;
+            graphic.events.onInputOver.add(this.show, this, 0);
+            graphic.events.onInputOut.add(this.hide, this, 0);
+        });
         this.tooltipable = tooltipable;
+
+        return this;
     }
 
     private getTooltipPosition() {

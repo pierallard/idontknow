@@ -46,7 +46,7 @@ export class LevelDisplayer implements Tooltipable {
         }
         Object.keys(this.tooltips).forEach((employeeType) => {
             this.tooltips[employeeType].create(game, groups);
-            this.tooltips[employeeType].setInput(this, this.gauges[parseInt(employeeType)].getGraphics());
+            this.tooltips[employeeType].setInput(this, [this.gauges[parseInt(employeeType)].getGraphics()]);
         });
 
     }

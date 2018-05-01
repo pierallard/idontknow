@@ -1,4 +1,8 @@
 import {EMPLOYEE_TYPE} from "./HumanPropertiesFactory";
+import {Price} from "../objects/Price";
+
+const MAX_WAGE = 50;
+const MIN_WAGE = 10;
 
 export class HumanProperties {
     private speed: number;
@@ -68,5 +72,9 @@ export class HumanProperties {
 
     private computeWage() {
         return (this.speed + this.perseverance + 2 * this.quality) / 4;
+    }
+
+    getRealWage(): Price {
+        return new Price(- (MIN_WAGE + this.wage * (MAX_WAGE - MIN_WAGE)));
     }
 }
