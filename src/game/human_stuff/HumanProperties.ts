@@ -1,7 +1,6 @@
 import {EMPLOYEE_TYPE} from "./HumanPropertiesFactory";
 
 export class HumanProperties {
-    private salary: number;
     private speed: number;
     private quality: number;
     private type: EMPLOYEE_TYPE;
@@ -14,20 +13,17 @@ export class HumanProperties {
         spriteVariation: string,
         type: EMPLOYEE_TYPE,
         name: string,
-        salary: number,
         speed: number,
         quality: number,
-        perseverance: number,
-        wage: number
+        perseverance: number
     ) {
         this.spriteVariation = spriteVariation;
         this.type = type;
         this.name = name;
-        this.salary = salary;
         this.speed = speed;
         this.quality = quality;
         this.perseverance = perseverance;
-        this.wage = wage;
+        this.wage = this.computeWage();
     }
 
     getSpriteKey(): string {
@@ -64,5 +60,13 @@ export class HumanProperties {
 
     getWage(): number {
         return this.wage;
+    }
+
+    getQuality(): number {
+        return this.quality;
+    }
+
+    private computeWage() {
+        return (this.speed + this.perseverance + 2 * this.quality) / 4;
     }
 }

@@ -39,8 +39,6 @@ export class HumanPropertiesFactory {
             USE_API ? this.generateName(isWoman) : names[Math.floor(Math.random() * names.length)],
             Math.random(),
             Math.random(),
-            Math.random(),
-            Math.random(),
             Math.random()
         );
     }

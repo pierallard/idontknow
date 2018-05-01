@@ -55,6 +55,7 @@ export class InfoPanel {
     show() {
         if (!this.visible) {
             this.moods.position.x -= INTERFACE_WIDTH;
+            this.employees.position.x -= INTERFACE_WIDTH;
             this.softwarePrice.position.x -= INTERFACE_WIDTH;
             this.developerCount.position.x -= INTERFACE_WIDTH;
             this.salesCount.position.x -= INTERFACE_WIDTH;
@@ -66,6 +67,7 @@ export class InfoPanel {
     hide() {
         if (this.visible) {
             this.moods.position.x += INTERFACE_WIDTH;
+            this.employees.position.x += INTERFACE_WIDTH;
             this.softwarePrice.position.x += INTERFACE_WIDTH;
             this.developerCount.position.x += INTERFACE_WIDTH;
             this.salesCount.position.x += INTERFACE_WIDTH;

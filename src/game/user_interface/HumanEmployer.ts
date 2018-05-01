@@ -10,6 +10,8 @@ import {COLOR} from "../Pico8Colors";
 import {Gauge} from "./Gauge";
 import {ColoredGauge} from "./ColoredGauge";
 
+const STARS = 5;
+
 export class HumanEmployer {
     private worldKnowledge: WorldKnowledge;
     private applicantButtons: ApplicantButton[];
@@ -105,6 +107,7 @@ class ApplicantButton {
     private availabilityTime: number;
     private remainingTime: number;
     private remainingGauge: Gauge;
+    private stars: Phaser.Sprite[];
 
     constructor(humanEmployer: HumanEmployer, humanProperties: HumanProperties, worldKnowledge: WorldKnowledge) {
         this.humanEmployer = humanEmployer;
@@ -113,6 +116,7 @@ class ApplicantButton {
         this.availabilityTime = (45 + Math.random() * 45) * Phaser.Timer.SECOND;
         this.remainingTime = this.availabilityTime;
         this.remainingGauge = new ColoredGauge(OBJECT_SELLER_CELL_SIZE, 5);
+        this.stars = [];
     }
 
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}, index: number) {
@@ -143,6 +147,11 @@ class ApplicantButton {
         game.add.tween(this).to({
             remainingTime: 0
         }, this.availabilityTime, 'Linear', true);
+
+        this.drawStars(game, 'coin', this.humanProperties.getWage(), left + OBJECT_SELLER_CELL_SIZE + 2, top + 18, groups[GROUP_INTERFACE]);
+        this.drawStars(game, 'star', this.humanProperties.getQuality(), left + OBJECT_SELLER_CELL_SIZE + 55, top + 18, groups[GROUP_INTERFACE]);
+        this.drawStars(game, 'star', this.humanProperties.getSpeed(), left + OBJECT_SELLER_CELL_SIZE + 2, top + 28, groups[GROUP_INTERFACE]);
+        this.drawStars(game, 'star', this.humanProperties.getPerseverance(), left + OBJECT_SELLER_CELL_SIZE + 55, top + 28, groups[GROUP_INTERFACE]);
     }
 
     hide() {
@@ -151,6 +160,9 @@ class ApplicantButton {
         this.typeText.position.x += INTERFACE_WIDTH;
         this.square.position.x += INTERFACE_WIDTH + 10;
         this.remainingGauge.hide();
+        this.stars.forEach((star) => {
+            star.position.x += INTERFACE_WIDTH;
+        });
     }
 
     show() {
@@ -159,6 +171,9 @@ class ApplicantButton {
         this.typeText.position.x -= INTERFACE_WIDTH;
         this.square.position.x -= INTERFACE_WIDTH + 10;
         this.remainingGauge.show();
+        this.stars.forEach((star) => {
+            star.position.x -= INTERFACE_WIDTH;
+        });
     }
 
     private click() {
@@ -186,5 +201,21 @@ class ApplicantButton {
         this.typeText.destroy(true);
         this.square.destroy(true);
         this.remainingGauge.destroy(true);
+        this.stars.forEach((star) => {
+            star.destroy(true);
+        });
+    }
+
+    private drawStars(game: Phaser.Game, key: string, value: number, left: number, top: number, group) {
+        const gap = 1/(STARS * 2 - 1);
+        for (let i = 0; i < STARS; i++) {
+            if (value < (i * 2) * gap) {
+                this.stars.push(game.add.sprite(left + i * 8, top, key, 2, group));
+            } else if (value < (i * 2 + 1) * gap) {
+                this.stars.push(game.add.sprite(left + i * 8, top, key, 1, group));
+            } else {
+                this.stars.push(game.add.sprite(left + i * 8, top, key, 0, group));
+            }
+        }
     }
 }

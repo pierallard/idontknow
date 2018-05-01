@@ -10,5 +10,4 @@ export class Desk extends AbstractObject implements InteractiveObjectInterface, 
 
         ObjectDeleter.makeDeletable(this, game, groups[GROUP_INFOS]);
     }
-
 }
