@@ -236,9 +236,9 @@ export class HumanStateManager {
         let result = {};
         switch(state) {
             case STATE.SMOKE: result[MOOD.RELAXATION] = 0.1; break;
-            case STATE.TALK: result[MOOD.SOCIAL] = 0.5; break;
-            case STATE.SIT: result[MOOD.RELAXATION] = 0.2; break;
-            case STATE.COFFEE: result[MOOD.HUNGER] = 0.5; break;
+            case STATE.TALK: result[MOOD.SOCIAL] = 0.4; result[MOOD.RELAXATION] += 0.1; break;
+            case STATE.SIT: result[MOOD.RELAXATION] = 0.35; break;
+            case STATE.COFFEE: result[MOOD.HUNGER] = 0.5; result[MOOD.RELAXATION] -= 0.1; break;
             case STATE.SIT_TALK: result[MOOD.SOCIAL] = 0.6; break;
             case STATE.RAGE: result[MOOD.RELAXATION] = -0.2; break;
         }

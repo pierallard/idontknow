@@ -51,7 +51,7 @@ export class HumanMoodManager {
     }
 
     updateFromState(state: STATE) {
-        this.updateFromStateInner(HumanStateManager.getMoodGains(state));
+        this.updateFromStateInner(HumanStateManager.getMoodGains(state), 5 * Phaser.Timer.SECOND);
     }
 
     private updateFromStateInner(moods: object, time: number = Phaser.Timer.SECOND) {
