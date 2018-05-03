@@ -335,7 +335,7 @@ export class WorldKnowledge {
     canPutHere(objectInfo: ObjectDescription, origin: PIXI.Point, orientation: DIRECTION) {
         return this.areAllTheCellsFree(objectInfo, origin, orientation) &&
             this.areAllSpritesEnterable(objectInfo, origin, orientation) &&
-            this.isNewObjectNotBlockingExistingOne(origin);
+            this.isNewObjectNotBlockingExistingOne(objectInfo, origin, orientation);
     };
 
     private areAllTheCellsFree(objectInfo: ObjectDescription, origin: PIXI.Point, orientation: DIRECTION) {
@@ -366,21 +366,41 @@ export class WorldKnowledge {
         return true;
     }
 
-    private isNewObjectNotBlockingExistingOne(origin: PIXI.Point) {
+    private isNewObjectNotBlockingExistingOne(objectInfo: ObjectDescription, origin: PIXI.Point, orientation: DIRECTION) {
+        const cellOffsets = objectInfo.getUniqueCellOffsets(orientation);
+        const cellPositions = cellOffsets.map((offset) => {
+            return new PIXI.Point(
+                origin.x + offset.x,
+                origin.y + offset.y
+            );
+        });
         for (let o = 0; o < this.objects.length; o++) {
-            /* TODO This method is buggy, it does not take account every entry points. I have to parse sprite by sprite
-             * and check it's not blocking for every sprite, instead of looking if there is a unique entry point.
-             */
             const object = this.objects[o];
             const objectInfo = ObjectDescriptionRegistry.getObjectDescription(object.constructor.name);
-
-            let isEntryPossible = false;
-            const entryCells = objectInfo.getEntryCells(object.getOrigin(), object.getOrientation());
-            for (let i = 0; i < entryCells.length; i++) {
-                isEntryPossible = isEntryPossible || (this.isFree(entryCells[i]) && (entryCells[i].x !== origin.x || entryCells[i].y !== origin.y));
-            }
-            if (isEntryPossible === false) {
-                return false;
+            const interactivePoints = objectInfo.getInteractivePoints(object.getOrientation());
+            for (let i = 0; i < interactivePoints.length; i++) {
+                const cellOffset = interactivePoints[i].getCellOffset(object.getOrientation());
+                const cell = new PIXI.Point(
+                    object.getOrigin().x + cellOffset.x,
+                    object.getOrigin().y + cellOffset.y
+                );
+                const entryPoints = interactivePoints[i].getEntryPoints(object.getOrientation());
+                let isEntryPossible = false;
+                for (let j = 0; j < entryPoints.length; j++) {
+                    const entryCell = Direction.getNeighbor(cell, entryPoints[j]);
+                    if (this.isFree(entryCell)) {
+                        let isNewObjectNotBlockingThisEntry = true;
+                        cellPositions.forEach((cellPosition) => {
+                            if (cellPosition.x === entryCell.x && cellPosition.y === entryCell.y) {
+                                isNewObjectNotBlockingThisEntry = false;
+                            }
+                        });
+                        isEntryPossible = isEntryPossible || isNewObjectNotBlockingThisEntry;
+                    }
+                }
+                if (isEntryPossible === false) {
+                    return false;
+                }
             }
         }
 
