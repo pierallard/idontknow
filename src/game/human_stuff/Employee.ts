@@ -347,7 +347,7 @@ export class Employee {
         this.thoughtBubble.hide();
     }
 
-    getNextProbabilities(): {probability: number, state: STATE}[] {
+    getNextProbabilities(): {[index: number]: number} {
         return this.stateManager.getNextProbabilities();
     }
 

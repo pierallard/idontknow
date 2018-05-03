@@ -122,63 +122,56 @@ export class HumanStateManager {
 
     private randomNextStepName(): STATE {
         const states = this.getNextProbabilities();
+        return HumanStateManager.getRandomWithProbabilities(states);
+    }
 
-        let debug = '';
-        debug += 'Rlx[' + Math.ceil(this.human.getMood(MOOD.RELAXATION) * 100) + '%], ';
-        debug += 'Hng[' + Math.ceil(this.human.getMood(MOOD.HUNGER) * 100) + '%], ';
-        debug += 'Soc[' + Math.ceil(this.human.getMood(MOOD.SOCIAL) * 100) + '%] ---> ';
-        debug += 'Smk(' + Math.ceil(this.getProbability(STATE.SMOKE)) + '), ' ;
-        debug += 'Frz(' + Math.ceil(this.getProbability(STATE.FREEZE)) + '), ' ;
-        debug += 'MvR(' + Math.ceil(this.getProbability(STATE.MOVE_RANDOM)) + '), ' ;
-        debug += 'Tak(' + Math.ceil(this.getProbability(STATE.TALK)) + '), ' ;
-        debug += 'Sit(' + Math.ceil(this.getProbability(STATE.SIT)) + '), ' ;
-        debug += 'Typ(' + Math.ceil(this.getProbability(STATE.TYPE)) + '), ' ;
-        debug += 'Cof(' + Math.ceil(this.getProbability(STATE.COFFEE)) + '), ' ;
-        console.log(debug);
-
-        const sum = states.reduce((prev, state) => {
-            return prev + state.probability;
+    static getRandomWithProbabilities(states: {[index: number]: number}): number {
+        const sum = Object.keys(states).reduce((prev, key) => {
+            return prev + states[key];
         }, 0);
 
         const random = Phaser.Math.random(0, sum);
         let counter = 0;
-        for (let i = 0; i < states.length; i++) {
-            counter += states[i].probability;
+        for (let i = 0; i < Object.keys(states).length; i++) {
+            counter += states[Object.keys(states)[i]];
             if (counter > random) {
-                return states[i].state;
+                return parseInt(Object.keys(states)[i]);
             }
         }
+
+        debugger;
+
     }
 
-    getNextProbabilities(): {probability: number, state: STATE}[] {
-        const states = [];
+    getNextProbabilities(): {[index: number]: number} {
+        const states = {};
 
         if (this.worldKnowledge.getClosestReferer(['Desk']) !== null) {
-            states.push({state: STATE.TYPE, probability: this.getProbability(STATE.TYPE)});
+            states[STATE.TYPE] = this.getProbability(STATE.TYPE);
         }
 
         if (
             this.worldKnowledge.getClosestReferer(['Table'], 4) !== null &&
             this.worldKnowledge.getAnotherFreeHumans(this.human, 3).length === 3
         ) {
-            states.push({state: STATE.SIT_TALK, probability: this.getProbability(STATE.SIT_TALK)});
+            states[STATE.SIT_TALK] = this.getProbability(STATE.SIT_TALK);
         }
 
         if (this.worldKnowledge.getClosestReferer(['Dispenser']) !== null) {
-            states.push({state: STATE.COFFEE, probability: this.getProbability(STATE.COFFEE)});
+            states[STATE.COFFEE] = this.getProbability(STATE.COFFEE);
         }
 
         if (this.worldKnowledge.getClosestReferer(['Sofa', 'Couch']) !== null) {
-            states.push({state: STATE.SIT, probability: this.getProbability(STATE.SIT)});
+            states[STATE.SIT] = this.getProbability(STATE.SIT);
         }
 
         if (this.worldKnowledge.getAnotherFreeHuman(this.human) !== null) {
-            states.push({state: STATE.TALK, probability: this.getProbability(STATE.TALK)});
+            states[STATE.TALK] = this.getProbability(STATE.TALK);
         }
 
-        states.push({state: STATE.FREEZE, probability: this.getProbability(STATE.FREEZE)});
-        states.push({state: STATE.MOVE_RANDOM, probability: this.getProbability(STATE.MOVE_RANDOM)});
-        states.push({state: STATE.SMOKE, probability: this.getProbability(STATE.SMOKE)});
+        states[STATE.FREEZE] = this.getProbability(STATE.FREEZE);
+        states[STATE.MOVE_RANDOM] = this.getProbability(STATE.MOVE_RANDOM);
+        states[STATE.SMOKE] = this.getProbability(STATE.SMOKE);
 
         return states;
     }

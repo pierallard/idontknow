@@ -95,22 +95,24 @@ export class PieChart implements Tooltipable {
 
     private refreshData() {
         let foundIdentifiers = [];
-        this.human.getNextProbabilities().forEach((state) => {
+        const probabilities = this.human.getNextProbabilities();
+        Object.keys(probabilities).forEach((key) => {
+            const state = <STATE> parseInt(key);
             let found = false;
             for (let i = 0; i < this.data.length; i++) {
                 const pieChartPart = this.data[i];
-                if (pieChartPart.getState() === state.state) {
-                    pieChartPart.setValue(state.probability);
+                if (pieChartPart.getState() === state) {
+                    pieChartPart.setValue(probabilities[state]);
                     found = true;
                     foundIdentifiers.push(i);
                 }
             }
             if (!found) {
                 this.data.push(new PieChartPart(
-                    state.state,
-                    state.probability,
-                    PieChart.getColor(state.state),
-                    HumanStateManager.getStr(state.state)
+                    state,
+                    probabilities[state],
+                    PieChart.getColor(state),
+                    HumanStateManager.getStr(state)
                 ));
             }
         });

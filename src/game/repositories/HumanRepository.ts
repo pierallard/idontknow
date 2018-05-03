@@ -6,8 +6,10 @@ export class HumanRepository {
     humans: Employee[];
 
     constructor(worldKnowledge: WorldKnowledge) {
+        const probabilities = {};
+        probabilities[EMPLOYEE_TYPE.DEVELOPER] = 1;
         this.humans = [
-            new Employee(worldKnowledge.getRandomCell(), HumanPropertiesFactory.create([EMPLOYEE_TYPE.DEVELOPER]))
+            new Employee(worldKnowledge.getRandomCell(), HumanPropertiesFactory.create(probabilities))
         ];
     }
 

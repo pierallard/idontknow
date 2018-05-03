@@ -12,6 +12,7 @@ import {ColoredGauge} from "./ColoredGauge";
 import {Tooltip, Tooltipable} from "./Tooltip";
 
 const STARS = 5;
+const MAX_APPLICANTS = 6;
 
 export class HumanEmployer {
     private worldKnowledge: WorldKnowledge;
@@ -24,10 +25,10 @@ export class HumanEmployer {
         this.worldKnowledge = worldKnowledge;
         this.applicantButtons = [];
         this.visible = true;
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < this.getMaxApplicants(); i++) {
             this.applicantButtons.push(new ApplicantButton(
                 this,
-                HumanPropertiesFactory.create(this.getEmployeeTypes()),
+                HumanPropertiesFactory.create(this.getEmployeeTypeProbabilities()),
                 this.worldKnowledge
             ));
         }
@@ -44,6 +45,17 @@ export class HumanEmployer {
     }
 
     update() {
+        if (this.applicantButtons.length < this.getMaxApplicants()) {
+            for (let i = this.applicantButtons.length; i < this.getMaxApplicants(); i++) {
+                const toto = new ApplicantButton(
+                    this,
+                    HumanPropertiesFactory.create(this.getEmployeeTypeProbabilities()),
+                    this.worldKnowledge
+                );
+                toto.create(this.game, this.groups, i);
+                this.applicantButtons.push(toto);
+            }
+        }
         this.applicantButtons.forEach((applicantButton) => {
             applicantButton.update();
         });
@@ -76,7 +88,7 @@ export class HumanEmployer {
         const index = this.applicantButtons.indexOf(applicant);
         this.applicantButtons[index] = new ApplicantButton(
             this,
-            HumanPropertiesFactory.create(this.getEmployeeTypes()),
+            HumanPropertiesFactory.create(this.getEmployeeTypeProbabilities()),
             this.worldKnowledge
         );
         this.applicantButtons[index].create(this.game, this.groups, index);
@@ -85,15 +97,26 @@ export class HumanEmployer {
         }
     }
 
-    private getEmployeeTypes(): EMPLOYEE_TYPE[] {
-        let result: EMPLOYEE_TYPE[] = [EMPLOYEE_TYPE.DEVELOPER];
+    private getEmployeeTypeProbabilities(): {[index: number]: number} {
+        const result = {};
+        result[EMPLOYEE_TYPE.DEVELOPER] = 1;
         if (this.worldKnowledge.getLevel() > 1) {
-            result.push(EMPLOYEE_TYPE.SALE);
+            result[EMPLOYEE_TYPE.SALE] = 1;
         }
         if (this.worldKnowledge.getLevel() > 2) {
-            result.push(EMPLOYEE_TYPE.MARKETING);
+            result[EMPLOYEE_TYPE.MARKETING] = 1;
         }
         return result;
+    }
+
+    private getMaxApplicants() {
+        if (this.worldKnowledge.getLevel() < 2) {
+            return MAX_APPLICANTS / 3;
+        }
+        if (this.worldKnowledge.getLevel() < 3) {
+            return MAX_APPLICANTS * 2 / 3;
+        }
+        return MAX_APPLICANTS;
     }
 }
 
