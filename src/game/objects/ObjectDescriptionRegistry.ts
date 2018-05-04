@@ -112,12 +112,19 @@ export class ObjectDescriptionRegistry {
                     new SpriteInfo('couch_part1', new PIXI.Point(10, 0), 12),
                     new SpriteInfo('couch_part2', new PIXI.Point(10 - 20, 10), 22, new PIXI.Point(0, 1))
                 ],
-                [],
+                [
+                    new SpriteInfo('couch_reverse_part1', new PIXI.Point(-13, 0), 12),
+                    new SpriteInfo('couch_reverse_part2', new PIXI.Point(- (13 - 20), 10), 22, new PIXI.Point(1, 0)),
+                    new SpriteInfo('couch_reverse_cache', new PIXI.Point(-13, 0), 0),
+                ],
                 [
                     new InteractivePoint([DIRECTION.RIGHT], new PIXI.Point(0,  -8), new PIXI.Point(0, 0)),
                     new InteractivePoint([DIRECTION.RIGHT], new PIXI.Point(0, -8), new PIXI.Point(0, 1)),
                 ],
-                [],
+                [
+                    new InteractivePoint([DIRECTION.TOP], new PIXI.Point(-1, -8), new PIXI.Point(0, 0), false, true),
+                    new InteractivePoint([DIRECTION.TOP], new PIXI.Point(-1, -8), new PIXI.Point(1, 0), false, true),
+                ],
                 new Price(1)
             )
         );
