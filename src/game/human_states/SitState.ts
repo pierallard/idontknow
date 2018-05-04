@@ -48,7 +48,7 @@ export class SitState extends MoveThenActAbstractState {
         return STATE.SIT;
     }
 
-    getRageState(): HumanState {
+    protected subGetRageState(): HumanState {
         return new RageState(this.human, RAGE_IMAGE.SLEEP);
     }
 }

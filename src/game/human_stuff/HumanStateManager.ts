@@ -107,7 +107,7 @@ export class HumanStateManager {
         if (this.state.start(game)) {
             // OK !
         } else {
-            console.log('State ' + this.state.constructor.name + ' failed. Retry.');
+            console.log('State ' + this.state.constructor.name + ' failed to start. Rage!');
             this.state = this.state.getRageState();
             this.state.start(game);
         }

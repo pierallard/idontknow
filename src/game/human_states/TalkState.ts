@@ -6,6 +6,8 @@ import {Meeting} from "./Meeting";
 import {Direction} from "../Direction";
 import {STATE} from "../human_stuff/HumanStateManager";
 import {AbstractState} from "./AbstractState";
+import {RageState} from "./RageState";
+import {RAGE_IMAGE} from "../human_stuff/ThoughtBubble";
 
 export class TalkState extends AbstractState {
     private anotherHuman: Employee;
@@ -110,6 +112,6 @@ export class TalkState extends AbstractState {
     }
 
     getRageState(): HumanState {
-        return null;
+        return new RageState(this.human, RAGE_IMAGE.PATH);
     }
 }

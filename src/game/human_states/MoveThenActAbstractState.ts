@@ -5,18 +5,22 @@ import {Employee} from "../human_stuff/Employee";
 import {STATE} from "../human_stuff/HumanStateManager";
 import {PositionTransformer} from "../PositionTransformer";
 import {HumanState} from "./HumanState";
+import {RageState} from "./RageState";
+import {RAGE_IMAGE} from "../human_stuff/ThoughtBubble";
 
 export abstract class MoveThenActAbstractState extends AbstractState {
     protected objectReferer: ObjectReferer;
     protected isHumanOnTheRightCell: boolean;
     protected worldKnowledge: WorldKnowledge;
     protected tries: number;
+    private noPathFound: boolean;
 
     constructor(human: Employee, worldKnowledge: WorldKnowledge, tries: number = 0) {
         super(human);
         this.isHumanOnTheRightCell = false;
         this.worldKnowledge = worldKnowledge;
         this.tries = tries;
+        this.noPathFound = false;
     }
 
     start(game: Phaser.Game): boolean {
@@ -25,6 +29,7 @@ export abstract class MoveThenActAbstractState extends AbstractState {
         }
 
         if (!this.human.moveToClosest(this.objectReferer.getPosition(), this.objectReferer.getEntries())) {
+            this.noPathFound = true;
             this.active = false;
             this.stop();
             return false;
@@ -58,7 +63,17 @@ export abstract class MoveThenActAbstractState extends AbstractState {
 
     abstract getState(): STATE;
 
+    getRageState(): HumanState {
+        if (this.noPathFound) {
+            return new RageState(this.human, RAGE_IMAGE.PATH);
+        } else {
+            return this.subGetRageState();
+        }
+    }
+
     protected abstract retry(): HumanState;
+
+    protected abstract subGetRageState(): HumanState;
 
     protected abstract act(): void;
 }

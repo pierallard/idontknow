@@ -4,8 +4,8 @@ import {AbstractState} from "./AbstractState";
 import {HumanState} from "./HumanState";
 
 export class SmokeState extends AbstractState {
-
     getRageState(): HumanState {
+        debugger;
         return null;
     }
 
@@ -17,7 +17,6 @@ export class SmokeState extends AbstractState {
         }, this);
         this.human.loadAnimation(ANIMATION.SMOKE);
         this.human.updateMoodFromState();
-
         return true;
     }
 

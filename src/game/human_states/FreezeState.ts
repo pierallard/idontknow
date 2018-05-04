@@ -21,6 +21,7 @@ export class FreezeState extends AbstractState {
     }
 
     getRageState(): HumanState {
+        debugger;
         return null;
     }
 }

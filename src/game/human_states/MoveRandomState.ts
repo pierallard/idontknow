@@ -3,6 +3,8 @@ import {HumanState} from "./HumanState";
 import {WorldKnowledge} from "../WorldKnowledge";
 import {STATE} from "../human_stuff/HumanStateManager";
 import {AbstractState} from "./AbstractState";
+import {RageState} from "./RageState";
+import {RAGE_IMAGE} from "../human_stuff/ThoughtBubble";
 
 export class MoveRandomState extends AbstractState {
     private goal: PIXI.Point;
@@ -38,7 +40,6 @@ export class MoveRandomState extends AbstractState {
     }
 
     getRageState(): HumanState {
-        // TODO Add a "path" rage icon
-        return null;
+        return new RageState(this.human, RAGE_IMAGE.PATH);
     }
 }

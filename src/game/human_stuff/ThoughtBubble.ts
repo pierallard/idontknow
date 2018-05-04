@@ -5,6 +5,7 @@ export enum RAGE_IMAGE {
     LAPTOP = 1,
     SLEEP = 2,
     TABLE = 3,
+    PATH = 4,
 }
 
 export class ThoughtBubble extends Bubble {

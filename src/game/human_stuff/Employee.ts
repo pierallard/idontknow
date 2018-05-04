@@ -154,6 +154,7 @@ export class Employee {
     moveTo(cell: PIXI.Point): boolean {
         const path = this.closestPathFinder.getPath(this.cell, cell);
         if (path === null) {
+            this.path = [];
             this.stateManager.reset(this.game);
 
             return false;
@@ -169,7 +170,7 @@ export class Employee {
     moveToClosest(cell: PIXI.Point, entries: DIRECTION[] = [DIRECTION.BOTTOM, DIRECTION.RIGHT, DIRECTION.TOP, DIRECTION.LEFT]): boolean {
         const path = this.closestPathFinder.getNeighborPath(this.cell, cell, entries);
         if (path === null) {
-            this.stateManager.reset(this.game);
+            this.path = [];
 
             return false;
         }

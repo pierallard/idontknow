@@ -155,6 +155,6 @@ export class SitTalkState extends AbstractState {
     }
 
     getRageState(): HumanState {
-        return null;
+        return new RageState(this.human, RAGE_IMAGE.PATH);
     }
 }

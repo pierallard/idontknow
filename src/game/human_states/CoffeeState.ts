@@ -43,7 +43,7 @@ export class CoffeeState extends MoveThenActAbstractState {
         return STATE.COFFEE;
     }
 
-    getRageState(): HumanState {
+    protected subGetRageState(): HumanState {
         return new RageState(this.human, RAGE_IMAGE.COFFEE);
     }
 }

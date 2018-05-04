@@ -50,7 +50,7 @@ export class TypeState extends MoveThenActAbstractState {
         return STATE.TYPE;
     }
 
-    getRageState(): HumanState {
+    protected subGetRageState(): HumanState {
         return new RageState(this.human, RAGE_IMAGE.LAPTOP);
     }
 }
