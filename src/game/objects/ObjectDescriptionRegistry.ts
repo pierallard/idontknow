@@ -8,7 +8,7 @@ import {InteractivePoint} from "./InteractivePoint";
 import {DIRECTION} from "../Direction";
 import {SpriteInfo} from "./SpriteInfo";
 import {Price} from "./Price";
-import {CELL_HEIGHT} from "../PositionTransformer";
+import {CELL_HEIGHT, CELL_WIDTH} from "../PositionTransformer";
 
 export class ObjectDescriptionRegistry {
     private static objectDescriptions: ObjectDescription[] = null;
@@ -110,11 +110,11 @@ export class ObjectDescriptionRegistry {
                 'Couch',
                 [
                     new SpriteInfo('couch_part1', new PIXI.Point(10, 0), 12),
-                    new SpriteInfo('couch_part2', new PIXI.Point(10 - 20, 10), 22, new PIXI.Point(0, 1))
+                    new SpriteInfo('couch_part2', new PIXI.Point(10 - CELL_WIDTH/2, 10), 22, new PIXI.Point(0, 1))
                 ],
                 [
                     new SpriteInfo('couch_reverse_part1', new PIXI.Point(-13, 0), 12),
-                    new SpriteInfo('couch_reverse_part2', new PIXI.Point(- (13 - 20), 10), 22, new PIXI.Point(1, 0)),
+                    new SpriteInfo('couch_reverse_part2', new PIXI.Point(-(13 - CELL_WIDTH/2), 9), 22, new PIXI.Point(1, 0)),
                     new SpriteInfo('couch_reverse_cache', new PIXI.Point(-13, 0), 0),
                 ],
                 [

@@ -14,4 +14,5 @@ export interface HumanState {
     start(game: Phaser.Game): boolean;
     stop(): void;
     getState(): STATE;
+    getRageState(): HumanState;
 }

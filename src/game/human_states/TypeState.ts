@@ -8,15 +8,23 @@ import {RAGE_IMAGE} from "../human_stuff/ThoughtBubble";
 const SECOND_MAX = 60 * Phaser.Timer.SECOND;
 
 export class TypeState extends MoveThenActAbstractState {
+    start(game: Phaser.Game): boolean {
+        this.objectReferer = this.worldKnowledge.getClosestReferer(['Desk'], 1, this.human.getPosition());
+        if (this.objectReferer === null) {
+            return false;
+        }
+
+        return super.start(game);
+    }
+
     protected retry(): HumanState {
-        const nextDeskReferer = this.worldKnowledge.getClosestReferer(['Desk'], 1, this.human.getPosition());
-        if (this.tries > this.human.getMaxRetries() || nextDeskReferer === null) {
+        if (this.tries > this.human.getMaxRetries()) {
             this.active = false;
             this.human.stopWalk();
 
             return new RageState(this.human, RAGE_IMAGE.LAPTOP);
         } else {
-            return new TypeState(this.human, nextDeskReferer, this.worldKnowledge, this.tries + 1);
+            return new TypeState(this.human, this.worldKnowledge, this.tries + 1);
         }
     }
 
@@ -40,5 +48,9 @@ export class TypeState extends MoveThenActAbstractState {
 
     getState(): STATE {
         return STATE.TYPE;
+    }
+
+    getRageState(): HumanState {
+        return new RageState(this.human, RAGE_IMAGE.LAPTOP);
     }
 }

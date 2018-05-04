@@ -36,4 +36,9 @@ export class MoveRandomState extends AbstractState {
     getState(): STATE {
         return STATE.MOVE_RANDOM;
     }
+
+    getRageState(): HumanState {
+        // TODO Add a "path" rage icon
+        return null;
+    }
 }

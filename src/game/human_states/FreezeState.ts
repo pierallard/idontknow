@@ -1,6 +1,7 @@
 import {ANIMATION} from "../human_stuff/HumanAnimationManager";
 import {STATE} from "../human_stuff/HumanStateManager";
 import {AbstractState} from "./AbstractState";
+import {HumanState} from "./HumanState";
 
 export class FreezeState extends AbstractState {
     private event: Phaser.TimerEvent;
@@ -17,5 +18,9 @@ export class FreezeState extends AbstractState {
 
     getState(): STATE {
         return STATE.FREEZE;
+    }
+
+    getRageState(): HumanState {
+        return null;
     }
 }

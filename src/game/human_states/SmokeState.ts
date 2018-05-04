@@ -1,8 +1,14 @@
 import {ANIMATION, HumanAnimationManager} from "../human_stuff/HumanAnimationManager";
 import {STATE} from "../human_stuff/HumanStateManager";
 import {AbstractState} from "./AbstractState";
+import {HumanState} from "./HumanState";
 
 export class SmokeState extends AbstractState {
+
+    getRageState(): HumanState {
+        return null;
+    }
+
     start(game: Phaser.Game): boolean {
         super.start(game);
 

@@ -12,16 +12,17 @@ export abstract class MoveThenActAbstractState extends AbstractState {
     protected worldKnowledge: WorldKnowledge;
     protected tries: number;
 
-    constructor(human: Employee, objectReferer: ObjectReferer, worldKnowledge: WorldKnowledge, tries: number = 0) {
+    constructor(human: Employee, worldKnowledge: WorldKnowledge, tries: number = 0) {
         super(human);
-        this.objectReferer = objectReferer;
         this.isHumanOnTheRightCell = false;
         this.worldKnowledge = worldKnowledge;
         this.tries = tries;
     }
 
     start(game: Phaser.Game): boolean {
-        super.start(game);
+        if (!super.start(game)) {
+            return false;
+        }
 
         if (!this.human.moveToClosest(this.objectReferer.getPosition(), this.objectReferer.getEntries())) {
             this.active = false;

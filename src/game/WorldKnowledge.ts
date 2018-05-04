@@ -279,7 +279,7 @@ export class WorldKnowledge {
         return true;
     }
 
-    getClosestReferer(types: string[], referersCountPerObject: number = 1, position: PIXI.Point = null) {
+    getClosestReferer(types: string[], referersCountPerObject: number = 1, position: PIXI.Point = null): ObjectReferer {
         let freeReferers: ObjectReferer[] = [];
         this.objects.forEach((object) => {
             if (types.indexOf(object.constructor.name) > -1) {

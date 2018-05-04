@@ -108,4 +108,8 @@ export class TalkState extends AbstractState {
     private static otherAnimation(animation: ANIMATION) {
         return animation === ANIMATION.TALK ? ANIMATION.FREEZE : ANIMATION.TALK;
     }
+
+    getRageState(): HumanState {
+        return null;
+    }
 }

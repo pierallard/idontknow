@@ -14,6 +14,9 @@ export class SmoothValue {
     }
 
     add(value: number, milliseconds: number = Phaser.Timer.SECOND) {
+        if (isNaN(value)) {
+            debugger;
+        }
         if (milliseconds < TIME_GAP) {
             this.value += value;
         } else {

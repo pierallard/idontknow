@@ -6,15 +6,23 @@ import {HumanState} from "./HumanState";
 import {RAGE_IMAGE} from "../human_stuff/ThoughtBubble";
 
 export class SitState extends MoveThenActAbstractState {
+    start(game: Phaser.Game): boolean {
+        this.objectReferer = this.worldKnowledge.getClosestReferer(['Sofa', 'Couch'], 1, this.human.getPosition());
+        if (this.objectReferer === null) {
+            return false;
+        }
+
+        return super.start(game);
+    }
+
     protected retry(): HumanState {
-        const nextSofaReferer = this.worldKnowledge.getClosestReferer(['Sofa'], 1, this.human.getPosition());
-        if (this.tries > this.human.getMaxRetries() || nextSofaReferer === null) {
+        if (this.tries > this.human.getMaxRetries()) {
             this.active = false;
             this.human.stopWalk();
 
             return new RageState(this.human, RAGE_IMAGE.SLEEP);
         } else {
-            return new SitState(this.human, nextSofaReferer, this.worldKnowledge, this.tries + 1);
+            return new SitState(this.human, this.worldKnowledge, this.tries + 1);
         }
     }
 
@@ -38,5 +46,9 @@ export class SitState extends MoveThenActAbstractState {
 
     getState(): STATE {
         return STATE.SIT;
+    }
+
+    getRageState(): HumanState {
+        return new RageState(this.human, RAGE_IMAGE.SLEEP);
     }
 }

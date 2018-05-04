@@ -27,11 +27,7 @@ export class TalkBubble extends Bubble {
     }
 
     hide() {
-        console.log(this.game.time.events.length);
-        console.log(
-            this.game.time.events.remove(this.event)
-        );
-        console.log(this.game.time.events.length);
+        this.game.time.events.remove(this.event);
         super.hide();
     }
 

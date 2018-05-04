@@ -7,16 +7,24 @@ import {HumanState} from "./HumanState";
 import {RAGE_IMAGE} from "../human_stuff/ThoughtBubble";
 
 export class CoffeeState extends MoveThenActAbstractState {
+    start(game: Phaser.Game): boolean {
+        this.objectReferer = this.worldKnowledge.getClosestReferer(['Dispenser'], 1, this.human.getPosition());
+        if (this.objectReferer === null) {
+            return false;
+        }
+
+        return super.start(game);
+    }
+
     protected retry(): HumanState {
-        const nextDispenserReferer = this.worldKnowledge.getClosestReferer(['Dispenser'], 1, this.human.getPosition());
-        if (this.tries > this.human.getMaxRetries() || nextDispenserReferer === null) {
+        if (this.tries > this.human.getMaxRetries()) {
             this.active = false;
             this.human.stopWalk();
 
             return new RageState(this.human, RAGE_IMAGE.COFFEE);
         }
         else {
-            return new CoffeeState(this.human, nextDispenserReferer, this.worldKnowledge, this.tries + 1);
+            return new CoffeeState(this.human, this.worldKnowledge, this.tries + 1);
         }
     }
 
@@ -33,5 +41,9 @@ export class CoffeeState extends MoveThenActAbstractState {
 
     getState(): STATE {
         return STATE.COFFEE;
+    }
+
+    getRageState(): HumanState {
+        return new RageState(this.human, RAGE_IMAGE.COFFEE);
     }
 }

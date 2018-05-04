@@ -153,4 +153,8 @@ export class SitTalkState extends AbstractState {
     private static otherAnimation(animation: ANIMATION) {
         return animation === ANIMATION.SIT_TALK ? ANIMATION.FREEZE_SIT : ANIMATION.SIT_TALK;
     }
+
+    getRageState(): HumanState {
+        return null;
+    }
 }

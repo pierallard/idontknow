@@ -43,7 +43,7 @@ export class HumanAnimationManager {
         if (HumanAnimationManager.hasTopOrientedVariation(animation)) {
             animationName = this.getAnimationName(animation, isTopLooking);
         }
-        if (this.humanTile.animations.name !== animationName) {
+        if (this.humanTile.animations.name !== animationName || !HumanAnimationManager.isLooped(animation)) {
             this.humanTile.animations.play(animationName, FRAME_RATE, HumanAnimationManager.isLooped(animation));
         }
         if (isLeftLooking != null) {

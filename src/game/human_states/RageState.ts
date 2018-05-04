@@ -4,6 +4,7 @@ import {AbstractState} from "./AbstractState";
 import {Employee} from "../human_stuff/Employee";
 import {RAGE_IMAGE} from "../human_stuff/ThoughtBubble";
 import {HumanState} from "./HumanState";
+import {FreezeState} from "./FreezeState";
 
 export class RageState extends AbstractState {
     private rageImage: RAGE_IMAGE;
@@ -21,12 +22,13 @@ export class RageState extends AbstractState {
             this.human.loadAnimation(ANIMATION.RAGE);
             this.human.updateMoodFromState();
             this.human.showThoughtBubble(this.rageImage);
-            this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.RAGE), () => {
+            this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.RAGE) + 100, () => {
                 this.active = false;
                 this.human.hideThoughtBubble();
             }, this));
         }
-        return super.getNextState();
+
+        return this.active ? this : new FreezeState(this.human);
     }
 
     getState(): STATE {
@@ -35,5 +37,9 @@ export class RageState extends AbstractState {
 
     getRageImage(): RAGE_IMAGE {
         return this.rageImage;
+    }
+
+    getRageState(): HumanState {
+        return new RageState(this.human, this.rageImage);
     }
 }

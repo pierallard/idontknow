@@ -51,72 +51,65 @@ export class HumanStateManager {
     updateState(game: Phaser.Game) {
         const nextState = this.state.getNextState();
         if (nextState === this.state) {
-            // Do nothing, current state is not ended.
             return;
         }
 
         if (nextState !== null) {
-            // Next state is forced.
             this.state = nextState;
-            this.state.start(game);
-            console.log('New forced state: ' + this.state.constructor.name);
-            return;
-        }
-
-        // Generates new state
-        switch(this.randomNextStepName()) {
-            case STATE.SMOKE:
-                this.state = new SmokeState(this.human);
-                break;
-            case STATE.MOVE_RANDOM:
-                this.state = new MoveRandomState(this.human, this.worldKnowledge);
-                break;
-            case STATE.SIT:
-                this.state = new SitState(
-                    this.human,
-                    this.worldKnowledge.getClosestReferer(['Sofa', 'Couch'], 1, this.human.getPosition()),
-                    this.worldKnowledge
-                );
-                break;
-            case STATE.TYPE:
-                this.state = new TypeState(
-                    this.human,
-                    this.worldKnowledge.getClosestReferer(['Desk'], 1, this.human.getPosition()),
-                    this.worldKnowledge
-                );
-                break;
-            case STATE.COFFEE:
-                this.state = new CoffeeState(
-                    this.human,
-                    this.worldKnowledge.getClosestReferer(['Dispenser'], 1, this.human.getPosition()),
-                    this.worldKnowledge
-                );
-                break;
-            case STATE.TALK:
-                this.state = new TalkState(
-                    this.human,
-                    this.worldKnowledge.getAnotherFreeHuman(this.human),
-                    this.worldKnowledge
-                );
-                break;
-            case STATE.SIT_TALK:
-                this.state = new SitTalkState(
-                    this.human,
-                    <Table> this.worldKnowledge.getClosestReferer(['Table'], 4, this.human.getPosition()).getObject(),
-                    this.worldKnowledge.getAnotherFreeHumans(this.human, 3),
-                    this.worldKnowledge
-                );
-                break;
-            case STATE.FREEZE:
-            default:
-                this.state = new FreezeState(this.human);
+        } else {
+            // Generates new state
+            switch (this.randomNextStepName()) {
+                case STATE.SMOKE:
+                    this.state = new SmokeState(this.human);
+                    break;
+                case STATE.MOVE_RANDOM:
+                    this.state = new MoveRandomState(this.human, this.worldKnowledge);
+                    break;
+                case STATE.SIT:
+                    this.state = new SitState(
+                        this.human,
+                        this.worldKnowledge
+                    );
+                    break;
+                case STATE.TYPE:
+                    this.state = new TypeState(
+                        this.human,
+                        this.worldKnowledge
+                    );
+                    break;
+                case STATE.COFFEE:
+                    this.state = new CoffeeState(
+                        this.human,
+                        this.worldKnowledge
+                    );
+                    break;
+                case STATE.TALK:
+                    this.state = new TalkState(
+                        this.human,
+                        this.worldKnowledge.getAnotherFreeHuman(this.human),
+                        this.worldKnowledge
+                    );
+                    break;
+                case STATE.SIT_TALK:
+                    this.state = new SitTalkState(
+                        this.human,
+                        <Table> this.worldKnowledge.getClosestReferer(['Table'], 4, this.human.getPosition()).getObject(),
+                        this.worldKnowledge.getAnotherFreeHumans(this.human, 3),
+                        this.worldKnowledge
+                    );
+                    break;
+                case STATE.FREEZE:
+                default:
+                    this.state = new FreezeState(this.human);
+            }
         }
 
         if (this.state.start(game)) {
-            console.log('New random state: ' + this.state.constructor.name);
+            // OK !
         } else {
             console.log('State ' + this.state.constructor.name + ' failed. Retry.');
-            this.updateState(game);
+            this.state = this.state.getRageState();
+            this.state.start(game);
         }
     }
 
@@ -146,10 +139,6 @@ export class HumanStateManager {
     getNextProbabilities(): {[index: number]: number} {
         const states = {};
 
-        if (this.worldKnowledge.getClosestReferer(['Desk']) !== null) {
-            states[STATE.TYPE] = this.getProbability(STATE.TYPE);
-        }
-
         if (
             this.worldKnowledge.getClosestReferer(['Table'], 4) !== null &&
             this.worldKnowledge.getAnotherFreeHumans(this.human, 3).length === 3
@@ -157,18 +146,13 @@ export class HumanStateManager {
             states[STATE.SIT_TALK] = this.getProbability(STATE.SIT_TALK);
         }
 
-        if (this.worldKnowledge.getClosestReferer(['Dispenser']) !== null) {
-            states[STATE.COFFEE] = this.getProbability(STATE.COFFEE);
-        }
-
-        if (this.worldKnowledge.getClosestReferer(['Sofa', 'Couch']) !== null) {
-            states[STATE.SIT] = this.getProbability(STATE.SIT);
-        }
-
         if (this.worldKnowledge.getAnotherFreeHuman(this.human) !== null) {
             states[STATE.TALK] = this.getProbability(STATE.TALK);
         }
 
+        states[STATE.TYPE] = this.getProbability(STATE.TYPE);
+        states[STATE.COFFEE] = this.getProbability(STATE.COFFEE);
+        states[STATE.SIT] = this.getProbability(STATE.SIT);
         states[STATE.FREEZE] = this.getProbability(STATE.FREEZE);
         states[STATE.MOVE_RANDOM] = this.getProbability(STATE.MOVE_RANDOM);
         states[STATE.SMOKE] = this.getProbability(STATE.SMOKE);
@@ -190,7 +174,7 @@ export class HumanStateManager {
         }
 
         if (state === this.state.getState()) {
-            result = result / 2;
+            result = result / 1.5;
         }
         if (this.state instanceof RageState) {
             const rageState = <RageState> this.state;
@@ -216,7 +200,7 @@ export class HumanStateManager {
             if (this.human.getMood(mood) < LIMIT) {
                 if (HumanStateManager.getMoodGains(state)[mood] > 0) {
                     let ratio = 1 - this.human.getMood(mood) / LIMIT;
-                    ratio = ratio * HumanStateManager.getMoodGains(state)[mood] * 15;
+                    ratio = ratio * HumanStateManager.getMoodGains(state)[mood] * 30;
                     result = result * (1 + ratio);
                 }
             }
@@ -225,13 +209,13 @@ export class HumanStateManager {
         return result;
     }
 
-    static getMoodGains(state: STATE): object {
+    static getMoodGains(state: STATE): {[index: number]: number} {
         let result = {};
         switch(state) {
             case STATE.SMOKE: result[MOOD.RELAXATION] = 0.1; break;
-            case STATE.TALK: result[MOOD.SOCIAL] = 0.4; result[MOOD.RELAXATION] += 0.1; break;
+            case STATE.TALK: result[MOOD.SOCIAL] = 0.4; result[MOOD.RELAXATION] = 0.1; break;
             case STATE.SIT: result[MOOD.RELAXATION] = 0.35; break;
-            case STATE.COFFEE: result[MOOD.HUNGER] = 0.5; result[MOOD.RELAXATION] -= 0.1; break;
+            case STATE.COFFEE: result[MOOD.HUNGER] = 0.5; result[MOOD.RELAXATION] = -0.1; break;
             case STATE.SIT_TALK: result[MOOD.SOCIAL] = 0.6; break;
             case STATE.RAGE: result[MOOD.RELAXATION] = -0.2; break;
         }
