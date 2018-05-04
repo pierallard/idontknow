@@ -47,6 +47,7 @@ export default class Preload extends Phaser.State {
         this.game.load.spritesheet('wall', 'assets/wall.png', 40, 37, 16);
         this.game.load.spritesheet('sofa', 'assets/sofa.png', 8, 6);
         this.game.load.spritesheet('dispenser', 'assets/dispenser.png', 26, 35);
+        this.game.load.spritesheet('dispenser_reverse', 'assets/dispenser_reverse.png', 26, 35);
         this.game.load.spritesheet('dispenser_selected', 'assets/dispenser_selected.png', 26, 35);
         this.game.load.spritesheet('sofa_selected', 'assets/sofa_selected.png', 8, 6);
         this.game.load.spritesheet('bubble', 'assets/bubble.png', 13, 15);

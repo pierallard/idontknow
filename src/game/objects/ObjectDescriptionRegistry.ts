@@ -8,6 +8,7 @@ import {InteractivePoint} from "./InteractivePoint";
 import {DIRECTION} from "../Direction";
 import {SpriteInfo} from "./SpriteInfo";
 import {Price} from "./Price";
+import {CELL_HEIGHT} from "../PositionTransformer";
 
 export class ObjectDescriptionRegistry {
     private static objectDescriptions: ObjectDescription[] = null;
@@ -32,13 +33,17 @@ export class ObjectDescriptionRegistry {
             new ObjectDescription(
                 'Dispenser',
                 [
-                    new SpriteInfo('dispenser', new PIXI.Point(-4, -4), 3,  new PIXI.Point(0, 0))
+                    new SpriteInfo('dispenser', new PIXI.Point(-4, -4), 3)
                 ],
-                [],
                 [
-                    new InteractivePoint([DIRECTION.RIGHT], new PIXI.Point(0, 0), new PIXI.Point(0, 0))
+                    new SpriteInfo('dispenser_reverse', new PIXI.Point(-4, -4), 0)
                 ],
-                [],
+                [
+                    new InteractivePoint([DIRECTION.RIGHT], new PIXI.Point(5, -3))
+                ],
+                [
+                    new InteractivePoint([DIRECTION.TOP], new PIXI.Point(5, -CELL_HEIGHT + 3))
+                ],
                 new Price(70)
             )
         );
