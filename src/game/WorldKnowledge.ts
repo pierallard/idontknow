@@ -27,6 +27,7 @@ import {PANEL, UserInterface} from "./user_interface/UserInterface";
 import {DIRECTION_LOOP} from "./objects/ObjectOrientation";
 import {Couch} from "./objects/Couch";
 import {EmployeeCountRegister} from "./human_stuff/EmployeeCountRegister";
+import {Console} from "./objects/Console";
 
 export const GRID_WIDTH = 16;
 export const GRID_HEIGHT = 16;
@@ -420,6 +421,7 @@ export class WorldKnowledge {
             case 'Dispenser': object = new Dispenser(position, this, orientation); break;
             case 'Table': object = new Table(position, this, orientation); break;
             case 'Couch': object = new Couch(position, this, orientation); break;
+            case 'Console': object = new Console(position, this, orientation); break;
             default: throw 'Unknown object ' + name;
         }
         this.objects.push(object);
