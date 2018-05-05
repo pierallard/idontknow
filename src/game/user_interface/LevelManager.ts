@@ -2,7 +2,7 @@ import {EMPLOYEE_TYPE} from "../human_stuff/HumanPropertiesFactory";
 import {SmoothValue} from "../SmoothValue";
 import {Price} from "../objects/Price";
 
-const DEVELOPER_RATIO = 1000;
+const DEVELOPER_RATIO = 500;
 const MARKETING_RATIO = 5;
 const SALE_RATIO = 10;
 const STARTING_LEVEL = 1;

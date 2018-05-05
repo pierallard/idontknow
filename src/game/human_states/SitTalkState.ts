@@ -41,7 +41,7 @@ export class SitTalkState extends AbstractState {
             this.active = false;
             this.human.stopWalk();
 
-            return new RageState(this.human, RAGE_IMAGE.TABLE);
+            return new RageState(this.human, this);
         } else {
             if (!this.isHumanOnTheRightCell && this.isNeighborPosition()) {
                 this.isHumanOnTheRightCell = true;
@@ -63,7 +63,7 @@ export class SitTalkState extends AbstractState {
                 this.active = false;
                 this.human.stopWalk();
 
-                return new RageState(this.human, RAGE_IMAGE.TABLE);
+                return new RageState(this.human, this);
             }
 
             if (this.isHumanSit && !this.meetingStarted && this.meeting.isReady()) {
@@ -154,7 +154,7 @@ export class SitTalkState extends AbstractState {
         return animation === ANIMATION.SIT_TALK ? ANIMATION.FREEZE_SIT : ANIMATION.SIT_TALK;
     }
 
-    getRageState(): HumanState {
-        return new RageState(this.human, RAGE_IMAGE.PATH);
+    getRageImage(): RAGE_IMAGE {
+        return RAGE_IMAGE.PATH;
     }
 }

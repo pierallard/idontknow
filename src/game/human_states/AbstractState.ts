@@ -1,7 +1,7 @@
 import {HumanState} from "./HumanState";
 import {STATE} from "../human_stuff/HumanStateManager";
 import {Employee} from "../human_stuff/Employee";
-import {ANIMATION} from "../human_stuff/HumanAnimationManager";
+import {RAGE_IMAGE} from "../human_stuff/ThoughtBubble";
 
 export abstract class AbstractState implements HumanState {
     protected events: Phaser.TimerEvent[];
@@ -35,5 +35,5 @@ export abstract class AbstractState implements HumanState {
 
     abstract getState(): STATE;
 
-    abstract getRageState(): HumanState;
+    abstract getRageImage(): RAGE_IMAGE;
 }

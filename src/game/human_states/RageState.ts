@@ -2,33 +2,39 @@ import {STATE} from "../human_stuff/HumanStateManager";
 import {ANIMATION, HumanAnimationManager} from "../human_stuff/HumanAnimationManager";
 import {AbstractState} from "./AbstractState";
 import {Employee} from "../human_stuff/Employee";
-import {RAGE_IMAGE} from "../human_stuff/ThoughtBubble";
 import {HumanState} from "./HumanState";
-import {FreezeState} from "./FreezeState";
+import {RAGE_IMAGE} from "../human_stuff/ThoughtBubble";
 
 export class RageState extends AbstractState {
-    private rageImage: RAGE_IMAGE;
+    private sourceState: HumanState;
     private isRaging: boolean;
 
-    constructor(human: Employee, rageImage: RAGE_IMAGE) {
+    constructor(human: Employee, sourceState: HumanState) {
         super(human);
-        this.rageImage = rageImage;
+        this.sourceState = sourceState;
         this.isRaging = false;
     }
 
     getNextState(): HumanState {
         if (!this.isRaging && !this.human.isMoving()) {
             this.isRaging = true;
-            this.human.loadAnimation(ANIMATION.RAGE);
+            if (this.human.getMood() < 0.5) {
+                this.human.loadAnimation(ANIMATION.RAGE);
+            } else {
+                this.human.loadAnimation(ANIMATION.FREEZE);
+            }
             this.human.updateMoodFromState();
-            this.human.showThoughtBubble(this.rageImage);
-            this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.RAGE) + 100, () => {
-                this.active = false;
+            this.human.showThoughtBubble(this.sourceState.getRageImage());
+            this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.RAGE), () => {
                 this.human.hideThoughtBubble();
+                this.human.loadAnimation(ANIMATION.FREEZE);
+                this.events.push(this.game.time.events.add(3 * Phaser.Timer.SECOND, () => {
+                    this.active = false;
+                }, this));
             }, this));
         }
 
-        return this.active ? this : new FreezeState(this.human);
+        return super.getNextState();
     }
 
     getState(): STATE {
@@ -36,10 +42,10 @@ export class RageState extends AbstractState {
     }
 
     getRageImage(): RAGE_IMAGE {
-        return this.rageImage;
+        return this.sourceState.getRageImage();
     }
 
-    getRageState(): HumanState {
-        return new RageState(this.human, this.rageImage);
+    getSourceState(): HumanState {
+        return this.sourceState
     }
 }

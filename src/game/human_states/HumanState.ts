@@ -1,4 +1,5 @@
 import {STATE} from "../human_stuff/HumanStateManager";
+import {RAGE_IMAGE} from "../human_stuff/ThoughtBubble";
 
 export interface HumanState {
     /**
@@ -14,5 +15,5 @@ export interface HumanState {
     start(game: Phaser.Game): boolean;
     stop(): void;
     getState(): STATE;
-    getRageState(): HumanState;
+    getRageImage(): RAGE_IMAGE;
 }

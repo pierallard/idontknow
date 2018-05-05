@@ -5,7 +5,8 @@ import {MoveThenActAbstractState} from "./MoveThenActAbstractState";
 import {HumanState} from "./HumanState";
 import {RAGE_IMAGE} from "../human_stuff/ThoughtBubble";
 
-const SECOND_MAX = 60 * Phaser.Timer.SECOND;
+const SECOND_MIN = 15 * Phaser.Timer.SECOND;
+const SECOND_MAX = 45 * Phaser.Timer.SECOND;
 
 export class TypeState extends MoveThenActAbstractState {
     start(game: Phaser.Game): boolean {
@@ -22,7 +23,7 @@ export class TypeState extends MoveThenActAbstractState {
             this.active = false;
             this.human.stopWalk();
 
-            return new RageState(this.human, RAGE_IMAGE.LAPTOP);
+            return new RageState(this.human, this);
         } else {
             return new TypeState(this.human, this.worldKnowledge, this.tries + 1);
         }
@@ -32,7 +33,7 @@ export class TypeState extends MoveThenActAbstractState {
         this.human.loadAnimation(ANIMATION.SIT_DOWN, this.objectReferer.getObject().forceLeftOrientation(this.objectReferer.getIdentifier()));
         this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.SIT_DOWN), () => {
             this.human.loadAnimation(ANIMATION.TYPE, this.objectReferer.forceLeftOrientation(), this.objectReferer.forceTopOrientation());
-            const time = Phaser.Math.random(15 * Phaser.Timer.SECOND, SECOND_MAX);
+            const time = Phaser.Math.random(SECOND_MIN, SECOND_MAX);
             this.worldKnowledge.addProgress(this.human.getType(), time / SECOND_MAX, time);
             this.events.push(this.game.time.events.add(time, () => {
                 this.human.loadAnimation(ANIMATION.STAND_UP);
@@ -50,7 +51,7 @@ export class TypeState extends MoveThenActAbstractState {
         return STATE.TYPE;
     }
 
-    protected subGetRageState(): HumanState {
-        return new RageState(this.human, RAGE_IMAGE.LAPTOP);
+    protected subGetRageImage(): RAGE_IMAGE {
+        return RAGE_IMAGE.LAPTOP;
     }
 }

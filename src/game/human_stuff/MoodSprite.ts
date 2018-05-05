@@ -9,9 +9,6 @@ export class MoodSprite {
     private sprite: Phaser.Graphics;
     private parent: Phaser.TileSprite;
 
-    constructor() {
-    }
-
     create(humanSprite: Phaser.TileSprite, game: Phaser.Game, group: Phaser.Group) {
         this.parent = humanSprite;
         this.sprite = game.add.graphics(this.parent.position.x, this.parent.position.y, group);
@@ -28,7 +25,7 @@ export class MoodSprite {
         for (let i = 0; i < moods.length; i++) {
             this.sprite.moveTo(0, i * 2);
             this.sprite.lineStyle(2, MoodSprite.getColor(moods[i]));
-            this.sprite.lineTo(moods[i] * 15 + 1,   i * 2);
+            this.sprite.lineTo(Math.floor(moods[i] * 15 + 1),   i * 2);
         }
     }
 

@@ -27,6 +27,7 @@ export class UserInfoPanel {
     private human: Employee;
     private pieChart: PieChart;
     private currentState: Phaser.Text;
+    private wage: Phaser.Text;
 
     constructor(worldKnowledge: WorldKnowledge) {
         this.worldKnowledge = worldKnowledge;
@@ -45,10 +46,11 @@ export class UserInfoPanel {
         this.moodHungerText = game.add.text(left, TOP_GAP + 2 * GAP_BETWEEN_LINES, 'Hunger', TEXT_STYLE, groups[GROUP_INTERFACE]);
         this.moodSocialText = game.add.text(left, TOP_GAP + 3 * GAP_BETWEEN_LINES, 'Social', TEXT_STYLE, groups[GROUP_INTERFACE]);
         this.currentState = game.add.text(left, TOP_GAP + 4 * GAP_BETWEEN_LINES, '', TEXT_STYLE, groups[GROUP_INTERFACE]);
+        this.wage = game.add.text(left, TOP_GAP + 5 * GAP_BETWEEN_LINES, '', TEXT_STYLE, groups[GROUP_INTERFACE]);
         this.pieChart.create(game, groups);
-        this.moodRelaxationGauge.create(game, groups, new PIXI.Point(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GAUGE_GAP, TOP_GAP + GAP_BETWEEN_LINES - 3.5));
-        this.moodHungerGauge.create(game, groups, new PIXI.Point(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GAUGE_GAP, TOP_GAP + 2 * GAP_BETWEEN_LINES - 3.5));
-        this.moodSocialGauge.create(game, groups, new PIXI.Point(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GAUGE_GAP, TOP_GAP + 3 * GAP_BETWEEN_LINES - 3.5));
+        this.moodRelaxationGauge.create(game, groups, new PIXI.Point(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GAUGE_GAP, TOP_GAP + GAP_BETWEEN_LINES + 3.5));
+        this.moodHungerGauge.create(game, groups, new PIXI.Point(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GAUGE_GAP, TOP_GAP + 2 * GAP_BETWEEN_LINES + 3.5));
+        this.moodSocialGauge.create(game, groups, new PIXI.Point(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GAUGE_GAP, TOP_GAP + 3 * GAP_BETWEEN_LINES + 3.5));
     }
 
     update() {
@@ -56,6 +58,7 @@ export class UserInfoPanel {
             this.moodRelaxationGauge.setValue(this.human.getMood(MOOD.RELAXATION));
             this.moodHungerGauge.setValue(this.human.getMood(MOOD.HUNGER));
             this.moodSocialGauge.setValue(this.human.getMood(MOOD.SOCIAL));
+            this.wage.setText('Wage: ' + this.human.getRealWage().getStringValue() + '/day');
             this.moodRelaxationGauge.update();
             this.moodHungerGauge.update();
             this.moodSocialGauge.update();
@@ -72,6 +75,7 @@ export class UserInfoPanel {
             this.moodHungerText.position.x -= INTERFACE_WIDTH;
             this.moodSocialText.position.x -= INTERFACE_WIDTH;
             this.currentState.position.x -= INTERFACE_WIDTH;
+            this.wage.position.x -= INTERFACE_WIDTH;
             this.moodRelaxationGauge.show();
             this.moodHungerGauge.show();
             this.moodSocialGauge.show();
@@ -87,6 +91,7 @@ export class UserInfoPanel {
             this.moodHungerText.position.x += INTERFACE_WIDTH;
             this.moodSocialText.position.x += INTERFACE_WIDTH;
             this.currentState.position.x += INTERFACE_WIDTH;
+            this.wage.position.x += INTERFACE_WIDTH;
             this.moodRelaxationGauge.hide();
             this.moodHungerGauge.hide();
             this.moodSocialGauge.hide();

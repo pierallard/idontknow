@@ -108,7 +108,7 @@ export class HumanStateManager {
             // OK !
         } else {
             console.log('State ' + this.state.constructor.name + ' failed to start. Rage!');
-            this.state = this.state.getRageState();
+            this.state = new RageState(this.human, this.state);
             this.state.start(game);
         }
     }
@@ -178,16 +178,7 @@ export class HumanStateManager {
         }
         if (this.state instanceof RageState) {
             const rageState = <RageState> this.state;
-            if (rageState.getRageImage() === RAGE_IMAGE.COFFEE && state === STATE.COFFEE) {
-                result = result / 3;
-            }
-            if (rageState.getRageImage() === RAGE_IMAGE.LAPTOP && state === STATE.TYPE) {
-                result = result / 3;
-            }
-            if (rageState.getRageImage() === RAGE_IMAGE.SLEEP && state === STATE.SIT) {
-                result = result / 3;
-            }
-            if (rageState.getRageImage() === RAGE_IMAGE.TABLE && state === STATE.SIT_TALK) {
+            if (rageState.getSourceState().getState() === state) {
                 result = result / 3;
             }
         }
@@ -217,7 +208,7 @@ export class HumanStateManager {
             case STATE.SIT: result[MOOD.RELAXATION] = 0.35; break;
             case STATE.COFFEE: result[MOOD.HUNGER] = 0.5; result[MOOD.RELAXATION] = -0.1; break;
             case STATE.SIT_TALK: result[MOOD.SOCIAL] = 0.6; break;
-            case STATE.RAGE: result[MOOD.RELAXATION] = -0.2; break;
+            case STATE.RAGE: result[MOOD.RELAXATION] = -0.15; break;
         }
 
         return result;

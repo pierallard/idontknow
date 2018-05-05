@@ -10,7 +10,7 @@ import {TalkBubble} from "./TalkBubble";
 import {HumanMoodManager, MOOD} from "./HumanMoodManager";
 import {MoodSprite} from "./MoodSprite";
 import {GROUP_OBJECTS_AND_HUMANS, GROUP_INFOS, GROUP_INTERFACE} from "../game_state/Play";
-import {HumanProperties} from "./HumanProperties";
+import {DAY_DURATION, HumanProperties} from "./HumanProperties";
 import {EMPLOYEE_TYPE} from "./HumanPropertiesFactory";
 import {ObjectReferer} from "../objects/ObjectReferer";
 import {TableMeeting} from "../human_states/TableMeeting";
@@ -22,7 +22,6 @@ import {Price} from "../objects/Price";
 
 const MAX_WALK_CELL_DURATION = 1500;
 const MIN_WALK_CELL_DURATION = 800;
-const DAY_LENGTH = 60 * Phaser.Timer.SECOND;
 
 const MAX_RETRIES = 3;
 const MIN_RETRIES = 0;
@@ -99,7 +98,7 @@ export class Employee {
         }
 
         this.worldKnowledge.addMoneyInWallet(this.humanProperties.getRealWage(), 3 * Phaser.Timer.SECOND);
-        this.game.time.events.loop(DAY_LENGTH, () => {
+        this.game.time.events.loop(DAY_DURATION, () => {
             this.worldKnowledge.addMoneyInWallet(this.humanProperties.getRealWage(), 3 * Phaser.Timer.SECOND);
         });
     }
@@ -202,7 +201,6 @@ export class Employee {
 
     private popPath() {
         this.moving = false;
-        let humanPositions = [this.cell];
         if (this.path !== null && this.path.length > 0) {
             const next = this.path.shift();
             const direction = Direction.getNeighborDirection(this.cell, next);
@@ -212,9 +210,8 @@ export class Employee {
                 this.anchorPixels.y = GAP_FROM_BOTTOM;
                 this.animateMove(direction);
             }
-            humanPositions.push(this.cell);
         }
-        this.worldKnowledge.humanMoved(humanPositions);
+        this.worldKnowledge.humanMoved();
     }
 
     getPosition() {
@@ -352,5 +349,9 @@ export class Employee {
         if (this.isSelected()) {
             ObjectSelector.click(this.sprite, null, [this.sprite]);
         }
+    }
+
+    getRealWage(): Price {
+        return this.humanProperties.getRealWage();
     }
 }

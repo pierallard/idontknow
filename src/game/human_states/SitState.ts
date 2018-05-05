@@ -20,7 +20,7 @@ export class SitState extends MoveThenActAbstractState {
             this.active = false;
             this.human.stopWalk();
 
-            return new RageState(this.human, RAGE_IMAGE.SLEEP);
+            return new RageState(this.human, this);
         } else {
             return new SitState(this.human, this.worldKnowledge, this.tries + 1);
         }
@@ -48,7 +48,7 @@ export class SitState extends MoveThenActAbstractState {
         return STATE.SIT;
     }
 
-    protected subGetRageState(): HumanState {
-        return new RageState(this.human, RAGE_IMAGE.SLEEP);
+    protected subGetRageImage(): RAGE_IMAGE {
+        return RAGE_IMAGE.SLEEP;
     }
 }

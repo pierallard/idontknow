@@ -3,6 +3,7 @@ import {Price} from "../objects/Price";
 
 const MAX_WAGE = 50;
 const MIN_WAGE = 10;
+export const DAY_DURATION = 60 * Phaser.Timer.SECOND;
 
 export class HumanProperties {
     private speed: number;

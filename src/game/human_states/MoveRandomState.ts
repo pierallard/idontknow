@@ -39,7 +39,7 @@ export class MoveRandomState extends AbstractState {
         return STATE.MOVE_RANDOM;
     }
 
-    getRageState(): HumanState {
-        return new RageState(this.human, RAGE_IMAGE.PATH);
+    getRageImage(): RAGE_IMAGE {
+        return RAGE_IMAGE.PATH;
     }
 }

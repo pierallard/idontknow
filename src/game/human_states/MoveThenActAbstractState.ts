@@ -63,17 +63,17 @@ export abstract class MoveThenActAbstractState extends AbstractState {
 
     abstract getState(): STATE;
 
-    getRageState(): HumanState {
+    getRageImage(): RAGE_IMAGE {
         if (this.noPathFound) {
-            return new RageState(this.human, RAGE_IMAGE.PATH);
+            return RAGE_IMAGE.PATH;
         } else {
-            return this.subGetRageState();
+            return this.subGetRageImage();
         }
     }
 
     protected abstract retry(): HumanState;
 
-    protected abstract subGetRageState(): HumanState;
+    protected abstract subGetRageImage(): RAGE_IMAGE;
 
     protected abstract act(): void;
 }

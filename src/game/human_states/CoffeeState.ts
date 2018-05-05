@@ -21,7 +21,7 @@ export class CoffeeState extends MoveThenActAbstractState {
             this.active = false;
             this.human.stopWalk();
 
-            return new RageState(this.human, RAGE_IMAGE.COFFEE);
+            return new RageState(this.human, this);
         }
         else {
             return new CoffeeState(this.human, this.worldKnowledge, this.tries + 1);
@@ -43,7 +43,7 @@ export class CoffeeState extends MoveThenActAbstractState {
         return STATE.COFFEE;
     }
 
-    protected subGetRageState(): HumanState {
-        return new RageState(this.human, RAGE_IMAGE.COFFEE);
+    protected subGetRageImage(): RAGE_IMAGE {
+        return RAGE_IMAGE.COFFEE;
     }
 }

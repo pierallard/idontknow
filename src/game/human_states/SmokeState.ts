@@ -1,10 +1,10 @@
 import {ANIMATION, HumanAnimationManager} from "../human_stuff/HumanAnimationManager";
 import {STATE} from "../human_stuff/HumanStateManager";
 import {AbstractState} from "./AbstractState";
-import {HumanState} from "./HumanState";
+import {RAGE_IMAGE} from "../human_stuff/ThoughtBubble";
 
 export class SmokeState extends AbstractState {
-    getRageState(): HumanState {
+    getRageImage(): RAGE_IMAGE {
         debugger;
         return null;
     }

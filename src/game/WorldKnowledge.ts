@@ -122,18 +122,12 @@ export class WorldKnowledge {
         }
     }
 
-    humanMoved(positions: PIXI.Point[]) {
+    humanMoved() {
         const walls = this.wallRepository.getWalls();
 
         walls.forEach((wall: Wall) => {
-            let visible = true;
-            positions.forEach((position: PIXI.Point) => {
-                if (this.anyHumanIsAboveWall(wall)) {
-                    visible = false;
-                }
-            });
-            wall.setVisibility(visible);
-        })
+            wall.setVisibility(!this.anyHumanIsAboveWall(wall));
+        });
     }
 
     private anyHumanIsAboveWall(wall: Wall) {

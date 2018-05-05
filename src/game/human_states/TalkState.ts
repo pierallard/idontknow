@@ -111,7 +111,7 @@ export class TalkState extends AbstractState {
         return animation === ANIMATION.TALK ? ANIMATION.FREEZE : ANIMATION.TALK;
     }
 
-    getRageState(): HumanState {
-        return new RageState(this.human, RAGE_IMAGE.PATH);
+    getRageImage(): RAGE_IMAGE {
+        return RAGE_IMAGE.PATH;
     }
 }

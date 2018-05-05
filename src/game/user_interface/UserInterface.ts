@@ -9,6 +9,7 @@ import {LevelDisplayer} from "./LevelDisplayer";
 import {Employee} from "../human_stuff/Employee";
 import {UserInfoPanel} from "./UserInfoPanel";
 import {COLOR} from "../Pico8Colors";
+import {DAY_DURATION} from "../human_stuff/HumanProperties";
 
 export const INTERFACE_WIDTH = 150.5;
 export const TOP_GAP_2 = 15.5 + 12;
@@ -33,6 +34,8 @@ export class UserInterface {
     private levelText: Phaser.Text;
     private worldKnowledge: WorldKnowledge;
     private userInfoPanel: UserInfoPanel;
+    private dayText: Phaser.Text
+    private day: number;
 
     constructor(worldKnowledge: WorldKnowledge) {
         this.worldKnowledge = worldKnowledge;
@@ -50,6 +53,7 @@ export class UserInterface {
             i++;
         });
         this.selectedPanel = PANEL.OBJ;
+        this.day = 1;
     }
 
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}) {
@@ -67,6 +71,17 @@ export class UserInterface {
         this.userInfoPanel.create(game, groups);
 
         this.levelDisplayer.create(game, groups);
+        this.dayText = game.add.text(
+            CAMERA_WIDTH_PIXELS - 50,
+            0,
+            'Day 1',
+            TEXT_STYLE,
+            groups[GROUP_INTERFACE]
+        );
+        game.time.events.loop(DAY_DURATION, () => {
+            this.day += 1;
+            this.updateDayText();
+        }, this);
 
         this.levelText = game.add.text(
             CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + 2,
@@ -147,6 +162,10 @@ export class UserInterface {
         this.buttons.forEach((button) => {
             button.highlight(button.getPanel() === panel);
         })
+    }
+
+    private updateDayText() {
+        this.dayText.text = 'Day ' + this.day;
     }
 }
 
