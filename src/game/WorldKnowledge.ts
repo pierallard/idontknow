@@ -159,7 +159,7 @@ export class WorldKnowledge {
         return new Price(this.wallet.getValue());
     }
 
-    resetAStar(position: PIXI.Point) {
+    resetAStar(position: PIXI.Point = null) {
         this.humanRepository.humans.forEach((human) => {
             human.resetAStar(position);
         });

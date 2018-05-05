@@ -90,6 +90,7 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
 
     remove(): void {
         this.worldKnowledge.moveToDepot(this);
+        this.worldKnowledge.resetAStar();
         this.getSprites().forEach((sprite) => {
             sprite.destroy(true);
         });

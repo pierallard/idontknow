@@ -271,13 +271,9 @@ export class Employee {
         return ObjectSelector.isSelected(this.sprite);
     }
 
-    getSprite(): any {
-        return this.sprite;
-    }
-
-    resetAStar(newNonEmptyCell: PIXI.Point) {
+    resetAStar(newNonEmptyCell: PIXI.Point = null) {
         this.closestPathFinder.reset();
-        if (this.path !== null) {
+        if (newNonEmptyCell && this.path !== null) {
             // If human wants to go to a non-empty cell
             const matchingPath = this.path.filter((cell) => {
                 return cell.x === newNonEmptyCell.x && cell.y === newNonEmptyCell.y;
