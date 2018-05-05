@@ -47,13 +47,16 @@ export class HumanEmployer {
     update() {
         if (this.applicantButtons.length < this.getMaxApplicants()) {
             for (let i = this.applicantButtons.length; i < this.getMaxApplicants(); i++) {
-                const toto = new ApplicantButton(
+                const newApplicantButton = new ApplicantButton(
                     this,
                     HumanPropertiesFactory.create(this.getEmployeeTypeProbabilities()),
                     this.worldKnowledge
                 );
-                toto.create(this.game, this.groups, i);
-                this.applicantButtons.push(toto);
+                newApplicantButton.create(this.game, this.groups, i);
+                if (!this.visible) {
+                    newApplicantButton.hide();
+                }
+                this.applicantButtons.push(newApplicantButton);
             }
         }
         this.applicantButtons.forEach((applicantButton) => {
