@@ -5,8 +5,8 @@ import {Employee} from "../human_stuff/Employee";
 import {STATE} from "../human_stuff/HumanStateManager";
 import {PositionTransformer} from "../PositionTransformer";
 import {HumanState} from "./HumanState";
-import {RageState} from "./RageState";
 import {RAGE_IMAGE} from "../human_stuff/ThoughtBubble";
+import {RageState} from "./RageState";
 
 export abstract class MoveThenActAbstractState extends AbstractState {
     protected objectReferer: ObjectReferer;
@@ -63,8 +63,6 @@ export abstract class MoveThenActAbstractState extends AbstractState {
             PositionTransformer.isNeighbor(this.human.getPosition(), this.objectReferer.getPosition());
     }
 
-    abstract getState(): STATE;
-
     getRageImage(): RAGE_IMAGE {
         if (this.noPathFound) {
             return RAGE_IMAGE.PATH;
@@ -73,11 +71,32 @@ export abstract class MoveThenActAbstractState extends AbstractState {
         }
     }
 
-    protected abstract retry(): HumanState;
+    abstract getState(): STATE;
+
+    protected retry(): HumanState {
+        if (this.tries > this.human.getMaxRetries()) {
+            this.active = false;
+            this.human.stopWalk();
+
+            return new RageState(this.human, this);
+        }
+        else {
+            return this.getRetryState();
+        }
+    }
+
+    protected abstract getRetryState(): HumanState;
 
     protected abstract subGetRageImage(): RAGE_IMAGE;
 
     protected abstract act(): void;
 
     protected abstract getActTime(): number;
+
+    protected finish() {
+        this.human.goToFreeCell(this.objectReferer);
+        this.events.push(this.game.time.events.add(this.human.getWalkDuration() + 100, () => {
+            this.active = false;
+        }, this));
+    }
 }

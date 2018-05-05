@@ -15,7 +15,7 @@ import {TableMeeting} from "../human_states/TableMeeting";
 import {SitTalkState} from "../human_states/SitTalkState";
 import {Table} from "../objects/Table";
 import {RageState} from "../human_states/RageState";
-import {RAGE_IMAGE} from "./ThoughtBubble";
+import {SitPlay} from "../human_states/SitPlay";
 
 const LIMIT = 0.8;
 
@@ -29,6 +29,7 @@ export enum STATE {
     COFFEE,
     RAGE,
     SIT_TALK,
+    SIT_PLAY
 }
 
 export class HumanStateManager {
@@ -98,6 +99,12 @@ export class HumanStateManager {
                         this.worldKnowledge
                     );
                     break;
+                case STATE.SIT_PLAY:
+                    this.state = new SitPlay(
+                        this.human,
+                        this.worldKnowledge
+                    );
+                    break;
                 case STATE.FREEZE:
                 default:
                     this.state = new FreezeState(this.human);
@@ -156,6 +163,7 @@ export class HumanStateManager {
         states[STATE.FREEZE] = this.getProbability(STATE.FREEZE);
         states[STATE.MOVE_RANDOM] = this.getProbability(STATE.MOVE_RANDOM);
         states[STATE.SMOKE] = this.getProbability(STATE.SMOKE);
+        states[STATE.SIT_PLAY] = this.getProbability(STATE.SIT_PLAY);
 
         return states;
     }
@@ -170,7 +178,8 @@ export class HumanStateManager {
             case STATE.SIT: result = 5; break;
             case STATE.COFFEE: result = 6; break;
             case STATE.SIT_TALK: result = 6; break;
-            case STATE.TYPE: result = (5 + 3 + 2 + 8 + 5 + 6 + 6); break;
+            case STATE.SIT_PLAY: result = 40000000; break;
+            case STATE.TYPE: result = (5 + 3 + 2 + 8 + 5 + 6 + 6 + 4); break;
         }
 
         if (state === this.state.getState()) {
@@ -209,6 +218,7 @@ export class HumanStateManager {
             case STATE.COFFEE: result[MOOD.HUNGER] = 0.5; result[MOOD.RELAXATION] = -0.1; break;
             case STATE.SIT_TALK: result[MOOD.SOCIAL] = 0.6; break;
             case STATE.RAGE: result[MOOD.RELAXATION] = -0.15; break;
+            case STATE.SIT_PLAY: result[MOOD.RELAXATION] = 0.5; result[MOOD.SOCIAL] = 0.3; break;
         }
 
         return result;
@@ -252,6 +262,7 @@ export class HumanStateManager {
             case STATE.COFFEE: return 'Coffee';
             case STATE.RAGE: return 'Rage';
             case STATE.SIT_TALK: return 'Meeting';
+            case STATE.SIT_PLAY: return 'Play';
         }
     }
 }

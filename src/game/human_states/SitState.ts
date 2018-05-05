@@ -1,9 +1,8 @@
 import {ANIMATION, HumanAnimationManager} from "../human_stuff/HumanAnimationManager";
 import {STATE} from "../human_stuff/HumanStateManager";
-import {RageState} from "./RageState";
 import {MoveThenActAbstractState} from "./MoveThenActAbstractState";
-import {HumanState} from "./HumanState";
 import {RAGE_IMAGE} from "../human_stuff/ThoughtBubble";
+import {HumanState} from "./HumanState";
 
 export class SitState extends MoveThenActAbstractState {
     private sitTime: number;
@@ -19,17 +18,6 @@ export class SitState extends MoveThenActAbstractState {
         return super.start(game);
     }
 
-    protected retry(): HumanState {
-        if (this.tries > this.human.getMaxRetries()) {
-            this.active = false;
-            this.human.stopWalk();
-
-            return new RageState(this.human, this);
-        } else {
-            return new SitState(this.human, this.worldKnowledge, this.tries + 1);
-        }
-    }
-
     protected act() {
         this.human.loadAnimation(
             ANIMATION.SIT_DOWN,
@@ -40,10 +28,7 @@ export class SitState extends MoveThenActAbstractState {
         this.events.push(this.game.time.events.add(this.sitTime + HumanAnimationManager.getAnimationTime(ANIMATION.SIT_DOWN), () => {
             this.human.loadAnimation(ANIMATION.STAND_UP);
             this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.STAND_UP) + 100, () => {
-                this.human.goToFreeCell(this.objectReferer);
-                this.events.push(this.game.time.events.add(this.human.getWalkDuration() + 100, () => {
-                    this.active = false;
-                }, this));
+                this.finish();
             }, this));
         }, this));
     }
@@ -61,5 +46,9 @@ export class SitState extends MoveThenActAbstractState {
 
     protected subGetRageImage(): RAGE_IMAGE {
         return RAGE_IMAGE.SLEEP;
+    }
+
+    protected getRetryState(): HumanState {
+        return new SitState(this.human, this.worldKnowledge, this.tries + 1)
     }
 }

@@ -1,5 +1,5 @@
 const TOP_ORIENTED_ANIMATION = '_reverse';
-const FRAME_RATE = 12;
+export const FRAME_RATE = 12;
 
 export enum ANIMATION {
     FREEZE,
