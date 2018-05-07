@@ -33,6 +33,9 @@ export class HumanMoodManager {
 
     create(game: Phaser.Game) {
         this.game = game;
+        this.moods[MOOD.RELAXATION].create(game);
+        this.moods[MOOD.HUNGER].create(game);
+        this.moods[MOOD.SOCIAL].create(game);
     }
 
     update() {

@@ -108,12 +108,14 @@ export class PieChart implements Tooltipable {
                 }
             }
             if (!found) {
-                this.data.push(new PieChartPart(
+                const pieChartPart = new PieChartPart(
                     state,
                     probabilities[state],
                     PieChart.getColor(state),
                     HumanStateManager.getStr(state)
-                ));
+                );
+                pieChartPart.create(this.game);
+                this.data.push(pieChartPart);
             }
         });
         for (let i = 0; i < this.data.length; i++) {
@@ -183,6 +185,10 @@ class PieChartPart {
         this.value = new SmoothValue(value);
         this.color = color;
         this.text= text;
+    }
+
+    create(game: Phaser.Game) {
+        this.value.create(game);
     }
 
     getValue(): number {

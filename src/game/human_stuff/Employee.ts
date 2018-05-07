@@ -363,4 +363,12 @@ export class Employee {
     getMoveTime() {
         return this.path.length * this.getWalkDuration();
     }
+
+    pause() {
+        this.animationManager.pause();
+    }
+
+    resume() {
+        this.animationManager.resume();
+    }
 }

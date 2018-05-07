@@ -5017,6 +5017,7 @@ declare module Phaser {
         start(key: string, clearWorld?: boolean, clearCache?: boolean, ...args: any[]): void;
         update(): void;
         unlink(key: string): void;
+        pause(): void;
 
     }
 

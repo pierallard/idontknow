@@ -98,6 +98,8 @@ export class WorldKnowledge {
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}) {
         this.game = game;
         this.groups = groups;
+        this.wallet.create(game);
+        this.levelManager.create(game);
         const floor = groups[GROUP_FLOOR];
         const noname = groups[GROUP_OBJECTS_AND_HUMANS];
 
@@ -498,5 +500,17 @@ export class WorldKnowledge {
 
     getLastEmployeesCount(): number[][] {
         return this.employeeCountRegister.getLastCounts();
+    }
+
+    pause() {
+        this.humanRepository.humans.forEach((human) => {
+            human.pause();
+        });
+    }
+
+    resume() {
+        this.humanRepository.humans.forEach((human) => {
+            human.resume();
+        });
     }
 }

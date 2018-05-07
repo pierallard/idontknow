@@ -150,4 +150,12 @@ export class HumanAnimationManager {
                 throw 'UNKNOWN ANIMATION ' + animation;
         }
     }
+
+    pause() {
+        this.humanTile.animations.currentAnim.paused = true;
+    }
+
+    resume() {
+        this.humanTile.animations.currentAnim.paused = false;
+    }
 }
