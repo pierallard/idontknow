@@ -19,6 +19,7 @@ import {COLOR} from "../Pico8Colors";
 import {SPRITE_DEBUG} from "../objects/AbstractObject";
 import {ObjectOrientation} from "../objects/ObjectOrientation";
 import {Price} from "../objects/Price";
+import {HumanState} from "../human_states/HumanState";
 
 const MAX_WALK_CELL_DURATION = 1500;
 const MIN_WALK_CELL_DURATION = 800;
@@ -290,10 +291,14 @@ export class Employee {
     }
 
     isFree(): boolean {
-        return [STATE.MOVE_RANDOM, STATE.FREEZE, STATE.SMOKE].indexOf(this.getState()) > -1;
+        return [STATE.MOVE_RANDOM, STATE.FREEZE, STATE.SMOKE].indexOf(this.getStateType()) > -1;
     }
 
-    getState(): STATE {
+    getStateType(): STATE {
+        return this.stateManager.getStateType();
+    }
+
+    getState(): HumanState {
         return this.stateManager.getState();
     }
 
@@ -306,7 +311,7 @@ export class Employee {
     }
 
     updateMoodFromState(): void {
-        this.moodManager.updateFromState(this.getState());
+        this.moodManager.updateFromState(this.getStateType());
     }
 
     getMood(mood: MOOD = null): number {
@@ -353,5 +358,9 @@ export class Employee {
 
     getRealWage(): Price {
         return this.humanProperties.getRealWage();
+    }
+
+    getMoveTime() {
+        return this.path.length * this.getWalkDuration();
     }
 }

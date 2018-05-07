@@ -9,11 +9,15 @@ const SECOND_MIN = 15 * Phaser.Timer.SECOND;
 const SECOND_MAX = 45 * Phaser.Timer.SECOND;
 
 export class TypeState extends MoveThenActAbstractState {
+    private typeTime: number;
+
     start(game: Phaser.Game): boolean {
         this.objectReferer = this.worldKnowledge.getClosestReferer(['Desk'], 1, this.human.getPosition());
         if (this.objectReferer === null) {
             return false;
         }
+
+        this.typeTime = Phaser.Math.random(SECOND_MIN, SECOND_MAX);
 
         return super.start(game);
     }
@@ -33,9 +37,8 @@ export class TypeState extends MoveThenActAbstractState {
         this.human.loadAnimation(ANIMATION.SIT_DOWN, this.objectReferer.getObject().forceLeftOrientation(this.objectReferer.getIdentifier()));
         this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.SIT_DOWN), () => {
             this.human.loadAnimation(ANIMATION.TYPE, this.objectReferer.forceLeftOrientation(), this.objectReferer.forceTopOrientation());
-            const time = Phaser.Math.random(SECOND_MIN, SECOND_MAX);
-            this.worldKnowledge.addProgress(this.human.getType(), time / SECOND_MAX, time);
-            this.events.push(this.game.time.events.add(time, () => {
+            this.worldKnowledge.addProgress(this.human.getType(), this.typeTime / SECOND_MAX, this.typeTime);
+            this.events.push(this.game.time.events.add(this.typeTime, () => {
                 this.human.loadAnimation(ANIMATION.STAND_UP);
                 this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.STAND_UP) + 100, () => {
                     this.human.goToFreeCell(this.objectReferer);
@@ -45,6 +48,13 @@ export class TypeState extends MoveThenActAbstractState {
                 }, this));
             }, this));
         }));
+    }
+
+    protected getActTime(): number {
+        return HumanAnimationManager.getAnimationTime(ANIMATION.SIT_DOWN) +
+            this.typeTime +
+            HumanAnimationManager.getAnimationTime(ANIMATION.STAND_UP) +
+            this.human.getWalkDuration();
     }
 
     getState(): STATE {

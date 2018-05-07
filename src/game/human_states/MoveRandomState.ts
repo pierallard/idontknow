@@ -5,6 +5,7 @@ import {STATE} from "../human_stuff/HumanStateManager";
 import {AbstractState} from "./AbstractState";
 import {RageState} from "./RageState";
 import {RAGE_IMAGE} from "../human_stuff/ThoughtBubble";
+import {HumanAnimationManager} from "../human_stuff/HumanAnimationManager";
 
 export class MoveRandomState extends AbstractState {
     private goal: PIXI.Point;
@@ -28,6 +29,7 @@ export class MoveRandomState extends AbstractState {
         super.start(game);
 
         if (!this.human.moveTo(this.goal)) {
+            this.startTimer(this.human.getMoveTime());
             this.stop();
             return false;
         }

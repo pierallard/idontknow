@@ -233,8 +233,12 @@ export class HumanStateManager {
         return this.state.start(game);
     }
 
-    getState() {
+    getStateType(): STATE {
         return this.state.getState();
+    }
+
+    getState(): HumanState {
+        return this.state;
     }
 
     static getStr(state: STATE) {

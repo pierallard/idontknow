@@ -35,6 +35,8 @@ export abstract class MoveThenActAbstractState extends AbstractState {
             return false;
         }
 
+        this.startTimer(this.human.getMoveTime() + this.getActTime());
+
         return true;
     }
 
@@ -76,4 +78,6 @@ export abstract class MoveThenActAbstractState extends AbstractState {
     protected abstract subGetRageImage(): RAGE_IMAGE;
 
     protected abstract act(): void;
+
+    protected abstract getActTime(): number;
 }

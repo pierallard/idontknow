@@ -63,7 +63,11 @@ export class UserInfoPanel {
             this.moodHungerGauge.update();
             this.moodSocialGauge.update();
             this.pieChart.update();
-            this.currentState.setText('State: ' + HumanStateManager.getStr(this.human.getState()));
+            let stateStr = 'State: ' + HumanStateManager.getStr(this.human.getStateType());
+            if (this.human.getState().getRemainingSeconds()) {
+                stateStr = stateStr + ' (' + this.human.getState().getRemainingSeconds() + 's left)';
+            }
+            this.currentState.setText(stateStr);
         }
     }
 

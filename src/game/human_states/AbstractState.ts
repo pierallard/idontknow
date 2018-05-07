@@ -8,11 +8,13 @@ export abstract class AbstractState implements HumanState {
     protected active: boolean;
     protected game: Phaser.Game;
     protected human: Employee;
+    protected remainingTime: number;
 
     constructor(human: Employee) {
         this.events = [];
         this.active = false;
         this.human = human;
+        this.remainingTime = null;
     }
 
     getNextState(): HumanState {
@@ -31,6 +33,17 @@ export abstract class AbstractState implements HumanState {
             this.game.time.events.remove(event);
         });
         this.active = false;
+    }
+
+    protected startTimer(value: number) {
+        this.remainingTime = value;
+        this.game.time.events.loop(Phaser.Timer.SECOND, () => {
+            this.remainingTime = Math.max(this.remainingTime - Phaser.Timer.SECOND, 0);
+        }, this);
+    }
+
+    getRemainingSeconds(): number {
+        return Math.round(this.remainingTime / Phaser.Timer.SECOND);
     }
 
     abstract getState(): STATE;

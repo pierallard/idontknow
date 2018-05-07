@@ -24,6 +24,8 @@ export class RageState extends AbstractState {
                 this.human.loadAnimation(ANIMATION.FREEZE);
             }
             this.human.updateMoodFromState();
+            const time = HumanAnimationManager.getAnimationTime(ANIMATION.RAGE) + 3 * Phaser.Timer.SECOND;
+            this.startTimer(time);
             this.human.showThoughtBubble(this.sourceState.getRageImage());
             this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.RAGE), () => {
                 this.human.hideThoughtBubble();

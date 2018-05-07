@@ -9,7 +9,9 @@ export class FreezeState extends AbstractState {
     start(game: Phaser.Game): boolean {
         super.start(game);
         this.human.loadAnimation(ANIMATION.FREEZE);
-        this.event = game.time.events.add(Phaser.Math.random(1, 2) * Phaser.Timer.SECOND, () => {
+        const time = Phaser.Math.random(1, 2) * Phaser.Timer.SECOND;
+        this.startTimer(time);
+        this.event = game.time.events.add(time, () => {
             this.active = false;
         }, this);
 

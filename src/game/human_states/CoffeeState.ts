@@ -7,11 +7,15 @@ import {HumanState} from "./HumanState";
 import {RAGE_IMAGE} from "../human_stuff/ThoughtBubble";
 
 export class CoffeeState extends MoveThenActAbstractState {
+    private drinkTime: number;
+
     start(game: Phaser.Game): boolean {
         this.objectReferer = this.worldKnowledge.getClosestReferer(['Dispenser'], 1, this.human.getPosition());
         if (this.objectReferer === null) {
             return false;
         }
+
+        this.drinkTime = Math.floor(Phaser.Math.random(2, 4)) * HumanAnimationManager.getAnimationTime(ANIMATION.DRINK);
 
         return super.start(game);
     }
@@ -31,12 +35,16 @@ export class CoffeeState extends MoveThenActAbstractState {
     protected act() {
         this.human.loadAnimation(ANIMATION.DRINK);
         this.human.updateMoodFromState();
-        this.events.push(this.game.time.events.add(Math.floor(Phaser.Math.random(2, 4)) * HumanAnimationManager.getAnimationTime(ANIMATION.DRINK), () => {
+        this.events.push(this.game.time.events.add(this.drinkTime, () => {
             this.human.goToFreeCell(this.objectReferer);
             this.events.push(this.game.time.events.add(this.human.getWalkDuration() + 100, () => {
                 this.active = false;
             }, this));
         }, this));
+    }
+
+    protected getActTime(): number {
+        return this.drinkTime + this.human.getWalkDuration();
     }
 
     getState(): STATE {

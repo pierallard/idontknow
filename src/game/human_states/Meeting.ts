@@ -62,7 +62,7 @@ export class Meeting {
     areAllHumanStillInMeeting() {
         for (let i = 0; i < this.places.length; i++) {
             const human = this.places[i].human;
-            if (human.getState() !== STATE.TALK) {
+            if (human.getStateType() !== STATE.TALK) {
                 return false;
             }
         }
