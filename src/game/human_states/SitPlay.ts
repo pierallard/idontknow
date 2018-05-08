@@ -30,14 +30,17 @@ export class SitPlay extends MoveThenActAbstractState {
             this.objectReferer.getObject().forceLeftOrientation(this.objectReferer.getIdentifier()),
             this.objectReferer.getObject().forceTopOrientation(this.objectReferer.getIdentifier())
         );
-        this.human.updateMoodFromState();
-        const console = <Console> this.objectReferer.getObject();
-        console.addPlayer();
-        this.events.push(this.game.time.events.add(Phaser.Math.random(3, 10) * Phaser.Timer.SECOND + HumanAnimationManager.getAnimationTime(ANIMATION.SIT_DOWN), () => {
-            console.removePlayer();
-            this.human.loadAnimation(ANIMATION.STAND_UP);
-            this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.STAND_UP) + 100, () => {
-                this.finish();
+        this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.SIT_DOWN), () => {
+            this.human.loadAnimation(ANIMATION.SIT_FREEZE);
+            this.human.updateMoodFromState();
+            const console = <Console> this.objectReferer.getObject();
+            console.addPlayer();
+            this.events.push(this.game.time.events.add(Phaser.Math.random(3, 10) * Phaser.Timer.SECOND + HumanAnimationManager.getAnimationTime(ANIMATION.SIT_DOWN), () => {
+                console.removePlayer();
+                this.human.loadAnimation(ANIMATION.STAND_UP);
+                this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.STAND_UP) + 100, () => {
+                    this.finish();
+                }, this));
             }, this));
         }, this));
     }

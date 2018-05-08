@@ -53,7 +53,7 @@ export class SitTalkState extends AbstractState {
                         this.table.forceTopOrientation(this.meeting.getCell(this.human).getIdentifier())
                     );
                     this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.SIT_DOWN) + 100, () => {
-                        this.human.loadAnimation(ANIMATION.FREEZE_SIT);
+                        this.human.loadAnimation(ANIMATION.SIT_FREEZE);
                     }, this));
                     this.isHumanSit = true;
                 }));
@@ -151,7 +151,7 @@ export class SitTalkState extends AbstractState {
     }
 
     private static otherAnimation(animation: ANIMATION) {
-        return animation === ANIMATION.SIT_TALK ? ANIMATION.FREEZE_SIT : ANIMATION.SIT_TALK;
+        return animation === ANIMATION.SIT_TALK ? ANIMATION.SIT_FREEZE : ANIMATION.SIT_TALK;
     }
 
     getRageImage(): RAGE_IMAGE {

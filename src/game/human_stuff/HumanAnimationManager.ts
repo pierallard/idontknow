@@ -11,7 +11,7 @@ export enum ANIMATION {
     TALK,
     DRINK,
     RAGE,
-    FREEZE_SIT,
+    SIT_FREEZE,
     SIT_TALK,
 }
 
@@ -58,7 +58,7 @@ export class HumanAnimationManager {
     private static getAnimationFrames(animation: ANIMATION, topOriented: boolean = null) {
         switch (animation) {
             case ANIMATION.FREEZE: return topOriented ? [18, 19, 20] : [12, 13, 14];
-            case ANIMATION.FREEZE_SIT: return topOriented ? [21, 22, 23] : [15, 16, 17];
+            case ANIMATION.SIT_FREEZE: return topOriented ? [21, 22, 23] : [15, 16, 17];
             case ANIMATION.WALK: return topOriented ? [6, 7, 8, 9, 10, 11] : [0, 1, 2, 3, 4, 5];
             case ANIMATION.SIT_DOWN: return topOriented ? [18, 68, 69, 70, 71] : [12, 32, 33, 34, 35];
             case ANIMATION.STAND_UP: return topOriented ? [71, 70, 69, 68, 18] : [35, 34, 33, 32, 12];
@@ -92,7 +92,7 @@ export class HumanAnimationManager {
 
     private static getAnimations(): ANIMATION[] {
         return [
-            ANIMATION.FREEZE_SIT,
+            ANIMATION.SIT_FREEZE,
             ANIMATION.FREEZE,
             ANIMATION.WALK,
             ANIMATION.SMOKE,
@@ -113,7 +113,7 @@ export class HumanAnimationManager {
             ANIMATION.TALK,
             ANIMATION.SIT_DOWN,
             ANIMATION.STAND_UP,
-            ANIMATION.FREEZE_SIT,
+            ANIMATION.SIT_FREEZE,
             ANIMATION.SIT_TALK,
             ANIMATION.TYPE,
         ].indexOf(animation) > -1;
@@ -128,7 +128,7 @@ export class HumanAnimationManager {
             ANIMATION.SMOKE,
             ANIMATION.TYPE,
             ANIMATION.DRINK,
-            ANIMATION.FREEZE_SIT,
+            ANIMATION.SIT_FREEZE,
             ANIMATION.SIT_TALK,
         ].indexOf(animation) > -1;
     }
@@ -136,7 +136,7 @@ export class HumanAnimationManager {
     static getAnimationStr(animation: ANIMATION): string {
         switch (animation) {
             case ANIMATION.FREEZE: return 'FZ';
-            case ANIMATION.FREEZE_SIT: return 'FS';
+            case ANIMATION.SIT_FREEZE: return 'FS';
             case ANIMATION.WALK: return 'WK';
             case ANIMATION.SIT_DOWN: return 'SD';
             case ANIMATION.STAND_UP: return 'SU';
