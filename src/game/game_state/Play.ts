@@ -29,6 +29,7 @@ export default class Play extends Phaser.State {
     }
 
     public create() {
+        this.game.stage.disableVisibilityChange = true
         this.game.stage.backgroundColor = "#494947";
         this.groups = {};
         this.groups[GROUP_FLOOR] = this.game.add.group();

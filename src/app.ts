@@ -16,16 +16,17 @@ export const WORLD_HEIGHT = GRID_WIDTH * CELL_HEIGHT / 2 + GRID_HEIGHT * CELL_HE
 
 class SimpleGame extends Phaser.Game {
     constructor() {
-        super(
-            CAMERA_WIDTH_PIXELS,
-            CAMERA_HEIGHT_PIXELS,
-            Phaser.CANVAS, // Open GL for effect / shader ?
-            'content',
-            null,
-            false,
-            false,
-            false,
-        );
+        super({
+            width: CAMERA_WIDTH_PIXELS,
+            height: CAMERA_HEIGHT_PIXELS,
+            renderer: Phaser.CANVAS,
+            parent: null,
+            state: 'content',
+            transparent: false,
+            antialias: false,
+            physicsConfig: false,
+            forceSetTimeOut: true,
+        });
 
         this.antialias = false;
         this.state.add('Boot', Boot);
