@@ -32,6 +32,7 @@ export class ObjectDescriptionRegistry {
         this.objectDescriptions.push(
             new ObjectDescription(
                 'Dispenser',
+                [new PIXI.Point(0, 0)],
                 [
                     new SpriteInfo('dispenser', new PIXI.Point(-4, -4), 3)
                 ],
@@ -50,6 +51,7 @@ export class ObjectDescriptionRegistry {
         this.objectDescriptions.push(
             new ObjectDescription(
                 'Sofa',
+                [new PIXI.Point(0, 0)],
                 [
                     new SpriteInfo('sofa', new PIXI.Point(0, -8), 3, new PIXI.Point(0, 0))
                 ],
@@ -64,6 +66,7 @@ export class ObjectDescriptionRegistry {
         this.objectDescriptions.push(
             new ObjectDescription(
                 'Desk',
+                [new PIXI.Point(0, 0)],
                 [
                     new SpriteInfo('chair', new PIXI.Point(-10, -8), 5),
                     new SpriteInfo('desk', new PIXI.Point(0, 0), 4)
@@ -84,6 +87,12 @@ export class ObjectDescriptionRegistry {
         this.objectDescriptions.push(
             new ObjectDescription(
                 'Table',
+                [
+                    new PIXI.Point(0, 0),
+                    new PIXI.Point(1, 1),
+                    new PIXI.Point(1, 0),
+                    new PIXI.Point(0, 1)
+                ],
                 [
                     new SpriteInfo('chair2', new PIXI.Point( -8, -9), 5, new PIXI.Point(1, 1)),
                     new SpriteInfo('table', new PIXI.Point(0, 0), 4, new PIXI.Point( 1, 1)),
@@ -109,6 +118,10 @@ export class ObjectDescriptionRegistry {
             new ObjectDescription(
                 'Couch',
                 [
+                    new PIXI.Point(0, 0),
+                    new PIXI.Point(0, 1),
+                ],
+                [
                     new SpriteInfo('couch_part1', new PIXI.Point(10, 0), 12),
                     new SpriteInfo('couch_part2', new PIXI.Point(10 - CELL_WIDTH/2, 10), 22, new PIXI.Point(0, 1))
                 ],
@@ -131,6 +144,12 @@ export class ObjectDescriptionRegistry {
         this.objectDescriptions.push(
             new ObjectDescription(
                 'Console',
+                [
+                    new PIXI.Point(0, 0),
+                    new PIXI.Point(1, 1),
+                    new PIXI.Point(1, 0),
+                    new PIXI.Point(0, 1)
+                ],
                 [
                     new SpriteInfo('couch_part1', new PIXI.Point(10 - CELL_WIDTH/2, 0 - CELL_HEIGHT/2), 12, new PIXI.Point(0, 0)),
                     new SpriteInfo('couch_part2', new PIXI.Point(10 - CELL_WIDTH/2 - CELL_WIDTH/2, 10- CELL_HEIGHT/2), 22, new PIXI.Point(0, 1)),

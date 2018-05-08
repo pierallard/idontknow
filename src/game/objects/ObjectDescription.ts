@@ -6,6 +6,7 @@ import {InteractivePoint} from "./InteractivePoint";
 
 export class ObjectDescription {
     private name: string;
+    private occupiedCells: PIXI.Point[];
     private bottomOrientedSpriteInfos: SpriteInfo[];
     private topOrientedSpriteInfos: SpriteInfo[];
     private bottomInteractivePoints: InteractivePoint[];
@@ -14,6 +15,7 @@ export class ObjectDescription {
 
     constructor(
         name: string,
+        occupiedCells: PIXI.Point[],
         bottomOrientedSpriteInfos: SpriteInfo[],
         topOrientedSpriteInfos: SpriteInfo[],
         bottomInteractivePoints: InteractivePoint[],
@@ -21,6 +23,7 @@ export class ObjectDescription {
         price: Price
     ) {
         this.name = name;
+        this.occupiedCells = occupiedCells;
         this.bottomOrientedSpriteInfos = bottomOrientedSpriteInfos;
         this.topOrientedSpriteInfos = topOrientedSpriteInfos;
         this.bottomInteractivePoints = bottomInteractivePoints;
@@ -71,41 +74,23 @@ export class ObjectDescription {
      * @returns {PIXI.Point[]}
      */
     getUniqueCellOffsets(orientation: DIRECTION): PIXI.Point[] {
-        let result = [];
-        this.getSpriteInfos(orientation).forEach((spriteInfo) => {
-            const newGap = spriteInfo.getCellOffset(orientation);
-            let found = false;
-            result.forEach((previousGap) => {
-                found = found || (previousGap.x === newGap.x && previousGap.y === newGap.y);
-            });
-            if (!found) {
-                result.push(newGap);
+        if (!ObjectOrientation.isHorizontalMirror(orientation)) {
+            if (!ObjectOrientation.isVerticalMirror(orientation)) {
+                return this.occupiedCells;
+            } else {
+                return this.occupiedCells.map((cell) => {
+                    return new PIXI.Point(cell.y, cell.x);
+                });
             }
-        });
-
-        return result;
-    }
-
-    /**
-     * Returns the list of all the entry cells of this object.
-     * @param {PIXI.Point} originCell
-     * @param {DIRECTION} orientation
-     * @returns {PIXI.Point[]}
-     */
-    getEntryCells(originCell: PIXI.Point, orientation: DIRECTION): PIXI.Point[] {
-        let result = [];
-        this.getInteractivePoints(orientation).forEach((interactivePoint) => {
-            interactivePoint.getEntryPoints(orientation).forEach((entryPoint) => {
-                const gap = interactivePoint.getCellOffset(orientation);
-                const spriteCell = new PIXI.Point(
-                    originCell.x + gap.x,
-                    originCell.y + gap.y
-                );
-                result.push(Direction.getNeighbor(spriteCell, entryPoint));
-            });
-        });
-
-        return result;
+        } else {
+            if (!ObjectOrientation.isVerticalMirror(orientation)) {
+                return this.occupiedCells.map((cell) => {
+                    return new PIXI.Point(cell.y, cell.x);
+                });
+            } else {
+                return this.occupiedCells;
+            }
+        }
     }
 
     canBeTopOriented() {
