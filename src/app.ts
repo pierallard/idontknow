@@ -25,7 +25,7 @@ class SimpleGame extends Phaser.Game {
             transparent: false,
             antialias: false,
             physicsConfig: false,
-            forceSetTimeOut: true,
+            // forceSetTimeOut: true,
         });
 
         this.antialias = false;
