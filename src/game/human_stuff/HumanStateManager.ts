@@ -178,8 +178,8 @@ export class HumanStateManager {
             case STATE.SIT: result = 5; break;
             case STATE.COFFEE: result = 6; break;
             case STATE.SIT_TALK: result = 6; break;
-            case STATE.SIT_PLAY: result = 40000000; break;
-            case STATE.TYPE: result = (5 + 3 + 2 + 8 + 5 + 6 + 6 + 4); break;
+            case STATE.SIT_PLAY: result = 3; break;
+            case STATE.TYPE: result = (5 + 3 + 2 + 8 + 5 + 6 + 6 + 3); break;
         }
 
         if (state === this.state.getState()) {
@@ -218,7 +218,7 @@ export class HumanStateManager {
             case STATE.COFFEE: result[MOOD.HUNGER] = 0.5; result[MOOD.RELAXATION] = -0.1; break;
             case STATE.SIT_TALK: result[MOOD.SOCIAL] = 0.6; break;
             case STATE.RAGE: result[MOOD.RELAXATION] = -0.15; break;
-            case STATE.SIT_PLAY: result[MOOD.RELAXATION] = 0.5; result[MOOD.SOCIAL] = 0.3; break;
+            case STATE.SIT_PLAY: result[MOOD.RELAXATION] = 0.4; result[MOOD.SOCIAL] = 0.2; break;
         }
 
         return result;

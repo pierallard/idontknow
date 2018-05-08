@@ -6,11 +6,15 @@ import {HumanState} from "./HumanState";
 import {Console} from "../objects/Console";
 
 export class SitPlay extends MoveThenActAbstractState {
+    private playTime: number;
+
     start(game: Phaser.Game): boolean {
         this.objectReferer = this.worldKnowledge.getClosestReferer(['Console'], 1, this.human.getPosition());
         if (this.objectReferer === null) {
             return false;
         }
+
+        this.playTime = Phaser.Math.random(3, 10) * Phaser.Timer.SECOND;
 
         return super.start(game);
     }
@@ -35,7 +39,7 @@ export class SitPlay extends MoveThenActAbstractState {
             this.human.updateMoodFromState();
             const console = <Console> this.objectReferer.getObject();
             console.addPlayer();
-            this.events.push(this.game.time.events.add(Phaser.Math.random(3, 10) * Phaser.Timer.SECOND + HumanAnimationManager.getAnimationTime(ANIMATION.SIT_DOWN), () => {
+            this.events.push(this.game.time.events.add(this.playTime, () => {
                 console.removePlayer();
                 this.human.loadAnimation(ANIMATION.STAND_UP);
                 this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.STAND_UP) + 100, () => {
@@ -47,5 +51,12 @@ export class SitPlay extends MoveThenActAbstractState {
 
     protected getRetryState(): HumanState {
         return new SitPlay(this.human, this.worldKnowledge, this.tries + 1)
+    }
+
+    protected getActTime(): number {
+        return HumanAnimationManager.getAnimationTime(ANIMATION.SIT_FREEZE) +
+            this.playTime +
+            HumanAnimationManager.getAnimationTime(ANIMATION.STAND_UP) +
+            this.human.getWalkDuration();
     }
 }
