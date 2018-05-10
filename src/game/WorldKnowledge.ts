@@ -49,20 +49,52 @@ export class WorldKnowledge {
     constructor() {
         this.cells = [];
         this.objects = [];
-        for (let y = 0; y < GRID_HEIGHT; y++) {
-            for (let x = 0; x < GRID_WIDTH; x++) {
-                this.cells.push(new Cell(new PIXI.Point(x, y)));
-            }
-        }
         this.wallRepository = new WallRepository();
-        this.wallRepository.initialize();
         this.levelManager = new LevelManager();
         this.depot = new Depot();
         this.wallet = new SmoothValue(1500);
 
+        const walls = "" +
+            "  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  \n" +
+            "  X,,,,,,X,,,,,,,,,,,,,X...X......X  \n" +
+            "  X,,,,,,,,,,,,X,,,,,,,XX.XX......X  \n" +
+            "  X,,,,,,XXXXXXX,,,,,,,...........X  \n" +
+            "  X,,,,,,X.....XXX.XXXXXXXXX......X  \n" +
+            "  X,,,,,,X.....X...........X......X  \n" +
+            "  X,,,,,,X.....X...........X......X  \n" +
+            "  X,,,,,,X.....X..................X  \n" +
+            "XXXXXX,XXX.................XXX.XXXXXX\n" +
+            "X.X............X....................X\n" +
+            "X.X......X.....X...........X........X\n" +
+            "X.X......XXXXXXXXX.XXXXXXXXX........X\n" +
+            "X.X.......,,,,,,,,,,,,,,,,,.........X\n" +
+            "X........X,,,,,,,,,,,,,,,,,X........X\n" +
+            "XXXXXXXXXX,,,,,,,,,,,,,,,,,XXXXXXXXXX";
+        const lines = walls.split("\n");
+        for (let y = 0; y < GRID_HEIGHT; y++) {
+            let line = lines[lines.length - 1 - y];
+            if (line === undefined) {
+                line = Array(lines[0].length).join(' ');
+            }
+            for (let x = 0; x < GRID_WIDTH; x++) {
+                const cell = line[line.length - 1 - x];
+                if (cell === 'X') {
+                    this.cells.push(new Cell(new PIXI.Point(x, y)));
+                    this.wallRepository.addWall(new PIXI.Point(x, y));
+                } else if (cell === '.') {
+                    this.cells.push(new Cell(new PIXI.Point(x, y), 'woodcell'));
+                } else if (cell === ',') {
+                    this.cells.push(new Cell(new PIXI.Point(x, y), 'case_floortile'));
+                }
+            }
+        }
+
+
+
         this.humanRepository = new HumanRepository(this);
         this.moodRegister = new MoodRegister(this.humanRepository);
         this.employeeCountRegister = new EmployeeCountRegister(this.humanRepository);
+
     }
 
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}) {
