@@ -60,9 +60,9 @@ export class UserInterface {
         const interfaceGroup = groups[GROUP_INTERFACE];
         this.backgroundGraphics = game.add.graphics(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH, 0, interfaceGroup);
         this.backgroundGraphics.beginFill(COLOR.BLACK);
-        this.backgroundGraphics.drawRect(-0.5, 0, INTERFACE_WIDTH, TOP_GAP_2);
+        this.backgroundGraphics.drawRect(-0.5, 0, INTERFACE_WIDTH + 0.5, TOP_GAP_2);
         this.backgroundGraphics.beginFill(COLOR.DARK_BLUE);
-        this.backgroundGraphics.drawRect(-0.5, TOP_GAP_2, INTERFACE_WIDTH, CAMERA_HEIGHT_PIXELS - TOP_GAP_2);
+        this.backgroundGraphics.drawRect(-0.5, TOP_GAP_2, INTERFACE_WIDTH + 0.5, CAMERA_HEIGHT_PIXELS - TOP_GAP_2);
         interfaceGroup.add(this.backgroundGraphics);
 
         this.objectSeller.create(game, groups);

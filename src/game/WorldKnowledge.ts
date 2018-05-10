@@ -24,13 +24,12 @@ import {ObjectDescription} from "./objects/ObjectDescription";
 import {ObjectDescriptionRegistry} from "./objects/ObjectDescriptionRegistry";
 import {SmoothValue} from "./SmoothValue";
 import {PANEL, UserInterface} from "./user_interface/UserInterface";
-import {DIRECTION_LOOP} from "./objects/ObjectOrientation";
 import {Couch} from "./objects/Couch";
 import {EmployeeCountRegister} from "./human_stuff/EmployeeCountRegister";
 import {Console} from "./objects/Console";
 
-export const GRID_WIDTH = 16;
-export const GRID_HEIGHT = 16;
+export const GRID_WIDTH = 37;
+export const GRID_HEIGHT = 15;
 export const DEBUG_WORLD = false;
 
 export class WorldKnowledge {
@@ -56,40 +55,10 @@ export class WorldKnowledge {
             }
         }
         this.wallRepository = new WallRepository();
+        this.wallRepository.initialize();
         this.levelManager = new LevelManager();
         this.depot = new Depot();
         this.wallet = new SmoothValue(1500);
-
-        if (DEBUG_WORLD) {
-            this.wallRepository.addWall(new PIXI.Point(5, 5));
-            this.wallRepository.addWall(new PIXI.Point(6, 5));
-            this.objects.push(new Desk(new PIXI.Point(4, 5), this, DIRECTION_LOOP[0]));
-            this.objects.push(new Desk(new PIXI.Point(4, 6), this, DIRECTION_LOOP[0]));
-            this.objects.push(new Dispenser(new PIXI.Point(5, 4), this, DIRECTION_LOOP[0]));
-        } else {
-            for (let x = 0; x < GRID_WIDTH; x++) {
-                this.wallRepository.addWall(new PIXI.Point(x, 0));
-                this.wallRepository.addWall(new PIXI.Point(x, GRID_HEIGHT - 1));
-            }
-            for (let y = 1; y < (GRID_HEIGHT - 1); y++) {
-                this.wallRepository.addWall(new PIXI.Point(0, y));
-                this.wallRepository.addWall(new PIXI.Point(GRID_WIDTH - 1, y));
-            }
-            for (let x = 1; x < 3 - 1; x++) {
-                this.wallRepository.addWall(new PIXI.Point(x, GRID_WIDTH / 2 + 1));
-            }
-            for (let x = 5; x < GRID_WIDTH - 1; x++) {
-                this.wallRepository.addWall(new PIXI.Point(x, GRID_WIDTH / 2 + 1));
-            }
-            [
-                new PIXI.Point(4, 3),
-                new PIXI.Point(4, 4),
-                new PIXI.Point(3, 4),
-                new PIXI.Point(3, 3),
-            ].forEach((cell) => {
-                this.wallRepository.addWall(cell);
-            });
-        }
 
         this.humanRepository = new HumanRepository(this);
         this.moodRegister = new MoodRegister(this.humanRepository);

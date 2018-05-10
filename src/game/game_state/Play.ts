@@ -1,6 +1,7 @@
-import {WorldKnowledge} from "../WorldKnowledge";
+import {GRID_HEIGHT, GRID_WIDTH, WorldKnowledge} from "../WorldKnowledge";
 import {CAMERA_HEIGHT_PIXELS, CAMERA_WIDTH_PIXELS, WORLD_HEIGHT, WORLD_WIDTH} from "../../app";
 import {INTERFACE_WIDTH, UserInterface} from "../user_interface/UserInterface";
+import {CELL_HEIGHT, CELL_WIDTH} from "../PositionTransformer";
 
 export const GROUP_FLOOR = 'floor';
 export const GROUP_OBJECTS_AND_HUMANS = 'objects_and_humans';
@@ -44,7 +45,8 @@ export default class Play extends Phaser.State {
         this.worldKnowledge.create(this.game, this.groups);
         this.userInterface.create(this.game, this.groups);
 
-        this.game.world.setBounds(0, 0, WORLD_WIDTH + INTERFACE_WIDTH, WORLD_HEIGHT);
+        const gapLeft = -(GRID_WIDTH - GRID_HEIGHT) * CELL_HEIGHT / 2;
+        this.game.world.setBounds(gapLeft, 0, WORLD_WIDTH + INTERFACE_WIDTH, WORLD_HEIGHT);
         this.game.camera.setPosition((WORLD_WIDTH - CAMERA_WIDTH_PIXELS) / 2, (WORLD_HEIGHT - CAMERA_HEIGHT_PIXELS) / 2);
 
         this.upKey = this.game.input.keyboard.addKey(Phaser.Keyboard.UP);
