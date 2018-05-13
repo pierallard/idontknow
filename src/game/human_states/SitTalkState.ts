@@ -5,7 +5,7 @@ import {ANIMATION, HumanAnimationManager} from "../human_stuff/HumanAnimationMan
 import {STATE} from "../human_stuff/HumanStateManager";
 import {AbstractState} from "./AbstractState";
 import {TableMeeting} from "./TableMeeting";
-import {Table} from "../objects/Table";
+import {MeetingTable} from "../objects/MeetingTable";
 import {PositionTransformer} from "../PositionTransformer";
 import {RageState} from "./RageState";
 import {RAGE_IMAGE} from "../human_stuff/ThoughtBubble";
@@ -15,13 +15,13 @@ export class SitTalkState extends AbstractState {
     private worldKnowledge: WorldKnowledge;
     private meetingStarted: boolean;
     private meeting: TableMeeting;
-    private table: Table;
+    private table: MeetingTable;
     private isHumanOnTheRightCell: boolean;
     private isHumanSit: boolean;
 
     constructor(
         human: Employee,
-        table: Table,
+        table: MeetingTable,
         anotherHumans: Employee[],
         worldKnowledge: WorldKnowledge,
         meeting: TableMeeting = null

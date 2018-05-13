@@ -5,7 +5,7 @@ import {GROUP_INTERFACE} from "../game_state/Play";
 import {COLOR} from "../Pico8Colors";
 import {MoodSprite} from "../human_stuff/MoodSprite";
 import {TEXT_STYLE} from "../TextStyle";
-import {GAP_BETWEEN_LINES} from "./UserInfoPanel";
+import {MEDIUM_GAP_BETWEEN_LINES} from "./UserInfoPanel";
 import {EMPLOYEE_TYPE} from "../human_stuff/HumanPropertiesFactory";
 
 const HEIGHT = 80;
@@ -30,9 +30,9 @@ export class InfoPanel {
         const left = CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GRAPH_GAP;
         const top = TOP_GAP + 100;
         this.softwarePrice = game.add.text(left, TOP_GAP, 'Software Price: ', TEXT_STYLE, groups[GROUP_INTERFACE]);
-        this.developerCount = game.add.text(left, TOP_GAP + GAP_BETWEEN_LINES, '', TEXT_STYLE, groups[GROUP_INTERFACE]);
-        this.salesCount = game.add.text(left, TOP_GAP + GAP_BETWEEN_LINES * 2, '', TEXT_STYLE, groups[GROUP_INTERFACE]);
-        this.marketingCount = game.add.text(left, TOP_GAP + GAP_BETWEEN_LINES * 3, '', TEXT_STYLE, groups[GROUP_INTERFACE]);
+        this.developerCount = game.add.text(left, TOP_GAP + MEDIUM_GAP_BETWEEN_LINES, '', TEXT_STYLE, groups[GROUP_INTERFACE]);
+        this.salesCount = game.add.text(left, TOP_GAP + MEDIUM_GAP_BETWEEN_LINES * 2, '', TEXT_STYLE, groups[GROUP_INTERFACE]);
+        this.marketingCount = game.add.text(left, TOP_GAP + MEDIUM_GAP_BETWEEN_LINES * 3, '', TEXT_STYLE, groups[GROUP_INTERFACE]);
         this.moods = game.add.graphics(left, top, groups[GROUP_INTERFACE]);
         this.employees = game.add.graphics(left, top + 100, groups[GROUP_INTERFACE]);
     }

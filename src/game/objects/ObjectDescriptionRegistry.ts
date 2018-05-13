@@ -2,7 +2,6 @@ import {ObjectDescription} from "./ObjectDescription";
 import {Dispenser} from "./Dispenser";
 import {Sofa} from "./Sofa";
 import {Desk} from "./Desk";
-import {Table} from "./Table";
 import {Couch} from "./Couch";
 import {InteractivePoint} from "./InteractivePoint";
 import {DIRECTION} from "../Direction";
@@ -24,6 +23,7 @@ export class ObjectDescriptionRegistry {
             }
         }
 
+        debugger;
         throw "Impossible to find info for " + name;
     }
 
@@ -86,7 +86,7 @@ export class ObjectDescriptionRegistry {
         );
         this.objectDescriptions.push(
             new ObjectDescription(
-                'Table',
+                'Meeting Table',
                 [
                     new PIXI.Point(0, 0),
                     new PIXI.Point(1, 1),

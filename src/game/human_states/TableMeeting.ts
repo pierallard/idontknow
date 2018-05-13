@@ -1,13 +1,13 @@
 import {Employee} from "../human_stuff/Employee";
 import {ObjectReferer} from "../objects/ObjectReferer";
-import {Table} from "../objects/Table";
+import {MeetingTable} from "../objects/MeetingTable";
 
 export class TableMeeting {
     private time: number;
     private places: {human:Employee, position: ObjectReferer}[];
-    private table: Table;
+    private table: MeetingTable;
 
-    constructor(humans: Employee[], time: number, table: Table) {
+    constructor(humans: Employee[], time: number, table: MeetingTable) {
         this.time = time;
         this.places = [];
         this.table = table;
@@ -60,7 +60,7 @@ export class TableMeeting {
         return anotherHumans;
     }
 
-    getTable(): Table {
+    getTable(): MeetingTable {
         return this.table;
     }
 

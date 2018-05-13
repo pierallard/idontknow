@@ -4,7 +4,7 @@ import {AbstractObject} from "./AbstractObject";
 import {ObjectDeleter} from "./ObjectDeleter";
 import {DeletableObjectInterface} from "./DeletableObjectInterface";
 
-export class Table extends AbstractObject implements InteractiveObjectInterface, DeletableObjectInterface {
+export class MeetingTable extends AbstractObject implements InteractiveObjectInterface, DeletableObjectInterface {
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}) {
         super.create(game, groups);
 

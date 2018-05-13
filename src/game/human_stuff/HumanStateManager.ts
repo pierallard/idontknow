@@ -13,7 +13,7 @@ import {CoffeeState} from "../human_states/CoffeeState";
 import {HumanMoodManager, MOOD} from "./HumanMoodManager";
 import {TableMeeting} from "../human_states/TableMeeting";
 import {SitTalkState} from "../human_states/SitTalkState";
-import {Table} from "../objects/Table";
+import {MeetingTable} from "../objects/MeetingTable";
 import {RageState} from "../human_states/RageState";
 import {SitPlay} from "../human_states/SitPlay";
 
@@ -94,7 +94,7 @@ export class HumanStateManager {
                 case STATE.SIT_TALK:
                     this.state = new SitTalkState(
                         this.human,
-                        <Table> this.worldKnowledge.getClosestReferer(['Table'], 4, this.human.getPosition()).getObject(),
+                        <MeetingTable> this.worldKnowledge.getClosestReferer(['Meeting Table'], 4, this.human.getPosition()).getObject(),
                         this.worldKnowledge.getAnotherFreeHumans(this.human, 3),
                         this.worldKnowledge
                     );
@@ -147,7 +147,7 @@ export class HumanStateManager {
         const states = {};
 
         if (
-            this.worldKnowledge.getClosestReferer(['Table'], 4) !== null &&
+            this.worldKnowledge.getClosestReferer(['Meeting Table'], 4) !== null &&
             this.worldKnowledge.getAnotherFreeHumans(this.human, 3).length === 3
         ) {
             states[STATE.SIT_TALK] = this.getProbability(STATE.SIT_TALK);

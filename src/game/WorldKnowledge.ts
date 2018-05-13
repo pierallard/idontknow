@@ -15,13 +15,12 @@ import {DeletableObjectInterface} from "./objects/DeletableObjectInterface";
 import {DIRECTION, Direction} from "./Direction";
 import {HumanProperties} from "./human_stuff/HumanProperties";
 import {MoodRegister} from "./human_stuff/MoodRegister";
-import {Table} from "./objects/Table";
+import {MeetingTable} from "./objects/MeetingTable";
 import {ObjectReferer} from "./objects/ObjectReferer";
 import {LevelManager} from "./user_interface/LevelManager";
 import {EMPLOYEE_TYPE} from "./human_stuff/HumanPropertiesFactory";
 import {Price} from "./objects/Price";
 import {ObjectDescription} from "./objects/ObjectDescription";
-import {ObjectDescriptionRegistry} from "./objects/ObjectDescriptionRegistry";
 import {SmoothValue} from "./SmoothValue";
 import {PANEL, UserInterface} from "./user_interface/UserInterface";
 import {Couch} from "./objects/Couch";
@@ -409,7 +408,7 @@ export class WorldKnowledge {
         });
         for (let o = 0; o < this.objects.length; o++) {
             const object = this.objects[o];
-            const objectInfo = ObjectDescriptionRegistry.getObjectDescription(object.constructor.name);
+            const objectInfo = object.getDescription();
             const interactivePoints = objectInfo.getInteractivePoints(object.getOrientation());
             for (let i = 0; i < interactivePoints.length; i++) {
                 const cellOffset = interactivePoints[i].getCellOffset(object.getOrientation());
@@ -455,7 +454,7 @@ export class WorldKnowledge {
             case 'Desk': object = new Desk(position, this, orientation); break;
             case 'Sofa': object = new Sofa(position, this, orientation); break;
             case 'Dispenser': object = new Dispenser(position, this, orientation); break;
-            case 'Table': object = new Table(position, this, orientation); break;
+            case 'Meeting Table': object = new MeetingTable(position, this, orientation); break;
             case 'Couch': object = new Couch(position, this, orientation); break;
             case 'Console': object = new Console(position, this, orientation); break;
             default: throw 'Unknown object ' + name;
@@ -550,5 +549,15 @@ export class WorldKnowledge {
         this.humanRepository.humans.forEach((human) => {
             human.resume();
         });
+    }
+
+    getSelectedHumanSprite() {
+        for (let i = 0; i < this.humanRepository.humans.length; i++) {
+            if (this.humanRepository.humans[i].isSelected()) {
+                return this.humanRepository.humans[i].getSprite();
+            }
+        }
+
+        return null;
     }
 }

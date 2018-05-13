@@ -1,7 +1,7 @@
 import {GRID_HEIGHT, GRID_WIDTH, WorldKnowledge} from "../WorldKnowledge";
 import {CAMERA_HEIGHT_PIXELS, CAMERA_WIDTH_PIXELS, WORLD_HEIGHT, WORLD_WIDTH} from "../../app";
 import {INTERFACE_WIDTH, UserInterface} from "../user_interface/UserInterface";
-import {CELL_HEIGHT, CELL_WIDTH} from "../PositionTransformer";
+import {CELL_HEIGHT} from "../PositionTransformer";
 
 export const GROUP_FLOOR = 'floor';
 export const GROUP_OBJECTS_AND_HUMANS = 'objects_and_humans';
@@ -46,7 +46,7 @@ export default class Play extends Phaser.State {
         this.userInterface.create(this.game, this.groups);
 
         const gapLeft = -(GRID_WIDTH - GRID_HEIGHT) * CELL_HEIGHT / 2;
-        this.game.world.setBounds(gapLeft, 0, WORLD_WIDTH + INTERFACE_WIDTH, WORLD_HEIGHT);
+        this.game.world.setBounds(gapLeft, 0, WORLD_WIDTH + 110, WORLD_HEIGHT);
         this.game.camera.setPosition((WORLD_WIDTH - CAMERA_WIDTH_PIXELS) / 2, (WORLD_HEIGHT - CAMERA_HEIGHT_PIXELS) / 2);
 
         this.upKey = this.game.input.keyboard.addKey(Phaser.Keyboard.UP);
@@ -90,10 +90,13 @@ export default class Play extends Phaser.State {
         else if (this.rightKey.isDown) {
             this.game.camera.setPosition(this.game.camera.position.x + CAMERA_GAP, this.game.camera.position.y);
         }
-        /*
+
         const selected = this.worldKnowledge.getSelectedHumanSprite();
         if (null !== selected) {
+            this.game.camera.width = CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH;
             this.game.camera.follow(selected, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
-        }*/
+        } else {
+            this.game.camera.unfollow();
+        }
     }
 }

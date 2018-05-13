@@ -269,6 +269,10 @@ export class Employee {
         return ObjectSelector.isSelected(this.sprite);
     }
 
+    getSprite() {
+        return this.sprite;
+    }
+
     resetAStar(newNonEmptyCell: PIXI.Point = null) {
         this.closestPathFinder.reset();
         if (newNonEmptyCell && this.path !== null) {

@@ -702,7 +702,7 @@ declare module Phaser {
         flash(color?: number, duration?: number, force?: boolean, alpha?: number): boolean;
         focusOn(displayObject: PIXI.DisplayObject): void;
         focusOnXY(x: number, y: number): void;
-        follow(target: Phaser.Sprite, style?: number, lerpX?: number, lerpY?: number): void;
+        follow(target: Phaser.Sprite|Phaser.TileSprite, style?: number, lerpX?: number, lerpY?: number): void;
         reset(): void;
         resetFX(): void;
         setBoundsToWorld(): void;

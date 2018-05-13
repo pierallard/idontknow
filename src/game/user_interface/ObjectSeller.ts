@@ -9,6 +9,7 @@ import {TEXT_STYLE} from "../TextStyle";
 import {CELL_HEIGHT, CELL_WIDTH} from "../PositionTransformer";
 import {COLOR} from "../Pico8Colors";
 import {DIRECTION_LOOP} from "../objects/ObjectOrientation";
+import {MEDIUM_GAP_BETWEEN_LINES, SMALL_GAP_BETWEEN_LINES} from "./UserInfoPanel";
 
 export const OBJECT_SELLER_CELL_SIZE = 41;
 const CIRCLE_GAP = 7;
@@ -105,6 +106,7 @@ class SellerButton {
     private worldKnowledge: WorldKnowledge;
     private button: Phaser.Sprite;
     private isDown: boolean;
+    private objectName: Phaser.Text;
 
     constructor(objectInfo: ObjectDescription, worldKnowledge: WorldKnowledge) {
         this.objectInfo = objectInfo;
@@ -114,12 +116,18 @@ class SellerButton {
 
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}, index: number) {
         const left = CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH;
-        const top = TOP_GAP + index * (OBJECT_SELLER_CELL_SIZE / 2);
+        const top = TOP_GAP + index * OBJECT_SELLER_CELL_SIZE;
 
-        const textTop = index * OBJECT_SELLER_CELL_SIZE + 12 + TOP_GAP + CIRCLE_GAP;
+        this.objectName = game.add.text(
+            left + OBJECT_SELLER_CELL_SIZE + 10,
+            top,
+            this.objectInfo.getName(),
+            TEXT_STYLE,
+            groups[GROUP_INTERFACE]
+        );
         this.price = game.add.text(
             left + OBJECT_SELLER_CELL_SIZE + 10,
-            textTop,
+            top + SMALL_GAP_BETWEEN_LINES,
             this.objectInfo.getPrice().getStringValue(),
             TEXT_STYLE,
             groups[GROUP_INTERFACE]
@@ -127,8 +135,8 @@ class SellerButton {
         groups[GROUP_INTERFACE].add(this.price);
 
         this.button = game.add.sprite(
-            this.price.x + this.price.width + 12,
-            textTop,
+            left + OBJECT_SELLER_CELL_SIZE + 10,
+            top + SMALL_GAP_BETWEEN_LINES * 2 + 3,
             'buy_button',
             0,
             groups[GROUP_INTERFACE]
@@ -138,6 +146,7 @@ class SellerButton {
         this.button.input.useHandCursor = true;
         this.button.events.onInputDown.add(this.buy, this, 0);
         this.button.events.onInputUp.add(this.up, this, 0);
+        this.button.anchor.setTo(0, 0);
 
         groups[GROUP_INTERFACE].add(this.button);
     }
@@ -168,11 +177,13 @@ class SellerButton {
     hide() {
         this.price.position.x += INTERFACE_WIDTH;
         this.button.position.x += INTERFACE_WIDTH;
+        this.objectName.position.x += INTERFACE_WIDTH;
     }
 
     show() {
         this.price.position.x -= INTERFACE_WIDTH;
         this.button.position.x -= INTERFACE_WIDTH;
+        this.objectName.position.x -= INTERFACE_WIDTH;
     }
 }
 

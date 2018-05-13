@@ -2,6 +2,7 @@ import {DIRECTION} from "../Direction";
 import {ObjectInterface} from "./ObjectInterface";
 import {ObjectReferer} from "./ObjectReferer";
 import {Employee} from "../human_stuff/Employee";
+import {ObjectDescription} from "./ObjectDescription";
 
 export interface InteractiveObjectInterface extends ObjectInterface {
     getEntries(objectNumber: number): DIRECTION[];
@@ -37,4 +38,6 @@ export interface InteractiveObjectInterface extends ObjectInterface {
     getUnusedReferers(): ObjectReferer[];
 
     getOrientation(): DIRECTION;
+
+    getDescription(): ObjectDescription;
 }

@@ -7,6 +7,7 @@ import {ObjectReferer} from "./ObjectReferer";
 import {Employee} from "../human_stuff/Employee";
 import {ObjectOrientation} from "./ObjectOrientation";
 import {COLOR} from "../Pico8Colors";
+import {ObjectDescription} from "./ObjectDescription";
 
 export const SPRITE_DEBUG = false;
 
@@ -25,8 +26,14 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
         this.usedIdentifiers = [];
     }
 
+    getDescription(): ObjectDescription {
+        let name = this.constructor.name;
+        name = name.split(/(?=[A-Z])/).join(' ');
+        return ObjectDescriptionRegistry.getObjectDescription(name);
+    }
+
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}) {
-        const infos = ObjectDescriptionRegistry.getObjectDescription(this.constructor.name);
+        const infos = this.getDescription();
 
         this.sprites = [];
 
@@ -72,11 +79,11 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
     }
 
     getEntries(objectNumber: number): DIRECTION[] {
-        return ObjectDescriptionRegistry.getObjectDescription(this.constructor.name).getInteractivePointEntryPoints(this.orientation, objectNumber);
+        return this.getDescription().getInteractivePointEntryPoints(this.orientation, objectNumber);
     }
 
     getPositions(): PIXI.Point[] {
-        return ObjectDescriptionRegistry.getObjectDescription(this.constructor.name).getUniqueCellOffsets(this.orientation).map((gap) => {
+        return this.getDescription().getUniqueCellOffsets(this.orientation).map((gap) => {
             return new PIXI.Point(
                 this.position.x + gap.x,
                 this.position.y + gap.y
@@ -100,19 +107,19 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
     }
 
     forceLeftOrientation(interactivePointIdentifier: number): boolean {
-        const infos = ObjectDescriptionRegistry.getObjectDescription(this.constructor.name);
+        const infos = this.getDescription();
 
         return infos.getInteractivePoints(this.orientation)[interactivePointIdentifier].isHumanLeftLooking(this.orientation);
     }
 
     forceTopOrientation(interactivePointIdentifier: number): boolean {
-        const infos = ObjectDescriptionRegistry.getObjectDescription(this.constructor.name);
+        const infos = this.getDescription();
 
         return infos.getInteractivePoints(this.orientation)[interactivePointIdentifier].isHumanTopLooking();
     }
 
     getCellPositionSubObject(interactivePointIdentifier: number): PIXI.Point {
-        const infos = ObjectDescriptionRegistry.getObjectDescription(this.constructor.name);
+        const infos = this.getDescription();
 
         return new PIXI.Point(
             this.position.x + infos.getInteractivePointCellOffset(this.orientation, interactivePointIdentifier).x,
@@ -146,7 +153,7 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
 
     getUnusedReferers(): ObjectReferer[] {
         let result = [];
-        const description = ObjectDescriptionRegistry.getObjectDescription(this.constructor.name);
+        const description = this.getDescription();
         for (let i = 0; i < description.getInteractivePoints(this.orientation).length; i++) {
             if (!this.isUsed(i)) {
                 result.push(new ObjectReferer(this, i));

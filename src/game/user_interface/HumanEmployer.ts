@@ -10,6 +10,7 @@ import {COLOR} from "../Pico8Colors";
 import {Gauge} from "./Gauge";
 import {ColoredGauge} from "./ColoredGauge";
 import {Tooltip, Tooltipable} from "./Tooltip";
+import {SMALL_GAP_BETWEEN_LINES} from "./UserInfoPanel";
 
 const STARS = 5;
 const MAX_APPLICANTS = 6;
@@ -169,7 +170,7 @@ class ApplicantButton implements Tooltipable {
         this.sprite.events.onInputDown.add(this.click, this, 0);
 
         this.name = game.add.text(left + OBJECT_SELLER_CELL_SIZE + 3, top, this.humanProperties.getName(), TEXT_STYLE, groups[GROUP_INTERFACE]);
-        this.typeText = game.add.text(left + OBJECT_SELLER_CELL_SIZE + 3, top + 8, this.humanProperties.getStrType(), TEXT_STYLE, groups[GROUP_INTERFACE]);
+        this.typeText = game.add.text(left + OBJECT_SELLER_CELL_SIZE + 3, top + SMALL_GAP_BETWEEN_LINES, this.humanProperties.getStrType(), TEXT_STYLE, groups[GROUP_INTERFACE]);
 
         this.remainingGauge.create(game, groups, new PIXI.Point(left, top + OBJECT_SELLER_CELL_SIZE - 5 - 0.5));
         this.remainingGauge.setValue(1);
