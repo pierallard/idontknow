@@ -27,6 +27,8 @@ import {Couch} from "./objects/Couch";
 import {EmployeeCountRegister} from "./human_stuff/EmployeeCountRegister";
 import {Console} from "./objects/Console";
 import {Floor} from "./Floor";
+import {InfoBox} from "./user_interface/Infobox";
+import {ObjectDescriptionRegistry} from "./objects/ObjectDescriptionRegistry";
 
 export const GRID_WIDTH = 37;
 export const GRID_HEIGHT = 15;
@@ -156,7 +158,8 @@ export class WorldKnowledge {
     update() {
         this.humanRepository.update();
         if (this.levelManager.update()) {
-            this.addMoneyInWallet(this.levelManager.getEarnedMoney())
+            this.addMoneyInWallet(this.levelManager.getEarnedMoney());
+            this.displayLevelInfoBox();
         }
     }
 
@@ -564,5 +567,40 @@ export class WorldKnowledge {
 
     selectFirstHuman() {
         this.humanRepository.humans[0].select();
+    }
+
+    private displayLevelInfoBox() {
+        let strings = [
+            '- ' + this.levelManager.getGoal(EMPLOYEE_TYPE.DEVELOPER) + ' lines to code',
+            '- ' + this.levelManager.getGoal(EMPLOYEE_TYPE.SALE) + ' licences to sell',
+        ];
+        if (this.levelManager.getGoal(EMPLOYEE_TYPE.MARKETING) > 0) {
+            strings.push('- ' + this.levelManager.getGoal(EMPLOYEE_TYPE.MARKETING) + ' campaigns to to');
+        }
+        let availables = [];
+        if (this.getLevel() === 2) {
+            availables.push('- Sales employees');
+        }
+        if (this.getLevel() === 3) {
+            availables.push('- Marketing employees');
+        }
+        ObjectDescriptionRegistry.getSalableObjects(this.getLevel()).forEach((objectDescription) => {
+            if (objectDescription.getMinLevel() === this.getLevel()) {
+                availables.push('- ' + objectDescription.getName())
+            }
+        });
+
+        const infoBox = new InfoBox(
+            'Next level!',
+            [
+                'Congratulations! You reached the level ' + this.getLevel() + '!',
+                'Next goals:'
+            ].concat(strings).concat([
+                '',
+                'Now available:'
+            ]).concat(availables),
+            'Oh yeah!'
+        );
+        infoBox.create(this.game, this.groups);
     }
 }

@@ -60,6 +60,7 @@ export default class Play extends Phaser.State {
         const infobox = new InfoBox(
             'Welcome!', [
                 'Welcome to Office Tycoon!',
+                '',
                 'You are in charge of the recruitment to run',
                 'your business.',
                 'Complete your goals for each level and you will',

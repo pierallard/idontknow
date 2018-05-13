@@ -51,7 +51,7 @@ export class InfoBox {
         leftSprite.scale.set(1, internalHeight / 12);
         const center = game.add.sprite(left + 12, top + 12, 'info', 4, groups[GROUP_INTERFACE]);
         this.elements.push(center);
-        center.scale.set(internalWidth / 12, internalHeight / 12);
+        center.scale.set((internalWidth + 1) / 12, internalHeight / 12);
         const right = game.add.sprite(left + 12 + internalWidth, top + 12, 'info', 5, groups[GROUP_INTERFACE]);
         right.scale.set(1, internalHeight / 12);
         this.elements.push(right);
