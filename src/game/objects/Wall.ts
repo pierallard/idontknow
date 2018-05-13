@@ -1,11 +1,12 @@
 import {PositionTransformer} from "../PositionTransformer";
 
 const FAKE_ANCHOR = -4;
+export const WALL_ALPHA = 1;
 
 export class Wall {
-    private cell: PIXI.Point;
+    protected cell: PIXI.Point;
     protected sprite: Phaser.Sprite;
-    private game: Phaser.Game;
+    protected game: Phaser.Game;
 
     constructor(position: PIXI.Point) {
         this.cell = position;
@@ -27,7 +28,7 @@ export class Wall {
             Wall.getFrame(hasWallLeft, hasWallTop, hasWallRight, hasWallBottom)
         );
 
-        this.sprite.anchor.set(0.5, 1 + (3 + FAKE_ANCHOR) / this.sprite.height);
+        this.sprite.anchor.set(0.5, 1 + FAKE_ANCHOR / this.sprite.height);
         group.add(this.sprite);
     }
 
@@ -35,7 +36,7 @@ export class Wall {
         return this.cell;
     }
 
-    private static getFrame(hasWallLeft: boolean, hasWallTop: boolean, hasWallRight: boolean, hasWallBottom: boolean): number {
+    protected static getFrame(hasWallLeft: boolean, hasWallTop: boolean, hasWallRight: boolean, hasWallBottom: boolean): number {
         return (hasWallLeft ? 1 : 0)
             + (hasWallTop ? 1 : 0) * 2
             + (hasWallRight ? 1 : 0) * 4
@@ -44,7 +45,7 @@ export class Wall {
 
     setVisibility(visible: boolean) {
         this.game.add.tween(this.sprite).to({
-            alpha: visible ? 1 : 0.2
+            alpha: visible ? 1 : WALL_ALPHA
         }, 400, 'Linear', true);
     }
 }

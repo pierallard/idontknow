@@ -1,5 +1,6 @@
 import {Wall} from "../objects/Wall";
 import {Window} from "../objects/Window";
+import {Door} from "../objects/Door";
 
 export class WallRepository {
     private walls: Wall[];
@@ -35,8 +36,12 @@ export class WallRepository {
         return null;
     }
 
-    hasWall(x: number, y: number): boolean {
-        return this.getWall(x, y) !== null;
+    hasWall(x: number, y: number, includeDoor = true): boolean {
+        if (includeDoor) {
+            return this.getWall(x, y) !== null
+        } else {
+            return this.getWall(x, y) !== null && this.getWall(x, y).constructor.name !== 'Door';
+        }
     }
 
     getWalls(): Wall[] {
@@ -45,5 +50,9 @@ export class WallRepository {
 
     addWindow(cell: PIXI.Point) {
         this.walls.push(new Window(cell));
+    }
+
+    addDoor(cell: PIXI.Point) {
+        this.walls.push(new Door(cell));
     }
 }

@@ -59,19 +59,19 @@ export class WorldKnowledge {
 
         const walls = "" +
             "  XXXWXXXXXWXXXXXXXXXXXXXWXXXXXWXXX  \n" +
-            "  X      X             X   X      X  \n" +
-            "  W            X       XX XX      W  \n" +
-            "  X      XXXXXXX                  X  \n" +
-            "  X      X     XXX XXXXXXXXX      X  \n" +
+            "  X      X     D       X   X      X  \n" +
+            "  W      D     X       XXDXX      W  \n" +
+            "  X      XXXXXXX       D   D      X  \n" +
+            "  X      X     XXXDXXXXXXXXX      X  \n" +
             "  X      X     X           X      X  \n" +
             "  W      X     X           X      W  \n" +
-            "  X      X     X                  X  \n" +
-            "XXXXXX XXX                 XXX XXXXXX\n" +
-            "X X            X                    X\n" +
+            "  X      X     X           D      X  \n" +
+            "XXXXXXDXXX     D           XXXDXXXXXX\n" +
+            "X X      D     X           D        X\n" +
             "X X      X     X           X        X\n" +
-            "X X      XXXWXXXXX XXXXXWXXX        X\n" +
-            "X X                                 X\n" +
-            "X        X                 X        X\n" +
+            "X X      XXXWXXXXXDXXXXXWXXX        X\n" +
+            "X X      D                 D        X\n" +
+            "X D      X                 X        X\n" +
             "XXXWXXXWXX                 XXWXXXWXXX";
         const floors = "" +
             "  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  \n" +
@@ -116,6 +116,8 @@ export class WorldKnowledge {
                     this.wallRepository.addWall(new PIXI.Point(x, y));
                 } else if (wallCell === 'W') {
                     this.wallRepository.addWindow(new PIXI.Point(x, y));
+                } else if (wallCell === 'D') {
+                    this.wallRepository.addDoor(new PIXI.Point(x, y));
                 }
             }
         }
@@ -303,7 +305,7 @@ export class WorldKnowledge {
             }
         }
 
-        if (this.wallRepository.hasWall(point.x, point.y)) {
+        if (this.wallRepository.hasWall(point.x, point.y, false)) {
             return false;
         }
 
