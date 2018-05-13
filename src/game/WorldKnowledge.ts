@@ -483,6 +483,7 @@ export class WorldKnowledge {
     }
 
     addProgress(type: EMPLOYEE_TYPE, value: number, time: number) {
+        debugger;
         this.levelManager.addLevelProgress(type, value, time);
         if (type === EMPLOYEE_TYPE.SALE) {
             this.addMoneyInWallet(new Price(value * this.levelManager.getSoftwarePrice().getValue()), time);
@@ -539,17 +540,17 @@ export class WorldKnowledge {
         return this.employeeCountRegister.getLastCounts();
     }
 
-    pause() {
-        this.humanRepository.humans.forEach((human) => {
-            human.pause();
-        });
-    }
-
-    resume() {
-        this.humanRepository.humans.forEach((human) => {
-            human.resume();
-        });
-    }
+    // pause() {
+    //     this.humanRepository.humans.forEach((human) => {
+    //         human.pause();
+    //     });
+    // }
+    //
+    // resume() {
+    //     this.humanRepository.humans.forEach((human) => {
+    //         human.resume();
+    //     });
+    // }
 
     getSelectedHumanSprite() {
         for (let i = 0; i < this.humanRepository.humans.length; i++) {

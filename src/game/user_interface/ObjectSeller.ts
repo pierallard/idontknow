@@ -20,33 +20,42 @@ export class ObjectSeller {
     private worldKnowledge: WorldKnowledge;
     private visible: boolean;
     private currentPhantom: ObjectPhantom;
+    private game: Phaser.Game;
+    private groups: {[index: string]: Phaser.Group};
 
     constructor(worldKnowledge: WorldKnowledge) {
         this.worldKnowledge = worldKnowledge;
         this.visible = true;
-
-        this.objectProvisionnerButtons = ObjectDescriptionRegistry
-            .getSalableObjects()
-            .map((object) => new ObjectProvisionnerButton(this, object, this.worldKnowledge));
-
-        this.sellerButtons = ObjectDescriptionRegistry
-            .getSalableObjects()
-            .map((object) => new SellerButton(object, this.worldKnowledge));
-
         this.currentPhantom = null;
+        this.objectProvisionnerButtons = [];
+        this.sellerButtons = [];
     }
 
     create(game: Phaser.Game, groups: {[index: string]: Phaser.Group }) {
-        let i = 0;
-        this.objectProvisionnerButtons.forEach((objectProvisionnerButton) => {
-            objectProvisionnerButton.create(game, groups, i);
-            i++;
+        this.game = game;
+        this.groups = groups;
+        this.addMissingButtons();
+    }
+
+    private addMissingButtons() {
+        ObjectDescriptionRegistry
+            .getSalableObjects(this.worldKnowledge.getLevel())
+            .forEach((objectDescription) => {
+                if (this.objectProvisionnerButtons.filter((previsionner) => {
+                    return previsionner.getName() === objectDescription.getName()
+                }).length === 0) {
+                    const objectProvisionnerButton = new ObjectProvisionnerButton(this, objectDescription, this.worldKnowledge);
+                    const sellerButton = new SellerButton(objectDescription, this.worldKnowledge);
+                    objectProvisionnerButton.create(this.game, this.groups, this.objectProvisionnerButtons.length);
+                    sellerButton.create(this.game, this.groups, this.sellerButtons.length);
+                    if (!this.visible) {
+                        objectProvisionnerButton.hide();
+                        sellerButton.hide();
+                    }
+                    this.objectProvisionnerButtons.push(objectProvisionnerButton);
+                    this.sellerButtons.push(sellerButton);
+                }
         });
-        i = 0;
-        this.sellerButtons.forEach((sellerButton) => {
-            sellerButton.create(game, groups, i);
-            i++;
-        })
     }
 
     update() {
@@ -56,7 +65,9 @@ export class ObjectSeller {
 
         this.sellerButtons.forEach((sellerButton) => {
             sellerButton.updateSprites();
-        })
+        });
+
+        this.addMissingButtons();
     }
 
     private getCount(name: string): number {

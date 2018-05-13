@@ -32,6 +32,7 @@ export class ObjectDescriptionRegistry {
         this.objectDescriptions.push(
             new ObjectDescription(
                 'Dispenser',
+                1,
                 [new PIXI.Point(0, 0)],
                 [
                     new SpriteInfo('dispenser', new PIXI.Point(-4, -4), 3)
@@ -51,6 +52,7 @@ export class ObjectDescriptionRegistry {
         this.objectDescriptions.push(
             new ObjectDescription(
                 'Sofa',
+                1,
                 [new PIXI.Point(0, 0)],
                 [
                     new SpriteInfo('sofa', new PIXI.Point(0, -8), 3, new PIXI.Point(0, 0))
@@ -66,6 +68,7 @@ export class ObjectDescriptionRegistry {
         this.objectDescriptions.push(
             new ObjectDescription(
                 'Desk',
+                1,
                 [new PIXI.Point(0, 0)],
                 [
                     new SpriteInfo('chair', new PIXI.Point(-10, -8), 5),
@@ -87,6 +90,7 @@ export class ObjectDescriptionRegistry {
         this.objectDescriptions.push(
             new ObjectDescription(
                 'Meeting Table',
+                3,
                 [
                     new PIXI.Point(0, 0),
                     new PIXI.Point(1, 1),
@@ -117,6 +121,7 @@ export class ObjectDescriptionRegistry {
         this.objectDescriptions.push(
             new ObjectDescription(
                 'Couch',
+                2,
                 [
                     new PIXI.Point(0, 0),
                     new PIXI.Point(0, 1),
@@ -144,6 +149,7 @@ export class ObjectDescriptionRegistry {
         this.objectDescriptions.push(
             new ObjectDescription(
                 'Console',
+                4,
                 [
                     new PIXI.Point(0, 0),
                     new PIXI.Point(1, 1),
@@ -174,11 +180,13 @@ export class ObjectDescriptionRegistry {
         )
     }
 
-    static getSalableObjects(): ObjectDescription[] {
+    static getSalableObjects(level: number): ObjectDescription[] {
         if (this.objectDescriptions === null) {
             this.generateObjectDescriptions();
         }
 
-        return this.objectDescriptions;
+        return this.objectDescriptions.filter((objectDescription) => {
+            return objectDescription.getMinLevel() <= level;
+        });
     }
 }

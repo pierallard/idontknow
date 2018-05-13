@@ -19,14 +19,14 @@ export default class Play extends Phaser.State {
     private leftKey: Phaser.Key;
     private rightKey: Phaser.Key;
     private pauseKey: Phaser.Key;
-    private isPaused: boolean;
+    // private isPaused: boolean;
 
     constructor() {
         super();
         this.worldKnowledge = new WorldKnowledge();
         this.userInterface = new UserInterface(this.worldKnowledge);
         this.worldKnowledge.setUserInterface(this.userInterface);
-        this.isPaused = false;
+        // this.isPaused = false;
     }
 
     public create() {
@@ -62,21 +62,21 @@ export default class Play extends Phaser.State {
         this.worldKnowledge.update();
         this.userInterface.update();
 
-        if (this.pauseKey.isDown && this.pauseKey.justDown) {
-            if (this.isPaused) {
-                this.game.time.events.resume();
-                this.isPaused = false;
-                this.game.stage.backgroundColor = "#494947";
-                this.worldKnowledge.resume();
-                this.game.tweens.resumeAll();
-            } else {
-                this.game.time.events.pause();
-                this.isPaused = true;
-                this.game.stage.backgroundColor = "#ffffff";
-                this.worldKnowledge.pause();
-                this.game.tweens.pauseAll();
-            }
-        }
+        // if (this.pauseKey.isDown && this.pauseKey.justDown) {
+        //     if (this.isPaused) {
+        //         this.game.time.events.resume();
+        //         this.isPaused = false;
+        //         this.game.stage.backgroundColor = "#494947";
+        //         this.worldKnowledge.resume();
+        //         this.game.tweens.resumeAll();
+        //     } else {
+        //         this.game.time.events.pause();
+        //         this.isPaused = true;
+        //         this.game.stage.backgroundColor = "#ffffff";
+        //         this.worldKnowledge.pause();
+        //         this.game.tweens.pauseAll();
+        //     }
+        // }
 
         if (this.upKey.isDown) {
             this.game.camera.setPosition(this.game.camera.position.x, this.game.camera.position.y - CAMERA_GAP);

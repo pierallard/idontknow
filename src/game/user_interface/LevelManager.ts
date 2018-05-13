@@ -6,7 +6,7 @@ const DEVELOPER_RATIO = 500;
 const MARKETING_RATIO = 5;
 const SALE_RATIO = 10;
 const STARTING_LEVEL = 1;
-const GLOBAL_PROGRESS_EARN = 7.5;
+const GLOBAL_PROGRESS_EARN = 7;
 
 export class LevelManager {
     private level: number;
@@ -48,6 +48,7 @@ export class LevelManager {
             case EMPLOYEE_TYPE.MARKETING: realValue = value * MARKETING_RATIO / GLOBAL_PROGRESS_EARN; break;
             case EMPLOYEE_TYPE.SALE: realValue = value * SALE_RATIO / GLOBAL_PROGRESS_EARN; break;
         }
+        debugger;
         this.levels[type].add(realValue, time);
     }
 

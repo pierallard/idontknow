@@ -6,6 +6,7 @@ import {InteractivePoint} from "./InteractivePoint";
 
 export class ObjectDescription {
     private name: string;
+    private minLevel: number;
     private occupiedCells: PIXI.Point[];
     private bottomOrientedSpriteInfos: SpriteInfo[];
     private topOrientedSpriteInfos: SpriteInfo[];
@@ -15,6 +16,7 @@ export class ObjectDescription {
 
     constructor(
         name: string,
+        minLevel: number,
         occupiedCells: PIXI.Point[],
         bottomOrientedSpriteInfos: SpriteInfo[],
         topOrientedSpriteInfos: SpriteInfo[],
@@ -23,6 +25,7 @@ export class ObjectDescription {
         price: Price
     ) {
         this.name = name;
+        this.minLevel = minLevel;
         this.occupiedCells = occupiedCells;
         this.bottomOrientedSpriteInfos = bottomOrientedSpriteInfos;
         this.topOrientedSpriteInfos = topOrientedSpriteInfos;
@@ -93,7 +96,11 @@ export class ObjectDescription {
         }
     }
 
-    canBeTopOriented() {
+    canBeTopOriented(): boolean {
         return this.topOrientedSpriteInfos.length > 0;
+    }
+
+    getMinLevel(): number {
+        return this.minLevel;
     }
 }

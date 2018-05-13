@@ -368,11 +368,11 @@ export class Employee {
         return this.path.length * this.getWalkDuration();
     }
 
-    pause() {
-        this.animationManager.pause();
-    }
-
-    resume() {
-        this.animationManager.resume();
-    }
+    // pause() {
+    //     this.animationManager.pause();
+    // }
+    //
+    // resume() {
+    //     this.animationManager.resume();
+    // }
 }

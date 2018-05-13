@@ -5,7 +5,7 @@ import {RAGE_IMAGE} from "../human_stuff/ThoughtBubble";
 import {HumanState} from "./HumanState";
 
 const SECOND_MIN = 15 * Phaser.Timer.SECOND;
-const SECOND_MAX = 45 * Phaser.Timer.SECOND;
+const SECOND_MAX = 40 * Phaser.Timer.SECOND;
 
 export class TypeState extends MoveThenActAbstractState {
     private typeTime: number;
