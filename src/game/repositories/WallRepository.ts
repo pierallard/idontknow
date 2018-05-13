@@ -1,4 +1,5 @@
 import {Wall} from "../objects/Wall";
+import {Window} from "../objects/Window";
 
 export class WallRepository {
     private walls: Wall[];
@@ -40,5 +41,9 @@ export class WallRepository {
 
     getWalls(): Wall[] {
         return this.walls;
+    }
+
+    addWindow(cell: PIXI.Point) {
+        this.walls.push(new Window(cell));
     }
 }

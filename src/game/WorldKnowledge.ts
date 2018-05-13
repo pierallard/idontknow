@@ -58,21 +58,21 @@ export class WorldKnowledge {
         this.wallet = new SmoothValue(1500);
 
         const walls = "" +
-            "  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  \n" +
+            "  XXXWXXXXXWXXXXXXXXXXXXXWXXXXXWXXX  \n" +
             "  X      X             X   X      X  \n" +
-            "  X            X       XX XX      X  \n" +
+            "  W            X       XX XX      W  \n" +
             "  X      XXXXXXX                  X  \n" +
             "  X      X     XXX XXXXXXXXX      X  \n" +
             "  X      X     X           X      X  \n" +
-            "  X      X     X           X      X  \n" +
+            "  W      X     X           X      W  \n" +
             "  X      X     X                  X  \n" +
             "XXXXXX XXX                 XXX XXXXXX\n" +
             "X X            X                    X\n" +
             "X X      X     X           X        X\n" +
-            "X X      XXXXXXXXX XXXXXXXXX        X\n" +
+            "X X      XXXWXXXXX XXXXXWXXX        X\n" +
             "X X                                 X\n" +
             "X        X                 X        X\n" +
-            "XXXXXXXXXX                 XXXXXXXXXX";
+            "XXXWXXXWXX                 XXWXXXWXXX";
         const floors = "" +
             "  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  \n" +
             "  X,,,,,,,,,,,,,,,,,,,,,...........  \n" +
@@ -88,7 +88,7 @@ export class WorldKnowledge {
             "X....................................\n" +
             "X.........,,,,,,,,,,,,,,,,,,.........\n" +
             "X.........,,,,,,,,,,,,,,,,,,.........\n" +
-            "XXXXXXXXXX,,,,,,,,,,,,,,,,,,.........";
+            "X.........,,,,,,,,,,,,,,,,,,.........";
 
         const wallLines = walls.split("\n");
         const floorLines = floors.split("\n");
@@ -114,6 +114,8 @@ export class WorldKnowledge {
                 }
                 if (wallCell === 'X') {
                     this.wallRepository.addWall(new PIXI.Point(x, y));
+                } else if (wallCell === 'W') {
+                    this.wallRepository.addWindow(new PIXI.Point(x, y));
                 }
             }
         }

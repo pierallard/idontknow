@@ -1,10 +1,10 @@
 import {PositionTransformer} from "../PositionTransformer";
 
-const FAKE_MACHIN = -4;
+const FAKE_ANCHOR = -4;
 
 export class Wall {
     private cell: PIXI.Point;
-    sprite: Phaser.Sprite;
+    protected sprite: Phaser.Sprite;
     private game: Phaser.Game;
 
     constructor(position: PIXI.Point) {
@@ -22,12 +22,12 @@ export class Wall {
         this.game = game;
         this.sprite = game.add.sprite(
             PositionTransformer.getRealPosition(this.cell).x,
-            PositionTransformer.getRealPosition(this.cell).y + FAKE_MACHIN,
+            PositionTransformer.getRealPosition(this.cell).y + FAKE_ANCHOR,
             'wall',
             Wall.getFrame(hasWallLeft, hasWallTop, hasWallRight, hasWallBottom)
         );
 
-        this.sprite.anchor.set(0.5, 1 + (3 + FAKE_MACHIN) / this.sprite.height);
+        this.sprite.anchor.set(0.5, 1 + (3 + FAKE_ANCHOR) / this.sprite.height);
         group.add(this.sprite);
     }
 
