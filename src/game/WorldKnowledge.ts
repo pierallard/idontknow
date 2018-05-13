@@ -27,6 +27,7 @@ import {PANEL, UserInterface} from "./user_interface/UserInterface";
 import {Couch} from "./objects/Couch";
 import {EmployeeCountRegister} from "./human_stuff/EmployeeCountRegister";
 import {Console} from "./objects/Console";
+import {Floor} from "./Floor";
 
 export const GRID_WIDTH = 37;
 export const GRID_HEIGHT = 15;
@@ -45,10 +46,12 @@ export class WorldKnowledge {
     private levelManager: LevelManager;
     private wallet: SmoothValue;
     private userInterface: UserInterface;
+    private floors: Floor[];
 
     constructor() {
         this.cells = [];
         this.objects = [];
+        this.floors = [];
         this.wallRepository = new WallRepository();
         this.levelManager = new LevelManager();
         this.depot = new Depot();
@@ -56,40 +59,64 @@ export class WorldKnowledge {
 
         const walls = "" +
             "  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  \n" +
-            "  X,,,,,,X,,,,,,,,,,,,,X...X......X  \n" +
-            "  X,,,,,,,,,,,,X,,,,,,,XX.XX......X  \n" +
-            "  X,,,,,,XXXXXXX,,,,,,,...........X  \n" +
-            "  X,,,,,,X.....XXX.XXXXXXXXX......X  \n" +
-            "  X,,,,,,X.....X...........X......X  \n" +
-            "  X,,,,,,X.....X...........X......X  \n" +
-            "  X,,,,,,X.....X..................X  \n" +
-            "XXXXXX,XXX.................XXX.XXXXXX\n" +
-            "X.X............X....................X\n" +
-            "X.X......X.....X...........X........X\n" +
-            "X.X......XXXXXXXXX.XXXXXXXXX........X\n" +
-            "X.X.......,,,,,,,,,,,,,,,,,.........X\n" +
-            "X........X,,,,,,,,,,,,,,,,,X........X\n" +
-            "XXXXXXXXXX,,,,,,,,,,,,,,,,,XXXXXXXXXX";
-        const lines = walls.split("\n");
+            "  X      X             X   X      X  \n" +
+            "  X            X       XX XX      X  \n" +
+            "  X      XXXXXXX                  X  \n" +
+            "  X      X     XXX XXXXXXXXX      X  \n" +
+            "  X      X     X           X      X  \n" +
+            "  X      X     X           X      X  \n" +
+            "  X      X     X                  X  \n" +
+            "XXXXXX XXX                 XXX XXXXXX\n" +
+            "X X            X                    X\n" +
+            "X X      X     X           X        X\n" +
+            "X X      XXXXXXXXX XXXXXXXXX        X\n" +
+            "X X                                 X\n" +
+            "X        X                 X        X\n" +
+            "XXXXXXXXXX                 XXXXXXXXXX";
+        const floors = "" +
+            "  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  \n" +
+            "  X,,,,,,,,,,,,,,,,,,,,,...........  \n" +
+            "  X,,,,,,,,,,,,,,,,,,,,,...........  \n" +
+            "  X,,,,,,,,,,,,,,,,,,,,,...........  \n" +
+            "  X,,,,,,,.....,,,,,,,,,...........  \n" +
+            "  X,,,,,,,.........................  \n" +
+            "  X,,,,,,,.........................  \n" +
+            "  X,,,,,,,.........................  \n" +
+            "XXX,,,,,,,.........................XX\n" +
+            "X....................................\n" +
+            "X....................................\n" +
+            "X....................................\n" +
+            "X.........,,,,,,,,,,,,,,,,,,.........\n" +
+            "X.........,,,,,,,,,,,,,,,,,,.........\n" +
+            "XXXXXXXXXX,,,,,,,,,,,,,,,,,,.........";
+
+        const wallLines = walls.split("\n");
+        const floorLines = floors.split("\n");
         for (let y = 0; y < GRID_HEIGHT; y++) {
-            let line = lines[lines.length - 1 - y];
-            if (line === undefined) {
-                line = Array(lines[0].length).join(' ');
+            let wallLine = wallLines[wallLines.length - 1 - y];
+            let floorLine = floorLines[floorLines.length - 1 - y];
+            if (wallLine === undefined) {
+                wallLine = Array(wallLines[0].length).join(' ');
+            }
+            if (floorLine === undefined) {
+                floorLine = Array(wallLines[0].length).join(' ');
             }
             for (let x = 0; x < GRID_WIDTH; x++) {
-                const cell = line[line.length - 1 - x];
-                if (cell === 'X') {
+                const wallCell = wallLine[wallLine.length - 1 - x];
+                const floorCell = floorLine[floorLine.length - 1 - x];
+                if (floorCell !== ' ') {
                     this.cells.push(new Cell(new PIXI.Point(x, y)));
+                }
+                if (floorCell === '.') {
+                    this.floors.push(new Floor(new PIXI.Point(x, y), 'woodcell'));
+                } else if (floorCell === ',') {
+                    this.floors.push(new Floor(new PIXI.Point(x, y), 'case_floortile'));
+                }
+                if (wallCell === 'X') {
                     this.wallRepository.addWall(new PIXI.Point(x, y));
-                } else if (cell === '.') {
-                    this.cells.push(new Cell(new PIXI.Point(x, y), 'woodcell'));
-                } else if (cell === ',') {
-                    this.cells.push(new Cell(new PIXI.Point(x, y), 'case_floortile'));
                 }
             }
         }
-
-
 
         this.humanRepository = new HumanRepository(this);
         this.moodRegister = new MoodRegister(this.humanRepository);
@@ -102,11 +129,15 @@ export class WorldKnowledge {
         this.groups = groups;
         this.wallet.create(game);
         this.levelManager.create(game);
-        const floor = groups[GROUP_FLOOR];
+        const floorGroup = groups[GROUP_FLOOR];
         const noname = groups[GROUP_OBJECTS_AND_HUMANS];
 
+        this.floors.forEach((floors: Floor) => {
+            floors.create(game, floorGroup);
+        });
+
         this.cells.forEach((cell: Cell) => {
-            cell.create(game, floor);
+            cell.create(game, floorGroup);
         });
 
         this.objects.forEach((object: ObjectInterface) => {

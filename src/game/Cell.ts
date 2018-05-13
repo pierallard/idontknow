@@ -4,23 +4,24 @@ import {DEBUG_WORLD} from "./WorldKnowledge";
 export class Cell {
     private position: PIXI.Point;
     private sprite: Phaser.Sprite;
-    private key: string;
 
-    constructor(point: PIXI.Point, key = 'woodcell') {
+    constructor(point: PIXI.Point) {
         this.position = point;
-        this.key = key;
     }
 
     create(game: Phaser.Game, group: Phaser.Group) {
-        this.sprite = game.add.sprite(
-            PositionTransformer.getRealPosition(this.position).x,
-            PositionTransformer.getRealPosition(this.position).y,
-            DEBUG_WORLD ? 'casedefault' : this.key
-        );
+        if (DEBUG_WORLD) {
+            this.sprite = game.add.sprite(
+                PositionTransformer.getRealPosition(this.position).x,
+                PositionTransformer.getRealPosition(this.position).y,
+                'casedefault'
+            );
 
-        this.sprite.anchor.setTo(0.5, 1);
+            this.sprite.anchor.setTo(0.5, 1);
+            this.sprite.alpha = 0.5;
 
-        group.add(this.sprite);
+            group.add(this.sprite);
+        }
     }
 
     getPosition(): PIXI.Point {
