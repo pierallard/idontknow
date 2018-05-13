@@ -29,7 +29,7 @@ export class ObjectSelector {
         return tile.key.indexOf(SELECTED) > -1;
     }
 
-    static click(sprite, _pointer, sprites, fallbackSelect: any = () => {},  fallbackUnselect: any = () => {}) {
+    static click(sprite, _pointer, sprites, fallbackSelect: any = () => {}, fallbackUnselect: any = () => {}) {
         const isSelected = this.isSelected(sprite);
         sprites.forEach((sprite) => {
             this.setSelected(sprite, !isSelected);

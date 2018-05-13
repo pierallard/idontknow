@@ -9,7 +9,7 @@ import {TEXT_STYLE} from "../TextStyle";
 import {CELL_HEIGHT, CELL_WIDTH} from "../PositionTransformer";
 import {COLOR} from "../Pico8Colors";
 import {DIRECTION_LOOP} from "../objects/ObjectOrientation";
-import {MEDIUM_GAP_BETWEEN_LINES, SMALL_GAP_BETWEEN_LINES} from "./UserInfoPanel";
+import {SMALL_GAP_BETWEEN_LINES} from "./UserInfoPanel";
 
 export const OBJECT_SELLER_CELL_SIZE = 41;
 const CIRCLE_GAP = 7;

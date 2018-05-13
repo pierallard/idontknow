@@ -561,4 +561,8 @@ export class WorldKnowledge {
 
         return null;
     }
+
+    selectFirstHuman() {
+        this.humanRepository.humans[0].select();
+    }
 }

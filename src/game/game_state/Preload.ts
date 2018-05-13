@@ -66,6 +66,7 @@ export default class Preload extends Phaser.State {
         this.game.load.spritesheet('star', 'assets/star.png', 9, 9);
         this.game.load.spritesheet('tv_reverse', 'assets/tv_reverse.png', 24, 35);
         this.game.load.spritesheet('tv', 'assets/tv.png', 24, 35);
+        this.game.load.spritesheet('info', 'assets/info.png', 12, 12);
     }
 
     private loadFonts() {

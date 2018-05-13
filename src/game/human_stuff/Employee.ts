@@ -375,4 +375,8 @@ export class Employee {
     // resume() {
     //     this.animationManager.resume();
     // }
+
+    select() {
+        ObjectSelector.click(this.sprite, null, [this.sprite]);
+    }
 }
