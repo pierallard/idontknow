@@ -27,12 +27,6 @@ export class LevelManager {
         this.levels[EMPLOYEE_TYPE.SALE] = new SmoothValue(0);
     }
 
-    create(game: Phaser.Game) {
-        this.levels[EMPLOYEE_TYPE.DEVELOPER].create(game);
-        this.levels[EMPLOYEE_TYPE.MARKETING].create(game);
-        this.levels[EMPLOYEE_TYPE.SALE].create(game);
-    }
-
     getLevelProgress(type: EMPLOYEE_TYPE): number {
         return Math.min((this.levels[type].getValue() - this.starts[type]) / (this.getGoal(type) - this.starts[type]), 1);
     }
@@ -48,11 +42,14 @@ export class LevelManager {
             case EMPLOYEE_TYPE.MARKETING: realValue = value * MARKETING_RATIO / GLOBAL_PROGRESS_EARN; break;
             case EMPLOYEE_TYPE.SALE: realValue = value * SALE_RATIO / GLOBAL_PROGRESS_EARN; break;
         }
-        debugger;
         this.levels[type].add(realValue, time);
     }
 
     update() {
+        this.levels[EMPLOYEE_TYPE.DEVELOPER].update();
+        this.levels[EMPLOYEE_TYPE.MARKETING].update();
+        this.levels[EMPLOYEE_TYPE.SALE].update();
+
         if (this.levels[EMPLOYEE_TYPE.DEVELOPER].getValue() >= this.getGoal(EMPLOYEE_TYPE.DEVELOPER) &&
             this.levels[EMPLOYEE_TYPE.MARKETING].getValue() >= this.getGoal(EMPLOYEE_TYPE.MARKETING) &&
             this.levels[EMPLOYEE_TYPE.SALE].getValue() >= this.getGoal(EMPLOYEE_TYPE.SALE)) {

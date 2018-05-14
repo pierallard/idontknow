@@ -60,6 +60,9 @@ export class PieChart implements Tooltipable {
     update() {
         if (this.human) {
             if (this.shouldRefreshData) {
+                this.data.forEach((part) => {
+                    part.update();
+                });
                 this.refreshData();
             }
             if (this.shouldRefreshPieChart) {
@@ -114,7 +117,6 @@ export class PieChart implements Tooltipable {
                     PieChart.getColor(state),
                     HumanStateManager.getStr(state)
                 );
-                pieChartPart.create(this.game);
                 this.data.push(pieChartPart);
             }
         });
@@ -187,8 +189,8 @@ class PieChartPart {
         this.text= text;
     }
 
-    create(game: Phaser.Game) {
-        this.value.create(game);
+    update() {
+        this.value.update();
     }
 
     getValue(): number {

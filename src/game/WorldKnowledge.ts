@@ -132,8 +132,6 @@ export class WorldKnowledge {
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}) {
         this.game = game;
         this.groups = groups;
-        this.wallet.create(game);
-        this.levelManager.create(game);
         const floorGroup = groups[GROUP_FLOOR];
         const noname = groups[GROUP_OBJECTS_AND_HUMANS];
 
@@ -156,6 +154,7 @@ export class WorldKnowledge {
     }
 
     update() {
+        this.wallet.update();
         this.humanRepository.update();
         if (this.levelManager.update()) {
             this.addMoneyInWallet(this.levelManager.getEarnedMoney());
@@ -486,7 +485,6 @@ export class WorldKnowledge {
     }
 
     addProgress(type: EMPLOYEE_TYPE, value: number, time: number) {
-        debugger;
         this.levelManager.addLevelProgress(type, value, time);
         if (type === EMPLOYEE_TYPE.SALE) {
             this.addMoneyInWallet(new Price(value * this.levelManager.getSoftwarePrice().getValue()), time);
