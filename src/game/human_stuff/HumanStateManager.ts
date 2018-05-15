@@ -16,6 +16,7 @@ import {SitTalkState} from "../human_states/SitTalkState";
 import {MeetingTable} from "../objects/MeetingTable";
 import {RageState} from "../human_states/RageState";
 import {SitPlay} from "../human_states/SitPlay";
+import {ObjectDescriptionRegistry} from "../objects/ObjectDescriptionRegistry";
 
 const LIMIT = 0.8;
 
@@ -111,9 +112,7 @@ export class HumanStateManager {
             }
         }
 
-        if (this.state.start(game)) {
-            // OK !
-        } else {
+        if (!this.state.start(game)) {
             console.log('State ' + this.state.constructor.name + ' failed to start. Rage!');
             this.state = new RageState(this.human, this.state);
             this.state.start(game);
@@ -140,7 +139,6 @@ export class HumanStateManager {
         }
 
         debugger;
-
     }
 
     getNextProbabilities(): {[index: number]: number} {
@@ -153,17 +151,19 @@ export class HumanStateManager {
             states[STATE.SIT_TALK] = this.getProbability(STATE.SIT_TALK);
         }
 
-        if (this.worldKnowledge.getAnotherFreeHuman(this.human) !== null) {
+        if (this.worldKnowledge.getHumanCount() > 1) {
             states[STATE.TALK] = this.getProbability(STATE.TALK);
         }
-
         states[STATE.TYPE] = this.getProbability(STATE.TYPE);
         states[STATE.COFFEE] = this.getProbability(STATE.COFFEE);
         states[STATE.SIT] = this.getProbability(STATE.SIT);
         states[STATE.FREEZE] = this.getProbability(STATE.FREEZE);
         states[STATE.MOVE_RANDOM] = this.getProbability(STATE.MOVE_RANDOM);
         states[STATE.SMOKE] = this.getProbability(STATE.SMOKE);
-        states[STATE.SIT_PLAY] = this.getProbability(STATE.SIT_PLAY);
+
+        if (this.worldKnowledge.getLevel() >= ObjectDescriptionRegistry.getObjectDescription('Meeting Table').getMinLevel()) {
+            states[STATE.SIT_PLAY] = this.getProbability(STATE.SIT_PLAY);
+        }
 
         return states;
     }

@@ -2,12 +2,12 @@ export class SmoothValue {
     private value: number;
     private maxValue: number = null;
     private minValue: number = null;
-    private toto: {value: number, remainingTime: number}[];
+    private pendingDiffs: {value: number, remainingTime: number}[];
     private lastUpdate: number;
 
     constructor(value: number) {
         this.value = value;
-        this.toto = [];
+        this.pendingDiffs = [];
         this.lastUpdate = (new Date()).getTime();
     }
 
@@ -15,27 +15,22 @@ export class SmoothValue {
         let i = 0;
         const diffTime = (new Date()).getTime() - this.lastUpdate;
         let changed = false;
-        while (i < this.toto.length) {
-            const tata = this.toto[i];
-            if (tata.remainingTime <= diffTime) {
-                this.value += tata.value;
-                this.toto.splice(i, 1);
+        while (i < this.pendingDiffs.length) {
+            const pendingDiff = this.pendingDiffs[i];
+            if (pendingDiff.remainingTime <= diffTime) {
+                this.value += pendingDiff.value;
+                this.pendingDiffs.splice(i, 1);
             } else {
-                const diffValue = tata.value / tata.remainingTime * diffTime
+                const diffValue = pendingDiff.value / pendingDiff.remainingTime * diffTime
                 this.value += diffValue;
-                this.toto[i].value -= diffValue;
-                this.toto[i].remainingTime -= diffTime;
+                this.pendingDiffs[i].value -= diffValue;
+                this.pendingDiffs[i].remainingTime -= diffTime;
                 i++;
             }
             changed = true;
         }
         if (changed) {
-            if (this.maxValue && this.value > this.maxValue) {
-                this.value = this.maxValue;
-            }
-            if (this.minValue && this.value < this.minValue) {
-                this.value = this.minValue;
-            }
+            this.checkBounds();
         }
         this.lastUpdate = (new Date()).getTime();
     }
@@ -45,10 +40,15 @@ export class SmoothValue {
     }
 
     add(value: number, milliseconds: number = Phaser.Timer.SECOND) {
-        this.toto.push({
-            value: value,
-            remainingTime: milliseconds
-        });
+        if (milliseconds <= 0) {
+            this.value += value;
+            this.checkBounds();
+        } else {
+            this.pendingDiffs.push({
+                value: value,
+                remainingTime: milliseconds
+            });
+        }
     }
 
     setMaxValue(number: number) {
@@ -61,5 +61,14 @@ export class SmoothValue {
 
     setValue(number: number) {
         this.add(number - this.value);
+    }
+
+    private checkBounds() {
+        if (this.maxValue && this.value > this.maxValue) {
+            this.value = this.maxValue;
+        }
+        if (this.minValue && this.value < this.minValue) {
+            this.value = this.minValue;
+        }
     }
 }

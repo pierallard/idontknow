@@ -16,5 +16,5 @@ export interface HumanState {
     stop(): void;
     getState(): STATE;
     getRageImage(): RAGE_IMAGE;
-    getRemainingSeconds(): number;
+    getDescription(): string;
 }

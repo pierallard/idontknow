@@ -383,14 +383,7 @@ export class Employee {
         ObjectSelector.click(this.sprite, null, [this.sprite]);
     }
 
-    /**
-     * TODO Should be more complete...
-     * @returns {number}
-     */
-    getProgressCoeff() {
-        let result = 1;
-        result = result * ((XP_MAX - XP_MIN) * this.humanProperties.getExperience() + XP_MIN);
-
-        return result;
+    getExperienceRatio() {
+        return ((XP_MAX - XP_MIN) * this.humanProperties.getExperience() + XP_MIN);
     }
 }

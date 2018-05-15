@@ -19,6 +19,10 @@ export class MoveRandomState extends AbstractState {
         }
     }
 
+    getDescription(): string {
+        return 'Stretching his legs';
+    }
+
     getNextState(): HumanState {
         return (this.active && this.human.getPosition().x !== this.goal.x ||
             this.human.getPosition().y !== this.goal.y ||
@@ -29,7 +33,6 @@ export class MoveRandomState extends AbstractState {
         super.start(game);
 
         if (!this.human.moveTo(this.goal)) {
-            this.startTimer(this.human.getMoveTime());
             this.stop();
             return false;
         }

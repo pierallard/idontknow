@@ -39,8 +39,10 @@ export class InfoPanel {
 
     update() {
         if (this.visible) {
-            const lastMoods = this.worldKnowledge.getLastMoods();
-            InfoPanel.drawChart(this.moods, [lastMoods], 1, [null]);
+            //const lastMoods = this.worldKnowledge.getLastMoods();
+            //InfoPanel.drawChart(this.moods, [lastMoods], 1, [null]);
+            const lastLevels = this.worldKnowledge.getLastEmployeesLevel();
+            InfoPanel.drawChart(this.moods, lastLevels, null, [COLOR.LIGHT_GREEN, COLOR.RED, COLOR.ROSE]);
 
             const lastEmployees = this.worldKnowledge.getLastEmployeesCount();
             InfoPanel.drawChart(this.employees, lastEmployees, null, [COLOR.LIGHT_GREEN, COLOR.RED, COLOR.ROSE]);

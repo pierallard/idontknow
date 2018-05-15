@@ -1,5 +1,5 @@
 import {HumanState} from "./HumanState";
-import {STATE} from "../human_stuff/HumanStateManager";
+import {HumanStateManager, STATE} from "../human_stuff/HumanStateManager";
 import {Employee} from "../human_stuff/Employee";
 import {RAGE_IMAGE} from "../human_stuff/ThoughtBubble";
 
@@ -8,13 +8,11 @@ export abstract class AbstractState implements HumanState {
     protected active: boolean;
     protected game: Phaser.Game;
     protected human: Employee;
-    protected remainingTime: number;
 
     constructor(human: Employee) {
         this.events = [];
         this.active = false;
         this.human = human;
-        this.remainingTime = null;
     }
 
     getNextState(): HumanState {
@@ -35,16 +33,7 @@ export abstract class AbstractState implements HumanState {
         this.active = false;
     }
 
-    protected startTimer(value: number) {
-        this.remainingTime = value;
-        this.game.time.events.loop(Phaser.Timer.SECOND, () => {
-            this.remainingTime = Math.max(this.remainingTime - Phaser.Timer.SECOND, 0);
-        }, this);
-    }
-
-    getRemainingSeconds(): number {
-        return Math.round(this.remainingTime / Phaser.Timer.SECOND);
-    }
+    abstract getDescription(): string;
 
     abstract getState(): STATE;
 

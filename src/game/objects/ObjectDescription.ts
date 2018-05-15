@@ -13,6 +13,8 @@ export class ObjectDescription {
     private bottomInteractivePoints: InteractivePoint[];
     private topInteractivePoints: InteractivePoint[];
     private price: Price;
+    private ambiance: number;
+    private radius: number;
 
     constructor(
         name: string,
@@ -22,7 +24,9 @@ export class ObjectDescription {
         topOrientedSpriteInfos: SpriteInfo[],
         bottomInteractivePoints: InteractivePoint[],
         topInteractivePoints: InteractivePoint[],
-        price: Price
+        price: Price,
+        ambiance: number = null,
+        radius: number = 1
     ) {
         this.name = name;
         this.minLevel = minLevel;
@@ -32,6 +36,8 @@ export class ObjectDescription {
         this.bottomInteractivePoints = bottomInteractivePoints;
         this.topInteractivePoints = topInteractivePoints;
         this.price = price;
+        this.ambiance = ambiance;
+        this.radius = radius;
     }
 
     getName() {
@@ -102,5 +108,13 @@ export class ObjectDescription {
 
     getMinLevel(): number {
         return this.minLevel;
+    }
+
+    getRadius(): number {
+        return this.radius;
+    }
+
+    getAmbiance(): number {
+        return this.ambiance;
     }
 }

@@ -56,6 +56,18 @@ export class TalkState extends AbstractState {
         return super.getNextState();
     }
 
+    getDescription() {
+        if (!this.meetingStarted) {
+            if (this.human.isMoving()) {
+                return 'is looking for a place to talk';
+            } else {
+                return 'is waiting for somebody to talk';
+            }
+        } else {
+            return 'is talking';
+        }
+    }
+
     private switchAnimation(animation: ANIMATION) {
         const direction = Direction.getNeighborDirection(
             this.human.getPosition(),
@@ -77,6 +89,9 @@ export class TalkState extends AbstractState {
 
     start(game: Phaser.Game): boolean {
         super.start(game);
+        if (this.anotherHuman === null) {
+            return false;
+        }
 
         if (this.meeting === null) {
             this.meeting = new Meeting(

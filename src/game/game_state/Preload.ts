@@ -33,6 +33,7 @@ export default class Preload extends Phaser.State {
             })
         });
         this.game.load.spritesheet('casedefault', 'assets/casedefault.png', 40, 19);
+        this.game.load.spritesheet('ambiance', 'assets/ambiance.png', 40, 19);
         this.game.load.spritesheet('woodcell', 'assets/woodcell.png', 40, 19);
         this.game.load.spritesheet('case_floortile', 'assets/case_floortile.png', 40, 19);
         this.game.load.spritesheet('chair', 'assets/chair.png', 40, 40);
@@ -67,6 +68,8 @@ export default class Preload extends Phaser.State {
         this.game.load.spritesheet('tv_reverse', 'assets/tv_reverse.png', 24, 35);
         this.game.load.spritesheet('tv', 'assets/tv.png', 24, 35);
         this.game.load.spritesheet('info', 'assets/info.png', 12, 12);
+        this.game.load.spritesheet('lamp', 'assets/lamp.png', 40, 50);
+        this.game.load.spritesheet('lamp_reverse', 'assets/lamp_reverse.png', 40, 50);
     }
 
     private loadFonts() {

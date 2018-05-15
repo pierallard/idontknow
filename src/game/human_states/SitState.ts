@@ -44,6 +44,14 @@ export class SitState extends MoveThenActAbstractState {
         return STATE.SIT;
     }
 
+    getDescription(): string {
+        if (!this.isHumanOnTheRightCell) {
+            return super.getDescription();
+        } else {
+            return 'is resting';
+        }
+    }
+
     protected subGetRageImage(): RAGE_IMAGE {
         return RAGE_IMAGE.SLEEP;
     }

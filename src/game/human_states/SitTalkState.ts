@@ -36,6 +36,18 @@ export class SitTalkState extends AbstractState {
         this.isHumanSit = false;
     }
 
+    getDescription(): string {
+        if (!this.isHumanOnTheRightCell) {
+            return 'Looking for a meeting table';
+        } else {
+            if (this.meetingStarted) {
+                return 'is in a meeting';
+            } else {
+                return 'is waiting for his colleagues';
+            }
+        }
+    }
+
     getNextState(): HumanState {
         if (!this.worldKnowledge.hasObject(this.table)) {
             this.active = false;

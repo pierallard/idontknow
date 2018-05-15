@@ -1,4 +1,4 @@
-import {GROUP_INTERFACE, GROUP_OBJECTS_AND_HUMANS} from "../game_state/Play";
+import {GROUP_INFOS, GROUP_INTERFACE, GROUP_OBJECTS_AND_HUMANS} from "../game_state/Play";
 import {ObjectDescriptionRegistry} from "./ObjectDescriptionRegistry";
 import {DIRECTION} from "../Direction";
 import {WorldKnowledge} from "../WorldKnowledge";
@@ -8,6 +8,7 @@ import {Employee} from "../human_stuff/Employee";
 import {ObjectOrientation} from "./ObjectOrientation";
 import {COLOR} from "../Pico8Colors";
 import {ObjectDescription} from "./ObjectDescription";
+import {ObjectDeleter} from "./ObjectDeleter";
 
 export const SPRITE_DEBUG = false;
 
@@ -54,6 +55,8 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
 
             groups[GROUP_OBJECTS_AND_HUMANS].add(sprite);
         });
+
+        ObjectDeleter.makeDeletable(this, game, groups[GROUP_INFOS]);
 
         if (SPRITE_DEBUG) {
             this.debugGraphics = game.add.graphics(0, 0, groups[GROUP_INTERFACE]);

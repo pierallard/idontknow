@@ -49,6 +49,14 @@ export class SitPlay extends MoveThenActAbstractState {
         }, this));
     }
 
+    getDescription(): string {
+        if (!this.isHumanOnTheRightCell) {
+            return super.getDescription();
+        } else {
+            return 'is playing';
+        }
+    }
+
     protected getRetryState(): HumanState {
         return new SitPlay(this.human, this.worldKnowledge, this.tries + 1)
     }

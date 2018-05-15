@@ -46,7 +46,9 @@ export class ObjectDescriptionRegistry {
                 [
                     new InteractivePoint([DIRECTION.TOP], new PIXI.Point(5, -CELL_HEIGHT + 3))
                 ],
-                new Price(70)
+                new Price(70),
+                -0.1,
+                5
             )
         );
         this.objectDescriptions.push(
@@ -62,7 +64,9 @@ export class ObjectDescriptionRegistry {
                     new InteractivePoint([DIRECTION.LEFT, DIRECTION.TOP, DIRECTION.RIGHT, DIRECTION.BOTTOM], new PIXI.Point(0, -7), new PIXI.Point(0, 0), null, false)
                 ],
                 [],
-                new Price(10)
+                new Price(20),
+                0.1,
+                5
             )
         );
         this.objectDescriptions.push(
@@ -84,7 +88,7 @@ export class ObjectDescriptionRegistry {
                 [
                     new InteractivePoint([DIRECTION.BOTTOM, DIRECTION.LEFT, DIRECTION.RIGHT], new PIXI.Point(-3, -8), new PIXI.Point(0, 0), false, true),
                 ],
-                new Price(20)
+                new Price(90)
             )
         );
         this.objectDescriptions.push(
@@ -115,7 +119,7 @@ export class ObjectDescriptionRegistry {
                     new InteractivePoint([DIRECTION.BOTTOM, DIRECTION.RIGHT], new PIXI.Point(4, -7), new PIXI.Point(0, 0), true, true),
                 ],
                 [],
-                new Price(12)
+                new Price(150),
             )
         );
         this.objectDescriptions.push(
@@ -143,7 +147,9 @@ export class ObjectDescriptionRegistry {
                     new InteractivePoint([DIRECTION.TOP], new PIXI.Point(-1, -8), new PIXI.Point(0, 0), false, true),
                     new InteractivePoint([DIRECTION.TOP], new PIXI.Point(-1, -8), new PIXI.Point(1, 0), false, true),
                 ],
-                new Price(10)
+                new Price(170),
+                0.2,
+                5
             )
         );
         this.objectDescriptions.push(
@@ -175,7 +181,23 @@ export class ObjectDescriptionRegistry {
                     new InteractivePoint([DIRECTION.TOP, DIRECTION.RIGHT], new PIXI.Point(-1 - CELL_WIDTH/2, -8 + CELL_HEIGHT/2), new PIXI.Point(0, 1), false, true),
                     new InteractivePoint([DIRECTION.TOP, DIRECTION.LEFT], new PIXI.Point(-1 - CELL_WIDTH/2, -8 + CELL_HEIGHT/2), new PIXI.Point(1, 1), false, true),
                 ],
-                new Price(10)
+                new Price(1950),
+                -0.3,
+                5
+            )
+        );
+        this.objectDescriptions.push(
+            new ObjectDescription(
+                'Lamp',
+                1,
+                [new PIXI.Point(0, 0)],
+                [new SpriteInfo('lamp')],
+                [new SpriteInfo('lamp_reverse')],
+                [],
+                [],
+                new Price(100),
+                0.1,
+                5
             )
         )
     }

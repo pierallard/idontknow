@@ -13,7 +13,6 @@ export class SmokeState extends AbstractState {
         super.start(game);
 
         const time = Phaser.Math.random(1, 3) * HumanAnimationManager.getAnimationTime(ANIMATION.SMOKE);
-        this.startTimer(time);
 
         game.time.events.add(time, () => {
             this.active = false;
@@ -25,5 +24,9 @@ export class SmokeState extends AbstractState {
 
     getState(): STATE {
         return STATE.SMOKE;
+    }
+
+    getDescription(): string {
+        return 'is smoking'
     }
 }

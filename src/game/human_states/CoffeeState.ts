@@ -35,6 +35,14 @@ export class CoffeeState extends MoveThenActAbstractState {
         return STATE.COFFEE;
     }
 
+    getDescription(): string {
+        if (!this.isHumanOnTheRightCell) {
+            return super.getDescription();
+        } else {
+            return 'Takes a coffee';
+        }
+    }
+
     protected subGetRageImage(): RAGE_IMAGE {
         return RAGE_IMAGE.COFFEE;
     }

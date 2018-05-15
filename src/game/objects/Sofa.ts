@@ -5,12 +5,6 @@ import {GROUP_INFOS} from "../game_state/Play";
 import {DeletableObjectInterface} from "./DeletableObjectInterface";
 
 export class Sofa extends AbstractObject implements InteractiveObjectInterface, DeletableObjectInterface {
-    create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}) {
-        super.create(game, groups);
-
-        ObjectDeleter.makeDeletable(this, game, groups[GROUP_INFOS]);
-    }
-
     forceLeftOrientation(interactivePointIdentifier: number): boolean {
         return null;
     }

@@ -35,8 +35,6 @@ export abstract class MoveThenActAbstractState extends AbstractState {
             return false;
         }
 
-        this.startTimer(this.human.getMoveTime() + this.getActTime());
-
         return true;
     }
 
@@ -56,6 +54,10 @@ export abstract class MoveThenActAbstractState extends AbstractState {
         }
 
         return super.getNextState();
+    }
+
+    getDescription(): string {
+        return 'Looking for ' + this.objectReferer.getObject().getDescription().getName();
     }
 
     private isNeighborPosition() {

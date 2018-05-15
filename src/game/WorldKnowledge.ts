@@ -29,6 +29,8 @@ import {Console} from "./objects/Console";
 import {Floor} from "./Floor";
 import {InfoBox} from "./user_interface/Infobox";
 import {ObjectDescriptionRegistry} from "./objects/ObjectDescriptionRegistry";
+import {EmployeeLevelRegister} from "./human_stuff/EmployeeLevelRegister";
+import {Lamp} from "./objects/Lamp";
 
 export const GRID_WIDTH = 37;
 export const GRID_HEIGHT = 15;
@@ -44,6 +46,7 @@ export class WorldKnowledge {
     private groups: {[index: string] : Phaser.Group};
     private moodRegister: MoodRegister;
     private employeeCountRegister: EmployeeCountRegister;
+    private levelRegister: EmployeeLevelRegister;
     private levelManager: LevelManager;
     private wallet: SmoothValue;
     private userInterface: UserInterface;
@@ -106,7 +109,7 @@ export class WorldKnowledge {
                 const wallCell = wallLine[wallLine.length - 1 - x];
                 const floorCell = floorLine[floorLine.length - 1 - x];
                 if (floorCell !== ' ') {
-                    this.cells.push(new Cell(new PIXI.Point(x, y)));
+                    this.cells.push(new Cell(this, new PIXI.Point(x, y)));
                 }
                 if (floorCell === '.') {
                     this.floors.push(new Floor(new PIXI.Point(x, y), 'woodcell'));
@@ -126,7 +129,7 @@ export class WorldKnowledge {
         this.humanRepository = new HumanRepository(this);
         this.moodRegister = new MoodRegister(this.humanRepository);
         this.employeeCountRegister = new EmployeeCountRegister(this.humanRepository);
-
+        this.levelRegister = new EmployeeLevelRegister(this.levelManager);
     }
 
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}) {
@@ -140,7 +143,7 @@ export class WorldKnowledge {
         });
 
         this.cells.forEach((cell: Cell) => {
-            cell.create(game, floorGroup);
+            cell.create(game, groups);
         });
 
         this.objects.forEach((object: ObjectInterface) => {
@@ -151,6 +154,7 @@ export class WorldKnowledge {
         this.humanRepository.create(game, groups, this);
         this.moodRegister.create(game);
         this.employeeCountRegister.create(game);
+        this.levelRegister.create(game);
     }
 
     update() {
@@ -160,6 +164,9 @@ export class WorldKnowledge {
             this.addMoneyInWallet(this.levelManager.getEarnedMoney());
             this.displayLevelInfoBox();
         }
+        this.cells.forEach((cell) => {
+            cell.update();
+        });
     }
 
     humanMoved() {
@@ -459,6 +466,7 @@ export class WorldKnowledge {
             case 'Meeting Table': object = new MeetingTable(position, this, orientation); break;
             case 'Couch': object = new Couch(position, this, orientation); break;
             case 'Console': object = new Console(position, this, orientation); break;
+            case 'Lamp': object = new Lamp(position, this, orientation); break;
             default: throw 'Unknown object ' + name;
         }
         this.objects.push(object);
@@ -541,6 +549,10 @@ export class WorldKnowledge {
         return this.employeeCountRegister.getLastCounts();
     }
 
+    getLastEmployeesLevel(): number[][] {
+        return this.levelRegister.getLastCounts();
+    }
+
     // pause() {
     //     this.humanRepository.humans.forEach((human) => {
     //         human.pause();
@@ -600,5 +612,28 @@ export class WorldKnowledge {
             'Oh yeah!'
         );
         infoBox.create(this.game, this.groups);
+    }
+
+    getHumanCount() {
+        return this.humanRepository.humans.length;
+    }
+
+    getAmbiance(cell: PIXI.Point): number {
+        let result = 1;
+        this.objects.forEach((object) => {
+            let ambiance = object.getDescription().getAmbiance();
+            if (ambiance) {
+                let distance = Math.sqrt(
+                    (cell.x - object.getOrigin().x) * (cell.x - object.getOrigin().x) +
+                    (cell.y - object.getOrigin().y) * (cell.y - object.getOrigin().y)
+                );
+                let maxDistance = object.getDescription().getRadius();
+                if (distance < maxDistance) {
+                    result += ambiance * (maxDistance - distance) / maxDistance;
+                }
+            }
+        });
+
+        return Math.min(2, Math.max(0, result));
     }
 }

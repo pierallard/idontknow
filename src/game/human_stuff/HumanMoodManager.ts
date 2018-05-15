@@ -1,7 +1,7 @@
 import {HumanStateManager, STATE} from "./HumanStateManager";
 import {SmoothValue} from "../SmoothValue";
 
-const LOSS = -0.05;
+const LOSS = -0.025;
 const DEFAULT = 0.8;
 const TIME_BETWEEN_LOSS = 10000;
 

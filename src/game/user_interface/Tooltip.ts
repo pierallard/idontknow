@@ -27,6 +27,11 @@ export class Tooltip {
         return this;
     }
 
+    destroy() {
+        this.box.destroy(true);
+        this.text.destroy(true);
+    }
+
     update() {
         if (this.text.alpha > 0) {
             this.text.text = this.getValueFunction.call(this.tooltipable);

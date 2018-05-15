@@ -5,6 +5,7 @@ import {CELL_HEIGHT} from "../PositionTransformer";
 import {InfoBox} from "../user_interface/Infobox";
 
 export const GROUP_FLOOR = 'floor';
+export const GROUP_AMBIANCE = 'ambiance';
 export const GROUP_OBJECTS_AND_HUMANS = 'objects_and_humans';
 export const GROUP_INFOS = 'infos';
 export const GROUP_INTERFACE = 'interface';
@@ -19,7 +20,11 @@ export default class Play extends Phaser.State {
     private downKey: Phaser.Key;
     private leftKey: Phaser.Key;
     private rightKey: Phaser.Key;
-    private pauseKey: Phaser.Key;
+    private zKey: Phaser.Key;
+    private sKey: Phaser.Key;
+    private qKey: Phaser.Key;
+    private dKey: Phaser.Key;
+    // private pauseKey: Phaser.Key;
     // private isPaused: boolean;
 
     constructor() {
@@ -35,6 +40,7 @@ export default class Play extends Phaser.State {
         this.game.stage.backgroundColor = "#494947";
         this.groups = {};
         this.groups[GROUP_FLOOR] = this.game.add.group();
+        this.groups[GROUP_AMBIANCE] = this.game.add.group();
         this.groups[GROUP_OBJECTS_AND_HUMANS] =  this.game.add.group();
         this.groups[GROUP_INFOS] = this.game.add.group();
         this.groups[GROUP_INTERFACE] = this.game.add.group();
@@ -54,7 +60,12 @@ export default class Play extends Phaser.State {
         this.downKey = this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
         this.leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
         this.rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-        this.pauseKey = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
+        this.zKey = this.game.input.keyboard.addKey(Phaser.Keyboard.Z);
+        this.sKey = this.game.input.keyboard.addKey(Phaser.Keyboard.S);
+        this.qKey = this.game.input.keyboard.addKey(Phaser.Keyboard.Q);
+        this.dKey = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
+
+        // this.pauseKey = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
         // const text = this.game.add.bitmapText(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + 60, 2, 'retro_computer','Bitmap Fonts!',7, this.groups[GROUP_INTERFACE]);
 
         const infobox = new InfoBox(
@@ -93,16 +104,16 @@ export default class Play extends Phaser.State {
         //     }
         // }
 
-        if (this.upKey.isDown) {
+        if (this.upKey.isDown || this.zKey.isDown) {
             this.game.camera.setPosition(this.game.camera.position.x, this.game.camera.position.y - CAMERA_GAP);
         }
-        else if (this.downKey.isDown) {
+        else if (this.downKey.isDown || this.sKey.isDown) {
             this.game.camera.setPosition(this.game.camera.position.x, this.game.camera.position.y + CAMERA_GAP);
         }
-        if (this.leftKey.isDown) {
+        if (this.leftKey.isDown || this.qKey.isDown) {
             this.game.camera.setPosition(this.game.camera.position.x - CAMERA_GAP, this.game.camera.position.y);
         }
-        else if (this.rightKey.isDown) {
+        else if (this.rightKey.isDown || this.dKey.isDown) {
             this.game.camera.setPosition(this.game.camera.position.x + CAMERA_GAP, this.game.camera.position.y);
         }
 

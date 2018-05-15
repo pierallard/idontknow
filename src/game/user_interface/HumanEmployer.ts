@@ -249,6 +249,9 @@ class ApplicantButton implements Tooltipable {
         this.stars.forEach((star) => {
             star.destroy(true);
         });
+        this.tooltips.forEach((tooltip) => {
+            tooltip.destroy();
+        });
     }
 
     private drawStars(game: Phaser.Game, key: string, value: number, left: number, top: number, group): Phaser.Sprite[] {
