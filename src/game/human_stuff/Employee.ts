@@ -24,6 +24,9 @@ import {HumanState} from "../human_states/HumanState";
 const MAX_WALK_CELL_DURATION = 1500;
 const MIN_WALK_CELL_DURATION = 800;
 
+const XP_MIN = 0.5;
+const XP_MAX = 1.5;
+
 const MAX_RETRIES = 3;
 const MIN_RETRIES = 0;
 
@@ -378,5 +381,16 @@ export class Employee {
 
     select() {
         ObjectSelector.click(this.sprite, null, [this.sprite]);
+    }
+
+    /**
+     * TODO Should be more complete...
+     * @returns {number}
+     */
+    getProgressCoeff() {
+        let result = 1;
+        result = result * ((XP_MAX - XP_MIN) * this.humanProperties.getExperience() + XP_MIN);
+
+        return result;
     }
 }

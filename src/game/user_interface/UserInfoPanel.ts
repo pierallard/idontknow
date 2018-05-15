@@ -49,9 +49,9 @@ export class UserInfoPanel {
         this.currentState = game.add.text(left, TOP_GAP + 4 * MEDIUM_GAP_BETWEEN_LINES, '', TEXT_STYLE, groups[GROUP_INTERFACE]);
         this.wage = game.add.text(left, TOP_GAP + 5 * MEDIUM_GAP_BETWEEN_LINES, '', TEXT_STYLE, groups[GROUP_INTERFACE]);
         this.pieChart.create(game, groups);
-        this.moodRelaxationGauge.create(game, groups, new PIXI.Point(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GAUGE_GAP, TOP_GAP + MEDIUM_GAP_BETWEEN_LINES + 3.5));
-        this.moodHungerGauge.create(game, groups, new PIXI.Point(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GAUGE_GAP, TOP_GAP + 2 * MEDIUM_GAP_BETWEEN_LINES + 3.5));
-        this.moodSocialGauge.create(game, groups, new PIXI.Point(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GAUGE_GAP, TOP_GAP + 3 * MEDIUM_GAP_BETWEEN_LINES + 3.5));
+        this.moodRelaxationGauge.create(game, groups, new PIXI.Point(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GAUGE_GAP, TOP_GAP + MEDIUM_GAP_BETWEEN_LINES + 2.5));
+        this.moodHungerGauge.create(game, groups, new PIXI.Point(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GAUGE_GAP, TOP_GAP + 2 * MEDIUM_GAP_BETWEEN_LINES + 2.5));
+        this.moodSocialGauge.create(game, groups, new PIXI.Point(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GAUGE_GAP, TOP_GAP + 3 * MEDIUM_GAP_BETWEEN_LINES + 2.5));
     }
 
     update() {

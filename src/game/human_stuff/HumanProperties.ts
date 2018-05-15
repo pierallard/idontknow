@@ -7,7 +7,7 @@ export const DAY_DURATION = 60 * Phaser.Timer.SECOND;
 
 export class HumanProperties {
     private speed: number;
-    private quality: number;
+    private experience: number;
     private type: EMPLOYEE_TYPE;
     private name: string;
     private perseverance: number;
@@ -26,7 +26,7 @@ export class HumanProperties {
         this.type = type;
         this.name = name;
         this.speed = speed;
-        this.quality = quality;
+        this.experience = quality;
         this.perseverance = perseverance;
         this.wage = this.computeWage();
     }
@@ -67,12 +67,12 @@ export class HumanProperties {
         return this.wage;
     }
 
-    getQuality(): number {
-        return this.quality;
+    getExperience(): number {
+        return this.experience;
     }
 
     private computeWage() {
-        return (this.speed + this.perseverance + 2 * this.quality) / 4;
+        return (this.speed + this.perseverance + 2 * this.experience) / 4;
     }
 
     getRealWage(): Price {

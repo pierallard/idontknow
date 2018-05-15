@@ -484,9 +484,9 @@ export class WorldKnowledge {
         return this.levelManager.getLevelProgress(type);
     }
 
-    addProgress(type: EMPLOYEE_TYPE, value: number, time: number) {
-        this.levelManager.addLevelProgress(type, value, time);
-        if (type === EMPLOYEE_TYPE.SALE) {
+    addProgress(employee: Employee, value: number, time: number) {
+        this.levelManager.addLevelProgress(employee.getType(), value, time);
+        if (employee.getType() === EMPLOYEE_TYPE.SALE) {
             this.addMoneyInWallet(new Price(value * this.levelManager.getSoftwarePrice().getValue()), time);
         }
     }

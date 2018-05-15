@@ -183,8 +183,8 @@ class ApplicantButton implements Tooltipable {
         }).setInput(this, this.drawStars(game, 'coin', this.humanProperties.getWage(), left + OBJECT_SELLER_CELL_SIZE + 2, top + 18, groups[GROUP_INTERFACE]))
             .create(game, groups));
         this.tooltips.push(new Tooltip(() => {
-            return 'Exp: ' + Math.round(this.humanProperties.getQuality() * 100) + '%';
-        }).setInput(this, this.drawStars(game, 'star', this.humanProperties.getQuality(), left + OBJECT_SELLER_CELL_SIZE + 55, top + 18, groups[GROUP_INTERFACE]))
+            return 'Exp: ' + Math.round(this.humanProperties.getExperience() * 100) + '%';
+        }).setInput(this, this.drawStars(game, 'star', this.humanProperties.getExperience(), left + OBJECT_SELLER_CELL_SIZE + 55, top + 18, groups[GROUP_INTERFACE]))
             .create(game, groups));
         this.tooltips.push(new Tooltip(() => {
             return 'Speed: ' + Math.round(this.humanProperties.getSpeed() * 100) + '%';
