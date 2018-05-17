@@ -31,6 +31,7 @@ import {InfoBox} from "./user_interface/Infobox";
 import {ObjectDescriptionRegistry} from "./objects/ObjectDescriptionRegistry";
 import {EmployeeLevelRegister} from "./human_stuff/EmployeeLevelRegister";
 import {Lamp} from "./objects/Lamp";
+import {Printer} from "./objects/Printer";
 
 export const GRID_WIDTH = 37;
 export const GRID_HEIGHT = 15;
@@ -51,8 +52,10 @@ export class WorldKnowledge {
     private wallet: SmoothValue;
     private userInterface: UserInterface;
     private floors: Floor[];
+    private displayAmbiance: boolean;
 
     constructor() {
+        this.displayAmbiance = false;
         this.cells = [];
         this.objects = [];
         this.floors = [];
@@ -467,6 +470,7 @@ export class WorldKnowledge {
             case 'Couch': object = new Couch(position, this, orientation); break;
             case 'Console': object = new Console(position, this, orientation); break;
             case 'Lamp': object = new Lamp(position, this, orientation); break;
+            case 'Printer': object = new Printer(position, this, orientation); break;
             default: throw 'Unknown object ' + name;
         }
         this.objects.push(object);
@@ -600,15 +604,19 @@ export class WorldKnowledge {
             }
         });
 
-        const infoBox = new InfoBox(
-            'Next level!',
-            [
-                'Congratulations! You reached the level ' + this.getLevel() + '!',
-                'Next goals:'
-            ].concat(strings).concat([
+        let text = [
+            'Congratulations! You reached the level ' + this.getLevel() + '!',
+            'Next goals:'
+        ].concat(strings);
+        if (availables.length > 0) {
+            text = text.concat([
                 '',
                 'Now available:'
-            ]).concat(availables),
+            ]).concat(availables);
+        }
+        const infoBox = new InfoBox(
+            'Next level!',
+            text,
             'Oh yeah!'
         );
         infoBox.create(this.game, this.groups);
@@ -635,5 +643,13 @@ export class WorldKnowledge {
         });
 
         return Math.min(2, Math.max(0, result));
+    }
+
+    getAmbianceDisplayed(): boolean {
+        return this.displayAmbiance;
+    }
+
+    setAmbianceDisplayed(value: boolean): void {
+        this.displayAmbiance = value;
     }
 }

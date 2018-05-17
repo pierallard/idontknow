@@ -125,7 +125,7 @@ export class ObjectDescriptionRegistry {
         this.objectDescriptions.push(
             new ObjectDescription(
                 'Couch',
-                2,
+                3,
                 [
                     new PIXI.Point(0, 0),
                     new PIXI.Point(0, 1),
@@ -189,7 +189,7 @@ export class ObjectDescriptionRegistry {
         this.objectDescriptions.push(
             new ObjectDescription(
                 'Lamp',
-                1,
+                2,
                 [new PIXI.Point(0, 0)],
                 [new SpriteInfo('lamp')],
                 [new SpriteInfo('lamp_reverse')],
@@ -199,7 +199,21 @@ export class ObjectDescriptionRegistry {
                 0.1,
                 5
             )
-        )
+        );
+        this.objectDescriptions.push(
+            new ObjectDescription(
+                'Printer',
+                5,
+                [new PIXI.Point(0, 0)],
+                [new SpriteInfo('printer')],
+                [new SpriteInfo('printer_reverse')],
+                [],
+                [],
+                new Price(2000),
+                0.2,
+                5
+            )
+        );
     }
 
     static getSalableObjects(level: number): ObjectDescription[] {

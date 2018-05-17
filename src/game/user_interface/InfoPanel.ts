@@ -20,6 +20,8 @@ export class InfoPanel {
     private developerCount: Phaser.Text;
     private salesCount: Phaser.Text;
     private marketingCount: Phaser.Text;
+    private check: Phaser.Sprite;
+    private ambiance: Phaser.Text;
 
     constructor(worldKnowledge: WorldKnowledge) {
         this.worldKnowledge = worldKnowledge;
@@ -33,8 +35,26 @@ export class InfoPanel {
         this.developerCount = game.add.text(left, TOP_GAP + MEDIUM_GAP_BETWEEN_LINES, '', TEXT_STYLE, groups[GROUP_INTERFACE]);
         this.salesCount = game.add.text(left, TOP_GAP + MEDIUM_GAP_BETWEEN_LINES * 2, '', TEXT_STYLE, groups[GROUP_INTERFACE]);
         this.marketingCount = game.add.text(left, TOP_GAP + MEDIUM_GAP_BETWEEN_LINES * 3, '', TEXT_STYLE, groups[GROUP_INTERFACE]);
+        this.check = game.add.sprite(left, TOP_GAP + MEDIUM_GAP_BETWEEN_LINES * 4 + 3, 'check', 0, groups[GROUP_INTERFACE]);
+        this.ambiance = game.add.text(left + 7, TOP_GAP + MEDIUM_GAP_BETWEEN_LINES * 4, 'Ambiance', TEXT_STYLE, groups[GROUP_INTERFACE]);
         this.moods = game.add.graphics(left, top, groups[GROUP_INTERFACE]);
         this.employees = game.add.graphics(left, top + 100, groups[GROUP_INTERFACE]);
+
+        this.check.anchor.set(0, 0);
+        this.check.inputEnabled = true;
+        this.check.input.pixelPerfectOver = true;
+        this.check.input.pixelPerfectClick = true;
+        this.check.input.useHandCursor = true;
+        this.check.events.onInputDown.add(this.toggleAmbiance, this);
+    }
+
+    private toggleAmbiance() {
+        if (this.worldKnowledge.getAmbianceDisplayed()) {
+            this.check.loadTexture('check', 0);
+        } else {
+            this.check.loadTexture('check', 1);
+        }
+        this.worldKnowledge.setAmbianceDisplayed(!this.worldKnowledge.getAmbianceDisplayed());
     }
 
     update() {
@@ -62,6 +82,8 @@ export class InfoPanel {
             this.developerCount.position.x -= INTERFACE_WIDTH;
             this.salesCount.position.x -= INTERFACE_WIDTH;
             this.marketingCount.position.x -= INTERFACE_WIDTH;
+            this.check.position.x -= INTERFACE_WIDTH;
+            this.ambiance.position.x -= INTERFACE_WIDTH;
         }
         this.visible = true;
     }
@@ -74,6 +96,8 @@ export class InfoPanel {
             this.developerCount.position.x += INTERFACE_WIDTH;
             this.salesCount.position.x += INTERFACE_WIDTH;
             this.marketingCount.position.x += INTERFACE_WIDTH;
+            this.check.position.x += INTERFACE_WIDTH;
+            this.ambiance.position.x += INTERFACE_WIDTH;
         }
         this.visible = false;
     }
@@ -81,10 +105,6 @@ export class InfoPanel {
     private static drawChart(graphics: Phaser.Graphics, valuesSet: number[][], max: number = null, colors: COLOR[] = []) {
         const graphWidth = INTERFACE_WIDTH - 2 * GRAPH_GAP;
         graphics.clear();
-        graphics.lineStyle(1, COLOR.WHITE);
-        graphics.moveTo(0, 0);
-        graphics.lineTo(0, HEIGHT);
-        graphics.lineTo(graphWidth, HEIGHT);
 
         graphics.lineStyle(1, COLOR.DARK_GREY);
         for (let i = 0; i < 10; i++) {
@@ -111,6 +131,11 @@ export class InfoPanel {
                 }
             }
         }
+
+        graphics.lineStyle(1, COLOR.WHITE);
+        graphics.moveTo(0, 0);
+        graphics.lineTo(0, HEIGHT);
+        graphics.lineTo(graphWidth, HEIGHT);
     }
 
     private static getMaxFromValuesSet(valuesSet: number[][]) {

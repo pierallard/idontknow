@@ -1,4 +1,4 @@
 import {AbstractObject} from "./AbstractObject";
 
-export class Lamp extends AbstractObject {
+export class Printer extends AbstractObject {
 }

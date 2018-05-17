@@ -45,7 +45,7 @@ export class PieChart implements Tooltipable {
 
     create(game:Phaser.Game, groups: {[index: string] : Phaser.Group}) {
         this.game = game;
-        this.graphics = game.add.graphics(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH / 2, 180, groups[GROUP_INTERFACE]);
+        this.graphics = game.add.graphics(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH / 2, 200, groups[GROUP_INTERFACE]);
         this.drawPieChart();
         this.tooltip.setInput(this, [this.graphics]);
 

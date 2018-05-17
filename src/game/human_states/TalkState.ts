@@ -89,7 +89,7 @@ export class TalkState extends AbstractState {
 
     start(game: Phaser.Game): boolean {
         super.start(game);
-        if (this.anotherHuman === null) {
+        if (this.anotherHuman === null && this.meeting === null) {
             return false;
         }
 
@@ -127,6 +127,6 @@ export class TalkState extends AbstractState {
     }
 
     getRageImage(): RAGE_IMAGE {
-        return RAGE_IMAGE.PATH;
+        return RAGE_IMAGE.HUMAN;
     }
 }

@@ -2,7 +2,7 @@ import {PositionTransformer} from "./PositionTransformer";
 import {DEBUG_WORLD, WorldKnowledge} from "./WorldKnowledge";
 import {GROUP_AMBIANCE, GROUP_FLOOR} from "./game_state/Play";
 
-const ALPHA = 0.5;
+const ALPHA = 0.8;
 
 export class Cell {
     private worldKnowledge: WorldKnowledge;
@@ -60,15 +60,21 @@ export class Cell {
     }
 
     update() {
-        const ambiance = this.worldKnowledge.getAmbiance(this.position);
-        if (ambiance <= 1) {
-            this.ambianceRed.alpha = (-1 * ambiance + 1) * ALPHA;
-            this.ambianceYellow.alpha = ambiance * ALPHA;
-            this.ambianceGreen.alpha = 0;
+        if (this.worldKnowledge.getAmbianceDisplayed()) {
+            const ambiance = this.worldKnowledge.getAmbiance(this.position);
+            if (ambiance <= 1) {
+                this.ambianceRed.alpha = (-1 * ambiance + 1) * ALPHA;
+                this.ambianceYellow.alpha = ambiance * ALPHA;
+                this.ambianceGreen.alpha = 0;
+            } else {
+                this.ambianceRed.alpha = 0;
+                this.ambianceYellow.alpha = (-1 * ambiance + 2) * ALPHA;
+                this.ambianceGreen.alpha = (ambiance - 1) * ALPHA;
+            }
         } else {
             this.ambianceRed.alpha = 0;
-            this.ambianceYellow.alpha = (-1 * ambiance + 2) * ALPHA;
-            this.ambianceGreen.alpha = (ambiance - 1) * ALPHA;
+            this.ambianceYellow.alpha = 0;
+            this.ambianceGreen.alpha = 0;
         }
     }
 

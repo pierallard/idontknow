@@ -298,7 +298,7 @@ export class Employee {
     }
 
     isFree(): boolean {
-        return [STATE.MOVE_RANDOM, STATE.FREEZE, STATE.SMOKE].indexOf(this.getStateType()) > -1;
+        return [STATE.MOVE_RANDOM, STATE.FREEZE, STATE.SMOKE, STATE.RAGE].indexOf(this.getStateType()) > -1;
     }
 
     getStateType(): STATE {

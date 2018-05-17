@@ -53,4 +53,9 @@ export class RageState extends AbstractState {
     getSourceState(): HumanState {
         return this.sourceState
     }
+
+    stop(): void {
+        this.human.hideThoughtBubble();
+        super.stop();
+    }
 }

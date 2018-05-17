@@ -24,8 +24,7 @@ export class SitPlay extends MoveThenActAbstractState {
     }
 
     protected subGetRageImage(): RAGE_IMAGE {
-        // TODO Set another image!
-        return RAGE_IMAGE.SLEEP
+        return RAGE_IMAGE.CONSOLE;
     }
 
     protected act(): void {
