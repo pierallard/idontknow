@@ -214,6 +214,20 @@ export class ObjectDescriptionRegistry {
                 5
             )
         );
+        this.objectDescriptions.push(
+            new ObjectDescription(
+                'Bonzai',
+                6,
+                [new PIXI.Point(0, 0)],
+                [new SpriteInfo('bonzai')],
+                [],
+                [],
+                [],
+                new Price(3000),
+                0.3,
+                5
+            )
+        );
     }
 
     static getSalableObjects(level: number): ObjectDescription[] {

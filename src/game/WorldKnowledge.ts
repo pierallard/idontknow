@@ -32,6 +32,7 @@ import {ObjectDescriptionRegistry} from "./objects/ObjectDescriptionRegistry";
 import {EmployeeLevelRegister} from "./human_stuff/EmployeeLevelRegister";
 import {Lamp} from "./objects/Lamp";
 import {Printer} from "./objects/Printer";
+import {Bonzai} from "./objects/Bonzai";
 
 export const GRID_WIDTH = 37;
 export const GRID_HEIGHT = 15;
@@ -471,6 +472,7 @@ export class WorldKnowledge {
             case 'Console': object = new Console(position, this, orientation); break;
             case 'Lamp': object = new Lamp(position, this, orientation); break;
             case 'Printer': object = new Printer(position, this, orientation); break;
+            case 'Bonzai': object = new Bonzai(position, this, orientation); break;
             default: throw 'Unknown object ' + name;
         }
         this.objects.push(object);

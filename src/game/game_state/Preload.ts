@@ -73,6 +73,7 @@ export default class Preload extends Phaser.State {
         this.game.load.spritesheet('printer', 'assets/printer.png', 40, 35);
         this.game.load.spritesheet('printer_reverse', 'assets/printer_reverse.png', 40, 35);
         this.game.load.spritesheet('check', 'assets/check.png', 5, 5);
+        this.game.load.spritesheet('bonzai', 'assets/bonzai.png', 40, 40);
     }
 
     private loadFonts() {
