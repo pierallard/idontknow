@@ -68,18 +68,7 @@ export default class Play extends Phaser.State {
         // this.pauseKey = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
         // const text = this.game.add.bitmapText(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + 60, 2, 'retro_computer','Bitmap Fonts!',7, this.groups[GROUP_INTERFACE]);
 
-        const infobox = new InfoBox(
-            'Welcome!', [
-                'Welcome to Office Tycoon!',
-                '',
-                'You are in charge of the recruitment to run',
-                'your business.',
-                'Complete your goals for each level and you will',
-                'gain new people, new objects for your employees!',
-                'Be careful of the health of your employees, the',
-                'better they are, the better they work.'
-            ], 'OK, let\'s go!');
-        infobox.create(this.game, this.groups);
+        this.worldKnowledge.initializeInfoBox();
         this.worldKnowledge.selectFirstHuman();
     }
 

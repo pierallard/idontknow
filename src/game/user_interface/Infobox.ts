@@ -12,6 +12,8 @@ export class InfoBox {
     private textLines: string[];
     private buttonText: string;
     private elements: any;
+    private escapeKey: Phaser.Key;
+    private visible: boolean;
 
     constructor(
         title: string,
@@ -25,6 +27,9 @@ export class InfoBox {
     }
 
     create(game: Phaser.Game, groups: { [index: string]: Phaser.Group }) {
+        this.escapeKey = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
+        this.visible = true;
+
         const closableElements = [];
         const internalWidth = this.getMaxLength() * LETTER_WIDTH;
         const internalHeight = LETTER_HEIGHT * this.textLines.length + 12 + 12;
@@ -91,7 +96,14 @@ export class InfoBox {
         })
     }
 
+    update() {
+        if (this.escapeKey.isDown) {
+            this.close();
+        }
+    }
+
     private close() {
+        this.visible = false;
         this.elements.forEach((element) => {
             element.destroy(true);
         });
@@ -101,5 +113,9 @@ export class InfoBox {
         return this.textLines.concat(this.title).concat(this.buttonText).reduce((prev, str) => {
             return Math.max(prev, str.length);
         }, 0);
+    }
+
+    isVisible(): boolean {
+        return this.visible;
     }
 }

@@ -54,6 +54,7 @@ export class WorldKnowledge {
     private userInterface: UserInterface;
     private floors: Floor[];
     private displayAmbiance: boolean;
+    private infoboxes: InfoBox[];
 
     constructor() {
         this.displayAmbiance = false;
@@ -64,6 +65,7 @@ export class WorldKnowledge {
         this.levelManager = new LevelManager();
         this.depot = new Depot();
         this.wallet = new SmoothValue(1500);
+        this.infoboxes = [];
 
         const walls = "" +
             "  XXXWXXXXXWXXXXXXXXXXXXXWXXXXXWXXX  \n" +
@@ -171,6 +173,16 @@ export class WorldKnowledge {
         this.cells.forEach((cell) => {
             cell.update();
         });
+
+
+        for (let i = 0; i < this.infoboxes.length; i++) {
+            if (this.infoboxes[i].isVisible()) {
+                this.infoboxes[i].update();
+            } else {
+                this.infoboxes.splice(i, 1);
+                i--;
+            }
+        }
     }
 
     humanMoved() {
@@ -622,6 +634,7 @@ export class WorldKnowledge {
             'Oh yeah!'
         );
         infoBox.create(this.game, this.groups);
+        this.infoboxes.push(infoBox);
     }
 
     getHumanCount() {
@@ -653,5 +666,21 @@ export class WorldKnowledge {
 
     setAmbianceDisplayed(value: boolean): void {
         this.displayAmbiance = value;
+    }
+
+    initializeInfoBox() {
+        const infobox = new InfoBox(
+            'Welcome!', [
+                'Welcome to Office Tycoon!',
+                '',
+                'You are in charge of the recruitment to run',
+                'your business.',
+                'Complete your goals for each level and you will',
+                'gain new people, new objects for your employees!',
+                'Be careful of the health of your employees, the',
+                'better they are, the better they work.'
+            ], 'OK, let\'s go!');
+        infobox.create(this.game, this.groups);
+        this.infoboxes.push(infobox);
     }
 }

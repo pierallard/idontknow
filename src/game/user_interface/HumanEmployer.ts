@@ -137,6 +137,7 @@ class ApplicantButton implements Tooltipable {
     private remainingGauge: Gauge;
     private stars: Phaser.Sprite[];
     private tooltips: Tooltip[];
+    private cancelButton: Phaser.Sprite;
 
     constructor(humanEmployer: HumanEmployer, humanProperties: HumanProperties, worldKnowledge: WorldKnowledge) {
         this.humanEmployer = humanEmployer;
@@ -194,6 +195,13 @@ class ApplicantButton implements Tooltipable {
             return 'Perseverance: ' + Math.round(this.humanProperties.getPerseverance() * 100) + '%';
         }).setInput(this, this.drawStars(game, 'star', this.humanProperties.getPerseverance(), left + OBJECT_SELLER_CELL_SIZE + 55, top + 28, groups[GROUP_INTERFACE]))
             .create(game, groups));
+
+        this.cancelButton = game.add.sprite(CAMERA_WIDTH_PIXELS - 16, top, 'buy_button', 3, groups[GROUP_INTERFACE]);
+        this.cancelButton.inputEnabled = true;
+        this.cancelButton.input.pixelPerfectOver = true;
+        this.cancelButton.input.pixelPerfectClick = true;
+        this.cancelButton.input.useHandCursor = true;
+        this.cancelButton.events.onInputDown.add(this.cancel, this, 0);
     }
 
     hide() {
@@ -202,6 +210,7 @@ class ApplicantButton implements Tooltipable {
         this.typeText.position.x += INTERFACE_WIDTH;
         this.square.position.x += INTERFACE_WIDTH + 10;
         this.remainingGauge.hide();
+        this.cancelButton.position.x += INTERFACE_WIDTH;
         this.stars.forEach((star) => {
             star.position.x += INTERFACE_WIDTH;
         });
@@ -212,6 +221,7 @@ class ApplicantButton implements Tooltipable {
         this.name.position.x -= INTERFACE_WIDTH;
         this.typeText.position.x -= INTERFACE_WIDTH;
         this.square.position.x -= INTERFACE_WIDTH + 10;
+        this.cancelButton.position.x -= INTERFACE_WIDTH;
         this.remainingGauge.show();
         this.stars.forEach((star) => {
             star.position.x -= INTERFACE_WIDTH;
@@ -221,6 +231,11 @@ class ApplicantButton implements Tooltipable {
     private click() {
         this.destroy();
         this.humanEmployer.employ(this);
+    }
+
+    private cancel() {
+        this.destroy();
+        this.humanEmployer.cancel(this);
     }
 
     getHumanProperties(): HumanProperties {
@@ -246,6 +261,7 @@ class ApplicantButton implements Tooltipable {
         this.typeText.destroy(true);
         this.square.destroy(true);
         this.remainingGauge.destroy(true);
+        this.cancelButton.destroy(true);
         this.stars.forEach((star) => {
             star.destroy(true);
         });
