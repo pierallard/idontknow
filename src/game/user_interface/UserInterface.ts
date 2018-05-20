@@ -86,7 +86,7 @@ export class UserInterface {
         this.levelText = game.add.text(
             CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + 2,
             0,
-            'Lvl 1',
+            'Level 1'.toUpperCase(),
             TEXT_STYLE,
             groups[GROUP_INTERFACE]
         );
@@ -115,7 +115,7 @@ export class UserInterface {
         this.userInfoPanel.update();
         this.humanEmployer.update();
         this.moneyCounter.setText(this.worldKnowledge.getMoneyInWallet().getStringValue());
-        this.levelText.setText('Lvl ' + this.worldKnowledge.getLevel());
+        this.levelText.setText('Level ' + this.worldKnowledge.getLevel());
     }
 
     selectPanel(panel: PANEL) {
@@ -188,8 +188,8 @@ class InterfaceTab {
         this.buttonSprite = game.add.sprite(this.position.x, this.position.y, 'interfacetabs', 0, groups[GROUP_INTERFACE]);
         this.buttonText = game.add.text(
             this.position.x + 4,
-            this.position.y,
-            this.text,
+            this.position.y + 3,
+            this.text.toUpperCase(),
             TEXT_STYLE,
             groups[GROUP_INTERFACE]
         );

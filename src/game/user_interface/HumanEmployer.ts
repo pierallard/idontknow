@@ -5,12 +5,11 @@ import {INTERFACE_WIDTH, TOP_GAP} from "./UserInterface";
 import {CAMERA_WIDTH_PIXELS} from "../../app";
 import {OBJECT_SELLER_CELL_SIZE} from "./ObjectSeller";
 import {GROUP_INTERFACE} from "../game_state/Play";
-import {TEXT_STYLE} from "../TextStyle";
+import {SMALL_GAP_BETWEEN_LINES, TEXT_STYLE} from "../TextStyle";
 import {COLOR} from "../Pico8Colors";
 import {Gauge} from "./Gauge";
 import {ColoredGauge} from "./ColoredGauge";
 import {Tooltip, Tooltipable} from "./Tooltip";
-import {SMALL_GAP_BETWEEN_LINES} from "./UserInfoPanel";
 
 const STARS = 5;
 const MAX_APPLICANTS = 6;
@@ -138,6 +137,7 @@ class ApplicantButton implements Tooltipable {
     private stars: Phaser.Sprite[];
     private tooltips: Tooltip[];
     private cancelButton: Phaser.Sprite;
+    private tween: Phaser.Tween;
 
     constructor(humanEmployer: HumanEmployer, humanProperties: HumanProperties, worldKnowledge: WorldKnowledge) {
         this.humanEmployer = humanEmployer;
@@ -175,7 +175,7 @@ class ApplicantButton implements Tooltipable {
 
         this.remainingGauge.create(game, groups, new PIXI.Point(left, top + OBJECT_SELLER_CELL_SIZE - 5 - 0.5));
         this.remainingGauge.setValue(1);
-        game.add.tween(this).to({
+        this.tween = game.add.tween(this).to({
             remainingTime: 0
         }, this.availabilityTime, 'Linear', true);
 
@@ -201,7 +201,7 @@ class ApplicantButton implements Tooltipable {
         this.cancelButton.input.pixelPerfectOver = true;
         this.cancelButton.input.pixelPerfectClick = true;
         this.cancelButton.input.useHandCursor = true;
-        this.cancelButton.events.onInputDown.add(this.cancel, this, 0);
+        this.cancelButton.events.onInputDown.add(this.speedup, this, 0);
     }
 
     hide() {
@@ -233,9 +233,9 @@ class ApplicantButton implements Tooltipable {
         this.humanEmployer.employ(this);
     }
 
-    private cancel() {
-        this.destroy();
-        this.humanEmployer.cancel(this);
+    private speedup() {
+        this.tween.timeScale = 30;
+        this.cancelButton.destroy(true);
     }
 
     getHumanProperties(): HumanProperties {

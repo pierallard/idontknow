@@ -4,16 +4,29 @@ export class SmoothValue {
     private minValue: number = null;
     private pendingDiffs: {value: number, remainingTime: number}[];
     private lastUpdate: number;
+    private game: Phaser.Game;
+    private timer: Phaser.Timer;
 
     constructor(value: number) {
         this.value = value;
         this.pendingDiffs = [];
-        this.lastUpdate = (new Date()).getTime();
+        this.lastUpdate = null;
+    }
+
+    create(game: Phaser.Game) {
+        this.game = game;
+        this.timer = this.game.time.create(true);
+        this.timer.start();
+        this.lastUpdate = this.getTime();
+    }
+
+    private getTime() {
+        return this.timer.ms;
     }
 
     update() {
         let i = 0;
-        const diffTime = (new Date()).getTime() - this.lastUpdate;
+        const diffTime = this.getTime() - this.lastUpdate;
         let changed = false;
         while (i < this.pendingDiffs.length) {
             const pendingDiff = this.pendingDiffs[i];
@@ -21,7 +34,7 @@ export class SmoothValue {
                 this.value += pendingDiff.value;
                 this.pendingDiffs.splice(i, 1);
             } else {
-                const diffValue = pendingDiff.value / pendingDiff.remainingTime * diffTime
+                const diffValue = pendingDiff.value / pendingDiff.remainingTime * diffTime;
                 this.value += diffValue;
                 this.pendingDiffs[i].value -= diffValue;
                 this.pendingDiffs[i].remainingTime -= diffTime;
@@ -32,7 +45,7 @@ export class SmoothValue {
         if (changed) {
             this.checkBounds();
         }
-        this.lastUpdate = (new Date()).getTime();
+        this.lastUpdate = this.getTime();
     }
 
     getValue(): number {

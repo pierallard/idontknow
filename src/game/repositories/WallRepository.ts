@@ -23,7 +23,11 @@ export class WallRepository {
                 this.hasWall(wall.getPosition().x - 1, wall.getPosition().y),
                 this.hasWall(wall.getPosition().x, wall.getPosition().y - 1),
             );
-        })
+        });
+
+        const graphics = game.add.graphics(0, 0, group);
+        graphics.beginFill(0xFFFFFF);
+        graphics.drawRect(-1, -1, 3, 3);
     }
 
     private getWall(x: number, y: number): Wall {
@@ -54,5 +58,11 @@ export class WallRepository {
 
     addDoor(cell: PIXI.Point) {
         this.walls.push(new Door(cell));
+    }
+
+    update() {
+        this.walls.forEach((wall) => {
+            wall.update();
+        });
     }
 }

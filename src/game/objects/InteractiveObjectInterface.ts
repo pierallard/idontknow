@@ -40,4 +40,6 @@ export interface InteractiveObjectInterface extends ObjectInterface {
     getOrientation(): DIRECTION;
 
     getDescription(): ObjectDescription;
+
+    getName(): string;
 }

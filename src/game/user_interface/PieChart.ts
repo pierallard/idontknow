@@ -117,6 +117,7 @@ export class PieChart implements Tooltipable {
                     PieChart.getColor(state),
                     HumanStateManager.getStr(state)
                 );
+                pieChartPart.create(this.game);
                 this.data.push(pieChartPart);
             }
         });
@@ -187,6 +188,10 @@ class PieChartPart {
         this.value = new SmoothValue(value);
         this.color = color;
         this.text= text;
+    }
+
+    create(game: Phaser.Game) {
+        this.value.create(game);
     }
 
     update() {

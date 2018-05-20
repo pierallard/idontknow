@@ -1,4 +1,4 @@
-import {Wall, WALL_ALPHA} from "./Wall";
+import {Wall} from "./Wall";
 import {PositionTransformer} from "../PositionTransformer";
 
 const FAKE_ANCHOR_TOP = -13.5;
@@ -50,10 +50,8 @@ export class Door extends Wall {
         group.add(this.secondSprite);
     }
 
-    setVisibility(visible: boolean) {
-        super.setVisibility(visible);
-        this.game.add.tween(this.secondSprite).to({
-            alpha: visible ? 1 : WALL_ALPHA
-        }, 400, 'Linear', true);
+    protected setVisibility(value: number) {
+        super.setVisibility(value);
+        this.secondSprite.alpha = value;
     }
 }

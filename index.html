@@ -1,24 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-102317332-2"></script>
     <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
+        href = window.location.href;
+        if (href.indexOf('localhost') === -1) {
+            var script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = 'https://www.googletagmanager.com/gtag/js?id=UA-102317332-2';
+            document.getElementsByTagName('head')[0].appendChild(script);
 
-        gtag('config', 'UA-102317332-2');
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'UA-102317332-2');
+        }
     </script>
     <meta charset="UTF-8">
     <title>Office Tycoon</title>
     <style>
         @font-face {
-            font-family: "000webfont";
-            src: url('assets/000webfont.ttf');
+            font-family: "PICO-8";
+            src: url('assets/PICO-8.ttf');
         }
         body {
-            font-family: "000webfont", Helvetica, Arial, sans-serif;
+            font-family: "PICO-8", Helvetica, Arial, sans-serif;
         }
     </style>
 </head>

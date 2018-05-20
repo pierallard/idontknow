@@ -16,10 +16,12 @@ export class TableMeeting {
             debugger;
         }
         for (let i = 0; i < unusedReferers.length; i++) {
-            this.places.push({
-                human: humans[i],
-                position: unusedReferers[i]
-            });
+            if (humans[i]) {
+                this.places.push({
+                    human: humans[i],
+                    position: unusedReferers[i]
+                });
+            }
         }
     }
 
@@ -37,6 +39,10 @@ export class TableMeeting {
     isReady() {
         for (let i = 0; i < this.places.length; i++) {
             const human = this.places[i].human;
+            if (undefined === human) {
+                console.log(this.places);
+                debugger;
+            }
             const position = this.places[i].position.getPosition();
             if (human.isMoving() || human.getPosition().x !== position.x || human.getPosition().y !== position.y) {
                 return false;

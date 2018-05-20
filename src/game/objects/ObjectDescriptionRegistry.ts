@@ -94,7 +94,7 @@ export class ObjectDescriptionRegistry {
         this.objectDescriptions.push(
             new ObjectDescription(
                 'Meeting Table',
-                3,
+                4,
                 [
                     new PIXI.Point(0, 0),
                     new PIXI.Point(1, 1),
@@ -155,7 +155,7 @@ export class ObjectDescriptionRegistry {
         this.objectDescriptions.push(
             new ObjectDescription(
                 'Console',
-                4,
+                5,
                 [
                     new PIXI.Point(0, 0),
                     new PIXI.Point(1, 1),
@@ -203,7 +203,7 @@ export class ObjectDescriptionRegistry {
         this.objectDescriptions.push(
             new ObjectDescription(
                 'Printer',
-                5,
+                7,
                 [new PIXI.Point(0, 0)],
                 [new SpriteInfo('printer')],
                 [new SpriteInfo('printer_reverse')],
@@ -217,7 +217,7 @@ export class ObjectDescriptionRegistry {
         this.objectDescriptions.push(
             new ObjectDescription(
                 'Bonzai',
-                6,
+                8,
                 [new PIXI.Point(0, 0)],
                 [new SpriteInfo('bonzai')],
                 [],

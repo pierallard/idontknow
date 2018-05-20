@@ -93,10 +93,19 @@ export class HumanStateManager {
                     );
                     break;
                 case STATE.SIT_TALK:
+                    const freeHumans = [
+                        this.worldKnowledge.getAnotherFreeHumans(this.human, 3),
+                        this.worldKnowledge.getAnotherFreeHumans(this.human, 2),
+                        this.worldKnowledge.getAnotherFreeHumans(this.human, 1)
+                    ].filter((freeHuman) => {
+                        return freeHuman.length > 0;
+                    })[0];
+                    const tableReferer = this.worldKnowledge.getClosestReferer(['Meeting Table'], 4, this.human.getPosition());
+                    console.log(tableReferer);
                     this.state = new SitTalkState(
                         this.human,
-                        <MeetingTable> this.worldKnowledge.getClosestReferer(['Meeting Table'], 4, this.human.getPosition()).getObject(),
-                        this.worldKnowledge.getAnotherFreeHumans(this.human, 3),
+                        tableReferer ? (<MeetingTable> tableReferer.getObject()) : null,
+                        freeHumans,
                         this.worldKnowledge
                     );
                     break;
@@ -144,16 +153,10 @@ export class HumanStateManager {
     getNextProbabilities(): {[index: number]: number} {
         const states = {};
 
-        if (
-            this.worldKnowledge.getClosestReferer(['Meeting Table'], 4) !== null &&
-            this.worldKnowledge.getAnotherFreeHumans(this.human, 3).length === 3
-        ) {
-            states[STATE.SIT_TALK] = this.getProbability(STATE.SIT_TALK);
-        }
-
         if (this.worldKnowledge.getHumanCount() > 1) {
             states[STATE.TALK] = this.getProbability(STATE.TALK);
         }
+
         states[STATE.TYPE] = this.getProbability(STATE.TYPE);
         states[STATE.COFFEE] = this.getProbability(STATE.COFFEE);
         states[STATE.SIT] = this.getProbability(STATE.SIT);
@@ -161,8 +164,12 @@ export class HumanStateManager {
         states[STATE.MOVE_RANDOM] = this.getProbability(STATE.MOVE_RANDOM);
         states[STATE.SMOKE] = this.getProbability(STATE.SMOKE);
 
-        if (this.worldKnowledge.getLevel() >= ObjectDescriptionRegistry.getObjectDescription('Meeting Table').getMinLevel()) {
+        if (this.worldKnowledge.getLevel() >= ObjectDescriptionRegistry.getObjectDescription('Console').getMinLevel()) {
             states[STATE.SIT_PLAY] = this.getProbability(STATE.SIT_PLAY);
+        }
+
+        if (this.worldKnowledge.getLevel() >= ObjectDescriptionRegistry.getObjectDescription('Meeting Table').getMinLevel()) {
+            states[STATE.SIT_TALK] = this.getProbability(STATE.SIT_TALK);
         }
 
         return states;

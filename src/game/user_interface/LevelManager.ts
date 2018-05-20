@@ -27,6 +27,12 @@ export class LevelManager {
         this.levels[EMPLOYEE_TYPE.SALE] = new SmoothValue(0);
     }
 
+    create(game: Phaser.Game) {
+        this.levels[EMPLOYEE_TYPE.DEVELOPER].create(game);
+        this.levels[EMPLOYEE_TYPE.MARKETING].create(game);
+        this.levels[EMPLOYEE_TYPE.SALE].create(game);
+    }
+
     getLevelProgress(type: EMPLOYEE_TYPE): number {
         return Math.min((this.levels[type].getValue() - this.starts[type]) / (this.getGoal(type) - this.starts[type]), 1);
     }
@@ -87,6 +93,6 @@ export class LevelManager {
     }
 
     getSoftwarePrice(): Price {
-        return new Price(this.levels[EMPLOYEE_TYPE.DEVELOPER].getValue() / 2);
+        return new Price(this.levels[EMPLOYEE_TYPE.DEVELOPER].getValue() / 3);
     }
 }

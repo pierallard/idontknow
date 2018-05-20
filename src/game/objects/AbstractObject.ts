@@ -28,9 +28,12 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
     }
 
     getDescription(): ObjectDescription {
+        return ObjectDescriptionRegistry.getObjectDescription(this.getName());
+    }
+
+    getName(): string {
         let name = this.constructor.name;
-        name = name.split(/(?=[A-Z])/).join(' ');
-        return ObjectDescriptionRegistry.getObjectDescription(name);
+        return name.split(/(?=[A-Z])/).join(' ');
     }
 
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}) {
@@ -75,7 +78,7 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
     getPositionGap(interactivePointIdentifier: number): PIXI.Point {
         const interactivePointDescription =
             ObjectDescriptionRegistry
-                .getObjectDescription(this.constructor.name)
+                .getObjectDescription(this.getName())
                 .getInteractivePoints(this.orientation)[interactivePointIdentifier];
 
         return interactivePointDescription.getInteractionPosition(this.orientation);

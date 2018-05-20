@@ -1,21 +1,21 @@
-import {WORLD_HEIGHT, WORLD_WIDTH} from "../app";
+import {HORIZONTAL_LEFT_SIZE, HORIZONTAL_RIGHT_SIZE, WORLD_HEIGHT, WORLD_WIDTH} from "../app";
 
 export const CELL_WIDTH = 40;
 export const CELL_HEIGHT = 20;
 
 export class PositionTransformer {
     static getRealPosition(point: PIXI.Point): PIXI.Point {
-        return this.addGap(new PIXI.Point(WORLD_WIDTH / 2, WORLD_HEIGHT), point);
+        return this.addGap(new PIXI.Point(HORIZONTAL_LEFT_SIZE, WORLD_HEIGHT), point);
     }
 
     static getCellPosition(point: PIXI.Point): PIXI.Point {
         return new PIXI.Point(
             Math.floor(
                 (point.y - WORLD_HEIGHT) / (2 * (- CELL_HEIGHT / 2)) +
-                (point.x - (WORLD_WIDTH / 2)) / (2 * (- CELL_WIDTH / 2))),
+                (point.x - (HORIZONTAL_LEFT_SIZE)) / (2 * (- CELL_WIDTH / 2))),
             Math.floor(
                 (point.y - WORLD_HEIGHT) / (2 * (- CELL_HEIGHT / 2)) -
-                (point.x - (WORLD_WIDTH / 2)) / (2 * (- CELL_WIDTH / 2)))
+                (point.x - (HORIZONTAL_LEFT_SIZE)) / (2 * (- CELL_WIDTH / 2)))
         )
     }
 

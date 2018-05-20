@@ -4,8 +4,7 @@ import {CAMERA_WIDTH_PIXELS} from "../../app";
 import {GROUP_INTERFACE} from "../game_state/Play";
 import {COLOR} from "../Pico8Colors";
 import {MoodSprite} from "../human_stuff/MoodSprite";
-import {TEXT_STYLE} from "../TextStyle";
-import {MEDIUM_GAP_BETWEEN_LINES} from "./UserInfoPanel";
+import {MEDIUM_GAP_BETWEEN_LINES, TEXT_STYLE} from "../TextStyle";
 import {EMPLOYEE_TYPE} from "../human_stuff/HumanPropertiesFactory";
 
 const HEIGHT = 80;
@@ -31,12 +30,12 @@ export class InfoPanel {
     create(game: Phaser.Game, groups: { [index: string]: Phaser.Group }) {
         const left = CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + GRAPH_GAP;
         const top = TOP_GAP + 100;
-        this.softwarePrice = game.add.text(left, TOP_GAP, 'Software Price: ', TEXT_STYLE, groups[GROUP_INTERFACE]);
-        this.developerCount = game.add.text(left, TOP_GAP + MEDIUM_GAP_BETWEEN_LINES, '', TEXT_STYLE, groups[GROUP_INTERFACE]);
-        this.salesCount = game.add.text(left, TOP_GAP + MEDIUM_GAP_BETWEEN_LINES * 2, '', TEXT_STYLE, groups[GROUP_INTERFACE]);
-        this.marketingCount = game.add.text(left, TOP_GAP + MEDIUM_GAP_BETWEEN_LINES * 3, '', TEXT_STYLE, groups[GROUP_INTERFACE]);
+        this.softwarePrice = game.add.text(left, TOP_GAP + 3, '', TEXT_STYLE, groups[GROUP_INTERFACE]);
+        this.developerCount = game.add.text(left, TOP_GAP + 3 + MEDIUM_GAP_BETWEEN_LINES, '', TEXT_STYLE, groups[GROUP_INTERFACE]);
+        this.salesCount = game.add.text(left, TOP_GAP + 3 + MEDIUM_GAP_BETWEEN_LINES * 2, '', TEXT_STYLE, groups[GROUP_INTERFACE]);
+        this.marketingCount = game.add.text(left, TOP_GAP + 3 + MEDIUM_GAP_BETWEEN_LINES * 3, '', TEXT_STYLE, groups[GROUP_INTERFACE]);
         this.check = game.add.sprite(left, TOP_GAP + MEDIUM_GAP_BETWEEN_LINES * 4 + 3, 'check', 0, groups[GROUP_INTERFACE]);
-        this.ambiance = game.add.text(left + 7, TOP_GAP + MEDIUM_GAP_BETWEEN_LINES * 4, 'Ambiance', TEXT_STYLE, groups[GROUP_INTERFACE]);
+        this.ambiance = game.add.text(left + 7, TOP_GAP + 3 + MEDIUM_GAP_BETWEEN_LINES * 4, 'Ambiance'.toUpperCase(), TEXT_STYLE, groups[GROUP_INTERFACE]);
         this.moods = game.add.graphics(left, top, groups[GROUP_INTERFACE]);
         this.employees = game.add.graphics(left, top + 100, groups[GROUP_INTERFACE]);
 
@@ -67,10 +66,10 @@ export class InfoPanel {
             const lastEmployees = this.worldKnowledge.getLastEmployeesCount();
             InfoPanel.drawChart(this.employees, lastEmployees, null, [COLOR.LIGHT_GREEN, COLOR.RED, COLOR.ROSE]);
 
-            this.softwarePrice.setText('Software Price: ' + this.worldKnowledge.getSoftwarePrice().getStringValue());
-            this.developerCount.setText('Developers: ' + this.worldKnowledge.getEmployeeCount(EMPLOYEE_TYPE.DEVELOPER));
-            this.salesCount.setText('Sales: ' + this.worldKnowledge.getEmployeeCount(EMPLOYEE_TYPE.SALE));
-            this.marketingCount.setText('Marketing: ' + this.worldKnowledge.getEmployeeCount(EMPLOYEE_TYPE.MARKETING));
+            this.softwarePrice.setText('Software Price: '.toUpperCase() + this.worldKnowledge.getSoftwarePrice().getStringValue());
+            this.developerCount.setText('Developers: '.toUpperCase() + this.worldKnowledge.getEmployeeCount(EMPLOYEE_TYPE.DEVELOPER));
+            this.salesCount.setText('Sales: '.toUpperCase() + this.worldKnowledge.getEmployeeCount(EMPLOYEE_TYPE.SALE));
+            this.marketingCount.setText('Marketing: '.toUpperCase() + this.worldKnowledge.getEmployeeCount(EMPLOYEE_TYPE.MARKETING));
         }
     }
 

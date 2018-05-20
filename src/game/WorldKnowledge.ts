@@ -55,6 +55,8 @@ export class WorldKnowledge {
     private floors: Floor[];
     private displayAmbiance: boolean;
     private infoboxes: InfoBox[];
+    private gridCache: {index: number}[][];
+    private acceptableCache: number[];
 
     constructor() {
         this.displayAmbiance = false;
@@ -66,6 +68,8 @@ export class WorldKnowledge {
         this.depot = new Depot();
         this.wallet = new SmoothValue(1500);
         this.infoboxes = [];
+        this.gridCache = null;
+        this.acceptableCache = null;
 
         const walls = "" +
             "  XXXWXXXXXWXXXXXXXXXXXXXWXXXXXWXXX  \n" +
@@ -141,6 +145,8 @@ export class WorldKnowledge {
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}) {
         this.game = game;
         this.groups = groups;
+        this.wallet.create(game);
+        this.levelManager.create(game);
         const floorGroup = groups[GROUP_FLOOR];
         const noname = groups[GROUP_OBJECTS_AND_HUMANS];
 
@@ -173,6 +179,7 @@ export class WorldKnowledge {
         this.cells.forEach((cell) => {
             cell.update();
         });
+        this.wallRepository.update();
 
 
         for (let i = 0; i < this.infoboxes.length; i++) {
@@ -183,14 +190,6 @@ export class WorldKnowledge {
                 i--;
             }
         }
-    }
-
-    humanMoved() {
-        const walls = this.wallRepository.getWalls();
-
-        walls.forEach((wall: Wall) => {
-            wall.setVisibility(!this.anyHumanIsAboveWall(wall));
-        });
     }
 
     private anyHumanIsAboveWall(wall: Wall) {
@@ -217,6 +216,7 @@ export class WorldKnowledge {
     }
 
     resetAStar(position: PIXI.Point = null) {
+        this.acceptableCache = null;
         this.humanRepository.humans.forEach((human) => {
             human.resetAStar(position);
         });
@@ -239,7 +239,7 @@ export class WorldKnowledge {
         return freeHuman[0];
     }
 
-    getAnotherFreeHumans(human: Employee, max: number): Employee[] {
+    getAnotherFreeHumans(human: Employee, max: number = 1): Employee[] {
         let availableHumans = this.humanRepository.humans.filter((anotherHuman: Employee) => {
             return anotherHuman !== human && anotherHuman.isFree()
         });
@@ -269,14 +269,16 @@ export class WorldKnowledge {
     }
 
     getAcceptables(): number[] {
-        let acceptables = [];
-        for (let i = 0; i < this.cells.length; i++) {
-            if (this.isFree(this.cells[i].getPosition())) {
-                acceptables.push(i);
+        if (this.acceptableCache === null) {
+            this.acceptableCache = [];
+            for (let i = 0; i < this.cells.length; i++) {
+                if (this.isFree(this.cells[i].getPosition())) {
+                    this.acceptableCache.push(i);
+                }
             }
         }
 
-        return acceptables;
+        return this.acceptableCache;
     }
 
     getMeetingCells(cells: PIXI.Point[]) {
@@ -301,17 +303,19 @@ export class WorldKnowledge {
     }
 
     getGrid(): {index: number}[][] {
-        let grid = [];
-        for (let i = 0; i < this.cells.length; i++) {
-            if (undefined === grid[this.cells[i].getPosition().y]) {
-                grid[this.cells[i].getPosition().y] = [];
+        if (this.gridCache === null) {
+            this.gridCache = [];
+            for (let i = 0; i < this.cells.length; i++) {
+                if (undefined === this.gridCache[this.cells[i].getPosition().y]) {
+                    this.gridCache[this.cells[i].getPosition().y] = [];
+                }
+                this.gridCache[this.cells[i].getPosition().y][this.cells[i].getPosition().x] = {
+                    index: i
+                };
             }
-            grid[this.cells[i].getPosition().y][this.cells[i].getPosition().x] = {
-                index: i
-            };
         }
 
-        return grid;
+        return this.gridCache;
     }
 
     isFree(point: PIXI.Point, object: ObjectInterface = null): boolean {
@@ -339,7 +343,7 @@ export class WorldKnowledge {
     getClosestReferer(types: string[], referersCountPerObject: number = 1, position: PIXI.Point = null): ObjectReferer {
         let freeReferers: ObjectReferer[] = [];
         this.objects.forEach((object) => {
-            if (types.indexOf(object.constructor.name) > -1) {
+            if (types.indexOf(object.getName()) > -1) {
                 const unusedReferers = object.getUnusedReferers();
                 if (unusedReferers.length >= referersCountPerObject) {
                     freeReferers = freeReferers.concat(unusedReferers);

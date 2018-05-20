@@ -14,6 +14,7 @@ export class TypeState extends MoveThenActAbstractState {
     private percentage: number;
     private finished: boolean;
     private lastUpdatedAt: number;
+    private timer: Phaser.Timer;
 
     constructor(human: Employee, worldKnowledge: WorldKnowledge, tries: number = 0) {
         super(human, worldKnowledge, tries);
@@ -30,17 +31,24 @@ export class TypeState extends MoveThenActAbstractState {
 
         this.typeTime = Phaser.Math.random(SECOND_MIN, SECOND_MAX);
 
+        this.timer = game.time.create(true);
+        this.timer.start();
+
         return super.start(game);
+    }
+
+    private getTime() {
+        return this.timer.ms;
     }
 
     getNextState(): HumanState {
         if (this.percentage !== null && this.percentage < 1) {
-            const diffTime = (new Date()).getTime() - this.lastUpdatedAt;
+            const diffTime = this.getTime() - this.lastUpdatedAt;
             const workProgress = this.getWorkProgress(diffTime);
             const levelProgress = this.getLevelProgress(diffTime);
             this.percentage += workProgress;
             this.worldKnowledge.addProgress(this.human, levelProgress, 0);
-            this.lastUpdatedAt = (new Date()).getTime();
+            this.lastUpdatedAt = this.getTime();
         }
         if (this.percentage !== null && this.percentage >= 1 && !this.finished) {
             this.finished = true;
@@ -57,7 +65,7 @@ export class TypeState extends MoveThenActAbstractState {
         this.events.push(this.game.time.events.add(HumanAnimationManager.getAnimationTime(ANIMATION.SIT_DOWN), () => {
             this.human.loadAnimation(ANIMATION.TYPE, this.objectReferer.forceLeftOrientation(), this.objectReferer.forceTopOrientation());
             this.percentage = 0;
-            this.lastUpdatedAt = (new Date()).getTime();
+            this.lastUpdatedAt = this.getTime();
         }));
     }
 

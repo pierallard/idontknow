@@ -5,11 +5,10 @@ import {ObjectDescription} from "../objects/ObjectDescription";
 import {ObjectDescriptionRegistry} from "../objects/ObjectDescriptionRegistry";
 import {ObjectPhantom} from "../objects/ObjectPhantom";
 import {GROUP_INTERFACE} from "../game_state/Play";
-import {TEXT_STYLE} from "../TextStyle";
+import {SMALL_GAP_BETWEEN_LINES, TEXT_STYLE} from "../TextStyle";
 import {CELL_HEIGHT, CELL_WIDTH} from "../PositionTransformer";
 import {COLOR} from "../Pico8Colors";
 import {DIRECTION_LOOP} from "../objects/ObjectOrientation";
-import {SMALL_GAP_BETWEEN_LINES} from "./UserInfoPanel";
 
 export const OBJECT_SELLER_CELL_SIZE = 41;
 const CIRCLE_GAP = 7;
@@ -40,7 +39,6 @@ export class ObjectSeller {
     create(game: Phaser.Game, groups: {[index: string]: Phaser.Group }) {
         this.game = game;
         this.groups = groups;
-        this.addMissingButtons();
         const barHeight = ObjectSeller.getNumberOfDisplayableButtons() * OBJECT_SELLER_CELL_SIZE;
         this.topButton = this.game.add.sprite(CAMERA_WIDTH_PIXELS - 12, TOP_GAP, 'info', 12, groups[GROUP_INTERFACE]);
         this.bottomButton = this.game.add.sprite(CAMERA_WIDTH_PIXELS - 12, TOP_GAP + barHeight - 12, 'info', 14, groups[GROUP_INTERFACE]);
@@ -52,7 +50,7 @@ export class ObjectSeller {
         this.scrollBackground.alpha = 0.5;
         this.scroll.alpha = 0.5;
 
-        // this.showScroll();
+        this.addMissingButtons();
     }
 
     private addMissingButtons() {
@@ -159,23 +157,47 @@ export class ObjectSeller {
     }
 
     private scrollTop() {
-        this.scrollFirstId -= 1;
-        this.objectProvisionnerButtons.forEach((provisionnerButton) => {
-            provisionnerButton.scrollTop();
-        });
-        this.sellerButtons.forEach((sellerButton) => {
-            sellerButton.scrollTop();
-        });
+        if (this.scrollFirstId > 0) {
+            this.scrollFirstId -= 1;
+            this.objectProvisionnerButtons.forEach((provisionnerButton, i) => {
+                provisionnerButton.scrollTop(this.shouldBeDisplayed(i));
+            });
+            this.sellerButtons.forEach((sellerButton, i) => {
+                sellerButton.scrollTop(this.shouldBeDisplayed(i));
+            });
+            this.updateScroll();
+        }
     }
 
     private scrollBottom() {
-        this.scrollFirstId += 1;
-        this.objectProvisionnerButtons.forEach((provisionnerButton) => {
-            provisionnerButton.scrollBottom();
-        });
-        this.sellerButtons.forEach((sellerButton) => {
-            sellerButton.scrollBottom();
-        });
+        if (this.scrollFirstId + ObjectSeller.getNumberOfDisplayableButtons() < this.objectProvisionnerButtons.length) {
+            this.scrollFirstId += 1;
+            this.objectProvisionnerButtons.forEach((provisionnerButton, i) => {
+                provisionnerButton.scrollBottom(this.shouldBeDisplayed(i));
+            });
+            this.sellerButtons.forEach((sellerButton, i) => {
+                sellerButton.scrollBottom(this.shouldBeDisplayed(i));
+            });
+            this.updateScroll();
+        }
+    }
+
+    private shouldBeDisplayed(i: number) {
+        if (i < this.scrollFirstId) {
+            return false;
+        }
+        if (i > this.scrollFirstId + ObjectSeller.getNumberOfDisplayableButtons() - 1) {
+            return false;
+        }
+        return true;
+    }
+
+    private updateScroll() {
+        const top = TOP_GAP + 12;
+        const bottom = TOP_GAP + ObjectSeller.getNumberOfDisplayableButtons() * OBJECT_SELLER_CELL_SIZE - 12 - 12;
+        const height = bottom - top;
+        const percentage = this.scrollFirstId / (this.objectProvisionnerButtons.length - ObjectSeller.getNumberOfDisplayableButtons());
+        this.scroll.position.y = top + height * percentage;
     }
 }
 
@@ -186,11 +208,13 @@ class SellerButton {
     private button: Phaser.Sprite;
     private isDown: boolean;
     private objectName: Phaser.Text;
+    private inScroll: boolean;
 
     constructor(objectInfo: ObjectDescription, worldKnowledge: WorldKnowledge) {
         this.objectInfo = objectInfo;
         this.worldKnowledge = worldKnowledge;
         this.isDown = false;
+        this.inScroll = true;
     }
 
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}, index: number) {
@@ -200,7 +224,7 @@ class SellerButton {
         this.objectName = game.add.text(
             left + OBJECT_SELLER_CELL_SIZE + 10,
             top,
-            this.objectInfo.getName(),
+            this.objectInfo.getName().toUpperCase(),
             TEXT_STYLE,
             groups[GROUP_INTERFACE]
         );
@@ -265,16 +289,36 @@ class SellerButton {
         this.objectName.position.x -= INTERFACE_WIDTH;
     }
 
-    scrollTop() {
+    scrollTop(shouldBeDisplayed: boolean) {
         this.price.position.y += OBJECT_SELLER_CELL_SIZE;
         this.button.position.y += OBJECT_SELLER_CELL_SIZE;
         this.objectName.position.y += OBJECT_SELLER_CELL_SIZE;
+
+        if (this.inScroll !== shouldBeDisplayed) {
+            if (shouldBeDisplayed) {
+                this.show();
+                this.inScroll = shouldBeDisplayed;
+            } else {
+                this.hide();
+                this.inScroll = shouldBeDisplayed;
+            }
+        }
     }
 
-    scrollBottom() {
+    scrollBottom(shouldBeDisplayed: boolean) {
         this.price.position.y -= OBJECT_SELLER_CELL_SIZE;
         this.button.position.y -= OBJECT_SELLER_CELL_SIZE;
         this.objectName.position.y -= OBJECT_SELLER_CELL_SIZE;
+
+        if (this.inScroll !== shouldBeDisplayed) {
+            if (shouldBeDisplayed) {
+                this.show();
+                this.inScroll = shouldBeDisplayed;
+            } else {
+                this.hide();
+                this.inScroll = shouldBeDisplayed;
+            }
+        }
     }
 }
 
@@ -287,6 +331,7 @@ class ObjectProvisionnerButton {
     private circle: Phaser.Graphics;
     private square: Phaser.Graphics;
     private objectSeller: ObjectSeller;
+    private inScroll: boolean;
 
     constructor(objectSeller: ObjectSeller, objectInfo: ObjectDescription, worldKnowledge: WorldKnowledge) {
         this.objectSeller = objectSeller;
@@ -294,6 +339,7 @@ class ObjectProvisionnerButton {
         this.worldKnowledge = worldKnowledge;
         this.sprites = [];
         this.fakeCells = [];
+        this.inScroll = true;
     }
 
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}, index: number) {
@@ -359,7 +405,7 @@ class ObjectProvisionnerButton {
         this.circle.drawCircle(OBJECT_SELLER_CELL_SIZE, 0, 9);
         groups[GROUP_INTERFACE].add(this.circle);
 
-        this.counter = game.add.text(left + OBJECT_SELLER_CELL_SIZE - 1.5, index * OBJECT_SELLER_CELL_SIZE + TOP_GAP + CIRCLE_GAP - 5, '0', TEXT_STYLE, groups[GROUP_INTERFACE]);
+        this.counter = game.add.text(left + OBJECT_SELLER_CELL_SIZE - 1.5, index * OBJECT_SELLER_CELL_SIZE + 3 + TOP_GAP + CIRCLE_GAP - 5, '0', TEXT_STYLE, groups[GROUP_INTERFACE]);
         groups[GROUP_INTERFACE].add(this.counter);
         this.updateCount(0);
     }
@@ -421,7 +467,7 @@ class ObjectProvisionnerButton {
         this.square.position.x -= INTERFACE_WIDTH + 10;
     }
 
-    scrollTop() {
+    scrollTop(shouldBeDisplayed: boolean) {
         this.counter.position.y += OBJECT_SELLER_CELL_SIZE;
         this.fakeCells.forEach((fakeCell) => {
             fakeCell.position.y += OBJECT_SELLER_CELL_SIZE;
@@ -431,9 +477,19 @@ class ObjectProvisionnerButton {
             sprite.position.y += OBJECT_SELLER_CELL_SIZE;
         });
         this.square.position.y += OBJECT_SELLER_CELL_SIZE;
+
+        if (this.inScroll !== shouldBeDisplayed) {
+            if (shouldBeDisplayed) {
+                this.show();
+                this.inScroll = shouldBeDisplayed;
+            } else {
+                this.hide();
+                this.inScroll = shouldBeDisplayed;
+            }
+        }
     }
 
-    scrollBottom() {
+    scrollBottom(shouldBeDisplayed: boolean) {
         this.counter.position.y -= OBJECT_SELLER_CELL_SIZE;
         this.fakeCells.forEach((fakeCell) => {
             fakeCell.position.y -= OBJECT_SELLER_CELL_SIZE;
@@ -443,5 +499,15 @@ class ObjectProvisionnerButton {
             sprite.position.y -= OBJECT_SELLER_CELL_SIZE;
         });
         this.square.position.y -= OBJECT_SELLER_CELL_SIZE;
+
+        if (this.inScroll !== shouldBeDisplayed) {
+            if (shouldBeDisplayed) {
+                this.show();
+                this.inScroll = shouldBeDisplayed;
+            } else {
+                this.hide();
+                this.inScroll = shouldBeDisplayed;
+            }
+        }
     }
 }

@@ -1,10 +1,9 @@
 import {CAMERA_HEIGHT_PIXELS, CAMERA_WIDTH_PIXELS} from "../../app";
-import {MEDIUM_GAP_BETWEEN_LINES} from "./UserInfoPanel";
 import {GROUP_INTERFACE} from "../game_state/Play";
-import {TEXT_STYLE} from "../TextStyle";
+import {MEDIUM_GAP_BETWEEN_LINES, TEXT_STYLE} from "../TextStyle";
 import {COLOR} from "../Pico8Colors";
 
-const LETTER_WIDTH = 6.5;
+const LETTER_WIDTH = 4;
 const LETTER_HEIGHT = MEDIUM_GAP_BETWEEN_LINES;
 
 export class InfoBox {
@@ -81,11 +80,11 @@ export class InfoBox {
         closableElements.push(buttonRightSprite);
         this.elements.push(buttonRightSprite);
 
-        this.elements.push(game.add.text(left + 8, top, this.title, TEXT_STYLE, groups[GROUP_INTERFACE]));
+        this.elements.push(game.add.text(left + 8, top + 3, this.title.toUpperCase(), TEXT_STYLE, groups[GROUP_INTERFACE]));
         this.textLines.forEach((str, i) => {
-            this.elements.push(game.add.text(left + 9, top + 6 + 12 + i * LETTER_HEIGHT, str, TEXT_STYLE, groups[GROUP_INTERFACE]));
+            this.elements.push(game.add.text(left + 9, top + 6 + 12 + 3 + i * LETTER_HEIGHT, str, TEXT_STYLE, groups[GROUP_INTERFACE]));
         });
-        this.elements.push(game.add.text(buttonLeft + 9, buttonTop, this.buttonText, TEXT_STYLE, groups[GROUP_INTERFACE]));
+        this.elements.push(game.add.text(buttonLeft + 9, buttonTop + 3, this.buttonText.toUpperCase(), TEXT_STYLE, groups[GROUP_INTERFACE]));
 
         closableElements.forEach((sprite) => {
             sprite.inputEnabled = true;

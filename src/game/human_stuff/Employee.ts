@@ -215,7 +215,6 @@ export class Employee {
                 this.animateMove(direction);
             }
         }
-        this.worldKnowledge.humanMoved();
     }
 
     getPosition() {

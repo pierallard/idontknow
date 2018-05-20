@@ -1,4 +1,4 @@
-import {TEXT_STYLE} from "../TextStyle";
+import {LETTER_HEIGHT, TEXT_STYLE} from "../TextStyle";
 import {GROUP_TOOLTIP} from "../game_state/Play";
 import {COLOR} from "../Pico8Colors";
 import {CAMERA_WIDTH_PIXELS, SCALE} from "../../app";
@@ -34,7 +34,7 @@ export class Tooltip {
 
     update() {
         if (this.text.alpha > 0) {
-            this.text.text = this.getValueFunction.call(this.tooltipable);
+            this.text.text = this.getValueFunction.call(this.tooltipable).toUpperCase();
             this.text.x = this.getTooltipPosition().x;
             this.text.y = this.getTooltipPosition().y;
             this.updateBox();
@@ -58,9 +58,9 @@ export class Tooltip {
         this.box.lineStyle(1, COLOR.WHITE);
         this.box.drawRect(
             this.getTooltipPosition().x - 2,
-            this.getTooltipPosition().y + 1,
+            this.getTooltipPosition().y - 2,
             this.getBoxWidth(),
-            8
+            LETTER_HEIGHT + 4
         );
     }
 
@@ -91,6 +91,6 @@ export class Tooltip {
     }
 
     private getBoxWidth() {
-        return this.text.width + 1
+        return this.text.width + 2
     }
 }

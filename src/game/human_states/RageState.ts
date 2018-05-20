@@ -39,6 +39,16 @@ export class RageState extends AbstractState {
     }
 
     getDescription(): string {
+        switch(this.sourceState.getRageImage()) {
+            case RAGE_IMAGE.HUMAN: return "Can't find another human!";
+            case RAGE_IMAGE.TABLE: return "Can't find a table!";
+            case RAGE_IMAGE.CONSOLE: return "Can't find a free console!";
+            case RAGE_IMAGE.PATH: return "Can't go where he wants!";
+            case RAGE_IMAGE.SLEEP: return "Can't find a place to sleep!";
+            case RAGE_IMAGE.COFFEE: return "Can't find a free dispenser!";
+            case RAGE_IMAGE.LAPTOP: return "Can't find a free computer!";
+        }
+        console.log('Unknown state: ' + this.sourceState.getRageImage());
         return "Can't do what he wants!"
     }
 

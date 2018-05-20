@@ -26,6 +26,7 @@ export class SitTalkState extends AbstractState {
         worldKnowledge: WorldKnowledge,
         meeting: TableMeeting = null
     ) {
+        console.log('Create SitTalkState with ' + table + ' and ' + anotherHumans);
         super(human);
         this.anotherHumans = anotherHumans;
         this.table = table;
@@ -112,6 +113,14 @@ export class SitTalkState extends AbstractState {
     start(game: Phaser.Game): boolean {
         super.start(game);
 
+        if (this.anotherHumans === undefined || this.anotherHumans.length === 0) {
+            return false;
+        }
+
+        if (this.table === null) {
+            return false;
+        }
+
         if (this.meeting === null) {
             this.meeting = new TableMeeting(
                 this.anotherHumans.concat([this.human]),
@@ -167,6 +176,10 @@ export class SitTalkState extends AbstractState {
     }
 
     getRageImage(): RAGE_IMAGE {
-        return RAGE_IMAGE.PATH;
+        if (this.table === null || (this.meeting && this.meeting.aPlaceWasTakenBySomeoneElse())) {
+            return RAGE_IMAGE.TABLE;
+        } else {
+            return RAGE_IMAGE.HUMAN;
+        }
     }
 }

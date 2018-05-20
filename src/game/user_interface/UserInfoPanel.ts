@@ -3,15 +3,13 @@ import {INTERFACE_WIDTH, TOP_GAP} from "./UserInterface";
 import {CAMERA_WIDTH_PIXELS} from "../../app";
 import {GROUP_INTERFACE} from "../game_state/Play";
 import {Employee} from "../human_stuff/Employee";
-import {TEXT_STYLE} from "../TextStyle";
+import {MEDIUM_GAP_BETWEEN_LINES, TEXT_STYLE} from "../TextStyle";
 import {MOOD} from "../human_stuff/HumanMoodManager";
 import {PieChart} from "./PieChart";
 import {Gauge} from "./Gauge";
 import {ColoredGauge} from "./ColoredGauge";
 
 const GRAPH_GAP = 2;
-export const SMALL_GAP_BETWEEN_LINES = 7;
-export const MEDIUM_GAP_BETWEEN_LINES = 10;
 const GAUGE_GAP = 100;
 
 export class UserInfoPanel {
@@ -35,9 +33,9 @@ export class UserInfoPanel {
         this.visible = true;
         this.pieChart = new PieChart();
         const gaugeWidth = INTERFACE_WIDTH - GAUGE_GAP - GRAPH_GAP;
-        this.moodRelaxationGauge = new ColoredGauge(gaugeWidth, 8);
-        this.moodHungerGauge = new ColoredGauge(gaugeWidth, 8);
-        this.moodSocialGauge = new ColoredGauge(gaugeWidth, 8);
+        this.moodRelaxationGauge = new ColoredGauge(gaugeWidth, MEDIUM_GAP_BETWEEN_LINES - 2);
+        this.moodHungerGauge = new ColoredGauge(gaugeWidth, MEDIUM_GAP_BETWEEN_LINES - 2);
+        this.moodSocialGauge = new ColoredGauge(gaugeWidth, MEDIUM_GAP_BETWEEN_LINES - 2);
     }
 
     create(game: Phaser.Game, groups: { [index: string]: Phaser.Group }) {
