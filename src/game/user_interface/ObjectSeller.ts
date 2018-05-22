@@ -1,5 +1,5 @@
 import {INTERFACE_WIDTH, TOP_GAP} from "./UserInterface";
-import {CAMERA_WIDTH_PIXELS} from "../../app";
+import {CAMERA_HEIGHT_PIXELS, CAMERA_WIDTH_PIXELS} from "../../app";
 import {WorldKnowledge} from "../WorldKnowledge";
 import {ObjectDescription} from "../objects/ObjectDescription";
 import {ObjectDescriptionRegistry} from "../objects/ObjectDescriptionRegistry";
@@ -22,6 +22,11 @@ export class ObjectSeller {
     private currentPhantom: ObjectPhantom;
     private game: Phaser.Game;
     private groups: {[index: string]: Phaser.Group};
+    private topButton: Phaser.Sprite;
+    private bottomButton: Phaser.Sprite;
+    private scroll: Phaser.Sprite;
+    private scrollBackground: Phaser.Sprite;
+    private scrollFirstId: number;
 
     constructor(worldKnowledge: WorldKnowledge) {
         this.worldKnowledge = worldKnowledge;
@@ -29,12 +34,25 @@ export class ObjectSeller {
         this.currentPhantom = null;
         this.objectProvisionnerButtons = [];
         this.sellerButtons = [];
+        this.scrollFirstId = 0;
     }
 
     create(game: Phaser.Game, groups: {[index: string]: Phaser.Group }) {
         this.game = game;
         this.groups = groups;
         this.addMissingButtons();
+        const barHeight = ObjectSeller.getNumberOfDisplayableButtons() * OBJECT_SELLER_CELL_SIZE;
+        this.topButton = this.game.add.sprite(CAMERA_WIDTH_PIXELS - 12, TOP_GAP, 'info', 12, groups[GROUP_INTERFACE]);
+        this.bottomButton = this.game.add.sprite(CAMERA_WIDTH_PIXELS - 12, TOP_GAP + barHeight - 12, 'info', 14, groups[GROUP_INTERFACE]);
+        this.scrollBackground = this.game.add.sprite(CAMERA_WIDTH_PIXELS - 12, TOP_GAP + 12, 'info', 13, groups[GROUP_INTERFACE]);
+        this.scrollBackground.scale.set(1, (barHeight - 12 - 12) / 12);
+        this.scroll = this.game.add.sprite(CAMERA_WIDTH_PIXELS - 12, TOP_GAP + 12, 'info', 15, groups[GROUP_INTERFACE]);
+        this.topButton.alpha = 0.5;
+        this.bottomButton.alpha = 0.5;
+        this.scrollBackground.alpha = 0.5;
+        this.scroll.alpha = 0.5;
+
+        // this.showScroll();
     }
 
     private addMissingButtons() {
@@ -56,6 +74,9 @@ export class ObjectSeller {
                     this.sellerButtons.push(sellerButton);
                 }
         });
+        if (this.objectProvisionnerButtons.length > ObjectSeller.getNumberOfDisplayableButtons()) {
+            this.showScroll();
+        }
     }
 
     update() {
@@ -83,6 +104,10 @@ export class ObjectSeller {
                 sellerButton.hide();
             })
         }
+        this.topButton.position.x += INTERFACE_WIDTH;
+        this.bottomButton.position.x += INTERFACE_WIDTH;
+        this.scroll.position.x += INTERFACE_WIDTH;
+        this.scrollBackground.position.x += INTERFACE_WIDTH;
         this.visible = false;
     }
 
@@ -95,6 +120,10 @@ export class ObjectSeller {
                 sellerButton.show();
             })
         }
+        this.topButton.position.x -= INTERFACE_WIDTH;
+        this.bottomButton.position.x -= INTERFACE_WIDTH;
+        this.scroll.position.x -= INTERFACE_WIDTH;
+        this.scrollBackground.position.x -= INTERFACE_WIDTH;
         this.visible = true;
     }
 
@@ -108,6 +137,45 @@ export class ObjectSeller {
 
     getCurrentPhantom(): ObjectPhantom {
         return this.currentPhantom;
+    }
+
+    private static getNumberOfDisplayableButtons(): number {
+        return Math.floor((CAMERA_HEIGHT_PIXELS - TOP_GAP) / OBJECT_SELLER_CELL_SIZE);
+    }
+
+    private showScroll() {
+        this.topButton.alpha = 1;
+        this.bottomButton.alpha = 1;
+        this.scroll.alpha = 1;
+        this.scrollBackground.alpha = 1;
+
+        this.topButton.inputEnabled = true;
+        this.topButton.input.useHandCursor = true;
+        this.topButton.events.onInputDown.add(this.scrollTop, this);
+
+        this.bottomButton.inputEnabled = true;
+        this.bottomButton.input.useHandCursor = true;
+        this.bottomButton.events.onInputDown.add(this.scrollBottom, this);
+    }
+
+    private scrollTop() {
+        this.scrollFirstId -= 1;
+        this.objectProvisionnerButtons.forEach((provisionnerButton) => {
+            provisionnerButton.scrollTop();
+        });
+        this.sellerButtons.forEach((sellerButton) => {
+            sellerButton.scrollTop();
+        });
+    }
+
+    private scrollBottom() {
+        this.scrollFirstId += 1;
+        this.objectProvisionnerButtons.forEach((provisionnerButton) => {
+            provisionnerButton.scrollBottom();
+        });
+        this.sellerButtons.forEach((sellerButton) => {
+            sellerButton.scrollBottom();
+        });
     }
 }
 
@@ -195,6 +263,18 @@ class SellerButton {
         this.price.position.x -= INTERFACE_WIDTH;
         this.button.position.x -= INTERFACE_WIDTH;
         this.objectName.position.x -= INTERFACE_WIDTH;
+    }
+
+    scrollTop() {
+        this.price.position.y += OBJECT_SELLER_CELL_SIZE;
+        this.button.position.y += OBJECT_SELLER_CELL_SIZE;
+        this.objectName.position.y += OBJECT_SELLER_CELL_SIZE;
+    }
+
+    scrollBottom() {
+        this.price.position.y -= OBJECT_SELLER_CELL_SIZE;
+        this.button.position.y -= OBJECT_SELLER_CELL_SIZE;
+        this.objectName.position.y -= OBJECT_SELLER_CELL_SIZE;
     }
 }
 
@@ -339,5 +419,29 @@ class ObjectProvisionnerButton {
             sprite.position.x -= INTERFACE_WIDTH;
         });
         this.square.position.x -= INTERFACE_WIDTH + 10;
+    }
+
+    scrollTop() {
+        this.counter.position.y += OBJECT_SELLER_CELL_SIZE;
+        this.fakeCells.forEach((fakeCell) => {
+            fakeCell.position.y += OBJECT_SELLER_CELL_SIZE;
+        });
+        this.circle.position.y += OBJECT_SELLER_CELL_SIZE;
+        this.sprites.forEach((sprite) => {
+            sprite.position.y += OBJECT_SELLER_CELL_SIZE;
+        });
+        this.square.position.y += OBJECT_SELLER_CELL_SIZE;
+    }
+
+    scrollBottom() {
+        this.counter.position.y -= OBJECT_SELLER_CELL_SIZE;
+        this.fakeCells.forEach((fakeCell) => {
+            fakeCell.position.y -= OBJECT_SELLER_CELL_SIZE;
+        });
+        this.circle.position.y -= OBJECT_SELLER_CELL_SIZE;
+        this.sprites.forEach((sprite) => {
+            sprite.position.y -= OBJECT_SELLER_CELL_SIZE;
+        });
+        this.square.position.y -= OBJECT_SELLER_CELL_SIZE;
     }
 }
