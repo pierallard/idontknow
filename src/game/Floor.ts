@@ -1,11 +1,12 @@
 import {PositionTransformer} from "./PositionTransformer";
+import {Point} from "./Point";
 
 export class Floor {
-    private position: PIXI.Point;
+    private position: Point;
     private sprite: Phaser.Sprite;
     private key: string;
 
-    constructor(point: PIXI.Point, key = 'woodcell') {
+    constructor(point: Point, key = 'woodcell') {
         this.position = point;
         this.key = key;
     }
@@ -22,7 +23,7 @@ export class Floor {
         group.add(this.sprite);
     }
 
-    getPosition(): PIXI.Point {
+    getPosition(): Point {
         return this.position;
     }
 }

@@ -1,6 +1,7 @@
 import {Wall} from "../objects/Wall";
 import {Window} from "../objects/Window";
 import {Door} from "../objects/Door";
+import {Point} from "../Point";
 
 export class WallRepository {
     private walls: Wall[];
@@ -9,7 +10,7 @@ export class WallRepository {
         this.walls = [];
     }
 
-    addWall(cell: PIXI.Point) {
+    addWall(cell: Point) {
         this.walls.push(new Wall(cell));
     }
 
@@ -52,11 +53,11 @@ export class WallRepository {
         return this.walls;
     }
 
-    addWindow(cell: PIXI.Point) {
+    addWindow(cell: Point) {
         this.walls.push(new Window(cell));
     }
 
-    addDoor(cell: PIXI.Point) {
+    addDoor(cell: Point) {
         this.walls.push(new Door(cell));
     }
 

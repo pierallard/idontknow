@@ -33,9 +33,11 @@ import {EmployeeLevelRegister} from "./human_stuff/EmployeeLevelRegister";
 import {Lamp} from "./objects/Lamp";
 import {Printer} from "./objects/Printer";
 import {Bonzai} from "./objects/Bonzai";
+import {Point} from "./Point";
 
 export const GRID_WIDTH = 37;
 export const GRID_HEIGHT = 15;
+export const GRID_FLOOR = 3;
 export const DEBUG_WORLD = false;
 
 export class WorldKnowledge {
@@ -55,8 +57,8 @@ export class WorldKnowledge {
     private floors: Floor[];
     private displayAmbiance: boolean;
     private infoboxes: InfoBox[];
-    private gridCache: {index: number}[][];
-    private acceptableCache: number[];
+    private gridCache: {index: number}[][][];
+    private acceptableCache: number[][];
 
     constructor() {
         this.displayAmbiance = false;
@@ -119,19 +121,19 @@ export class WorldKnowledge {
                 const wallCell = wallLine[wallLine.length - 1 - x];
                 const floorCell = floorLine[floorLine.length - 1 - x];
                 if (floorCell !== ' ') {
-                    this.cells.push(new Cell(this, new PIXI.Point(x, y)));
+                    this.cells.push(new Cell(this, new Point(x, y, 0)));
                 }
                 if (floorCell === '.') {
-                    this.floors.push(new Floor(new PIXI.Point(x, y), 'woodcell'));
+                    this.floors.push(new Floor(new Point(x, y, 0), 'woodcell'));
                 } else if (floorCell === ',') {
-                    this.floors.push(new Floor(new PIXI.Point(x, y), 'case_floortile'));
+                    this.floors.push(new Floor(new Point(x, y, 0), 'case_floortile'));
                 }
                 if (wallCell === 'X') {
-                    this.wallRepository.addWall(new PIXI.Point(x, y));
+                    this.wallRepository.addWall(new Point(x, y, 0));
                 } else if (wallCell === 'W') {
-                    this.wallRepository.addWindow(new PIXI.Point(x, y));
+                    this.wallRepository.addWindow(new Point(x, y, 0));
                 } else if (wallCell === 'D') {
-                    this.wallRepository.addDoor(new PIXI.Point(x, y));
+                    this.wallRepository.addDoor(new Point(x, y, 0));
                 }
             }
         }
@@ -215,14 +217,14 @@ export class WorldKnowledge {
         return new Price(this.wallet.getValue());
     }
 
-    resetAStar(position: PIXI.Point = null) {
+    resetAStar(position: Point = null) {
         this.acceptableCache = null;
         this.humanRepository.humans.forEach((human) => {
             human.resetAStar(position);
         });
     }
 
-    resetStates(positions: PIXI.Point[]) {
+    resetStates(positions: Point[]) {
         this.humanRepository.humans.forEach((human) => {
             positions.forEach((position) => {
                 human.resetStateIfCellEmpty(position);
@@ -261,28 +263,33 @@ export class WorldKnowledge {
         return result;
     }
 
-    getRandomCell(): PIXI.Point {
-        const acceptableIndexes = this.getAcceptables();
+    getRandomCell(): Point {
+        const acceptableIndexes = this.getAcceptables(0);
         const random = Math.floor(Math.random() * acceptableIndexes.length);
 
         return this.cells[acceptableIndexes[random]].getPosition();
     }
 
-    getAcceptables(): number[] {
+    getAcceptables(floor: number): number[] {
         if (this.acceptableCache === null) {
             this.acceptableCache = [];
-            for (let i = 0; i < this.cells.length; i++) {
-                if (this.isFree(this.cells[i].getPosition())) {
-                    this.acceptableCache.push(i);
+            for (let i = 0; i < GRID_FLOOR; i++) {
+                this.acceptableCache[i] = [];
+                for (let j = 0; j < this.cells.length; j++) {
+                    if (this.cells[j].getPosition().z === i) {
+                        if (this.isFree(this.cells[j].getPosition())) {
+                            this.acceptableCache[i].push(j);
+                        }
+                    }
                 }
             }
         }
 
-        return this.acceptableCache;
+        return this.acceptableCache[floor];
     }
 
-    getMeetingCells(cells: PIXI.Point[]) {
-        const acceptableIndexes = this.getAcceptables();
+    getMeetingCells(cells: Point[]) {
+        const acceptableIndexes = this.getAcceptables(0);
         let result = null;
         let dist = null;
         for (let i = 0; i < acceptableIndexes.length; i++) {
@@ -290,7 +297,7 @@ export class WorldKnowledge {
             for (let j = i + 1; j < acceptableIndexes.length; j++) {
                 const position2 = this.cells[acceptableIndexes[j]].getPosition();
                 if (PositionTransformer.isNeighbor(position1, position2)) {
-                    const newDist = WorldKnowledge.getDist(cells, position1);
+                    const newDist = WorldKnowledge.getMeetingPointDistance(cells, position1);
                     if (result === null || newDist < dist) {
                         dist = newDist;
                         result = [position1, position2];
@@ -302,23 +309,28 @@ export class WorldKnowledge {
         return result;
     }
 
-    getGrid(): {index: number}[][] {
+    getGrid(floor: number): {index: number}[][] {
         if (this.gridCache === null) {
             this.gridCache = [];
-            for (let i = 0; i < this.cells.length; i++) {
-                if (undefined === this.gridCache[this.cells[i].getPosition().y]) {
-                    this.gridCache[this.cells[i].getPosition().y] = [];
+            for (let i = 0; i < GRID_FLOOR; i++) {
+                this.gridCache[i] = [];
+                for (let j = 0; j < this.cells.length; j++) {
+                    if (this.cells[j].getPosition().z === i) {
+                        if (undefined === this.gridCache[i][this.cells[j].getPosition().y]) {
+                            this.gridCache[i][this.cells[j].getPosition().y] = [];
+                        }
+                        this.gridCache[i][this.cells[j].getPosition().y][this.cells[j].getPosition().x] = {
+                            index: j
+                        };
+                    }
                 }
-                this.gridCache[this.cells[i].getPosition().y][this.cells[i].getPosition().x] = {
-                    index: i
-                };
             }
         }
 
-        return this.gridCache;
+        return this.gridCache[floor];
     }
 
-    isFree(point: PIXI.Point, object: ObjectInterface = null): boolean {
+    isFree(point: Point, object: ObjectInterface = null): boolean {
         if (point.x < 0 || point.y < 0 || point.x >= GRID_WIDTH || point.y >= GRID_HEIGHT) {
             return false;
         }
@@ -327,6 +339,7 @@ export class WorldKnowledge {
             for (let k = 0; k < this.objects[j].getPositions().length; k++) {
                 if (this.objects[j].getPositions()[k].x === point.x &&
                     this.objects[j].getPositions()[k].y === point.y &&
+                    this.objects[j].getPositions()[k].z === point.z &&
                     this.objects[j] !== object) {
                     return false;
                 }
@@ -340,7 +353,7 @@ export class WorldKnowledge {
         return true;
     }
 
-    getClosestReferer(types: string[], referersCountPerObject: number = 1, position: PIXI.Point = null): ObjectReferer {
+    getClosestReferer(types: string[], referersCountPerObject: number = 1, position: Point = null): ObjectReferer {
         let freeReferers: ObjectReferer[] = [];
         this.objects.forEach((object) => {
             if (types.indexOf(object.getName()) > -1) {
@@ -364,7 +377,7 @@ export class WorldKnowledge {
         })[0];
     }
 
-    private static getDist(sources: PIXI.Point[], point: PIXI.Point): number {
+    private static getMeetingPointDistance(sources: Point[], point: Point): number {
         let dist = 0;
         sources.forEach((source) => {
             dist += PositionTransformer.dist(source, point);
@@ -393,17 +406,17 @@ export class WorldKnowledge {
         this.wallet.add(- price.getValue());
     }
 
-    canPutHere(objectInfo: ObjectDescription, origin: PIXI.Point, orientation: DIRECTION) {
+    canPutHere(objectInfo: ObjectDescription, origin: Point, orientation: DIRECTION) {
         return this.areAllTheCellsFree(objectInfo, origin, orientation) &&
             this.areAllSpritesEnterable(objectInfo, origin, orientation) &&
             this.isNewObjectNotBlockingExistingOne(objectInfo, origin, orientation);
     };
 
-    private areAllTheCellsFree(objectInfo: ObjectDescription, origin: PIXI.Point, orientation: DIRECTION) {
+    private areAllTheCellsFree(objectInfo: ObjectDescription, origin: Point, orientation: DIRECTION) {
         for (let i = 0; i < objectInfo.getSpriteInfos(orientation).length; i++) {
             const spriteInfo = objectInfo.getSpriteInfo(orientation, i);
             const gap = spriteInfo.getCellOffset(orientation);
-            if (!this.isFree(new PIXI.Point(origin.x + gap.x, origin.y + gap.y))) {
+            if (!this.isFree(origin.add(gap))) {
                 return false;
             }
         }
@@ -411,7 +424,7 @@ export class WorldKnowledge {
         return true;
     }
 
-    private areAllSpritesEnterable(objectInfo: ObjectDescription, origin: PIXI.Point, orientation: DIRECTION) {
+    private areAllSpritesEnterable(objectInfo: ObjectDescription, origin: Point, orientation: DIRECTION) {
         for (let i = 0; i < objectInfo.getInteractivePoints(orientation).length; i++) {
             const interactivePoint = objectInfo.getInteractivePoints(orientation)[i];
             let isEntryPossible = false;
@@ -427,7 +440,7 @@ export class WorldKnowledge {
         return true;
     }
 
-    private isNewObjectNotBlockingExistingOne(objectInfo: ObjectDescription, origin: PIXI.Point, orientation: DIRECTION) {
+    private isNewObjectNotBlockingExistingOne(objectInfo: ObjectDescription, origin: Point, orientation: DIRECTION) {
         const cellOffsets = objectInfo.getUniqueCellOffsets(orientation);
         const cellPositions = cellOffsets.map((offset) => {
             return new PIXI.Point(
@@ -441,10 +454,7 @@ export class WorldKnowledge {
             const interactivePoints = objectInfo.getInteractivePoints(object.getOrientation());
             for (let i = 0; i < interactivePoints.length; i++) {
                 const cellOffset = interactivePoints[i].getCellOffset(object.getOrientation());
-                const cell = new PIXI.Point(
-                    object.getOrigin().x + cellOffset.x,
-                    object.getOrigin().y + cellOffset.y
-                );
+                const cell = object.getOrigin().add(cellOffset);
                 const entryPoints = interactivePoints[i].getEntryPoints(object.getOrientation());
                 let isEntryPossible = false;
                 for (let j = 0; j < entryPoints.length; j++) {
@@ -468,16 +478,13 @@ export class WorldKnowledge {
         return true;
     }
 
-    isEntryAccessibleForObject(origin: PIXI.Point, gap: PIXI.Point, entry: DIRECTION) {
-        const gappedPosition = new PIXI.Point(
-            origin.x + gap.x,
-            origin.y + gap.y,
-        );
+    isEntryAccessibleForObject(origin: Point, gap: PIXI.Point, entry: DIRECTION) {
+        const gappedPosition = origin.add(gap);
 
         return this.isFree(Direction.getNeighbor(gappedPosition, entry));
     }
 
-    add(name: string, position: PIXI.Point, orientation: DIRECTION) {
+    add(name: string, position: Point, orientation: DIRECTION) {
         let object: InteractiveObjectInterface = null;
         switch (name) {
             case 'Desk': object = new Desk(position, this, orientation); break;
@@ -645,7 +652,7 @@ export class WorldKnowledge {
         return this.humanRepository.humans.length;
     }
 
-    getAmbiance(cell: PIXI.Point): number {
+    getAmbiance(cell: Point): number {
         let result = 1;
         this.objects.forEach((object) => {
             let ambiance = object.getDescription().getAmbiance();

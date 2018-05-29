@@ -3,6 +3,7 @@ import {ObjectInterface} from "./ObjectInterface";
 import {ObjectReferer} from "./ObjectReferer";
 import {Employee} from "../human_stuff/Employee";
 import {ObjectDescription} from "./ObjectDescription";
+import {Point} from "../Point";
 
 export interface InteractiveObjectInterface extends ObjectInterface {
     getEntries(objectNumber: number): DIRECTION[];
@@ -29,7 +30,7 @@ export interface InteractiveObjectInterface extends ObjectInterface {
      */
     getPositionGap(interactivePointIdentifier: number): PIXI.Point;
 
-    getCellPositionSubObject(interactivePointIdentifier: number): PIXI.Point;
+    getCellPositionSubObject(interactivePointIdentifier: number): Point;
 
     setUsed(interactivePointIdentifier: number, human: Employee): void;
 

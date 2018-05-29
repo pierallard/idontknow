@@ -1,18 +1,19 @@
 import {PositionTransformer} from "./PositionTransformer";
 import {DEBUG_WORLD, WorldKnowledge} from "./WorldKnowledge";
 import {GROUP_AMBIANCE, GROUP_FLOOR} from "./game_state/Play";
+import {Point} from "./Point";
 
 const ALPHA = 0.8;
 
 export class Cell {
     private worldKnowledge: WorldKnowledge;
-    private position: PIXI.Point;
+    private position: Point;
     private sprite: Phaser.Sprite;
     private ambianceRed: Phaser.Sprite;
     private ambianceYellow: Phaser.Sprite;
     private ambianceGreen: Phaser.Sprite;
 
-    constructor(worldKnowledge: WorldKnowledge, point: PIXI.Point) {
+    constructor(worldKnowledge: WorldKnowledge, point: Point) {
         this.worldKnowledge = worldKnowledge;
         this.position = point;
     }
@@ -78,7 +79,7 @@ export class Cell {
         }
     }
 
-    getPosition(): PIXI.Point {
+    getPosition(): Point {
         return this.position;
     }
 }

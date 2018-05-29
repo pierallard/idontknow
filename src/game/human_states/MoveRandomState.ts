@@ -6,9 +6,10 @@ import {AbstractState} from "./AbstractState";
 import {RageState} from "./RageState";
 import {RAGE_IMAGE} from "../human_stuff/ThoughtBubble";
 import {HumanAnimationManager} from "../human_stuff/HumanAnimationManager";
+import {Point} from "../Point";
 
 export class MoveRandomState extends AbstractState {
-    private goal: PIXI.Point;
+    private goal: Point;
 
     constructor(human: Employee, worldKnowledge: WorldKnowledge) {
         super(human);

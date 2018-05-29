@@ -1,10 +1,11 @@
 import {Employee} from "../human_stuff/Employee";
 import {WorldKnowledge} from "../WorldKnowledge";
 import {STATE} from "../human_stuff/HumanStateManager";
+import {Point} from "../Point";
 
 export class Meeting {
     private time: number;
-    private places: {human:Employee, position: PIXI.Point}[];
+    private places: {human:Employee, position: Point}[];
 
     constructor(humans: Employee[], time: number, worldKnowledge: WorldKnowledge) {
         const cells = worldKnowledge.getMeetingCells(humans.map((human) => {
@@ -23,7 +24,7 @@ export class Meeting {
         }
     }
 
-    getCell(human: Employee): PIXI.Point {
+    getCell(human: Employee): Point {
         for (let i = 0; i < this.places.length; i++) {
             if (human === this.places[i].human) {
                 return this.places[i].position;

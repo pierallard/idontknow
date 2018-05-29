@@ -1,6 +1,7 @@
 import {InteractiveObjectInterface} from "./InteractiveObjectInterface";
 import {DIRECTION} from "../Direction";
 import {Employee} from "../human_stuff/Employee";
+import {Point} from "../Point";
 
 export class ObjectReferer {
     private obj: InteractiveObjectInterface;
@@ -27,7 +28,7 @@ export class ObjectReferer {
         return this.obj.getEntries(this.interactivePointIdentifier);
     }
 
-    getPosition(): PIXI.Point {
+    getPosition(): Point {
         return this.obj.getCellPositionSubObject(this.interactivePointIdentifier);
     }
 

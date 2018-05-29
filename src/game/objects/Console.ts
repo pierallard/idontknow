@@ -2,12 +2,13 @@ import {AbstractObject} from "./AbstractObject";
 import {Direction, DIRECTION} from "../Direction";
 import {WorldKnowledge} from "../WorldKnowledge";
 import {FRAME_RATE} from "../human_stuff/HumanAnimationManager";
+import {Point} from "../Point";
 
 export class Console extends AbstractObject {
     private playersCount: number;
     private tvSprite: Phaser.Sprite;
 
-    constructor(point: PIXI.Point, worldKnowledge: WorldKnowledge, orientation: DIRECTION) {
+    constructor(point: Point, worldKnowledge: WorldKnowledge, orientation: DIRECTION) {
         super(point, worldKnowledge, orientation);
         this.playersCount = 0;
     }

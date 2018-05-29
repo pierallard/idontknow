@@ -1,6 +1,7 @@
 import {CELL_HEIGHT, CELL_WIDTH, PositionTransformer} from "../PositionTransformer";
 import {DIRECTION} from "../Direction";
 import {ObjectOrientation} from "./ObjectOrientation";
+import {Point} from "../Point";
 
 export class SpriteInfo {
     private spriteKey: string;
@@ -36,7 +37,7 @@ export class SpriteInfo {
         return this.anchorBottom;
     }
 
-    getRealPosition(originCell: PIXI.Point, orientation: DIRECTION): PIXI.Point {
+    getRealPosition(originCell: Point, orientation: DIRECTION): PIXI.Point {
         return this.getRealPositionFromOrigin(PositionTransformer.getRealPosition(originCell), orientation);
     }
 

@@ -1,3 +1,5 @@
+import {Point} from "./Point";
+
 export enum DIRECTION {
     CURRENT,
     TOP,
@@ -16,12 +18,12 @@ export class Direction {
         ];
     }
 
-    static getNeighbor(point: PIXI.Point, direction: DIRECTION): PIXI.Point {
+    static getNeighbor(point: Point, direction: DIRECTION): Point {
         switch (direction) {
-            case DIRECTION.TOP: return new PIXI.Point(point.x, point.y + 1);
-            case DIRECTION.BOTTOM: return new PIXI.Point(point.x, point.y - 1);
-            case DIRECTION.LEFT: return new PIXI.Point(point.x + 1, point.y);
-            case DIRECTION.RIGHT: return new PIXI.Point(point.x - 1, point.y);
+            case DIRECTION.TOP: return new Point(point.x, point.y + 1, point.z);
+            case DIRECTION.BOTTOM: return new Point(point.x, point.y - 1, point.z);
+            case DIRECTION.LEFT: return new Point(point.x + 1, point.y, point.z);
+            case DIRECTION.RIGHT: return new Point(point.x - 1, point.y, point.z);
             case DIRECTION.CURRENT: return point;
         }
     }

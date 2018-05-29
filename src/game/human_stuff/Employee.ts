@@ -20,6 +20,7 @@ import {SPRITE_DEBUG} from "../objects/AbstractObject";
 import {ObjectOrientation} from "../objects/ObjectOrientation";
 import {Price} from "../objects/Price";
 import {HumanState} from "../human_states/HumanState";
+import {Point} from "../Point";
 
 const MAX_WALK_CELL_DURATION = 1500;
 const MIN_WALK_CELL_DURATION = 800;
@@ -38,10 +39,10 @@ export const HUMAN_SPRITE_COLORS = ['green', 'pink', 'red'];
 
 export class Employee {
     private sprite: Phaser.TileSprite;
-    private cell: PIXI.Point;
+    private cell: Point;
     private game: Phaser.Game;
     private moving: boolean;
-    private path: PIXI.Point[];
+    private path: Point[];
     private worldKnowledge: WorldKnowledge;
     private closestPathFinder: ClosestPathFinder;
     private anchorPixels: PIXI.Point;
@@ -54,7 +55,7 @@ export class Employee {
     private moodSprite: MoodSprite;
     private humanProperties: HumanProperties;
 
-    constructor(cell: PIXI.Point, humanProperties: HumanProperties) {
+    constructor(cell: Point, humanProperties: HumanProperties) {
         this.cell = cell;
         this.moving = false;
         this.path = [];
@@ -154,7 +155,7 @@ export class Employee {
         return this.stateManager.goSitMeeting(this.game, meeting);
     }
 
-    moveTo(cell: PIXI.Point): boolean {
+    moveTo(cell: Point): boolean {
         const path = this.closestPathFinder.getPath(this.cell, cell);
         if (path === null) {
             this.path = [];
@@ -170,7 +171,7 @@ export class Employee {
         return true;
     }
 
-    moveToClosest(cell: PIXI.Point, entries: DIRECTION[] = [DIRECTION.BOTTOM, DIRECTION.RIGHT, DIRECTION.TOP, DIRECTION.LEFT]): boolean {
+    moveToClosest(cell: Point, entries: DIRECTION[] = [DIRECTION.BOTTOM, DIRECTION.RIGHT, DIRECTION.TOP, DIRECTION.LEFT]): boolean {
         const path = this.closestPathFinder.getNeighborPath(this.cell, cell, entries);
         if (path === null) {
             this.path = [];
@@ -207,7 +208,7 @@ export class Employee {
         this.moving = false;
         if (this.path !== null && this.path.length > 0) {
             const next = this.path.shift();
-            const direction = Direction.getNeighborDirection(this.cell, next);
+            const direction = Direction.getNeighborDirection(this.cell.to2DPoint(), next.to2DPoint());
             if (!this.moving) {
                 this.cell = next;
                 this.anchorPixels.x = 0;
@@ -217,7 +218,7 @@ export class Employee {
         }
     }
 
-    getPosition() {
+    getPosition(): Point {
         return this.cell;
     }
 
@@ -226,7 +227,7 @@ export class Employee {
     }
 
     interactWith(objectReferer: ObjectReferer, isLeft: boolean = null) {
-        const direction = Direction.getNeighborDirection(this.cell, objectReferer.getPosition());
+        const direction = Direction.getNeighborDirection(this.cell.to2DPoint(), objectReferer.getPosition().to2DPoint());
         const side = (isLeft !== null) ? isLeft : Employee.isHumanLeftLooking(direction);
         // Employee has to gap 5px from the sofa to be sit properly, and 1px from the bottom.
         this.anchorPixels.x = objectReferer.getPositionGap().x + (side ? -5 : 5);
@@ -275,12 +276,12 @@ export class Employee {
         return this.sprite;
     }
 
-    resetAStar(newNonEmptyCell: PIXI.Point = null) {
+    resetAStar(newNonEmptyCell: Point = null) {
         this.closestPathFinder.reset();
         if (newNonEmptyCell && this.path !== null) {
             // If human wants to go to a non-empty cell
             const matchingPath = this.path.filter((cell) => {
-                return cell.x === newNonEmptyCell.x && cell.y === newNonEmptyCell.y;
+                return cell.equals(newNonEmptyCell)
             });
             if (matchingPath.length > 0) {
                 const goal = this.path[this.path.length - 1];
@@ -290,8 +291,8 @@ export class Employee {
         }
     }
 
-    resetStateIfCellEmpty(newEmptyCell: PIXI.Point) {
-        if (this.cell.x == newEmptyCell.x && this.cell.y == newEmptyCell.y) {
+    resetStateIfCellEmpty(newEmptyCell: Point) {
+        if (this.cell.equals(newEmptyCell)) {
             this.stateManager.reset(this.game);
         }
     }

@@ -45,8 +45,8 @@ export class TalkState extends AbstractState {
                     this.switchAnimation(animation);
                 } else if (!this.human.isMoving()) {
                     const direction = Direction.getNeighborDirection(
-                        this.human.getPosition(),
-                        this.meeting.getAnotherHuman(this.human).getPosition()
+                        this.human.getPosition().to2DPoint(),
+                        this.meeting.getAnotherHuman(this.human).getPosition().to2DPoint()
                     );
                     this.human.loadAnimation(ANIMATION.FREEZE, Direction.isLeft(direction), Direction.isTop(direction));
                 }
@@ -70,8 +70,8 @@ export class TalkState extends AbstractState {
 
     private switchAnimation(animation: ANIMATION) {
         const direction = Direction.getNeighborDirection(
-            this.human.getPosition(),
-            this.meeting.getAnotherHuman(this.human).getPosition()
+            this.human.getPosition().to2DPoint(),
+            this.meeting.getAnotherHuman(this.human).getPosition().to2DPoint()
         );
         if (animation === ANIMATION.TALK) {
             this.human.showTalkBubble();

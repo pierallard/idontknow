@@ -9,18 +9,19 @@ import {ObjectOrientation} from "./ObjectOrientation";
 import {COLOR} from "../Pico8Colors";
 import {ObjectDescription} from "./ObjectDescription";
 import {ObjectDeleter} from "./ObjectDeleter";
+import {Point} from "../Point";
 
 export const SPRITE_DEBUG = false;
 
 export abstract class AbstractObject implements InteractiveObjectInterface {
     protected sprites: Phaser.Sprite[];
-    protected position: PIXI.Point;
+    protected position: Point;
     protected orientation: DIRECTION;
     private worldKnowledge: WorldKnowledge;
     private usedIdentifiers: Employee[];
     private debugGraphics: Phaser.Graphics;
 
-    constructor(point: PIXI.Point, worldKnowledge: WorldKnowledge, orientation: DIRECTION) {
+    constructor(point: Point, worldKnowledge: WorldKnowledge, orientation: DIRECTION) {
         this.position = point;
         this.orientation = orientation;
         this.worldKnowledge = worldKnowledge;
@@ -88,11 +89,12 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
         return this.getDescription().getInteractivePointEntryPoints(this.orientation, objectNumber);
     }
 
-    getPositions(): PIXI.Point[] {
+    getPositions(): Point[] {
         return this.getDescription().getUniqueCellOffsets(this.orientation).map((gap) => {
-            return new PIXI.Point(
+            return new Point(
                 this.position.x + gap.x,
-                this.position.y + gap.y
+                this.position.y + gap.y,
+                this.position.z
             );
         });
     }
@@ -124,12 +126,13 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
         return infos.getInteractivePoints(this.orientation)[interactivePointIdentifier].isHumanTopLooking();
     }
 
-    getCellPositionSubObject(interactivePointIdentifier: number): PIXI.Point {
+    getCellPositionSubObject(interactivePointIdentifier: number): Point {
         const infos = this.getDescription();
 
-        return new PIXI.Point(
+        return new Point(
             this.position.x + infos.getInteractivePointCellOffset(this.orientation, interactivePointIdentifier).x,
-            this.position.y + infos.getInteractivePointCellOffset(this.orientation, interactivePointIdentifier).y
+            this.position.y + infos.getInteractivePointCellOffset(this.orientation, interactivePointIdentifier).y,
+            this.position.z
         );
     }
 
@@ -141,7 +144,7 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
         return this.usedIdentifiers[interactivePointIdentifier] ? this.usedIdentifiers[interactivePointIdentifier] : null;
     }
 
-    getOrigin(): PIXI.Point {
+    getOrigin(): Point {
         return this.position;
     }
 

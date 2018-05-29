@@ -1,4 +1,5 @@
 import {PositionTransformer} from "../PositionTransformer";
+import {Point} from "../Point";
 
 const FAKE_ANCHOR = -4;
 const RADIUS_INVISIBLE = 10;
@@ -6,11 +7,11 @@ const RADIUS_VISIBLE = 50;
 const MIN_ALPHA = 0.5;
 
 export class Wall {
-    protected cell: PIXI.Point;
+    protected cell: Point;
     protected sprite: Phaser.Sprite;
     protected game: Phaser.Game;
 
-    constructor(position: PIXI.Point) {
+    constructor(position: Point) {
         this.cell = position;
     }
 
@@ -34,7 +35,7 @@ export class Wall {
         group.add(this.sprite);
     }
 
-    getPosition(): PIXI.Point {
+    getPosition(): Point {
         return this.cell;
     }
 

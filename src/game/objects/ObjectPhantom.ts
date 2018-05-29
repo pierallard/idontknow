@@ -10,13 +10,14 @@ import {GROUP_INFOS} from "../game_state/Play";
 import {COLOR} from "../Pico8Colors";
 import {DIRECTION_LOOP, ObjectOrientation} from "./ObjectOrientation";
 import {ObjectSeller} from "../user_interface/ObjectSeller";
+import {Point} from "../Point";
 
 const ARROW_SIZE = 0.9;
 const GAP = 4;
 const SPRITE_OPACITY = 0.7;
 
 export class ObjectPhantom implements ObjectInterface {
-    private position: PIXI.Point;
+    private position: Point;
     private phantomSprites: PhantomSprite[];
     private orientation: DIRECTION;
     private forbiddenSprite: Phaser.Sprite;
@@ -33,7 +34,7 @@ export class ObjectPhantom implements ObjectInterface {
         this.phantomSprites = [];
         this.orientation = DIRECTION_LOOP[0];
         this.worldKnowledge = worldKnowledge;
-        this.position = new PIXI.Point(-10, -10);
+        this.position = new Point(-10, -10, 0);
         this.objectDescription = ObjectDescriptionRegistry.getObjectDescription(name);
 
         this.objectDescription.getSpriteInfos(DIRECTION_LOOP[0]).forEach((spriteInfo: SpriteInfo) => {
@@ -79,10 +80,10 @@ export class ObjectPhantom implements ObjectInterface {
         groups[GROUP_INFOS].add(this.forbiddenSprite);
     }
 
-    private updatePosition(point: PIXI.Point, camera: Phaser.Camera) {
+    private updatePosition(realPoint: PIXI.Point, camera: Phaser.Camera) {
         const gappedPoint = new PIXI.Point(
-            point.x + camera.x,
-            point.y + camera.y
+            realPoint.x + camera.x,
+            realPoint.y + camera.y
         );
 
         this.position = PositionTransformer.getCellPosition(gappedPoint);
@@ -120,9 +121,9 @@ export class ObjectPhantom implements ObjectInterface {
         this.directionsSprite.updatePolygons();
     }
 
-    getPositions(): PIXI.Point[] {
+    getPositions(): Point[] {
         return this.objectDescription.getUniqueCellOffsets(this.orientation).map((cellGap) => {
-            return new PIXI.Point(this.position.x + cellGap.x, this.position.y + cellGap.y)
+            return this.position.add(cellGap);
         });
     }
 
@@ -187,7 +188,7 @@ export class ObjectPhantom implements ObjectInterface {
         return true;
     }
 
-    getOrigin(): PIXI.Point {
+    getOrigin(): Point {
         return this.position;
     }
 
@@ -225,33 +226,34 @@ class DirectionsSprite {
                 } else {
                     this.graphics.beginFill(COLOR.RED); // Red
                 }
+                const cellGap3D = new Point(cellGap.x, cellGap.y, 0);
                 switch (direction) {
                     case DIRECTION.BOTTOM:
                         this.graphics.drawPolygon(
-                            PositionTransformer.addGap(new PIXI.Point(-GAP, CELL_HEIGHT / 2), cellGap),
-                            PositionTransformer.addGap(new PIXI.Point(-CELL_WIDTH / 2, GAP), cellGap),
-                            PositionTransformer.addGap(new PIXI.Point(-CELL_WIDTH / 2 * ARROW_SIZE, CELL_HEIGHT / 2 * ARROW_SIZE), cellGap),
+                            PositionTransformer.addGap(new PIXI.Point(-GAP, CELL_HEIGHT / 2), cellGap3D),
+                            PositionTransformer.addGap(new PIXI.Point(-CELL_WIDTH / 2, GAP), cellGap3D),
+                            PositionTransformer.addGap(new PIXI.Point(-CELL_WIDTH / 2 * ARROW_SIZE, CELL_HEIGHT / 2 * ARROW_SIZE), cellGap3D),
                         );
                         break;
                     case DIRECTION.LEFT:
                         this.graphics.drawPolygon(
-                            PositionTransformer.addGap(new PIXI.Point(-CELL_WIDTH / 2, -GAP), cellGap),
-                            PositionTransformer.addGap(new PIXI.Point(-GAP, -CELL_HEIGHT / 2), cellGap),
-                            PositionTransformer.addGap(new PIXI.Point(-CELL_WIDTH / 2 * ARROW_SIZE, -CELL_HEIGHT / 2 * ARROW_SIZE), cellGap),
+                            PositionTransformer.addGap(new PIXI.Point(-CELL_WIDTH / 2, -GAP), cellGap3D),
+                            PositionTransformer.addGap(new PIXI.Point(-GAP, -CELL_HEIGHT / 2), cellGap3D),
+                            PositionTransformer.addGap(new PIXI.Point(-CELL_WIDTH / 2 * ARROW_SIZE, -CELL_HEIGHT / 2 * ARROW_SIZE), cellGap3D),
                         );
                         break;
                     case DIRECTION.TOP:
                         this.graphics.drawPolygon(
-                            PositionTransformer.addGap(new PIXI.Point(CELL_WIDTH / 2, -GAP), cellGap),
-                            PositionTransformer.addGap(new PIXI.Point(GAP, -CELL_HEIGHT / 2), cellGap),
-                            PositionTransformer.addGap(new PIXI.Point(CELL_WIDTH / 2 * ARROW_SIZE, -CELL_HEIGHT / 2 * ARROW_SIZE), cellGap),
+                            PositionTransformer.addGap(new PIXI.Point(CELL_WIDTH / 2, -GAP), cellGap3D),
+                            PositionTransformer.addGap(new PIXI.Point(GAP, -CELL_HEIGHT / 2), cellGap3D),
+                            PositionTransformer.addGap(new PIXI.Point(CELL_WIDTH / 2 * ARROW_SIZE, -CELL_HEIGHT / 2 * ARROW_SIZE), cellGap3D),
                         );
                         break;
                     case DIRECTION.RIGHT:
                         this.graphics.drawPolygon(
-                            PositionTransformer.addGap(new PIXI.Point(GAP, CELL_HEIGHT / 2), cellGap),
-                            PositionTransformer.addGap(new PIXI.Point(CELL_WIDTH / 2, GAP), cellGap),
-                            PositionTransformer.addGap(new PIXI.Point(CELL_WIDTH / 2 * ARROW_SIZE, CELL_HEIGHT / 2 * ARROW_SIZE), cellGap),
+                            PositionTransformer.addGap(new PIXI.Point(GAP, CELL_HEIGHT / 2), cellGap3D),
+                            PositionTransformer.addGap(new PIXI.Point(CELL_WIDTH / 2, GAP), cellGap3D),
+                            PositionTransformer.addGap(new PIXI.Point(CELL_WIDTH / 2 * ARROW_SIZE, CELL_HEIGHT / 2 * ARROW_SIZE), cellGap3D),
                         );
                 }
             });
@@ -259,16 +261,17 @@ class DirectionsSprite {
 
         this.graphics.beginFill(this.phantom.isCellFree() ? COLOR.LIGHT_GREEN : COLOR.RED);
         this.phantom.getObjectDescription().getUniqueCellOffsets(this.phantom.getOrientation()).forEach((cellGap) => {
+            const cellGap3D = new Point(cellGap.x, cellGap.y, 0);
             this.graphics.drawPolygon(
-                PositionTransformer.addGap(new PIXI.Point(- CELL_WIDTH / 2, 0), cellGap),
-                PositionTransformer.addGap(new PIXI.Point(0, CELL_HEIGHT / 2), cellGap),
-                PositionTransformer.addGap(new PIXI.Point(CELL_WIDTH / 2, 0), cellGap),
-                PositionTransformer.addGap(new PIXI.Point(0, - CELL_HEIGHT / 2), cellGap)
+                PositionTransformer.addGap(new PIXI.Point(- CELL_WIDTH / 2, 0), cellGap3D),
+                PositionTransformer.addGap(new PIXI.Point(0, CELL_HEIGHT / 2), cellGap3D),
+                PositionTransformer.addGap(new PIXI.Point(CELL_WIDTH / 2, 0), cellGap3D),
+                PositionTransformer.addGap(new PIXI.Point(0, - CELL_HEIGHT / 2), cellGap3D)
             );
         });
     }
 
-    setPosition(position: PIXI.Point) {
+    setPosition(position: Point) {
         this.graphics.x = PositionTransformer.getRealPosition(position).x;
         this.graphics.y = PositionTransformer.getRealPosition(position).y - CELL_HEIGHT / 2;
         this.updatePolygons();
@@ -295,7 +298,7 @@ class PhantomSprite {
         this.sprite.alpha = SPRITE_OPACITY;
     }
 
-    setPosition(position: PIXI.Point) {
+    setPosition(position: Point) {
         this.sprite.x = this.spriteInfo.getRealPosition(position, this.orientation).x;
         this.sprite.y = this.spriteInfo.getRealPosition(position, this.orientation).y;
     }
