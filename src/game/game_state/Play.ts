@@ -1,8 +1,6 @@
-import {GRID_HEIGHT, GRID_WIDTH, WorldKnowledge} from "../WorldKnowledge";
+import {GRID_FLOOR, WorldKnowledge} from "../WorldKnowledge";
 import {CAMERA_HEIGHT_PIXELS, CAMERA_WIDTH_PIXELS, WORLD_HEIGHT, WORLD_WIDTH} from "../../app";
 import {INTERFACE_WIDTH, UserInterface} from "../user_interface/UserInterface";
-import {CELL_HEIGHT} from "../PositionTransformer";
-import {InfoBox} from "../user_interface/Infobox";
 
 export const GROUP_FLOOR = 'floor';
 export const GROUP_AMBIANCE = 'ambiance';
@@ -39,9 +37,11 @@ export default class Play extends Phaser.State {
         // this.game.stage.disableVisibilityChange = true;
         this.game.stage.backgroundColor = "#494947";
         this.groups = {};
-        this.groups[GROUP_FLOOR] = this.game.add.group();
+        for (let i = 0; i < GRID_FLOOR; i++) {
+            this.groups[GROUP_FLOOR + i] = this.game.add.group();
+            this.groups[GROUP_OBJECTS_AND_HUMANS + i] =  this.game.add.group();
+        }
         this.groups[GROUP_AMBIANCE] = this.game.add.group();
-        this.groups[GROUP_OBJECTS_AND_HUMANS] =  this.game.add.group();
         this.groups[GROUP_INFOS] = this.game.add.group();
         this.groups[GROUP_INTERFACE] = this.game.add.group();
         this.groups[GROUP_TOOLTIP] = this.game.add.group();
@@ -72,7 +72,9 @@ export default class Play extends Phaser.State {
     }
 
     update(game: Phaser.Game) {
-        this.groups[GROUP_OBJECTS_AND_HUMANS].sort('y', Phaser.Group.SORT_ASCENDING);
+        for (let i = 0; i < GRID_FLOOR; i++) {
+            this.groups[GROUP_OBJECTS_AND_HUMANS + i].sort('y', Phaser.Group.SORT_ASCENDING);
+        }
         this.worldKnowledge.update();
         this.userInterface.update();
 

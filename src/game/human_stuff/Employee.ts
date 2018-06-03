@@ -89,13 +89,13 @@ export class Employee {
         }, () => {
             this.worldKnowledge.unselectHuman();
         });
-        groups[GROUP_OBJECTS_AND_HUMANS].add(this.sprite);
+        groups[GROUP_OBJECTS_AND_HUMANS + this.cell.z].add(this.sprite);
 
         this.animationManager.loadAnimation(ANIMATION.FREEZE, true, false);
         this.closestPathFinder = new ClosestPathFinder(game, worldKnowledge);
         this.stateManager.create(game, worldKnowledge, this.animationManager);
-        this.talkBubble.create(this.sprite, this.game, groups[GROUP_OBJECTS_AND_HUMANS]);
-        this.thoughtBubble.create(this.sprite, this.game, groups[GROUP_OBJECTS_AND_HUMANS]);
+        this.talkBubble.create(this.sprite, this.game, groups[GROUP_OBJECTS_AND_HUMANS + this.cell.z]);
+        this.thoughtBubble.create(this.sprite, this.game, groups[GROUP_OBJECTS_AND_HUMANS + this.cell.z]);
         this.moodSprite.create(this.sprite, this.game, groups[GROUP_INFOS]);
 
         if (PATH_DEBUG || SPRITE_DEBUG) {

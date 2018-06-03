@@ -29,7 +29,7 @@ export class Cell {
             this.sprite.anchor.setTo(0.5, 1);
             this.sprite.alpha = 0.5;
 
-            groups[GROUP_FLOOR].add(this.sprite);
+            groups[GROUP_FLOOR + this.position.z].add(this.sprite);
         }
 
         this.ambianceRed = game.add.sprite(

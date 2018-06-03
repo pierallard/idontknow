@@ -9,7 +9,6 @@ import {Dispenser} from "./objects/Dispenser";
 import {WallRepository} from "./repositories/WallRepository";
 import {Cell} from "./Cell";
 import {PositionTransformer} from "./PositionTransformer";
-import {GROUP_FLOOR, GROUP_OBJECTS_AND_HUMANS} from "./game_state/Play";
 import {Depot} from "./objects/Depot";
 import {DeletableObjectInterface} from "./objects/DeletableObjectInterface";
 import {DIRECTION, Direction} from "./Direction";
@@ -73,8 +72,8 @@ export class WorldKnowledge {
         this.gridCache = null;
         this.acceptableCache = null;
 
-        const walls = "" +
-            "  XXXWXXXXXWXXXXXXXXXXXXXWXXXXXWXXX  \n" +
+        const walls = ["" +
+            "  XXXWXXXXXWXXWXXXXXXXWXXWXXXXXWXXX  \n" +
             "  X      X     D       X   X      X  \n" +
             "  W      D     X       XXDXX      W  \n" +
             "  X      XXXXXXX       D   D      X  \n" +
@@ -85,11 +84,43 @@ export class WorldKnowledge {
             "XXXXXXDXXX     D           XXXDXXXXXX\n" +
             "X X      D     X           D        X\n" +
             "X X      X     X           X        X\n" +
-            "X X      XXXWXXXXXDXXXXXWXXX        X\n" +
+            "X X      XXWXXWXXXDXXXWXXWXX        X\n" +
             "X X      D                 D        X\n" +
             "X D      X                 X        X\n" +
-            "XXXWXXXWXX                 XXWXXXWXXX";
-        const floors = "" +
+            "XXXWXXXWXX                 XXWXXXWXXX",
+
+            "         XXWXXWXXXXXXXWXXWXX         \n" +
+            "         X   X    D    D   X         \n" +
+            "         X   X    X    X   X         \n" +
+            "         X   X    X    X   X         \n" +
+            "         XXXDXDXXXX    X   X         \n" +
+            "         X             X   X         \n" +
+            "         XXXXXDXXXXXXXXXDXXX         \n" +
+            "         X     D       X   X         \n" +
+            "         X     X       X   X         \n" +
+            "         X     X       X   X         \n" +
+            "         X     X       D   X         \n" +
+            "         XXWXXWXXXDXXXWXXWXX         \n" +
+            "                                     \n" +
+            "                                     \n" +
+            "                                     ",
+
+            "         XXXXXWXXXWXXXWXXXXX         \n" +
+            "         X   X             X         \n" +
+            "         X   X             X         \n" +
+            "         X   X             X         \n" +
+            "         XXXDX             X         \n" +
+            "         W                 W         \n" +
+            "         XXXXXDXXXXXXX     X         \n" +
+            "         X     X     X     X         \n" +
+            "         X     X     XXXXXXX         \n" +
+            "         X     X     X     X         \n" +
+            "         X     X     X     X         \n" +
+            "         XXXXXWXXXWXXXWXXXXX         \n" +
+            "                                     \n" +
+            "                                     \n" +
+            "                                     "];
+        const floors = ["" +
             "  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  \n" +
             "  X,,,,,,,,,,,,,,,,,,,,,...........  \n" +
             "  X,,,,,,,,,,,,,,,,,,,,,...........  \n" +
@@ -104,36 +135,70 @@ export class WorldKnowledge {
             "X....................................\n" +
             "X.........,,,,,,,,,,,,,,,,,,.........\n" +
             "X.........,,,,,,,,,,,,,,,,,,.........\n" +
-            "X.........,,,,,,,,,,,,,,,,,,.........";
+            "X.........,,,,,,,,,,,,,,,,,,.........",
 
-        const wallLines = walls.split("\n");
-        const floorLines = floors.split("\n");
-        for (let y = 0; y < GRID_HEIGHT; y++) {
-            let wallLine = wallLines[wallLines.length - 1 - y];
-            let floorLine = floorLines[floorLines.length - 1 - y];
-            if (wallLine === undefined) {
-                wallLine = Array(wallLines[0].length).join(' ');
-            }
-            if (floorLine === undefined) {
-                floorLine = Array(wallLines[0].length).join(' ');
-            }
-            for (let x = 0; x < GRID_WIDTH; x++) {
-                const wallCell = wallLine[wallLine.length - 1 - x];
-                const floorCell = floorLine[floorLine.length - 1 - x];
-                if (floorCell !== ' ') {
-                    this.cells.push(new Cell(this, new Point(x, y, 0)));
+            "                                     \n" +
+            "          ..................         \n" +
+            "          ..........    ....         \n" +
+            "          ..........    ....         \n" +
+            "          ..................         \n" +
+            "          ..................         \n" +
+            "          ..................         \n" +
+            "          ..................         \n" +
+            "          ..................         \n" +
+            "          ..................         \n" +
+            "          ..................         \n" +
+            "          ..................         \n" +
+            "          ,,,,,,,,,,,,,,,,,,         \n" +
+            "          ,,,,,,,,,,,,,,,,,,         \n" +
+            "          ,,,,,,,,,,,,,,,,,,         ",
+
+            "                                     \n" +
+            "              ..............         \n" +
+            "              ..............         \n" +
+            "              ..............         \n" +
+            "              ..............         \n" +
+            "          ..................         \n" +
+            "          ..................         \n" +
+            "          ..................         \n" +
+            "          ..................         \n" +
+            "          ..................         \n" +
+            "          ..................         \n" +
+            "          ..................         \n" +
+            "                                     \n" +
+            "                                     \n" +
+            "                                     "];
+
+        for (let i = 0; i < walls.length; i++) {
+            const wallLines = walls[i].split("\n");
+            const floorLines = floors[i].split("\n");
+            for (let y = 0; y < GRID_HEIGHT; y++) {
+                let wallLine = wallLines[wallLines.length - 1 - y];
+                let floorLine = floorLines[floorLines.length - 1 - y];
+                if (wallLine === undefined) {
+                    wallLine = Array(wallLines[0].length).join(' ');
                 }
-                if (floorCell === '.') {
-                    this.floors.push(new Floor(new Point(x, y, 0), 'woodcell'));
-                } else if (floorCell === ',') {
-                    this.floors.push(new Floor(new Point(x, y, 0), 'case_floortile'));
+                if (floorLine === undefined) {
+                    floorLine = Array(wallLines[0].length).join(' ');
                 }
-                if (wallCell === 'X') {
-                    this.wallRepository.addWall(new Point(x, y, 0));
-                } else if (wallCell === 'W') {
-                    this.wallRepository.addWindow(new Point(x, y, 0));
-                } else if (wallCell === 'D') {
-                    this.wallRepository.addDoor(new Point(x, y, 0));
+                for (let x = 0; x < GRID_WIDTH; x++) {
+                    const wallCell = wallLine[wallLine.length - 1 - x];
+                    const floorCell = floorLine[floorLine.length - 1 - x];
+                    if (floorCell !== ' ') {
+                        this.cells.push(new Cell(this, new Point(x, y, i)));
+                    }
+                    if (floorCell === '.') {
+                        this.floors.push(new Floor(new Point(x, y, i), 'woodcell'));
+                    } else if (floorCell === ',') {
+                        this.floors.push(new Floor(new Point(x, y, i), 'case_floortile'));
+                    }
+                    if (wallCell === 'X') {
+                        this.wallRepository.addWall(new Point(x, y, i));
+                    } else if (wallCell === 'W') {
+                        this.wallRepository.addWindow(new Point(x, y, i));
+                    } else if (wallCell === 'D') {
+                        this.wallRepository.addDoor(new Point(x, y, i));
+                    }
                 }
             }
         }
@@ -149,11 +214,9 @@ export class WorldKnowledge {
         this.groups = groups;
         this.wallet.create(game);
         this.levelManager.create(game);
-        const floorGroup = groups[GROUP_FLOOR];
-        const noname = groups[GROUP_OBJECTS_AND_HUMANS];
 
         this.floors.forEach((floors: Floor) => {
-            floors.create(game, floorGroup);
+            floors.create(game, groups);
         });
 
         this.cells.forEach((cell: Cell) => {
@@ -164,7 +227,7 @@ export class WorldKnowledge {
             object.create(game, groups);
         });
 
-        this.wallRepository.create(game, noname);
+        this.wallRepository.create(game, groups);
         this.humanRepository.create(game, groups, this);
         this.moodRegister.create(game);
         this.employeeCountRegister.create(game);
@@ -337,16 +400,14 @@ export class WorldKnowledge {
 
         for (let j = 0; j < this.objects.length; j++) {
             for (let k = 0; k < this.objects[j].getPositions().length; k++) {
-                if (this.objects[j].getPositions()[k].x === point.x &&
-                    this.objects[j].getPositions()[k].y === point.y &&
-                    this.objects[j].getPositions()[k].z === point.z &&
+                if (this.objects[j].getPositions()[k].equals(point) &&
                     this.objects[j] !== object) {
                     return false;
                 }
             }
         }
 
-        if (this.wallRepository.hasWall(point.x, point.y, false)) {
+        if (this.wallRepository.hasWall(point, false)) {
             return false;
         }
 

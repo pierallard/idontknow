@@ -48,10 +48,9 @@ export class PositionTransformer {
     }
 
     static addGap(realPosition: PIXI.Point, cellGap: Point) {
-        // TODO Do this
         return new PIXI.Point(
             realPosition.x - (cellGap.x - cellGap.y) * CELL_WIDTH / 2,
-            realPosition.y - (cellGap.x + cellGap.y) * CELL_HEIGHT / 2
+            realPosition.y - (cellGap.x + cellGap.y) * CELL_HEIGHT / 2 - cellGap.z * 36,
         );
     }
 

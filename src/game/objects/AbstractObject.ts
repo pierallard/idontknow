@@ -57,7 +57,7 @@ export abstract class AbstractObject implements InteractiveObjectInterface {
 
             this.sprites.push(sprite);
 
-            groups[GROUP_OBJECTS_AND_HUMANS].add(sprite);
+            groups[GROUP_OBJECTS_AND_HUMANS + this.position.z].add(sprite);
         });
 
         ObjectDeleter.makeDeletable(this, game, groups[GROUP_INFOS]);
