@@ -10,6 +10,7 @@ import {Employee} from "../human_stuff/Employee";
 import {UserInfoPanel} from "./UserInfoPanel";
 import {COLOR} from "../Pico8Colors";
 import {DAY_DURATION} from "../human_stuff/HumanProperties";
+import {FloorSelector} from "./FloorSelector";
 
 export const INTERFACE_WIDTH = 150.5;
 export const TOP_GAP_2 = 15.5 + 12;
@@ -36,6 +37,7 @@ export class UserInterface {
     private userInfoPanel: UserInfoPanel;
     private dayText: Phaser.Text
     private day: number;
+    private floorSelector: FloorSelector;
 
     constructor(worldKnowledge: WorldKnowledge) {
         this.worldKnowledge = worldKnowledge;
@@ -44,6 +46,7 @@ export class UserInterface {
         this.infoPanel = new InfoPanel(worldKnowledge);
         this.userInfoPanel = new UserInfoPanel(worldKnowledge);
         this.levelDisplayer = new LevelDisplayer(worldKnowledge);
+        this.floorSelector = new FloorSelector(worldKnowledge);
         this.buttons = [];
         let i = 0;
         [['info', PANEL.INFO], ['usr', PANEL.USR], ['obj', PANEL.OBJ]].forEach((panelInfo) => {
@@ -106,6 +109,8 @@ export class UserInterface {
             button.create(game, groups);
         });
         this.selectPanel(PANEL.INFO);
+
+        this.floorSelector.create(game, groups);
     }
 
     update() {
@@ -166,6 +171,10 @@ export class UserInterface {
 
     private updateDayText() {
         this.dayText.text = 'Day ' + this.day;
+    }
+
+    getFloorSelector(): FloorSelector {
+        return this.floorSelector;
     }
 }
 

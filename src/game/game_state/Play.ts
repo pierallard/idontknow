@@ -22,6 +22,8 @@ export default class Play extends Phaser.State {
     private sKey: Phaser.Key;
     private qKey: Phaser.Key;
     private dKey: Phaser.Key;
+    private doubleUpKey: Phaser.Key;
+    private doubleDownKey: Phaser.Key;
     // private pauseKey: Phaser.Key;
     // private isPaused: boolean;
 
@@ -63,6 +65,8 @@ export default class Play extends Phaser.State {
         this.sKey = this.game.input.keyboard.addKey(Phaser.Keyboard.S);
         this.qKey = this.game.input.keyboard.addKey(Phaser.Keyboard.Q);
         this.dKey = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
+        this.doubleUpKey = this.game.input.keyboard.addKey(Phaser.Keyboard.PAGE_UP);
+        this.doubleDownKey = this.game.input.keyboard.addKey(Phaser.Keyboard.PAGE_DOWN);
 
         // this.pauseKey = this.game.input.keyboard.addKey(Phaser.Keyboard.P);
         // const text = this.game.add.bitmapText(CAMERA_WIDTH_PIXELS - INTERFACE_WIDTH + 60, 2, 'retro_computer','Bitmap Fonts!',7, this.groups[GROUP_INTERFACE]);
@@ -105,6 +109,11 @@ export default class Play extends Phaser.State {
         }
         else if (this.rightKey.isDown || this.dKey.isDown) {
             this.game.camera.setPosition(this.game.camera.position.x + CAMERA_GAP, this.game.camera.position.y);
+        }
+        if (this.doubleUpKey.isDown && this.doubleUpKey.justDown) {
+            this.userInterface.getFloorSelector().up();
+        } else if (this.doubleDownKey.isDown && this.doubleDownKey.justDown) {
+            this.userInterface.getFloorSelector().down();
         }
 
         const selected = this.worldKnowledge.getSelectedHumanSprite();
