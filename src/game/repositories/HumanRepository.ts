@@ -8,8 +8,12 @@ export class HumanRepository {
     constructor(worldKnowledge: WorldKnowledge) {
         const probabilities = {};
         probabilities[EMPLOYEE_TYPE.DEVELOPER] = 1;
+        let randomCell = worldKnowledge.getRandomCell();
+        while (randomCell.z !== 2) {
+            randomCell = worldKnowledge.getRandomCell();
+        }
         this.humans = [
-            new Employee(worldKnowledge.getRandomCell(), HumanPropertiesFactory.create(probabilities))
+            new Employee(randomCell, HumanPropertiesFactory.create(probabilities))
         ];
     }
 

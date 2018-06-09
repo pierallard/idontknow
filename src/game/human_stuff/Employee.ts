@@ -54,6 +54,7 @@ export class Employee {
     private moodManager: HumanMoodManager;
     private moodSprite: MoodSprite;
     private humanProperties: HumanProperties;
+    private groups: {[index: string] : Phaser.Group};
 
     constructor(cell: Point, humanProperties: HumanProperties) {
         this.cell = cell;
@@ -72,6 +73,7 @@ export class Employee {
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}, worldKnowledge: WorldKnowledge) {
         this.game = game;
         this.worldKnowledge = worldKnowledge;
+        this.groups = groups;
         this.moodManager.create(game);
 
         this.sprite = game.add.tileSprite(
@@ -208,8 +210,13 @@ export class Employee {
         this.moving = false;
         if (this.path !== null && this.path.length > 0) {
             const next = this.path.shift();
+            console.log(this.cell, next);
             const direction = Direction.getNeighborDirection(this.cell.to2DPoint(), next.to2DPoint());
             if (!this.moving) {
+                if (this.cell.z !== next.z) {
+                    this.groups[GROUP_OBJECTS_AND_HUMANS + this.cell.z].remove(this.sprite);
+                    this.groups[GROUP_OBJECTS_AND_HUMANS + next.z].add(this.sprite);
+                }
                 this.cell = next;
                 this.anchorPixels.x = 0;
                 this.anchorPixels.y = GAP_FROM_BOTTOM;

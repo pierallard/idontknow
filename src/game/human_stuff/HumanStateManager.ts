@@ -180,7 +180,7 @@ export class HumanStateManager {
         switch(state) {
             case STATE.SMOKE: result = 5; break;
             case STATE.FREEZE: result = 3; break;
-            case STATE.MOVE_RANDOM: result = 2; break;
+            case STATE.MOVE_RANDOM: result = 200000000; break;
             case STATE.TALK: result = 8; break;
             case STATE.SIT: result = 5; break;
             case STATE.COFFEE: result = 6; break;

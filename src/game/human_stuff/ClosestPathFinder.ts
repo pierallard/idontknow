@@ -20,65 +20,85 @@ export class ClosestPathFinder {
     }
 
     getNeighborPath(originCell: Point, goalCell: Point, entries: DIRECTION[] = [DIRECTION.BOTTOM, DIRECTION.RIGHT, DIRECTION.TOP, DIRECTION.LEFT]): Point[] {
-        return this.getPathInner(originCell, goalCell, entries);
+        return this.getMultipleFloorPathInner(originCell, goalCell, entries);
     }
 
     getPath(originCell: Point, goalCell: Point): Point[] {
-        return this.getPathInner(originCell, goalCell, [DIRECTION.CURRENT]);
+        return this.getMultipleFloorPathInner(originCell, goalCell, [DIRECTION.CURRENT]);
+    }
+
+    private getMultipleFloorPathInner(originCell: Point, goalCell: Point, entries: DIRECTION[]): Point[] {
+        if (originCell.z === goalCell.z) {
+            return this.getPathInner(originCell, goalCell, entries);
+        }
+        if (originCell.z < goalCell.z) {
+            const stair = this.worldKnowledge.getStairsAt(originCell.z);
+            const entryPoint = stair.getStartPoint();
+            const outsidePoint = stair.getEndPoint();
+            return this.getNeighborPath(originCell, entryPoint)
+                .concat(stair.getPoints())
+                .concat(this.getMultipleFloorPathInner(outsidePoint, goalCell, entries));
+        }
+        const stair = this.worldKnowledge.getStairsAt(originCell.z - 1);
+        const entryPoint = stair.getEndPoint();
+        const outsidePoint = stair.getStartPoint();
+        return this.getNeighborPath(originCell, entryPoint)
+            .concat(stair.getPoints().reverse())
+            .concat(this.getMultipleFloorPathInner(outsidePoint, goalCell, entries));
     }
 
     private getPathInner(originCell: Point, goalCell: Point, directions: DIRECTION[]): Point[] {
-        if (originCell.z === goalCell.z) {
-            const floor = originCell.z;
-            this.initialize();
-            let results = {};
-            for (let i = 0; i < directions.length; i++) {
-                const direction = directions[i];
-                try {
-                    const gappedCell = Direction.getNeighbor(goalCell, direction);
-                    if (originCell.x === gappedCell.x && originCell.y === gappedCell.y) {
+        if (originCell.z !== goalCell.z) {
+            return null;
+        }
+        const floor = originCell.z;
+        this.initialize();
+        let results = {};
+        for (let i = 0; i < directions.length; i++) {
+            const direction = directions[i];
+            try {
+                const gappedCell = Direction.getNeighbor(goalCell, direction);
+                if (originCell.x === gappedCell.x && originCell.y === gappedCell.y) {
+                    results[direction] = [];
+                    if (Object.keys(results).length >= directions.length) {
+                        return ClosestPathFinder.getClosest(results);
+                    }
+                }
+
+                this.finders[floor][direction].setCallbackFunction((path: ({ x: number, y: number }[])) => {
+                    if (path) {
                         results[direction] = [];
-                        if (Object.keys(results).length >= directions.length) {
-                            return ClosestPathFinder.getClosest(results);
+                        for (let i = 1, ilen = path.length; i < ilen; i++) {
+                            results[direction].push(new Point(path[i].x, path[i].y, floor));
                         }
-                    }
-
-                    this.finders[floor][direction].setCallbackFunction((path: ({ x: number, y: number }[])) => {
-                        if (path) {
-                            results[direction] = [];
-                            for (let i = 1, ilen = path.length; i < ilen; i++) {
-                                results[direction].push(new Point(path[i].x, path[i].y, floor));
-                            }
-                        } else {
-                            results[direction] = null;
-                        }
-
-                    });
-
-                    this.finders[floor][direction].preparePathCalculation([originCell.x, originCell.y], [gappedCell.x, gappedCell.y]);
-                    this.finders[floor][direction].calculatePath();
-
-                    let tries = 1000;
-                    while (tries > 0) {
-                        if (direction in results) {
-                            if (Object.keys(results).length >= directions.length) {
-                                return ClosestPathFinder.getClosest(results);
-                            }
-                            tries = 0;
-                        }
-                        tries--;
-                    }
-                    if (!(direction in results)) {
+                    } else {
                         results[direction] = null;
+                    }
+                });
+
+                this.finders[floor][direction].preparePathCalculation([originCell.x, originCell.y], [gappedCell.x, gappedCell.y]);
+                this.finders[floor][direction].calculatePath();
+
+                let tries = 1000;
+                while (tries > 0) {
+                    if (direction in results) {
                         if (Object.keys(results).length >= directions.length) {
                             return ClosestPathFinder.getClosest(results);
                         }
+                        tries = 0;
                     }
-                } catch (e) {
+                    tries--;
+                }
+                if (!(direction in results)) {
                     results[direction] = null;
                     if (Object.keys(results).length >= directions.length) {
                         return ClosestPathFinder.getClosest(results);
                     }
+                }
+            } catch (e) {
+                results[direction] = null;
+                if (Object.keys(results).length >= directions.length) {
+                    return ClosestPathFinder.getClosest(results);
                 }
             }
         }
@@ -113,7 +133,6 @@ export class ClosestPathFinder {
                 Direction.neighborDirections().concat([DIRECTION.CURRENT]).forEach((direction: DIRECTION) => {
                     this.finders[i][direction].setGrid(grid, acceptables);
                 });
-
             }
             this.reseted = false;
         }

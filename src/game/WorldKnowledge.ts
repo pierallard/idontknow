@@ -33,6 +33,8 @@ import {Lamp} from "./objects/Lamp";
 import {Printer} from "./objects/Printer";
 import {Bonzai} from "./objects/Bonzai";
 import {Point} from "./Point";
+import {StairsRepository} from "./repositories/StairsRepository";
+import {Stairs} from "./objects/Stairs";
 
 export const GRID_WIDTH = 37;
 export const GRID_HEIGHT = 15;
@@ -44,6 +46,7 @@ export class WorldKnowledge {
     private cells: Cell[];
     private objects: InteractiveObjectInterface[];
     private wallRepository: WallRepository;
+    private stairsRepository: StairsRepository;
     private depot: Depot;
     private game: Phaser.Game;
     private groups: {[index: string] : Phaser.Group};
@@ -65,12 +68,16 @@ export class WorldKnowledge {
         this.objects = [];
         this.floors = [];
         this.wallRepository = new WallRepository();
+        this.stairsRepository = new StairsRepository();
         this.levelManager = new LevelManager();
         this.depot = new Depot();
         this.wallet = new SmoothValue(1500);
         this.infoboxes = [];
         this.gridCache = null;
-        this.acceptableCache = null;
+        this.acceptableCache = [];
+        for (let i = 0; i < GRID_FLOOR; i++) {
+            this.acceptableCache[i] = null;
+        }
 
         const walls = ["" +
             "  XXXWXXXXXWXXWXXXXXXXWXXWXXXXXWXXX  \n" +
@@ -93,7 +100,7 @@ export class WorldKnowledge {
             "         X   X    D    D   X         \n" +
             "         X   X    X    X   X         \n" +
             "         X   X    X    X   X         \n" +
-            "         XXXDXDXXXX    X   X         \n" +
+            "         XDXXXDXXXX    X   X         \n" +
             "         X             X   X         \n" +
             "         XXXXXDXXXXXXXXXDXXX         \n" +
             "         X     D       X   X         \n" +
@@ -105,6 +112,7 @@ export class WorldKnowledge {
             "                                     \n" +
             "                                     ",
 
+
             "         XXXXXWXXXWXXXWXXXXX         \n" +
             "         X   X             X         \n" +
             "         X   X             X         \n" +
@@ -112,14 +120,32 @@ export class WorldKnowledge {
             "         XXXDX             X         \n" +
             "         W                 W         \n" +
             "         XXXXXDXXXXXXX     X         \n" +
-            "         X     X     X     X         \n" +
-            "         X     X     XXXXXXX         \n" +
+            "         X     X     D     X         \n" +
+            "         X     X     XXXDXXX         \n" +
             "         X     X     X     X         \n" +
             "         X     X     X     X         \n" +
             "         XXXXXWXXXWXXXWXXXXX         \n" +
             "                                     \n" +
             "                                     \n" +
             "                                     "];
+
+            //
+            // "         XXXXXWXXXWXXXWXXXXX         \n" +
+            // "         X  X              X         \n" +
+            // "         X  X              X         \n" +
+            // "         X  X              X         \n" +
+            // "         XXDX              X         \n" +
+            // "         W                 W         \n" +
+            // "         XXXXXDXXXXXXX     X         \n" +
+            // "         X     X     D     X         \n" +
+            // "         X     X     XXXDXXX         \n" +
+            // "         X     X     X     X         \n" +
+            // "         X     X     X     X         \n" +
+            // "         XXXXXWXXXWXXXWXXXXX         \n" +
+            // "                                     \n" +
+            // "                                     \n" +
+            // "                                     "];
+            //
         const floors = ["" +
             "  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  \n" +
             "  X,,,,,,,,,,,,,,,,,,,,,...........  \n" +
@@ -137,34 +163,34 @@ export class WorldKnowledge {
             "X.........,,,,,,,,,,,,,,,,,,.........\n" +
             "X.........,,,,,,,,,,,,,,,,,,.........",
 
-            "                                     \n" +
-            "          ..................         \n" +
-            "          ..........    ....         \n" +
-            "          ..........    ....         \n" +
-            "          ..................         \n" +
-            "          ..................         \n" +
-            "          ..................         \n" +
-            "          ..................         \n" +
-            "          ..................         \n" +
-            "          ..................         \n" +
-            "          ..................         \n" +
-            "          ..................         \n" +
-            "          ,,,,,,,,,,,,,,,,,,         \n" +
-            "          ,,,,,,,,,,,,,,,,,,         \n" +
-            "          ,,,,,,,,,,,,,,,,,,         ",
+            "         XXXXXXXXXXXXXXXXXXX         \n" +
+            "         X..................         \n" +
+            "         X..........    ....         \n" +
+            "         X..........    ....         \n" +
+            "         X..................         \n" +
+            "         X..................         \n" +
+            "         X..................         \n" +
+            "         X..................         \n" +
+            "         X..................         \n" +
+            "         X..................         \n" +
+            "         X..................         \n" +
+            "         X..................         \n" +
+            "         X,,,,,,,,,,,,,,,,,,         \n" +
+            "         X,,,,,,,,,,,,,,,,,,         \n" +
+            "         X,,,,,,,,,,,,,,,,,,         ",
 
-            "                                     \n" +
-            "              ..............         \n" +
-            "              ..............         \n" +
-            "              ..............         \n" +
-            "              ..............         \n" +
-            "          ..................         \n" +
-            "          ..................         \n" +
-            "          ..................         \n" +
-            "          ..................         \n" +
-            "          ..................         \n" +
-            "          ..................         \n" +
-            "          ..................         \n" +
+            "         XXXXXXXXXXXXXXXXXXX         \n" +
+            "         X   ...............         \n" +
+            "         X   ...............         \n" +
+            "         X   ...............         \n" +
+            "         X  ................         \n" +
+            "         X..................         \n" +
+            "         X..................         \n" +
+            "         X..................         \n" +
+            "         X..................         \n" +
+            "         X..................         \n" +
+            "         X..................         \n" +
+            "         X..................         \n" +
             "                                     \n" +
             "                                     \n" +
             "                                     "];
@@ -187,10 +213,14 @@ export class WorldKnowledge {
                     if (floorCell !== ' ') {
                         this.cells.push(new Cell(this, new Point(x, y, i)));
                     }
-                    if (floorCell === '.') {
-                        this.floors.push(new Floor(new Point(x, y, i), 'woodcell'));
-                    } else if (floorCell === ',') {
-                        this.floors.push(new Floor(new Point(x, y, i), 'case_floortile'));
+                    if (x === 24 && y === 10) {
+                        this.floors.push(new Floor(new Point(x, y, i), 'casedefault'));
+                    } else {
+                        if (floorCell === '.') {
+                            this.floors.push(new Floor(new Point(x, y, i), 'woodcell'));
+                        } else if (floorCell === ',') {
+                            this.floors.push(new Floor(new Point(x, y, i), 'case_floortile'));
+                        }
                     }
                     if (wallCell === 'X') {
                         this.wallRepository.addWall(new Point(x, y, i));
@@ -203,10 +233,38 @@ export class WorldKnowledge {
             }
         }
 
+        this.stairsRepository.add(new Stairs(0, [
+            new PIXI.Point(16, 13),
+            new PIXI.Point(15, 13),
+            new PIXI.Point(14, 13),
+            new PIXI.Point(14, 12),
+            new PIXI.Point(14, 11),
+            new PIXI.Point(15, 11),
+            new PIXI.Point(16, 11),
+            new PIXI.Point(17, 11),
+        ]));
+
+        this.stairsRepository.add(new Stairs(1, [
+            new PIXI.Point(26, 10),
+            new PIXI.Point(26, 11),
+            new PIXI.Point(26, 12),
+            new PIXI.Point(26, 13),
+            new PIXI.Point(25, 13),
+            new PIXI.Point(24, 13),
+            new PIXI.Point(24, 12),
+            new PIXI.Point(24, 11),
+        ]));
+
         this.humanRepository = new HumanRepository(this);
         this.moodRegister = new MoodRegister(this.humanRepository);
         this.employeeCountRegister = new EmployeeCountRegister(this.humanRepository);
         this.levelRegister = new EmployeeLevelRegister(this.levelManager);
+
+        // Check stairs validity
+        const accept = this.getGrid(2)[this.stairsRepository.getStairsAt(1).getEndPoint().y][this.stairsRepository.getStairsAt(1).getEndPoint().x].index;
+        if (this.getAcceptables(2).filter((acc) => { return acc == accept; }).length === 0) {
+            console.error('The position ' + this.stairsRepository.getStairsAt(1).getEndPoint().x + ', ' + this.stairsRepository.getStairsAt(1).getEndPoint().y + ' has to be accessible.');
+        }
     }
 
     create(game: Phaser.Game, groups: {[index: string] : Phaser.Group}) {
@@ -281,7 +339,7 @@ export class WorldKnowledge {
     }
 
     resetAStar(position: Point = null) {
-        this.acceptableCache = null;
+        this.acceptableCache[position.z] = null;
         this.humanRepository.humans.forEach((human) => {
             human.resetAStar(position);
         });
@@ -327,25 +385,22 @@ export class WorldKnowledge {
     }
 
     getRandomCell(): Point {
-        const acceptableIndexes = this.getAcceptables(0);
+        const randomFloor = Math.floor(Math.random() * GRID_FLOOR);
+        const acceptableIndexes = this.getAcceptables(randomFloor);
         const random = Math.floor(Math.random() * acceptableIndexes.length);
 
-        return this.cells[acceptableIndexes[random]].getPosition();
+        return this.getFloorCells(randomFloor)[random].getPosition();
     }
 
     getAcceptables(floor: number): number[] {
-        if (this.acceptableCache === null) {
-            this.acceptableCache = [];
-            for (let i = 0; i < GRID_FLOOR; i++) {
-                this.acceptableCache[i] = [];
-                for (let j = 0; j < this.cells.length; j++) {
-                    if (this.cells[j].getPosition().z === i) {
-                        if (this.isFree(this.cells[j].getPosition())) {
-                            this.acceptableCache[i].push(j);
-                        }
-                    }
+        if (this.acceptableCache[floor] === null) {
+            this.acceptableCache[floor] = [];
+            const floorCells = this.getFloorCells(floor);
+            floorCells.forEach((cell) => {
+                if (this.isFree(cell.getPosition())) {
+                    this.acceptableCache[floor].push(cell.getPosition().y * GRID_WIDTH + cell.getPosition().x);
                 }
-            }
+            });
         }
 
         return this.acceptableCache[floor];
@@ -377,13 +432,11 @@ export class WorldKnowledge {
             this.gridCache = [];
             for (let i = 0; i < GRID_FLOOR; i++) {
                 this.gridCache[i] = [];
-                for (let j = 0; j < this.cells.length; j++) {
-                    if (this.cells[j].getPosition().z === i) {
-                        if (undefined === this.gridCache[i][this.cells[j].getPosition().y]) {
-                            this.gridCache[i][this.cells[j].getPosition().y] = [];
-                        }
-                        this.gridCache[i][this.cells[j].getPosition().y][this.cells[j].getPosition().x] = {
-                            index: j
+                for (let y = 0; y < GRID_HEIGHT; y++) {
+                    this.gridCache[i][y] = [];
+                    for (let x = 0; x < GRID_WIDTH; x++) {
+                        this.gridCache[i][y][x] = {
+                            index: y * GRID_WIDTH + x
                         };
                     }
                 }
@@ -754,5 +807,15 @@ export class WorldKnowledge {
             ], 'OK, let\'s go!');
         infobox.create(this.game, this.groups);
         this.infoboxes.push(infobox);
+    }
+
+    getStairsAt(z: number): Stairs {
+        return this.stairsRepository.getStairsAt(z);
+    }
+
+    private getFloorCells(floor: number): Cell[] {
+        return this.cells.filter((cell) => {
+            return cell.getPosition().z === floor;
+        });
     }
 }
