@@ -100,9 +100,9 @@ export class WorldKnowledge {
             "         X   X    D    D   X         \n" +
             "         X   X    X    X   X         \n" +
             "         X   X    X    X   X         \n" +
-            "         XDXXXDXXXX    X   X         \n" +
+            "         XXXDXDXXXX    X   X         \n" +
             "         X             X   X         \n" +
-            "         XXXXXDXXXXXXXXXDXXX         \n" +
+            "         XXXXXDXDXXXXXXXDXXX         \n" +
             "         X     D       X   X         \n" +
             "         X     X       X   X         \n" +
             "         X     X       X   X         \n" +
@@ -117,7 +117,7 @@ export class WorldKnowledge {
             "         X   X             X         \n" +
             "         X   X             X         \n" +
             "         X   X             X         \n" +
-            "         XXXDX             X         \n" +
+            "         XDXXX             X         \n" +
             "         W                 W         \n" +
             "         XXXXXDXXXXXXX     X         \n" +
             "         X     X     D     X         \n" +
@@ -129,23 +129,6 @@ export class WorldKnowledge {
             "                                     \n" +
             "                                     "];
 
-            //
-            // "         XXXXXWXXXWXXXWXXXXX         \n" +
-            // "         X  X              X         \n" +
-            // "         X  X              X         \n" +
-            // "         X  X              X         \n" +
-            // "         XXDX              X         \n" +
-            // "         W                 W         \n" +
-            // "         XXXXXDXXXXXXX     X         \n" +
-            // "         X     X     D     X         \n" +
-            // "         X     X     XXXDXXX         \n" +
-            // "         X     X     X     X         \n" +
-            // "         X     X     X     X         \n" +
-            // "         XXXXXWXXXWXXXWXXXXX         \n" +
-            // "                                     \n" +
-            // "                                     \n" +
-            // "                                     "];
-            //
         const floors = ["" +
             "  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  \n" +
             "  X,,,,,,,,,,,,,,,,,,,,,...........  \n" +
@@ -167,7 +150,7 @@ export class WorldKnowledge {
             "         X..................         \n" +
             "         X..........    ....         \n" +
             "         X..........    ....         \n" +
-            "         X..................         \n" +
+            "         X..........    ....         \n" +
             "         X..................         \n" +
             "         X..................         \n" +
             "         X..................         \n" +
@@ -180,10 +163,10 @@ export class WorldKnowledge {
             "         X,,,,,,,,,,,,,,,,,,         ",
 
             "         XXXXXXXXXXXXXXXXXXX         \n" +
-            "         X   ...............         \n" +
-            "         X   ...............         \n" +
-            "         X   ...............         \n" +
-            "         X  ................         \n" +
+            "         X    ..............         \n" +
+            "         X    ..............         \n" +
+            "         XX   ..............         \n" +
+            "         XX   ..............         \n" +
             "         X..................         \n" +
             "         X..................         \n" +
             "         X..................         \n" +
@@ -213,14 +196,10 @@ export class WorldKnowledge {
                     if (floorCell !== ' ') {
                         this.cells.push(new Cell(this, new Point(x, y, i)));
                     }
-                    if (x === 24 && y === 10) {
-                        this.floors.push(new Floor(new Point(x, y, i), 'casedefault'));
-                    } else {
-                        if (floorCell === '.') {
-                            this.floors.push(new Floor(new Point(x, y, i), 'woodcell'));
-                        } else if (floorCell === ',') {
-                            this.floors.push(new Floor(new Point(x, y, i), 'case_floortile'));
-                        }
+                    if (floorCell === '.') {
+                        this.floors.push(new Floor(new Point(x, y, i), 'woodcell'));
+                    } else if (floorCell === ',') {
+                        this.floors.push(new Floor(new Point(x, y, i), 'case_floortile'));
                     }
                     if (wallCell === 'X') {
                         this.wallRepository.addWall(new Point(x, y, i));
@@ -234,6 +213,7 @@ export class WorldKnowledge {
         }
 
         this.stairsRepository.add(new Stairs(0, [
+            new PIXI.Point(17, 13),
             new PIXI.Point(16, 13),
             new PIXI.Point(15, 13),
             new PIXI.Point(14, 13),
@@ -242,18 +222,19 @@ export class WorldKnowledge {
             new PIXI.Point(15, 11),
             new PIXI.Point(16, 11),
             new PIXI.Point(17, 11),
-        ]));
+        ], new PIXI.Point(14, 55), 1));
 
         this.stairsRepository.add(new Stairs(1, [
-            new PIXI.Point(26, 10),
-            new PIXI.Point(26, 11),
-            new PIXI.Point(26, 12),
-            new PIXI.Point(26, 13),
-            new PIXI.Point(25, 13),
-            new PIXI.Point(24, 13),
-            new PIXI.Point(24, 12),
+            new PIXI.Point(24, 9),
+            new PIXI.Point(24, 10),
             new PIXI.Point(24, 11),
-        ]));
+            new PIXI.Point(24, 12),
+            new PIXI.Point(24, 13),
+            new PIXI.Point(25, 13),
+            new PIXI.Point(26, 13),
+            new PIXI.Point(26, 12),
+            new PIXI.Point(26, 11),
+        ], new PIXI.Point(39, -14), 2));
 
         this.humanRepository = new HumanRepository(this);
         this.moodRegister = new MoodRegister(this.humanRepository);
@@ -285,6 +266,7 @@ export class WorldKnowledge {
             object.create(game, groups);
         });
 
+        this.stairsRepository.create(game, groups);
         this.wallRepository.create(game, groups);
         this.humanRepository.create(game, groups, this);
         this.moodRegister.create(game);

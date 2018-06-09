@@ -210,12 +210,11 @@ export class Employee {
         this.moving = false;
         if (this.path !== null && this.path.length > 0) {
             const next = this.path.shift();
-            console.log(this.cell, next);
             const direction = Direction.getNeighborDirection(this.cell.to2DPoint(), next.to2DPoint());
             if (!this.moving) {
-                if (this.cell.z !== next.z) {
-                    this.groups[GROUP_OBJECTS_AND_HUMANS + this.cell.z].remove(this.sprite);
-                    this.groups[GROUP_OBJECTS_AND_HUMANS + next.z].add(this.sprite);
+                if (Math.floor(this.cell.z) !== Math.floor(next.z)) {
+                    this.groups[GROUP_OBJECTS_AND_HUMANS + Math.floor(this.cell.z)].remove(this.sprite);
+                    this.groups[GROUP_OBJECTS_AND_HUMANS + Math.floor(next.z)].add(this.sprite);
                 }
                 this.cell = next;
                 this.anchorPixels.x = 0;

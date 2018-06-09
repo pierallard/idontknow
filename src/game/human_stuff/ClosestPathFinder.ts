@@ -35,16 +35,28 @@ export class ClosestPathFinder {
             const stair = this.worldKnowledge.getStairsAt(originCell.z);
             const entryPoint = stair.getStartPoint();
             const outsidePoint = stair.getEndPoint();
-            return this.getNeighborPath(originCell, entryPoint)
-                .concat(stair.getPoints())
-                .concat(this.getMultipleFloorPathInner(outsidePoint, goalCell, entries));
+            const step1 = this.getNeighborPath(originCell, entryPoint)
+            if (step1 === null) {
+                return null;
+            }
+            const step2 = this.getMultipleFloorPathInner(outsidePoint, goalCell, entries);
+            if (step2 === null) {
+                return null;
+            }
+            return step1.concat(stair.getPoints()).concat(step2);
         }
         const stair = this.worldKnowledge.getStairsAt(originCell.z - 1);
         const entryPoint = stair.getEndPoint();
         const outsidePoint = stair.getStartPoint();
-        return this.getNeighborPath(originCell, entryPoint)
-            .concat(stair.getPoints().reverse())
-            .concat(this.getMultipleFloorPathInner(outsidePoint, goalCell, entries));
+        const step1 = this.getNeighborPath(originCell, entryPoint);
+        if (step1 === null) {
+            return null;
+        }
+        const step2 = this.getMultipleFloorPathInner(outsidePoint, goalCell, entries);
+        if (step2 === null) {
+            return null;
+        }
+        return step1.concat(stair.getPoints().reverse()).concat(step2);
     }
 
     private getPathInner(originCell: Point, goalCell: Point, directions: DIRECTION[]): Point[] {

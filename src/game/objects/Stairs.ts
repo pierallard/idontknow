@@ -1,12 +1,30 @@
 import {Point} from "../Point";
+import {PositionTransformer} from "../PositionTransformer";
+import {GROUP_OBJECTS_AND_HUMANS} from "../game_state/Play";
 
 export class Stairs {
     private points: PIXI.Point[];
     private startFloor: number;
+    private sprite: Phaser.Sprite;
+    private gap: PIXI.Point;
+    private frame: number;
 
-    constructor(startFloor: number, points: PIXI.Point[]) {
+    constructor(startFloor: number, points: PIXI.Point[], gap: PIXI.Point, frame: number) {
         this.startFloor = startFloor;
         this.points = points;
+        this.gap = gap;
+        this.frame = frame;
+    }
+
+    create(game: Phaser.Game, groups: {[index: string]: Phaser.Group }) {
+        this.sprite = game.add.sprite(
+            PositionTransformer.getRealPosition(this.getStartPoint()).x + this.gap.x,
+            PositionTransformer.getRealPosition(this.getStartPoint()).y + this.gap.y,
+            'stairs',
+            this.frame,
+            groups[GROUP_OBJECTS_AND_HUMANS + this.getStartPoint().z]
+        );
+        this.sprite.anchor.setTo(0.5, 1);
     }
 
     getStartPoint(): Point {
@@ -26,8 +44,9 @@ export class Stairs {
     }
 
     getPoints(): Point[] {
-        return this.points.map((point) => {
-            return new Point(point.x, point.y, this.startFloor);
+        const gap = 1 / this.points.length;
+        return this.points.map((point, index) => {
+            return new Point(point.x, point.y, this.startFloor + gap * index);
         });
     }
 }

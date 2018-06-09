@@ -20,4 +20,10 @@ export class StairsRepository {
 
         throw 'Impossible to get stairs at level ' + z;
     }
+
+    create(game: Phaser.Game, groups: { [p: string]: Phaser.Group }) {
+        this.stairs.forEach((stairs) => {
+            stairs.create(game, groups);
+        });
+    }
 }
