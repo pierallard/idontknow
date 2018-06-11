@@ -234,7 +234,7 @@ export class WorldKnowledge {
             new PIXI.Point(26, 13),
             new PIXI.Point(26, 12),
             new PIXI.Point(26, 11),
-        ], new PIXI.Point(39, -14), 2));
+        ], new PIXI.Point(39, -14), 0));
 
         this.humanRepository = new HumanRepository(this);
         this.moodRegister = new MoodRegister(this.humanRepository);
@@ -244,7 +244,7 @@ export class WorldKnowledge {
         // Check stairs validity
         const accept = this.getGrid(2)[this.stairsRepository.getStairsAt(1).getEndPoint().y][this.stairsRepository.getStairsAt(1).getEndPoint().x].index;
         if (this.getAcceptables(2).filter((acc) => { return acc == accept; }).length === 0) {
-            console.error('The position ' + this.stairsRepository.getStairsAt(1).getEndPoint().x + ', ' + this.stairsRepository.getStairsAt(1).getEndPoint().y + ' has to be accessible.');
+            console.log('The position ' + this.stairsRepository.getStairsAt(1).getEndPoint().x + ', ' + this.stairsRepository.getStairsAt(1).getEndPoint().y + ' has to be accessible.');
         }
     }
 

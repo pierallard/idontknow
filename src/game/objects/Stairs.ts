@@ -2,10 +2,16 @@ import {Point} from "../Point";
 import {PositionTransformer} from "../PositionTransformer";
 import {GROUP_OBJECTS_AND_HUMANS} from "../game_state/Play";
 
+const SPRITES_COUNT = 7;
+const FAKE_HEIGHTS = [
+    2, 17, 37, 51, 63, 61, 67,
+    51, 49, 35, 30, 19, 30, 52
+];
+const SPRITE_HEIGHT = 108;
+
 export class Stairs {
     private points: PIXI.Point[];
     private startFloor: number;
-    private sprite: Phaser.Sprite;
     private gap: PIXI.Point;
     private frame: number;
 
@@ -17,14 +23,18 @@ export class Stairs {
     }
 
     create(game: Phaser.Game, groups: {[index: string]: Phaser.Group }) {
-        this.sprite = game.add.sprite(
-            PositionTransformer.getRealPosition(this.getStartPoint()).x + this.gap.x,
-            PositionTransformer.getRealPosition(this.getStartPoint()).y + this.gap.y,
-            'stairs',
-            this.frame,
-            groups[GROUP_OBJECTS_AND_HUMANS + this.getStartPoint().z]
-        );
-        this.sprite.anchor.setTo(0.5, 1);
+        for (let i = 0; i < SPRITES_COUNT; i++) {
+            const frame = this.frame * SPRITES_COUNT + i;
+            const fake_height = FAKE_HEIGHTS[frame] - 10;
+            const sprite = game.add.sprite(
+                PositionTransformer.getRealPosition(this.getStartPoint()).x + this.gap.x,
+                PositionTransformer.getRealPosition(this.getStartPoint()).y + this.gap.y - fake_height,
+                'stairs2',
+                frame,
+                groups[GROUP_OBJECTS_AND_HUMANS + this.getStartPoint().z]
+            );
+            sprite.anchor.setTo(0.5, 1 - fake_height / SPRITE_HEIGHT);
+        }
     }
 
     getStartPoint(): Point {
